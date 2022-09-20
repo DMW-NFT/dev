@@ -6,7 +6,7 @@ const screenHeight = Dimensions.get('window').height;
 export default class loginHome extends Component {
   render() {
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{backgroundColor:'#fff'}}>
             <View style={[styles.container]}>
                  <View> 
                     {/* <Text style={[styles.faceLogin]}>面部登录</Text> */}

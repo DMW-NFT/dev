@@ -27,6 +27,7 @@ export default class MessageCenter extends Component {
           paddingTop: 40,
           position: 'relative',
           height: Dimensions.get('window').height,
+          backgroundColor:'#fff'
         }}>
         <View style={{paddingLeft: 20, paddingRight: 20}}>
           <TouchableWithoutFeedback

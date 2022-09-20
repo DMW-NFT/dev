@@ -17,7 +17,7 @@ export default class Jiaoyi extends Component {
   } 
   render() {
     return (
-      <SafeAreaView>
+      <SafeAreaView  style={{backgroundColor:'#fff'}}> 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* tab栏 -- start */}
         <View style={[styles.index_box, styles.daohang]}>

@@ -27,6 +27,7 @@ export default class ILikeIt extends Component {
           paddingTop: 30,
           position: 'relative',
           height: Dimensions.get('window').height,
+          backgroundColor:'#fff'
         }}>
         <View style={{paddingLeft: 20, paddingRight: 20}}>
          

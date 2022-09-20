@@ -7,7 +7,7 @@ export default class RradeSuccessfully extends Component {
   }
   render() {
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{backgroundColor:'#fff'}}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.container}>
             <View style={[styles.whiteBox]}>

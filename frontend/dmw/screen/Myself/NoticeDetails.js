@@ -26,7 +26,7 @@ export default class NoticeDetails extends Component {
     return (
       <SafeAreaView
         style={{
-       
+          backgroundColor:'#fff',
           position: 'relative',
           height: Dimensions.get('window').height,
         }}>

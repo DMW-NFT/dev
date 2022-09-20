@@ -60,7 +60,7 @@ export default class Categray extends Component {
   render() {
     
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{backgroundColor:'#fff'}}>
         <ScrollView style={[styles.container]}>
           <List list={this.state.list} type={1} getList={this.getList} />
         </ScrollView>

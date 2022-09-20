@@ -23,7 +23,7 @@ export default class Search extends Component {
     }
     render() {
         return (
-            <SafeAreaView>
+            <SafeAreaView style={{backgroundColor:'#fff'}}> 
                 <ScrollView>
                     <View style={[styles.container]}>
                         <View style={[styles.inputBox]} >

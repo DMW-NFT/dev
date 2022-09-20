@@ -48,7 +48,7 @@ export default class Data extends Component {
   }
   render() {
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{backgroundColor:'#fff'}}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={[styles.flexJBC, styles.topBOx]}>
             <TouchableWithoutFeedback onPress={() => { this.changeVisible(true) }}>

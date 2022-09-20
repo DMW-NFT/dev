@@ -29,6 +29,7 @@ export default class SystemNotification extends Component {
           paddingTop: 44,
           position: 'relative',
           height: Dimensions.get('window').height,
+          backgroundColor:'#fff'
         }}>
         <View style={{paddingLeft: 20, paddingRight: 20}}>
           <View style={styles.View}>

@@ -22,7 +22,7 @@ export default class ModifyInfo extends Component {
   }
   render() {
     return (
-      <SafeAreaView style={{paddingTop: 20, position: 'relative',height:Dimensions.get('window').height}}>
+      <SafeAreaView style={{paddingTop: 20, position: 'relative',height:Dimensions.get('window').height,backgroundColor:'#fff'}}>
         <View
           style={{
             flexDirection: 'row',

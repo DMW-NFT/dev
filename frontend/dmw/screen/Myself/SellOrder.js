@@ -22,7 +22,7 @@ export default class SellOrder extends Component {
     // } 
     render() {
         return (
-            <SafeAreaView >
+            <SafeAreaView style={{backgroundColor:'#fff'}}>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View styles={[styles.container, { backgroundColor: "#f5f5f5" }]}>
                         <View style={[styles.index_box, styles.daohang]}>

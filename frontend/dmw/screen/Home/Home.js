@@ -47,7 +47,7 @@ export default class Home extends Component {
 };
   render() {
     return (
-      <SafeAreaView > 
+      <SafeAreaView  style={{backgroundColor:'#fff'}}> 
         {/* scrollEnabled={this.state.enableScrollViewScroll} */}
         <ScrollView  showsVerticalScrollIndicator={false}  >
           <View style={styles.index_box}>

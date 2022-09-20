@@ -11,7 +11,7 @@ export default class ImportWord extends Component {
     }
     render() {
         return (
-            <SafeAreaView>
+            <SafeAreaView style={{backgroundColor:'#fff'}}>
                 <View style={[styles.container]}>
                     <StepComp type={3} />  
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>

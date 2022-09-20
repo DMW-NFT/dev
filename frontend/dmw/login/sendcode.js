@@ -87,7 +87,7 @@ class Index extends Component {
 
     render() {
         return (
-            <SafeAreaView>
+            <SafeAreaView style={{backgroundColor:'#fff'}}>
                 <View style={[styles.container]}>
                     <View style={[styles.topBox]}>
                         <Text style={[styles.toptext]}>验证码已发送到您的{this.state.type==1?'邮箱':"手机"}</Text>

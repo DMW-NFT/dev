@@ -30,7 +30,8 @@ export default class TransferredIntoCollection extends Component {
           paddingRight: 20,
           position: 'relative',
           height: Dimensions.get('window').height,
-          paddingBottom:200
+          paddingBottom:200,
+          backgroundColor:'#fff'
         }}>
         <ScrollView showsVerticalScrollIndicator={false}>
             {/* <Text>dnfjhsbdhfbhsdb电脑上减肥不上班分别少部分黑死病封神榜风寒湿痹封神榜粉红色部分少部分火山爆发s是

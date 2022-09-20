@@ -69,8 +69,8 @@ export default class Myself extends Component {
   }
   render() {
     return (
-      <SafeAreaView>
-        <View>
+      <SafeAreaView style={{backgroundColor:'#fff'}}>
+        <View style={{backgroundColor:'#fff'}}>
           <View style={styles.index_box}>
             {/* title -- start*/}
             <View
@@ -154,6 +154,7 @@ const styles = StyleSheet.create({
   index_box: {
     paddingLeft: 20,
     paddingRight: 20,
+    backgroundColor:'#fff'
   },
   title: {
     height: 52,

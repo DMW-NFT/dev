@@ -53,7 +53,7 @@ export default class CollectionDetails extends Component {
 
     render() {
         return (
-            <SafeAreaView>
+            <SafeAreaView style={{backgroundColor:'#fff'}}>
                 <ScrollView showsHorizontalScrollIndicator={false}>
                     {/* <StatusBar barStyle="dark-content" backgroundColor="#fff" /> */}
                     <View>

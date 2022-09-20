@@ -12,7 +12,7 @@ export default class SetUp extends Component {
     }
   render() {
     return (
-      <SafeAreaView style={{paddingLeft: 20, paddingRight: 20}}>
+      <SafeAreaView style={{paddingLeft: 20, paddingRight: 20,backgroundColor:'#fff'}}>
         <View style={[{padding: 20},styles.box]}>
           <Text style={styles.title}>账户</Text>
           <View style={[styles.list,{ marginBottom:31}]}>

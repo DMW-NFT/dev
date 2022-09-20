@@ -22,7 +22,7 @@ export default class BlockchainQuery extends Component {
   }
   render() {
     return (
-      <SafeAreaView style={{paddingTop: 38, position: 'relative',height:Dimensions.get('window').height}}>
+      <SafeAreaView style={{paddingTop: 38, position: 'relative',height:Dimensions.get('window').height,backgroundColor:'#fff'}}>
        
 <View style={{paddingLeft:20,paddingRight:20}}>
 <TextInput

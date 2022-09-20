@@ -27,7 +27,7 @@ export default class Sell extends Component {
     }
     render() {
         return (
-            <SafeAreaView>
+            <SafeAreaView style={{backgroundColor:'#fff'}}>
                 <ScrollView showsVerticalScrollIndicator={false} style={{ paddingHorizontal: 20 }}>
                     {/* tab栏 -- start */}
                     <View style={[styles.index_box, styles.daohang]}>

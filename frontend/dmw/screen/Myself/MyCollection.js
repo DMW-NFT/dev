@@ -20,7 +20,7 @@ export default class MyCollection extends Component {
     } 
     render() {
         return (
-            <SafeAreaView>
+            <SafeAreaView style={{backgroundColor:'#fff'}}>
                 <ScrollView showsVerticalScrollIndicator={false} >
                     <View style={{ padding: 20 }}> 
                         <View style={{ flexDirection: 'row', alignItems: 'center', height: 50 }}>

@@ -21,7 +21,7 @@ export default class GoodsDetail extends Component {
     }
     render() { 
         return (
-            <SafeAreaView>
+            <SafeAreaView style={{backgroundColor:'#fff'}}>
                 <ScrollView showsVerticalScrollIndicator={false}        >
                     <View style={[styles.container]}>
                         <Image source={require('../../assets/img/index/any.jpeg')} style={[styles.topImg]}></Image>

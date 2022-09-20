@@ -15,7 +15,7 @@ export default class CreateMoney extends Component {
     render() {
         let { visible } = this.state
         return (
-            <SafeAreaView>
+            <SafeAreaView style={{backgroundColor:'#fff'}}>
                 <View style={[styles.container]}>
                     <Text style={[styles.title]}>Connect with Wallet</Text>
                     <View style={[styles.imgBox]}>

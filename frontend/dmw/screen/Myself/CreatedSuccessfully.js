@@ -22,7 +22,7 @@ export default class CreatedSuccessfully extends Component {
   }
   render() {
     return (
-      <SafeAreaView style={{ paddingLeft:20,paddingRight:20, position: 'relative',height:Dimensions.get('window').height}}>
+      <SafeAreaView style={{ paddingLeft:20,paddingRight:20, position: 'relative',height:Dimensions.get('window').height,backgroundColor:'#fff'}}>
       
 <Text style={{fontSize:16,color:'#0F172C',marginBottom:41}}>你成功上传了一个新的藏品！</Text>
         
