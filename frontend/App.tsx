@@ -8,25 +8,25 @@ import { Button } from "@ui-kitten/components";
 export default function App() {
 
 
-  const { connectWallet, currentWallet, currentChainId, disconnectWallet, tranferNative, mintNft } = useDmwWeb3();
+  // const { connectWallet, currentWallet, currentChainId, disconnectWallet, tranferNative, mintNft } = useDmwWeb3();
 
 
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+      {/* <Text>Open up App.tsx to start working on your app!</Text> */}
 
-      <Button onPress={() => connectWallet()} >
+      {/* <Button onPress={() => connectWallet()} >
         Connect
-      </Button>
-      <Button onPress={() => disconnectWallet()} >
+      </Button> */}
+      {/* <Button onPress={() => disconnectWallet()} >
         Disconnect
-      </Button>
-      <Button onPress={() => tranferNative()} >
+      </Button> */}
+      {/* <Button onPress={() => tranferNative()} >
         SendTest
-      </Button>
-      <Button onPress={() => mintNft()} >
+      </Button> */}
+      {/* <Button onPress={() => mintNft()} >
         mint
-      </Button>
+      </Button> */}
       {/* <Button onPress={() => connector.killSession()} >
         Disconnect
       </Button> */}
