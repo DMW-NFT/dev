@@ -11,7 +11,7 @@
     "@ui-kitten/components": "^5.1.2",
     "@walletconnect/react-native-dapp": "1.6.1",
     "base-64": "1.0.0",
-    "buffer": "6.0.3",
+    "buffer": "^6.0.3",
     "expo": "~46.0.9",
     "expo-splash-screen": "~0.16.2",
     "expo-status-bar": "~1.4.0",

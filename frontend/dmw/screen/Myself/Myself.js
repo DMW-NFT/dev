@@ -12,10 +12,11 @@ import React, { Component } from 'react';
 import Tabcolumn from './Tabcolumn';
 import Screen from '../../Components/screen';
 import Search from '../../Components/Searchbox';
-import Lmodal from './leftModal';  
+import Lmodal from './leftModal';
+const imgurl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEEAAABBCAIAAAABlV4SAAAABnRSTlMAAAAAAABupgeRAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAh0lEQVRoge3asQ3DMAwAQcvIQBnRI3okr8DCQQ7CXy1QeKhhofW9jqF7cPIv087pnbAaDDUYajDUYKjBUINhvTvu3b11aId3qMFQg6EGQw2GGgxrvuGwdniHGgw1GGow1GCowVCDoQZDDYYaDDUYajDUYNih4TM/2p/EH6rBUIOhBkMNhhoMD46XC+KxwFUQAAAAAElFTkSuQmCC'
 const data = [
-  {  
-    typename: 'Status',  
+  {
+    typename: 'Status',
     list: [
       { name: 'Buy now', id: 1, active: false },
       { name: 'On auction', id: 2, active: false },
@@ -42,19 +43,19 @@ export default class Myself extends Component {
     this.state = {
       typename: '我的藏品',
       visible: false,
-      strText:'',
-      lMvisible:false
+      strText: '',
+      lMvisible: false
     };
     this.paging = this.paging.bind(this);
   }
-  navigateto=(val)=>{
+  navigateto = (val) => {
     console.log(val)
-     this.props.navigation.navigate(val)
+    this.props.navigation.navigate(val)
   }
   close() {
     this.setState({
       visible: false,
-      lMvisible:false
+      lMvisible: false
     });
   }
   visible() {
@@ -69,8 +70,8 @@ export default class Myself extends Component {
   }
   render() {
     return (
-      <SafeAreaView style={{backgroundColor:'#fff',flex: 1}}>
-        <View style={{backgroundColor:'#fff'}}>
+      <SafeAreaView style={{ backgroundColor: '#fff', flex: 1 }}>
+        <View style={{ backgroundColor: '#fff' }}>
           <View style={styles.index_box}>
             {/* title -- start*/}
             <View
@@ -84,15 +85,15 @@ export default class Myself extends Component {
                   justifyContent: 'space-between',
                   height: 52,
                 }}>
-                  <Pressable onPress={()=>{this.setState({lMvisible : true})}}>
+                <Pressable onPress={() => { this.setState({ lMvisible: true }) }}>
                   <Image
-                  style={styles.top_img}
-                  source={require('../../assets/img/my/top_left_list.png')}></Image>
-                  </Pressable>
-                <Pressable onPress={()=>{this.props.navigation.navigate('SetUp')}}>
-                <Image
-                  style={styles.top_img}
-                  source={require('../../assets/img/my/top_right_set.png')}></Image>
+                    style={styles.top_img}
+                    source={require('../../assets/img/my/top_left_list.png')}></Image>
+                </Pressable>
+                <Pressable onPress={() => { this.props.navigation.navigate('SetUp') }}>
+                  <Image
+                    style={styles.top_img}
+                    source={require('../../assets/img/my/top_right_set.png')}></Image>
                 </Pressable>
               </View>
             </View>
@@ -138,9 +139,11 @@ export default class Myself extends Component {
             visible={this.state.visible}
             close={() => this.close()}
             datalist={data}></Screen>
-          </View>
-        <Lmodal goto={(path)=>{this.props.navigation.navigate(path)}} style={[styles.Screen]}  close={() => this.close()} visible={this.state.lMvisible}></Lmodal>
-        
+        </View>
+        <Lmodal goto={(path) => { this.props.navigation.navigate(path) }} style={[styles.Screen]} close={() => this.close()} visible={this.state.lMvisible}></Lmodal>
+
+        {/* <Image  style={{width:50,height:50}}
+        source={{uri:imgurl}}></Image> */}
       </SafeAreaView>
     );
   }
@@ -154,7 +157,7 @@ const styles = StyleSheet.create({
   index_box: {
     paddingLeft: 20,
     paddingRight: 20,
-    backgroundColor:'#fff'
+    backgroundColor: '#fff'
   },
   title: {
     height: 52,

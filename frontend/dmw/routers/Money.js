@@ -13,7 +13,7 @@ const Stack=createStackNavigator()
 export default class Home extends Component {
   render() {
     return (
-      <Stack.Navigator initialRouteName={'createMoney'} screenOptions={{headerShadowVisible: false}}>
+      <Stack.Navigator initialRouteName={'DetermineWord'} screenOptions={{headerShadowVisible: false}}>
         <Stack.Screen  
             component={MoneyScreen} 
             name='money'
