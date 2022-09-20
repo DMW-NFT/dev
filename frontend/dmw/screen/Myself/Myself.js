@@ -69,7 +69,7 @@ export default class Myself extends Component {
   }
   render() {
     return (
-      <SafeAreaView style={{backgroundColor:'#fff'}}>
+      <SafeAreaView style={{backgroundColor:'#fff',flex: 1}}>
         <View style={{backgroundColor:'#fff'}}>
           <View style={styles.index_box}>
             {/* title -- start*/}
