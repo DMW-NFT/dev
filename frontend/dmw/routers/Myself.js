@@ -19,17 +19,35 @@ import CreatedSuccessfully from '../screen/Myself/CreatedSuccessfully'
 import AuctionOrderr from '../screen/Myself/AuctionOrder'
 import CompleteBackup from '../screen/Money/CompleteBackup'
 import TradeSuccessfully from '../screen/Myself/TradeSuccessfully'  
-import CollectionDetails from '../screen/Other/CollectionDetails'  
+import CollectionDetails from '../screen/Other/CollectionDetails'
+import MyCollection from '../screen/Myself/MyCollection'  
+import Sell from '../screen/Myself/Sell'  //卖出
 const Stack=createStackNavigator()
 export default class Home extends Component {
   render() {
     return (
       <Stack.Navigator initialRouteName='myself' screenOptions={{headerShadowVisible: false}}>
-          <Stack.Screen  
+          <Stack.Screen   
             component={MyselfScreen}  
             name='myself'
             options={{ 
               headerMode:'none'
+            }}
+          >
+         </Stack.Screen>
+          <Stack.Screen   
+            component={Sell}  
+            name='sell'
+            options={{ 
+              headerTitle:'卖出' 
+            }}
+          >
+         </Stack.Screen>
+          <Stack.Screen  
+            component={MyCollection}  
+            name='myCollection'
+            options={{  
+              headerTitle:'合集'
             }}
           >
          </Stack.Screen>

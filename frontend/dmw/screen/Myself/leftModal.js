@@ -56,14 +56,16 @@ export default class Lmodal extends Component {
                   source={require('../../assets/img/my/3338.png')}></Image>
                 <Text style={styles.img_bottom_text}>售卖订单</Text>
               </View>
-              </TouchableWithoutFeedback>
-              
+              </TouchableWithoutFeedback> 
+
+              <TouchableWithoutFeedback  onPress={() => { this.props.goto('myCollection') }}>
               <View style={{ flexDirection: 'column' }}>
                 <Image
                   style={{ width: 96 / 2, height: 96 / 2 }}
                   source={require('../../assets/img/my/3337.png')}></Image>
                 <Text style={styles.img_bottom_text}>合集</Text>
               </View>
+              </TouchableWithoutFeedback>
 
               <TouchableWithoutFeedback
                 onPress={() => this.cilck('CreateCollection')}

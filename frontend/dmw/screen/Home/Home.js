@@ -39,9 +39,7 @@ export default class Home extends Component {
     } 
  
 
-//  renderItem=({item})=>{
-//    return <List list={item} type={1}  navigatetoDetail={this.navigatetoDetail}/>
-//  }
+
  onEnableScroll = value => {
   this.setState({
     enableScrollViewScroll: value,
@@ -228,6 +226,7 @@ const styles = StyleSheet.create({
   top_img: {
     width: 40,
     height: 40,
+    backgroundColor: '#fff',
   },
   slidebutton: {
     fontFamily: 'Source Han Sans CN',

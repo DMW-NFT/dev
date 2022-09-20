@@ -19,9 +19,9 @@ export default class Home extends Component {
           options={{ 
             headerBackTitleVisible:false,//对于后退按钮标题是否应该可见
             headerMode: "none"
-          }}
+          }} 
         >
-        </Stack.Screen>
+        </Stack.Screen> 
         <Stack.Screen
           component={GoodsDetail}
           name='goodsDetail'

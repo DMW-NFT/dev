@@ -1,5 +1,5 @@
 import React from "react";
-import Routers from "../dmw/routers/routers";
+import Routers from "../../dev/frontend/dmw/routers/routers";
 import { Providers } from "./Providers";
 
 export default () => (

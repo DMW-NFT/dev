@@ -7,6 +7,7 @@ export default class faceLogin extends Component {
 
     // const [value, onChangeText] = React.useState('Useless Multiline Placeholder');
     state = {
+        type:2 ,//1为邮箱登录  2为手机号登录
         areaCode: "+86",//当前选中的区号
         areaCodeList: ['+86', "+81", "+1", '+86', "+81", "+1"], //区号列表
         showareaCode: false, //显示选择区号框
@@ -96,49 +97,57 @@ export default class faceLogin extends Component {
 
                 </View>
                 {/* 邮箱 */}
-                <View style={[styles.inputBox]}>
-                    <Image style={[styles.imageInput]} source={require('../assets/img/login/email.png')}></Image>
-                    <TextInput
-                        placeholder='请输入邮箱'
-                        keyboardType="decimal-pad"
-
-                        onChangeText={text => this.onChangeText(text, 1)}
-                        value={this.state.email}
-                    />
-                </View>
-                {/* 电话号码 */}
-                <View>
-                    <View style={[styles.inputBox, { paddingLeft: 100 }]}>
-                       <TouchableWithoutFeedback onPress={()=>{this.setState({showareaCode:true})}}>
-                       <View style={[styles.imageInput, { flexDirection: "row", width: 80, justifyContent: "space-between" }]} >
-                            <FontAwesomeIcon icon={faPhone} color='#707070' size={20} />
-                            <Text>{this.state.areaCode}</Text>
-                            <FontAwesomeIcon icon={faAngleDown} color='#707070' size={20} />
+                {/* {
+                    this.state.type==1?
+                    
+                } */}
+                {
+                    this.state.type == 1 ? 
+                        <View style={[styles.inputBox]}>
+                            <Image style={[styles.imageInput]} source={require('../assets/img/login/email.png')}></Image>
+                            <TextInput
+                                placeholder='请输入邮箱'
+                                keyboardType="decimal-pad"
+                                style={[styles.input]}
+                                onChangeText={text => this.onChangeText(text, 1)}
+                                value={this.state.email}
+                            />
+                        </View> :
+                        <View>
+                            <View style={[styles.inputBox, { paddingLeft: 100 }]}>
+                                <TouchableWithoutFeedback onPress={() => { this.setState({ showareaCode: true }) }}>
+                                    <View style={[styles.imageInput, { flexDirection: "row", width: 80, justifyContent: "space-between" }]} >
+                                        <FontAwesomeIcon icon={faPhone} color='#707070' size={20} />
+                                        <Text>{this.state.areaCode}</Text>
+                                        <FontAwesomeIcon icon={faAngleDown} color='#707070' size={20} />
+                                    </View>
+                                </TouchableWithoutFeedback>
+                                <TextInput
+                                    onStartShouldSetResponderCapture={(ev) => true}
+                                    placeholder='请输入电话号码'
+                                    keyboardType="decimal-pad"
+                                    onChangeText={text => this.onChangeText(text, 3)}
+                                    value={this.state.phone}
+                                />
+                            </View> 
+                            {/* <View> */}
+                            { 
+                                this.state.showareaCode ? 
+                                    <ScrollView style={[styles.checkColac, { left: 0, top: 50,height:200 }]} showsVerticalScrollIndicator={false}>
+                                        { 
+                                            this.state.areaCodeList.map((item, index) => {
+                                                return ( 
+                                                    <TouchableWithoutFeedback key={index} onPress={() => { this.changeAreaCode(item) }}>
+                                                        <Text style={[styles.liscloca, { borderBottomColor: "#ccc", borderBottomWidth: 1 }]} >{item}</Text>
+                                                    </TouchableWithoutFeedback>
+                                                ) 
+                                            })
+                                        }
+                                    </ScrollView> : <View></View>
+                            }
+                            {/* </View> */}
                         </View>
-                        </TouchableWithoutFeedback> 
-                        <TextInput
-                            onStartShouldSetResponderCapture={(ev) => true}
-                            placeholder='请输电话号码'
-                            keyboardType="decimal-pad"
-                            onChangeText={text => this.onChangeText(text, 3)}
-                            value={this.state.phone}
-                        />
-                    </View>
-                    {
-                        this.state.showareaCode ?
-                            <ScrollView style={[styles.checkColac, { left: 0, top: 50 }]}>
-                                {
-                                    this.state.areaCodeList.map((item, index) => {
-                                        return (
-                                            <TouchableWithoutFeedback key={index} onPress={() => { this.changeAreaCode(item) }}>
-                                                <Text style={[styles.liscloca, { borderBottomColor: "#ccc", borderBottomWidth: 1 }]} >{item}</Text>
-                                            </TouchableWithoutFeedback>
-                                        )
-                                    })
-                                }
-                            </ScrollView> : <View></View>
-                    }
-                </View>
+                }
                 <View style={[styles.inputBox,{paddingRight:60}]} >
                     <Image style={[styles.imageInput, { width: 37 / 2, height: 20 }]} source={require('../assets/img/login/password.png')}></Image>
                     <TouchableWithoutFeedback onPress={()=>{this.setState({secureTextEntry:!this.state.secureTextEntry})}} >
