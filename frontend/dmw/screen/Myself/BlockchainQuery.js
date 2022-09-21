@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
 
 
   textarea:{ 
+    paddingTop:10,
     // borderColor: 'gray', 
     borderWidth: 1,
     borderColor:"#ccc",

@@ -9,6 +9,8 @@ import WalletSafe from '../screen/Money/WalletSafe' // 保护钱包安全1
 import WalletSafeShow from '../screen/Money/WalletSafeShow' // 保护钱包安全2
 import DetermineWord from '../screen/Money/DetermineWord' // 确认助记词
 import CompleteBackup from '../screen/Money/CompleteBackup' // 完成备份
+import Exchange from '../screen/Money/Exchange' // 兑换
+import Gift from '../screen/Money/Gift' // 发送
 const Stack=createStackNavigator()
 export default class Home extends Component {
   render() {
@@ -79,6 +81,25 @@ export default class Home extends Component {
              }}
           >  
          </Stack.Screen>
+
+         <Stack.Screen  
+            component={Exchange} 
+            name='Exchange'
+            options={{  
+              title:'兑换'
+             }}
+          >  
+         </Stack.Screen>
+
+         <Stack.Screen  
+            component={Gift} 
+            name='Gift'
+            options={{  
+              title:'发送'
+             }}
+          >  
+         </Stack.Screen>
+
       </Stack.Navigator>
     )
   }
