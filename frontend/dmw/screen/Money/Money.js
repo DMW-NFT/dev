@@ -2,6 +2,7 @@ import { Text, StyleSheet, View, SafeAreaView, Image, ScrollView, ImageBackgroun
 import React, { Component } from 'react'
 import Screen from './BottomPopUpWindow'
 import Lmodal from './leftModal';
+import Api from '../../Request/http'
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
@@ -12,6 +13,16 @@ export default class Money extends Component {
     list: [{}, {}],
     visible: false,
     lMvisible: false,
+  }
+  axios(){
+    // fetch('http://192.168.1.25/index/register/get_phone_code',{method:'GET'}).then(res => res.json()).then(res=>{
+    //   console.log(res,'-------------');
+    // })
+    let a =  new Api()
+     a.get('/index/register/get_phone_code').then(res=>{
+      console.log(res,3123);
+     })
+
   }
   close() {
     this.setState({
@@ -109,11 +120,12 @@ export default class Money extends Component {
             </View>
           </TouchableWithoutFeedback>
 
-
+          <TouchableWithoutFeedback onPress={() => this.axios()}>
           <View style={styles.ListService}>
             <Image style={styles.ListServiceImg} source={require('../../assets/img/money/list2.png')}></Image>
             <Text>充值</Text>
           </View>
+          </TouchableWithoutFeedback>
 
           <TouchableWithoutFeedback onPress={() => { this.props.navigation.navigate('Exchange') }}>
             <View style={styles.ListService}>

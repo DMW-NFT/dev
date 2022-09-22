@@ -1,4 +1,4 @@
-import { Text, StyleSheet, Image } from 'react-native'
+import { Text, StyleSheet, Image, View } from 'react-native'
 import React, { Component, } from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 const Tab = createBottomTabNavigator()
@@ -11,6 +11,7 @@ export default class router extends Component {
   render() {
     return (
       <Tab.Navigator
+      tabBarStyle={{height: 0, overflow: 'hidden'}}
         screenOptions={({ route }) => ({
           headerShown: false,  //取消顶部导航
           activeTintColor: "#897EF8",
@@ -31,12 +32,8 @@ export default class router extends Component {
             return <Image source={url} style={[styles.tabImg]}></Image>
           }
         })}
-
-        // tabBarOptions={{
-        //   activeTintColor: "#897EF8",
-        //   inactiveTintColor: "#333"
-        // }}
-      >    
+      >   
+       
         <Tab.Screen name="Home" component={HomeScreen} options={{title: '首页'}} ></Tab.Screen>
         <Tab.Screen name="Data" component={DateScreen} options={{title: '数据'}}></Tab.Screen>
         <Tab.Screen name="Jiaoyi" component={JiaoyiScreen} options={{title: '交易'}}></Tab.Screen>
