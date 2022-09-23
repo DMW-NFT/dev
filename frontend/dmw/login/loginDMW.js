@@ -1,42 +1,46 @@
-import { Text, StyleSheet, View, TextInput, Image, TouchableWithoutFeedback, ScrollView } from 'react-native'
+import { Text, StyleSheet, View, TextInput, Image, TouchableWithoutFeedback, ScrollView ,SafeAreaView} from 'react-native'
 import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faAngleDown, faPhone } from '@fortawesome/free-solid-svg-icons'
 
-export default class faceLogin extends Component {
+export default class LoginDMW extends Component {
 
-    // const [value, onChangeText] = React.useState('Useless Multiline Placeholder');
-    state = {
-        type:2 ,//1为邮箱登录  2为手机号登录
-        areaCode: "+86",//当前选中的区号
-        areaCodeList: ['+86', "+81", "+1", '+86', "+81", "+1"], //区号列表
-        showareaCode: false, //显示选择区号框
-        showlocal: false, //显示选择语言框
-        local: {  //当前选中的语言
-            name: "中文", 
-            id: "zh"
-        },
-        //语言列表
-        localLIst: [
-            {
-                name: "中文",
+    constructor(props){
+        super(props)
+       this.state = {
+            type:props.route.params['type'] ,//1为邮箱登录  2为手机号登录
+            areaCode: "+86",//当前选中的区号
+            areaCodeList: ['+86', "+81", "+1", '+86', "+81", "+1"], //区号列表
+            showareaCode: false, //显示选择区号框
+            showlocal: false, //显示选择语言框
+            local: {  //当前选中的语言
+                name: "中文", 
                 id: "zh"
             },
-            {
-                name: "英文",
-                id: "en"
-            },
-            {
-                name: "日文",
-                id: "jp"
-            },
-        ],
-        email: '',
-        phone: '',
-        password: '',
-        secureTextEntry: true, //密码框类型切换
-        agree: false, //同意用户协议
-    };
+            //语言列表
+            localLIst: [
+                {
+                    name: "中文",
+                    id: "zh"
+                },
+                {
+                    name: "英文",
+                    id: "en"
+                },
+                {
+                    name: "日文",
+                    id: "jp"
+                },
+            ],
+            email: '',
+            phone: '',
+            password: '',
+            secureTextEntry: true, //密码框类型切换
+            agree: false, //同意用户协议
+        };
+    }
+    // const [value, onChangeText] = React.useState('Useless Multiline Placeholder');
+
 
     onChangeText = (e, num) => {
         if (num == 1) {
@@ -68,7 +72,7 @@ export default class faceLogin extends Component {
     render() {
         return (
             
-            <View style={[styles.container]} >
+            <SafeAreaView style={[styles.container,{backgroundColor:"#fff",flex:1}]} >
                 <View style={[styles.TopBox]}>
                     <Text style={[styles.topText]}>欢迎登陆DMW</Text>
                     <View>
@@ -166,7 +170,7 @@ export default class faceLogin extends Component {
                         value={this.state.password}
                     />
                 </View>
-                <Text style={[styles.forget]} >忘记密码？</Text>
+                <Text style={[styles.forget]} onPress={()=>{this.props.navigation.navigate('ForgetPassword',{type : this.state.type})}}>忘记密码？</Text>
                 <Text style={[styles.loginBtnBox]}>登陆</Text>
                 <View style={[styles.agren]} >
                     <Text style={[styles.checkbox, { "backgroundColor": this.state.agree ? '#897EF8' : "#fff" }]} onPress={() => { this.setState({ agree: !this.state.agree }) }}></Text>
@@ -175,7 +179,7 @@ export default class faceLogin extends Component {
                     <Text style={[styles.textinfo]}>及</Text>
                     <Text style={[styles.text]}>《隐私政策》</Text>
                 </View>
-            </View> 
+            </SafeAreaView> 
         )
     }
 }
@@ -255,6 +259,8 @@ const styles = StyleSheet.create({
         paddingLeft: 46,
         paddingRight: 15,
         marginBottom: 30,
+        // alignItems:'center',
+        justifyContent:'center'
 
     },
     imageInput: {
@@ -281,6 +287,7 @@ const styles = StyleSheet.create({
     agren: {
         flexDirection: "row",
         marginTop: 21,
+        alignItems:'center'
     },
     textinfo: {
         fontSize: 12,

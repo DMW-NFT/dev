@@ -1,7 +1,7 @@
 import { Text, StyleSheet, View,Image } from 'react-native'
 import React, { Component } from 'react'
 
-export default class faceLogin extends Component {
+export default class FaceLogin extends Component {
   render() {
     return (
       <View style={[styles.container]}>

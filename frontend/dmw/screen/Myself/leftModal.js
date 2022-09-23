@@ -6,13 +6,20 @@ import {
   Image,
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, {Component} from 'react';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faChevronRight} from '@fortawesome/free-solid-svg-icons';
+import React, { Component } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { connect } from 'react-redux'
+import { LoginFailed } from '../../redux/actions/Login';
 const scale = Dimensions.get('window').scale;
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
+const mapStateToProps = state => {
+  return {
+    isLogin: state.Login.isLogin
+  }
+}
 export default class Lmodal extends Component {
   constructor(props) {
     super(props);
@@ -22,6 +29,9 @@ export default class Lmodal extends Component {
   }
   cilck(path) {
     this.props.goto(path);
+  }
+  logout() {
+    this.props.LoginFailed()
   }
 
   render() {
@@ -42,53 +52,53 @@ export default class Lmodal extends Component {
                 marginBottom: 44,
               }}>
               <TouchableWithoutFeedback onPress={() => { this.props.goto('auctionOrder') }}>
-                <View style={{ flexDirection: 'column' }} > 
+                <View style={{ flexDirection: 'column' }} >
                   <Image
                     style={{ width: 96 / 2, height: 96 / 2 }}
                     source={require('../../assets/img/my/3422.png')}></Image>
                   <Text style={styles.img_bottom_text} >拍卖订单</Text>
                 </View>
-              </TouchableWithoutFeedback> 
+              </TouchableWithoutFeedback>
               <TouchableWithoutFeedback onPress={() => { this.props.goto('sellOrder') }}>
-              <View style={{ flexDirection: 'column' }} >
-                <Image
-                  style={{ width: 96 / 2, height: 96 / 2 }}
-                  source={require('../../assets/img/my/3338.png')}></Image>
-                <Text style={styles.img_bottom_text}>售卖订单</Text>
-              </View>
-              </TouchableWithoutFeedback> 
+                <View style={{ flexDirection: 'column' }} >
+                  <Image
+                    style={{ width: 96 / 2, height: 96 / 2 }}
+                    source={require('../../assets/img/my/3338.png')}></Image>
+                  <Text style={styles.img_bottom_text}>售卖订单</Text>
+                </View>
+              </TouchableWithoutFeedback>
 
-              <TouchableWithoutFeedback  onPress={() => { this.props.goto('myCollection') }}>
-              <View style={{ flexDirection: 'column' }}>
-                <Image
-                  style={{ width: 96 / 2, height: 96 / 2 }}
-                  source={require('../../assets/img/my/3337.png')}></Image>
-                <Text style={styles.img_bottom_text}>合集</Text>
-              </View>
+              <TouchableWithoutFeedback onPress={() => { this.props.goto('myCollection') }}>
+                <View style={{ flexDirection: 'column' }}>
+                  <Image
+                    style={{ width: 96 / 2, height: 96 / 2 }}
+                    source={require('../../assets/img/my/3337.png')}></Image>
+                  <Text style={styles.img_bottom_text}>合集</Text>
+                </View>
               </TouchableWithoutFeedback>
 
               <TouchableWithoutFeedback
                 onPress={() => this.cilck('CreateCollection')}
                 onStartShouldSetResponderCapture={() => true}>
                 {
-              <View style={{ flexDirection: 'column' }}>
-                <Image
-                  style={{ width: 96 / 2, height: 96 / 2 }}
-                  source={require('../../assets/img/my/3336.png')}></Image>
-                <Text style={styles.img_bottom_text}>创建</Text>
-              </View>
-  }
+                  <View style={{ flexDirection: 'column' }}>
+                    <Image
+                      style={{ width: 96 / 2, height: 96 / 2 }}
+                      source={require('../../assets/img/my/3336.png')}></Image>
+                    <Text style={styles.img_bottom_text}>创建</Text>
+                  </View>
+                }
               </TouchableWithoutFeedback>
             </View>
             <Text style={styles.title}>更多功能</Text>
             <View>
-              
+
               <TouchableWithoutFeedback
                 onPress={() => this.cilck('TransferredIntoCollection')}
                 onStartShouldSetResponderCapture={() => true}>
                 {
                   <View style={styles.more}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <Image
                         style={styles.moreimg}
                         source={require('../../assets/img/my/b3.png')}></Image>
@@ -108,24 +118,24 @@ export default class Lmodal extends Component {
                 onPress={() => this.cilck('MessageCenter')}
                 onStartShouldSetResponderCapture={() => true}>
                 {
-              <View style={styles.more}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Image
-                    style={styles.moreimg}
-                    source={require('../../assets/img/my/b1.png')}></Image>
-                  <Text style={styles.more_text}>消息中心</Text>
-                </View>
-                <FontAwesomeIcon
-                  icon={faChevronRight}
-                  color="#707070"
-                  size={16}
-                />
-              </View>
-  }
+                  <View style={styles.more}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Image
+                        style={styles.moreimg}
+                        source={require('../../assets/img/my/b1.png')}></Image>
+                      <Text style={styles.more_text}>消息中心</Text>
+                    </View>
+                    <FontAwesomeIcon
+                      icon={faChevronRight}
+                      color="#707070"
+                      size={16}
+                    />
+                  </View>
+                }
               </TouchableWithoutFeedback>
 
               <View style={styles.more}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Image
                     style={styles.moreimg}
                     source={require('../../assets/img/my/b5.png')}></Image>
@@ -139,7 +149,7 @@ export default class Lmodal extends Component {
               </View>
 
               <View style={styles.more}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Image
                     style={styles.moreimg}
                     source={require('../../assets/img/my/b2.png')}></Image>
@@ -152,19 +162,26 @@ export default class Lmodal extends Component {
                 />
               </View>
 
-              <View style={styles.more}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Image
-                    style={styles.moreimg}
-                    source={require('../../assets/img/my/b4.png')}></Image>
-                  <Text style={styles.more_text}>退出</Text>
-                </View>
-                <FontAwesomeIcon
-                  icon={faChevronRight}
-                  color="#707070"
-                  size={16}
-                />
-              </View>
+
+              <TouchableWithoutFeedback
+                onPress={() => this.logout()}
+                onStartShouldSetResponderCapture={() => true}>
+                {
+                  <View style={styles.more}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Image
+                        style={styles.moreimg}
+                        source={require('../../assets/img/my/b4.png')}></Image>
+                      <Text style={styles.more_text}>退出</Text>
+                    </View>
+                    <FontAwesomeIcon
+                      icon={faChevronRight}
+                      color="#707070"
+                      size={16}
+                    />
+                  </View>
+                }
+              </TouchableWithoutFeedback>
             </View>
           </View>
         ) : null}
@@ -172,6 +189,8 @@ export default class Lmodal extends Component {
     );
   }
 }
+
+
 
 const styles = StyleSheet.create({
   black: {

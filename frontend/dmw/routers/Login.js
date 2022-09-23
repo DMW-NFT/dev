@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native'
 import React, { Component } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
-import loginHome from '../login/loginHome'
+import loginHome from '../login/LoginHome'
 const Stack=createStackNavigator()
 export default class Home extends Component {
   render() {

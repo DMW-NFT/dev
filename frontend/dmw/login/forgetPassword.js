@@ -1,24 +1,28 @@
-import { Text, StyleSheet, View, TextInput, Image, TouchableWithoutFeedback ,ScrollView} from 'react-native'
+import { Text, StyleSheet, View, TextInput, Image, TouchableWithoutFeedback ,ScrollView,SafeAreaView} from 'react-native'
 import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPhone,faAngleDown } from '@fortawesome/free-solid-svg-icons'
 
-export default class faceLogin extends Component {
+export default class ForgetPassword extends Component {
 
+    constructor(props){
+        super(props)
+        this.state = {
+            type: props.route.params['type'], //1为邮箱找回 2为手机找回密码
+            email: '',
+            phone: '',
+            sancode: '',
+            password: '',
+            password1: '',
+            numend: 60,
+            areaCode: "+86",//当前选中的区号
+            areaCodeList: ['+86', "+81", "+1", '+86', "+81", "+1",], //区号列表
+            showareaCode:false, 
+            secureTextEntry: true, //密码框类型切换
+        };
+    }
     // const [value, onChangeText] = React.useState('Useless Multiline Placeholder');
-    state = {
-        type: 2, //1为邮箱找回 2为手机找回密码
-        email: '',
-        phone: '',
-        sancode: '',
-        password: '',
-        password1: '',
-        numend: 60,
-        areaCode: "+86",//当前选中的区号
-        areaCodeList: ['+86', "+81", "+1", '+86', "+81", "+1",], //区号列表
-        showareaCode:false, 
-        secureTextEntry: true, //密码框类型切换
-    }; 
+   
     onChangeText = (e, num) => {
         if (num == 1) {
             this.setState({ email: e, });
@@ -52,7 +56,7 @@ export default class faceLogin extends Component {
     }
     render() {
         return (
-            <View style={[styles.container]} >
+            <SafeAreaView style={[styles.container,{backgroundColor:'#fff',flex:1}]} >
                 <Text style={[styles.topText]}>忘记密码？</Text>
                 {/* 邮箱/电话号码 */}
                 {
@@ -146,7 +150,7 @@ export default class faceLogin extends Component {
                     />
                 </View>
                 <Text style={[styles.loginBtnBox]}>登录</Text>
-            </View>
+            </SafeAreaView>
         )
     }
 }
@@ -208,6 +212,7 @@ const styles = StyleSheet.create({
         paddingLeft: 46,
         paddingRight: 15,
         marginBottom: 30,
+        justifyContent:'center'
 
     },
     imageInput: {

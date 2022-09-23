@@ -1,24 +1,28 @@
-import { Text, StyleSheet, View, TextInput, Image, TouchableWithoutFeedback ,ScrollView} from 'react-native'
+import { Text, StyleSheet, View, TextInput, Image, TouchableWithoutFeedback ,ScrollView,SafeAreaView} from 'react-native'
 import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPhone,faAngleDown } from '@fortawesome/free-solid-svg-icons'
 
-export default class faceLogin extends Component {
+export default class EmailAndPhoneReginster extends Component {
 
+    constructor(props){
+        super(props)
+        this.state = {
+            type: props.route.params['type'], //1为注册邮箱 2为注册手机
+            email: '',
+            phone: '',
+            sancode: '',
+            password: '',
+            password1: '',
+            numend: 60,
+            areaCode: "+86",//当前选中的区号
+            areaCodeList: ['+86', "+81", "+1", '+86', "+81", "+1",], //区号列表
+            showareaCode:false,
+            secureTextEntry: true, //密码框类型切换
+        };
+    }
     // const [value, onChangeText] = React.useState('Useless Multiline Placeholder');
-    state = {
-        type: 2, //1为注册邮箱 2为注册手机
-        email: '',
-        phone: '',
-        sancode: '',
-        password: '',
-        password1: '',
-        numend: 60,
-        areaCode: "+86",//当前选中的区号
-        areaCodeList: ['+86', "+81", "+1", '+86', "+81", "+1",], //区号列表
-        showareaCode:false,
-        secureTextEntry: true, //密码框类型切换
-    };
+  
 
     onChangeText = (e, num) => {
         if (num == 1) {
@@ -53,7 +57,7 @@ export default class faceLogin extends Component {
     }
     render() {
         return (
-            <View style={[styles.container]} >
+            <SafeAreaView style={[styles.container,{backgroundColor:'#fff',flex:1}]} >
                 <Text style={[styles.topText]}>注册一个新账号</Text>
                 {/* 邮箱/电话号码 */}
                 {
@@ -149,7 +153,7 @@ export default class faceLogin extends Component {
                 </View>
                 <Text style={{ marginTop: -15 }} onPress={() => this.setState({ type: this.state.type == 1 ? 2 : 1 })}>{this.state.type == 1 ? '手机号注册' : '邮箱注册'}</Text>
                 <Text style={[styles.loginBtnBox]}>注册</Text>
-            </View>
+            </SafeAreaView>
         )
     }
 }
@@ -211,6 +215,7 @@ const styles = StyleSheet.create({
         paddingLeft: 46,
         paddingRight: 15,
         marginBottom: 30,
+        justifyContent:'center'
 
     },
     imageInput: {

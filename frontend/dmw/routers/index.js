@@ -2,18 +2,23 @@ const router = [
     {
         name: "Index", //跳转路径
         title: null, //头部展示标题
-        component: require("../login/loginHome").default,
+        component: require("../login/LoginHome").default,
     },
-    // //下面只需要配置非tabbar页面路径
-    // {
-    //     name: "Detail",
-    //     title: "详情",
-    //     component: require("../views/Detail/Detail").default
-    // },
-    // {
-    //     name: "Life",
-    //     title: "生命周期",
-    //     component: require("../views/Life/Life").default
-    // },
+    {
+        name: "LoginDMW", //跳转路径
+        title: '', //头部展示标题
+        component: require("../login/LoginDMW").default,
+    },
+    {
+        name: "EmailAndPhoneReginster", //跳转路径
+        title: '', //头部展示标题
+        component: require("../login/EmailAndPhoneReginster").default,
+    },
+    {
+        name: "ForgetPassword", //跳转路径
+        title: '', //头部展示标题
+        component: require("../login/ForgetPassword").default,
+    },
+   
 ]
 export default router

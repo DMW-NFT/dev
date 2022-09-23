@@ -16,15 +16,15 @@ const StackNavigator = () => {
                     return (
                         <Stack.Screen key={index} name={item.name} component={item.component} options={({ route }) => ({
                             title: getChildTitle(route) || item.title,
-                            headerStyle: {
-                                backgroundColor: '#fff',
-                                height: 40
-                            },
-                            headerTitleStyle: {
-                                color: '#000',
-                                fontSize: 15
-                            },
-                            // headerShown: false, //不显示头部标题
+                            // headerStyle: {
+                            //     backgroundColor: '#fff',
+                            //     height: 40
+                            // },
+                            // headerTitleStyle: {
+                            //     color: '#000',
+                            //     fontSize: 15
+                            // },
+                            headerShown:item.name == 'Index'  ?  false : true, //不显示头部标题
                         })} />
                     )
                 })

@@ -9,7 +9,8 @@ import * as eva from "@eva-design/eva";
 import { Provider as PaperProvider } from "react-native-paper";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { StatusBar } from "react-native";
-
+import {Provider as StoreProvider} from 'react-redux'
+import store from "../frontend/dmw/redux/store"
 interface ProvidersProps {
   readonly children: JSX.Element;
 }
@@ -37,10 +38,12 @@ export const Providers = ({ children }: ProvidersProps) => {
     <WalletConnectProvider {...walletConnectOptions}>
       <DmwWeb3Provider>
         <PaperProvider>
+          <StoreProvider store={store}>
           <NavigationContainer>
             <StatusBar barStyle="dark-content" backgroundColor="#fff" />
             {children}
           </NavigationContainer>
+          </StoreProvider>
         </PaperProvider>
       </DmwWeb3Provider>
     </WalletConnectProvider>
