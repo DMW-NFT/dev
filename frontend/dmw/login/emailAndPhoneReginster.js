@@ -1,11 +1,14 @@
-import { Text, StyleSheet, View, TextInput, Image, TouchableWithoutFeedback ,ScrollView,SafeAreaView} from 'react-native'
+import { Text, StyleSheet, View, TextInput, Image, TouchableWithoutFeedback, ScrollView, SafeAreaView } from 'react-native'
 import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faPhone,faAngleDown } from '@fortawesome/free-solid-svg-icons'
+import { faPhone, faAngleDown } from '@fortawesome/free-solid-svg-icons'
+import Api from '../Request/http'
 
+import DialogToast from '../Components/DialogToast'
+const api = new Api()
 export default class EmailAndPhoneReginster extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props)
         this.state = {
             type: props.route.params['type'], //1为注册邮箱 2为注册手机
@@ -15,14 +18,16 @@ export default class EmailAndPhoneReginster extends Component {
             password: '',
             password1: '',
             numend: 60,
-            areaCode: "+86",//当前选中的区号
-            areaCodeList: ['+86', "+81", "+1", '+86', "+81", "+1",], //区号列表
-            showareaCode:false,
+            areaCode: "86",//当前选中的区号
+            areaCodeList: ['86', "81", "1", '86', "81", "1",], //区号列表
+            showareaCode: false,
             secureTextEntry: true, //密码框类型切换
+            visible: false,
+            message: '温馨提示'
         };
     }
     // const [value, onChangeText] = React.useState('Useless Multiline Placeholder');
-  
+
 
     onChangeText = (e, num) => {
         if (num == 1) {
@@ -39,25 +44,79 @@ export default class EmailAndPhoneReginster extends Component {
     }
     // 获取验证码
     getsancode = () => {
-        let taol = 50
-        let timer = setInterval(() => {
-            taol--
-            this.setState({ numend: taol })
-            if (taol == 0) {
-                clearInterval(timer)
-                this.setState({ numend: 60 })
-            }
-        }, 1000)
-    } 
+        // let taol = 50
+        // let timer = setInterval(() => {
+        //     taol--
+        //     this.setState({ numend: taol })
+        //     if (taol == 0) {
+        //         clearInterval(timer)
+        //         this.setState({ numend: 60 })
+        //     }
+        // }, 1000)
+    }
     changeAreaCode = (item) => {
         this.setState({
             areaCode: item,
             showareaCode: false
         })
     }
+
+    // 提示弹窗
+    DT(val) {
+        this.setState({
+            visible: true,
+            message: val
+        })
+    }
+    // 获取验证码
+    getPhoneCode() {
+        if (this.state.type == 1) {
+            // 邮箱验证码
+        } else {
+            // 手机验证码
+            let data = { phone: this.state.phone, phone_prefix: this.state.areaCode }
+            let formData = api.formData(data)
+            console.log(formData);
+            api.post('/index/register/get_phone_code', formData).then(res => {
+                console.log(res, this.state.phone, '验证码');
+                if (res.code != 200) {
+                    this.DT(res.message)
+                } else {
+                    this.DT(res.message)
+                }
+            }).catch(err => {
+                console.log(err, this.state.phone, '验证码');
+                this.DT(err.message)
+            })
+        }
+    }
+
+    registerFn() {
+        const _this = this;
+
+        // 手机号注册
+        let data = { phone: _this.state.phone, phone_prefix: _this.state.areaCode, phone_code: _this.state.sancode, password: _this.state.password }
+        let formData = api.formData(data)
+        console.log(formData);
+        api.post('/index/register/register_by_phone',
+            formData
+        ).then(res => {
+            console.log(res, '注册');
+            if (res.code != 200) {
+                this.DT(res.message)
+            }else{
+                this.DT(res.message)
+            }
+        }).catch(err => {
+            this.DT(err.message)
+            console.log(err.message, '错误');
+        })
+
+    }
+
     render() {
         return (
-            <SafeAreaView style={[styles.container,{backgroundColor:'#fff',flex:1}]} >
+            <SafeAreaView style={[styles.container, { backgroundColor: '#fff', flex: 1 }]} >
                 <Text style={[styles.topText]}>注册一个新账号</Text>
                 {/* 邮箱/电话号码 */}
                 {
@@ -85,21 +144,21 @@ export default class EmailAndPhoneReginster extends Component {
                                     onStartShouldSetResponderCapture={(ev) => true}
                                     placeholder='请输电话号码'
                                     keyboardType="decimal-pad"
-                                    onChangeText={text => this.onChangeText(text, 3)}
+                                    onChangeText={text => this.onChangeText(text, 2)}
                                     value={this.state.phone}
                                 />
-                            </View> 
+                            </View>
                             {/* <View> */}
                             {
                                 this.state.showareaCode ?
                                     <ScrollView style={[styles.checkColac, { left: 0, top: 50 }]} showsVerticalScrollIndicator={false}>
                                         {
                                             this.state.areaCodeList.map((item, index) => {
-                                                return ( 
+                                                return (
                                                     <TouchableWithoutFeedback key={index} onPress={() => { this.changeAreaCode(item) }}>
                                                         <Text style={[styles.liscloca, { borderBottomColor: "#ccc", borderBottomWidth: 1 }]} >{item}</Text>
                                                     </TouchableWithoutFeedback>
-                                                ) 
+                                                )
                                             })
                                         }
                                     </ScrollView> : <View></View>
@@ -110,8 +169,9 @@ export default class EmailAndPhoneReginster extends Component {
                 {/* 验证码 */}
                 <View style={[styles.inputBox, { paddingRight: 80 }]} >
                     <Image style={[styles.imageInput, { width: 37 / 2, height: 20 }]} source={require('../assets/img/login/forgetpass.png')}></Image>
-                    <TouchableWithoutFeedback onPress={this.getsancode} >
-                        <Text style={[styles.getsancode]}>{this.state.numend == 60 ? '获取验证码' : this.state.numend}</Text>
+                    <TouchableWithoutFeedback onPress={() => this.getPhoneCode()}>
+                        {/* {this.state.numend == 60 ? '获取验证码' : this.state.numend} */}
+                        <Text style={[styles.getsancode]}>获取验证码</Text>
                     </TouchableWithoutFeedback>
                     <TextInput
                         maxLength={6}
@@ -152,7 +212,12 @@ export default class EmailAndPhoneReginster extends Component {
 
                 </View>
                 <Text style={{ marginTop: -15 }} onPress={() => this.setState({ type: this.state.type == 1 ? 2 : 1 })}>{this.state.type == 1 ? '手机号注册' : '邮箱注册'}</Text>
-                <Text style={[styles.loginBtnBox]}>注册</Text>
+                <Text onPress={() => this.registerFn()} style={[styles.loginBtnBox]}>注册</Text>
+
+                <DialogToast visible={this.state.visible} isClose={true} value={this.state.message} title='温馨提示' Size='18' textAlign='left' close={() => { this.setState({ visible: false }) }}>
+                    <Text style={{ fontSize: 16 }}>OK</Text>
+                </DialogToast>
+
             </SafeAreaView>
         )
     }
@@ -169,7 +234,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width: 100,
         paddingHorizontal: 20,
-        height:160,
+        height: 160,
         borderWidth: 1,
         backgroundColor: "#fff",
         top: 40,
@@ -215,7 +280,7 @@ const styles = StyleSheet.create({
         paddingLeft: 46,
         paddingRight: 15,
         marginBottom: 30,
-        justifyContent:'center'
+        justifyContent: 'center'
 
     },
     imageInput: {

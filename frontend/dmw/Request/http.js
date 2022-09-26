@@ -3,7 +3,7 @@
 //     name: 'lpp',
 //     age: 18
 // }
-const BaseUrl = 'http://192.168.1.25'
+const BaseUrl = 'https://dmw.cougogo.com'
 
 //全局的方法
 export default class Api {
@@ -13,6 +13,14 @@ export default class Api {
    }
 
    post(url,data){
-    fetch(BaseUrl + url,{method:'POST',body:JSON.stringify(data)}).then(res => res.json())
+   return  fetch(BaseUrl + url,{method:'POST',body:data}).then(res => res.json())
+   }
+
+   formData(data){
+    let formData = new FormData();
+    for(let key in data){
+        formData.append(key,data[key]);
+    }
+    return   formData
    }
 }

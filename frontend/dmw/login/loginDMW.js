@@ -1,20 +1,29 @@
-import { Text, StyleSheet, View, TextInput, Image, TouchableWithoutFeedback, ScrollView ,SafeAreaView} from 'react-native'
+import { Text, StyleSheet, View, TextInput, Image, TouchableWithoutFeedback, ScrollView, SafeAreaView } from 'react-native'
 import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faAngleDown, faPhone } from '@fortawesome/free-solid-svg-icons'
+import DialogToast from '../Components/DialogToast'
+import Api from '../Request/http'
+import { LoginSuccess } from '../redux/actions/Login'
+import { connect } from 'react-redux'
+const api = new Api()
+const mapStateToProps = state => {
+    return {
+        isLogin: state.Login.isLogin
+    }
+}
+class LoginDMW extends Component {
 
-export default class LoginDMW extends Component {
-
-    constructor(props){
+    constructor(props) {
         super(props)
-       this.state = {
-            type:props.route.params['type'] ,//1为邮箱登录  2为手机号登录
+        this.state = {
+            type: props.route.params['type'],//1为邮箱登录  2为手机号登录
             areaCode: "+86",//当前选中的区号
             areaCodeList: ['+86', "+81", "+1", '+86', "+81", "+1"], //区号列表
             showareaCode: false, //显示选择区号框
             showlocal: false, //显示选择语言框
             local: {  //当前选中的语言
-                name: "中文", 
+                name: "中文",
                 id: "zh"
             },
             //语言列表
@@ -37,6 +46,8 @@ export default class LoginDMW extends Component {
             password: '',
             secureTextEntry: true, //密码框类型切换
             agree: false, //同意用户协议
+            visible: false,
+            message: '温馨提示'
         };
     }
     // const [value, onChangeText] = React.useState('Useless Multiline Placeholder');
@@ -67,12 +78,32 @@ export default class LoginDMW extends Component {
             showareaCode: false
         })
     }
+    // 提示弹窗
+    DT(val) {
+        this.setState({
+            visible: true,
+            message: val
+        })
+    }
+
+    // 登录按钮
+    login() {
+        let data = { phone: this.state.phone, password: this.state.password }
+        let formData = api.formData(data)
+        api.post('/index/login/login_by_phone', formData).then(res => {
+            // this.DT(res || '登陆成功！')
+            console.log(res.data.token);
+            this.props.LoginSuccess()
+        }).catch(err => {
+            this.DT(err.message)
+        })
+    }
 
 
     render() {
         return (
-            
-            <SafeAreaView style={[styles.container,{backgroundColor:"#fff",flex:1}]} >
+
+            <SafeAreaView style={[styles.container, { backgroundColor: "#fff", flex: 1 }]} >
                 <View style={[styles.TopBox]}>
                     <Text style={[styles.topText]}>欢迎登陆DMW</Text>
                     <View>
@@ -82,7 +113,7 @@ export default class LoginDMW extends Component {
                                 <FontAwesomeIcon icon={faAngleDown} color='#707070' size={20} style={{ marginLeft: 10 }} />
                             </View>
                         </TouchableWithoutFeedback>
-                        { 
+                        {
                             this.state.showlocal ?
                                 <ScrollView style={[styles.checkColac]}>
                                     {
@@ -106,7 +137,7 @@ export default class LoginDMW extends Component {
                     
                 } */}
                 {
-                    this.state.type == 1 ? 
+                    this.state.type == 1 ?
                         <View style={[styles.inputBox]}>
                             <Image style={[styles.imageInput]} source={require('../assets/img/login/email.png')}></Image>
                             <TextInput
@@ -133,18 +164,18 @@ export default class LoginDMW extends Component {
                                     onChangeText={text => this.onChangeText(text, 3)}
                                     value={this.state.phone}
                                 />
-                            </View> 
+                            </View>
                             {/* <View> */}
-                            { 
-                                this.state.showareaCode ? 
-                                    <ScrollView style={[styles.checkColac, { left: 0, top: 50,height:200 }]} showsVerticalScrollIndicator={false}>
-                                        { 
+                            {
+                                this.state.showareaCode ?
+                                    <ScrollView style={[styles.checkColac, { left: 0, top: 50, height: 200 }]} showsVerticalScrollIndicator={false}>
+                                        {
                                             this.state.areaCodeList.map((item, index) => {
-                                                return ( 
+                                                return (
                                                     <TouchableWithoutFeedback key={index} onPress={() => { this.changeAreaCode(item) }}>
                                                         <Text style={[styles.liscloca, { borderBottomColor: "#ccc", borderBottomWidth: 1 }]} >{item}</Text>
                                                     </TouchableWithoutFeedback>
-                                                ) 
+                                                )
                                             })
                                         }
                                     </ScrollView> : <View></View>
@@ -152,9 +183,9 @@ export default class LoginDMW extends Component {
                             {/* </View> */}
                         </View>
                 }
-                <View style={[styles.inputBox,{paddingRight:60}]} >
+                <View style={[styles.inputBox, { paddingRight: 60 }]} >
                     <Image style={[styles.imageInput, { width: 37 / 2, height: 20 }]} source={require('../assets/img/login/password.png')}></Image>
-                    <TouchableWithoutFeedback onPress={()=>{this.setState({secureTextEntry:!this.state.secureTextEntry})}} >
+                    <TouchableWithoutFeedback onPress={() => { this.setState({ secureTextEntry: !this.state.secureTextEntry }) }} >
                         {this.state.secureTextEntry ?
                             <Image style={[styles.imageshow]} source={require('../assets/img/login/nopass.png')} ></Image> :
                             <Image style={[styles.imageshow]} source={require('../assets/img/login/showpass.png')} ></Image>
@@ -170,8 +201,8 @@ export default class LoginDMW extends Component {
                         value={this.state.password}
                     />
                 </View>
-                <Text style={[styles.forget]} onPress={()=>{this.props.navigation.navigate('ForgetPassword',{type : this.state.type})}}>忘记密码？</Text>
-                <Text style={[styles.loginBtnBox]}>登陆</Text>
+                <Text style={[styles.forget]} onPress={() => { this.props.navigation.navigate('ForgetPassword', { type: this.state.type }) }}>忘记密码？</Text>
+                <Text onPress={() => this.login()} style={[styles.loginBtnBox]}>登陆</Text>
                 <View style={[styles.agren]} >
                     <Text style={[styles.checkbox, { "backgroundColor": this.state.agree ? '#897EF8' : "#fff" }]} onPress={() => { this.setState({ agree: !this.state.agree }) }}></Text>
                     <Text style={[styles.textinfo]}>我已阅读并同意</Text>
@@ -179,11 +210,16 @@ export default class LoginDMW extends Component {
                     <Text style={[styles.textinfo]}>及</Text>
                     <Text style={[styles.text]}>《隐私政策》</Text>
                 </View>
-            </SafeAreaView> 
+
+                <DialogToast visible={this.state.visible} isClose={true} value={this.state.message} title='温馨提示' Size='18' textAlign='left' close={() => { this.setState({ visible: false }) }}>
+                    <Text style={{ fontSize: 16 }}>OK</Text>
+                </DialogToast>
+
+            </SafeAreaView>
         )
     }
 }
-
+export default connect(mapStateToProps, { LoginSuccess })(LoginDMW)
 const styles = StyleSheet.create({
     lisEnglish: {
         borderBottomColor: "#ccc",
@@ -260,7 +296,7 @@ const styles = StyleSheet.create({
         paddingRight: 15,
         marginBottom: 30,
         // alignItems:'center',
-        justifyContent:'center'
+        justifyContent: 'center'
 
     },
     imageInput: {
@@ -287,7 +323,7 @@ const styles = StyleSheet.create({
     agren: {
         flexDirection: "row",
         marginTop: 21,
-        alignItems:'center'
+        alignItems: 'center'
     },
     textinfo: {
         fontSize: 12,
