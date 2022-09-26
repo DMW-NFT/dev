@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState, useContext } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useDmwWeb3, DmwWeb3Provider } from './constans/DmwWeb3Provider';
-import { DmwWeb3context } from './constans/DmwWeb3context';
+import { useDmwWeb3 } from './DmwWeb3/DmwWeb3Provider';
+import { DmwWeb3context } from './DmwWeb3/DmwWeb3context';
 
 import { Button } from "@ui-kitten/components";
 
 export default function App() {
 
 
-  const { connectWallet, currentWallet, currentChainId, disconnectWallet, tranferNative, mintNft } = useDmwWeb3();
+  const { connectWallet, currentWallet, currentChainId, disconnectWallet, tranferNative, mintNft,mintNftWithSignature } = useDmwWeb3();
 
 
   return (
@@ -26,6 +26,9 @@ export default function App() {
       </Button>
       <Button onPress={() => mintNft()} >
         mint
+      </Button>
+      <Button onPress={() => mintNftWithSignature()} >
+        mintWithSignature
       </Button>
       {/* <Button onPress={() => connector.killSession()} >
         Disconnect
