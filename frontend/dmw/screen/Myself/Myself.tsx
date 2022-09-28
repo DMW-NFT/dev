@@ -8,12 +8,14 @@ import {
   SafeAreaView,
   Pressable
 } from 'react-native';
-import React, { Component } from 'react';
+import React, { Component,useEffect,useState } from 'react';
 import Tabcolumn from './Tabcolumn';
 import Screen from '../../Components/screen';
 import Search from '../../Components/Searchbox';
 import Lmodal from './leftModal';
-const imgurl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEEAAABBCAIAAAABlV4SAAAABnRSTlMAAAAAAABupgeRAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAh0lEQVRoge3asQ3DMAwAQcvIQBnRI3okr8DCQQ7CXy1QeKhhofW9jqF7cPIv087pnbAaDDUYajDUYKjBUINhvTvu3b11aId3qMFQg6EGQw2GGgxrvuGwdniHGgw1GGow1GCowVCDoQZDDYYaDDUYajDUYNih4TM/2p/EH6rBUIOhBkMNhhoMD46XC+KxwFUQAAAAAElFTkSuQmCC'
+import Api from '../../Request/http';
+const api = new Api()
+
 const data = [
   {
     typename: 'Status',
@@ -37,38 +39,37 @@ const data = [
 ];
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
-export default class Myself extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      typename: '我的藏品',
-      visible: false,
-      strText: '',
-      lMvisible: false
-    };
-    this.paging = this.paging.bind(this);
+ const Myself = (props) => {
+  const [typename,setTypename] = useState('我的藏品')
+  const [visible,setVisible] = useState(false)
+  const [strText,setStrText] = useState()
+  const [lMvisible,setlMvisible] = useState(false)
+  const [userInfo,setUserInfo] = useState(null)
+
+  const visibleFn = () => {
+    setVisible(true)
+  } 
+
+  const close = () =>{
+    setlMvisible(false)
+    setVisible(false)
   }
-  navigateto = (val) => {
-    console.log(val)
-    this.props.navigation.navigate(val)
-  }
-  close() {
-    this.setState({
-      visible: false,
-      lMvisible: false
-    });
-  }
-  visible() {
-    this.setState({
-      visible: true,
-    });
-  }
-  paging(typename) {
-    this.setState({
-      typename: typename,
-    });
-  }
-  render() {
+
+  useEffect(() => {
+      api.post('/index/user/get_user_msg').then(res=>{
+        console.log(res,'用户信息');
+        if(res.code == 200){
+          setUserInfo(res.data)
+          console.log(userInfo,'用户信息打印');
+        }
+        
+        
+      })
+    return ()=>{
+
+    }
+  },[])
+
     return (
       <SafeAreaView style={{ backgroundColor: '#fff', flex: 1 }}>
         <View style={{ backgroundColor: '#fff' }}>
@@ -85,12 +86,12 @@ export default class Myself extends Component {
                   justifyContent: 'space-between',
                   height: 52,
                 }}>
-                <Pressable onPress={() => { this.setState({ lMvisible: true }) }}>
+                <Pressable onPress={() => { setlMvisible(true)}}>
                   <Image
                     style={styles.top_img}
                     source={require('../../assets/img/my/top_left_list.png')}></Image>
                 </Pressable>
-                <Pressable onPress={() => { this.props.navigation.navigate('SetUp') }}>
+                <Pressable onPress={() => { props.navigation.navigate('SetUp') }}>
                   <Image
                     style={styles.top_img}
                     source={require('../../assets/img/my/top_right_set.png')}></Image>
@@ -119,9 +120,9 @@ export default class Myself extends Component {
           {/* tab栏 -- start */}
           <View style={[styles.index_box, { paddingLeft: 40 }]}>
             <Tabcolumn
-              typename={this.state.typename}
+              typename={typename}
               paging={typename => {
-                this.paging(typename);
+                setTypename(typename)
               }}></Tabcolumn>
           </View>
           {/* tab栏 -- end */}
@@ -129,25 +130,26 @@ export default class Myself extends Component {
           <View style={styles.line}></View>
           {/* line -- end */}
           <View style={styles.index_box}>
-            <Search onChange={(strText) => { this.setState({ strText }) }} visible={() => this.visible()}></Search>
+            <Search onChange={(strText) => {setStrText(strText) }} visible={() => visibleFn()}></Search>
           </View>
           {/* <Text onPress={() => this.visible()}>123</Text> */}
 
           <Screen
             title="select filter"
             style={[styles.Screen]}
-            visible={this.state.visible}
-            close={() => this.close()}
+            visible={visible}
+            close={() => close()}
             datalist={data}></Screen>
         </View>
-        <Lmodal goto={(path) => { this.props.navigation.navigate(path) }} style={[styles.Screen]} close={() => this.close()} visible={this.state.lMvisible}></Lmodal>
+        <Lmodal goto={(path) => {props.navigation.navigate(path) }} style={[styles.Screen]} close={() => close()} visible={lMvisible}></Lmodal>
 
         {/* <Image  style={{width:50,height:50}}
         source={{uri:imgurl}}></Image> */}
       </SafeAreaView>
     );
   }
-}
+
+export default Myself
 
 const styles = StyleSheet.create({
   Screen: {

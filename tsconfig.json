@@ -21,7 +21,7 @@
   "include": [
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "frontend/dmw/screen/Myself/Myself.tsx"  ],
   "exclude": [
     "node_modules",
     "babel.config.js",
