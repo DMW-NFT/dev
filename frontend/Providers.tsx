@@ -12,7 +12,7 @@ import { StatusBar } from "react-native";
 import {Provider as StoreProvider} from 'react-redux'
 import store from "../frontend/dmw/redux/store"
 import { DmwLoginProvider } from "./loginProvider/constans/DmwLoginProvider";
-
+import {DmwApiProvider} from "./DmwApiProvider/DmwApiProvider.jsx"
 
 interface ProvidersProps {
   readonly children: JSX.Element;
@@ -41,6 +41,7 @@ export const Providers = ({ children }: ProvidersProps) => {
     <WalletConnectProvider {...walletConnectOptions}>
       <DmwWeb3Provider>
         <DmwLoginProvider>
+          <DmwApiProvider>
         <PaperProvider>
           <StoreProvider store={store}>
           <NavigationContainer>
@@ -49,6 +50,7 @@ export const Providers = ({ children }: ProvidersProps) => {
           </NavigationContainer>
           </StoreProvider>
         </PaperProvider>
+        </DmwApiProvider>
         </DmwLoginProvider>
       </DmwWeb3Provider>
     </WalletConnectProvider>

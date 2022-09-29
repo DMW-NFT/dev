@@ -15,9 +15,10 @@ import DialogToast from "../Components/DialogToast";
 import Api from "../Request/http";
 import storage from "../Storage/storage";
 import { useDmwLogin } from "../../loginProvider/constans/DmwLoginProvider";
+import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 const api = new Api();
 const LoginDMW = (props) => {
-  const {login}  = useDmwLogin();
+  const { login } = useDmwLogin();
 
   const [type, setType] = useState(props.route.params["type"]);
   const [areaCode, setAreaCode] = useState("+86");
@@ -44,7 +45,7 @@ const LoginDMW = (props) => {
   const [agree, setAgree] = useState(false);
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("温馨提示");
-
+  const { post, formData } = useDmwApi();
   const onChangeText = (e, num) => {
     if (num == 1) {
       setEmail(e);
@@ -74,12 +75,28 @@ const LoginDMW = (props) => {
 
   // 登录按钮
   const loginFn = () => {
-    let data = { phone, password };
-    let formData = api.formData(data);
-    api
-      .post("/index/login/login_by_phone", formData)
+    let data = {};
+    let Fdata = {};
+    let url = "";
+    if (type == 1) {
+      // 邮箱登录
+      data = { email, password };
+      Fdata = formData(data);
+      url = "/index/login/login_by_email";
+    } else {
+      // 手机登录
+      data = { phone, password };
+      Fdata = formData(data);
+      url = "/index/login/login_by_phone";
+    }
+    post(url, Fdata)
       .then((res) => {
-        // this.DT(res || '登陆成功！')
+        console.log(res, "res");
+        if (res.code == 202) {
+          DT(res.message);
+          return;
+        }
+        DT("登陆成功！");
         console.log(res.data.token);
 
         storage.save({
@@ -91,7 +108,9 @@ const LoginDMW = (props) => {
           // 如果设为null，则永不过期
           expires: null,
         });
-        login()
+        setTimeout(() => {
+          login();
+        }, 2000);
       })
       .catch((err) => {
         DT(err.message);
@@ -302,7 +321,7 @@ const LoginDMW = (props) => {
     </SafeAreaView>
   );
 };
-export default LoginDMW
+export default LoginDMW;
 const styles = StyleSheet.create({
   lisEnglish: {
     borderBottomColor: "#ccc",
@@ -366,7 +385,6 @@ const styles = StyleSheet.create({
   inputBox: {
     height: 48,
     // position: 'relative',
-    borderColor: "gray",
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 24,

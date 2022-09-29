@@ -3,8 +3,9 @@ import DmwLoginContext from './DmwLoginContext'
 
 const DmwLoginProvider = ({ children }) => {
 
-    const [isLogin,setIsLogin] = useState(true)
-
+    const [isLogin,setIsLogin] = useState(true)//登录状态
+    const [username,setUsername] = useState('用户昵称')//用户名
+    const [avatarUrl,setAvatarUrl] = useState()//用户名
 
     const login = () => {
         setIsLogin(true)
@@ -30,7 +31,7 @@ const DmwLoginProvider = ({ children }) => {
 
     return (
 
-        <DmwLoginContext.Provider value={{ isLogin,setIsLogin,login,logOut }}>
+        <DmwLoginContext.Provider value={{ isLogin,setIsLogin,login,logOut ,username,setUsername,avatarUrl,setAvatarUrl}}>
             {children}
         </DmwLoginContext.Provider>
     )

@@ -38,7 +38,9 @@ export default class DialogToast extends Component {
                             </Dialog.Actions>
                             :
                             <Dialog.Actions style={{ paddingRight: 20, paddingBottom: 20 }}>
+                                 <TouchableWithoutFeedback onPress={() => { this.close() }}>
                                 {this.props.children}
+                                </TouchableWithoutFeedback>
                             </Dialog.Actions>
                     }
 
