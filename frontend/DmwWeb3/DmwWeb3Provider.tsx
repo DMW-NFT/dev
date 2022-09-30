@@ -107,7 +107,7 @@ const DmwWeb3Provider = ({ children }) => {
             data: rawdata, // Required
             // gasPrice: "0x02540be400", // Optional
             // gasLimit: "0x9c40", // Optional
-            value:web3.utils.toWei('0.1', 'ether') , // Optional
+            value: web3.utils.toWei('0.1', 'ether'), // Optional
             // nonce: "0x0114", // Optional
         };
 
@@ -123,6 +123,46 @@ const DmwWeb3Provider = ({ children }) => {
                 console.error(error);
             });
     }
+
+    const getWalletNfts = () => {
+        console.log(currentWallet)
+        return fetch(`https://eth-goerli.g.alchemy.com/nft/v2/S8xDLVufmTFUnjHYkZDOW5NkQtQG8q8J/getNFTs?owner=${currentWallet}&pageSize=10&withMetadata=false`, {
+            method: 'GET',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            }
+          })
+            .then((response) => response.json())
+            .then((json) => {
+                // console.log(json)
+                // for (let index = 0; index < json.ownedNfts.length; index++) {
+                    // const element = json.ownedNfts[index];
+                    // console.log(element)
+                    
+                // }
+                return json;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+
+    }
+
+    const checkIsApproveForAll = (nftContract,account,operator)=> {
+        web3.eth.setProvider(getProvider(currentChainId));
+        const contract = new web3.eth.Contract(NFT1155, nftContract)
+        
+        contract.methods.isApprovedForAll(account,operator).call().then((res) => {
+            console.log(res)
+            res?console.log(nftContract,'is approved to ',operator):console.log(nftContract,'is not approved to ',operator)
+        })
+
+    }
+
+
+
+
 
     useEffect(() => {
         // connector.on('disconnect', connectWallet);
@@ -140,7 +180,7 @@ const DmwWeb3Provider = ({ children }) => {
 
     return (
 
-        <DmwWeb3Context.Provider value={{ currentWallet, connector, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature }}>
+        <DmwWeb3Context.Provider value={{ currentWallet, connector, connected,connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature,getWalletNfts,checkIsApproveForAll }}>
             {children}
         </DmwWeb3Context.Provider>
     )

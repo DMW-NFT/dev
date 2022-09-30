@@ -7,8 +7,16 @@ import { Button } from "@ui-kitten/components";
 
 export default function App() {
 
+  const [nftList, setNftList] = useState([])
+  const { connectWallet, currentWallet,connected ,currentChainId, checkIsApproveForAll,disconnectWallet, tranferNative, getWalletNfts, mintNft, mintNftWithSignature } = useDmwWeb3();
 
-  const { connectWallet, currentWallet, currentChainId, disconnectWallet, tranferNative, mintNft,mintNftWithSignature } = useDmwWeb3();
+  useEffect(() => {
+    currentWallet && getWalletNfts().then((res) => {
+      setNftList(res.ownedNfts)
+      console.log(typeof (res.ownedNfts))
+      console.log(res.ownedNfts)
+    })
+  }, [currentWallet,connected])
 
 
   return (
@@ -30,6 +38,26 @@ export default function App() {
       <Button onPress={() => mintNftWithSignature()} >
         mintWithSignature
       </Button>
+      <Button onPress={() => getWalletNfts()} >
+        getWalletNfts
+      </Button>
+      <>
+        {connected&&nftList.map(item => (
+          <>
+            <Text>
+              {item.id.tokenId}            
+              <Button onPress={() => checkIsApproveForAll(item.contract.address,currentWallet,"0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4")} >
+                list
+              </Button>
+            </Text>
+
+          </>
+
+
+        ))}
+      </>
+
+
       {/* <Button onPress={() => connector.killSession()} >
         Disconnect
       </Button> */}
