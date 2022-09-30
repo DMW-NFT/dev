@@ -1,7 +1,9 @@
 import { Text, StyleSheet, View,Image,SafeAreaView } from 'react-native'
 import React, { Component } from 'react'
+import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider'
 
 const FaceLogin = () => {
+    const {login} = useDmwLogin()
     return (
       <SafeAreaView style={[styles.container]}>
         <View style={[styles.topBox]}>
@@ -11,7 +13,7 @@ const FaceLogin = () => {
         </View>
         <View>
             <Text style={[styles.loginBtnBox]}>开通面容登陆</Text>
-            <Text  style={[styles.later]}>Later</Text>
+            <Text onPress={()=>{login()}} style={[styles.later]}>Later</Text>
         </View>
       </SafeAreaView>
     )
