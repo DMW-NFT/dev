@@ -109,7 +109,8 @@ const LoginDMW = (props) => {
           expires: null,
         });
         setTimeout(() => {
-          login();
+        //   login();
+        props.navigation.navigate("FaceLogin")
         }, 2000);
       })
       .catch((err) => {

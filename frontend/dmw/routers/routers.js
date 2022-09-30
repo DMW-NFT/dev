@@ -40,6 +40,7 @@ export default class router extends Component {
         <Tab.Screen name="Money" component={MoneyScreen} options={{title: '钱包'}}></Tab.Screen>
         <Tab.Screen name="Myself" component={MyselfScreen} options={{title: '我的'}}></Tab.Screen>
       </Tab.Navigator> 
+      
     )
   }
 }

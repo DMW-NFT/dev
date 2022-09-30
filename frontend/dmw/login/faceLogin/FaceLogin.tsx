@@ -1,10 +1,9 @@
-import { Text, StyleSheet, View,Image } from 'react-native'
+import { Text, StyleSheet, View,Image,SafeAreaView } from 'react-native'
 import React, { Component } from 'react'
 
-export default class FaceLogin extends Component {
-  render() {
+const FaceLogin = () => {
     return (
-      <View style={[styles.container]}>
+      <SafeAreaView style={[styles.container]}>
         <View style={[styles.topBox]}>
             <Image source={require('../../assets/img/login/faceLogin.png')} style={[styles.LoginImage]}></Image>
             <Text style={[styles.facetext]}>推荐开通面容登陆</Text>
@@ -14,11 +13,12 @@ export default class FaceLogin extends Component {
             <Text style={[styles.loginBtnBox]}>开通面容登陆</Text>
             <Text  style={[styles.later]}>Later</Text>
         </View>
-      </View>
+      </SafeAreaView>
     )
-  }
 }
 
+
+export default FaceLogin
 const styles = StyleSheet.create({
     container:{
         flex:1,
@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
         alignContent:'center',
         padding:20,
         paddingBottom:80,
+        backgroundColor:'#fff'
     },
     topBox:{
         // flex:1,

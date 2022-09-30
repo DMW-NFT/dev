@@ -36,7 +36,7 @@ const ForgetPassword = (props) => {
   const [secureTextEntry, SetsecureTextEntry] = useState(false);
   const [visible, Setvisible] = useState(false);
   const [message, Setmessage] = useState("温馨提示");
-  const { post, get, formData } = useDmwApi();
+  const { post, get, formData,Toast } = useDmwApi();
   const { login } = useDmwLogin();
 
   const onChangeText = (e, num) => {
@@ -53,15 +53,15 @@ const ForgetPassword = (props) => {
     }
   };
 
-   // 提示弹窗
-   const DT = (val) => {
-    Setvisible(true);
-    Setmessage(val);
-    setTimeout(() => {
-        Setvisible(false);
-        Setmessage('');
-    }, 2000);
-  };
+//    // 提示弹窗
+//    const DT = (val) => {
+//     Setvisible(true);
+//     Setmessage(val);
+//     setTimeout(() => {
+//         Setvisible(false);
+//         Setmessage('');
+//     }, 2000);
+//   };
 
   // 获取验证码
   const getsancode = () => {
@@ -80,7 +80,7 @@ const ForgetPassword = (props) => {
       fdata = formData(data);
     }
     post(url, fdata).then((res) => {
-        DT(res.message)
+        Toast(res.message)
       console.log(res, "忘记密码验证码");
     });
   };
@@ -107,6 +107,15 @@ const loginFn = () =>{
         console.log(res,'+++++++++++++++++');
         
         if(res.code == 200){
+            storage.save({
+                key: "loginState", // 注意:请不要在key中使用_下划线符号!
+                data: {
+                  token: res.data.token,
+                },
+                // 如果不指定过期时间，则会使用defaultExpires参数
+                // 如果设为null，则永不过期
+                expires: null,
+              });
             login()
         }
     })
@@ -264,10 +273,10 @@ const loginFn = () =>{
         />
       </View>
       <Text onPress={()=>loginFn()} style={[styles.loginBtnBox]}>登录</Text>
-      <Toast
+      {/* <Toast
         visible={visible}
         value={message}>
-      </Toast>
+      </Toast> */}
     </SafeAreaView>
   );
 };

@@ -5,6 +5,9 @@ import storage from "../dmw/Storage/storage";
 const DmwApiProvider = ({ children }) => {
   const [BaseUrl, setBaseUrl] = useState("https://dmw.cougogo.com");
   const { logOut } = useDmwLogin();
+  const [show, setShow] = useState(false);
+  const [time, setTime] = useState(2000);
+  const [toastVal, setToastVal] = useState("温馨提示");
 
   const get = async (url) => {
     let token = await GetStorage();
@@ -19,22 +22,25 @@ const DmwApiProvider = ({ children }) => {
 
   const post = async (url, data) => {
     let token = await GetStorage();
-    console.log(token,'----------------');
+    console.log(token, "----------------");
     return fetch(BaseUrl + url, {
       method: "POST",
       body: data,
       headers: {
         token: token,
       },
-    }).then((res) => res.json()).then(res=>{
-        if(res.code == 204){
-           setTimeout(() => {
-             logOut();
-           }, 2000);
-        }else {
-            return res
-        }
     })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.code == 204) {
+          setTimeout(() => {
+            Toast('登录失效，重新登录')
+            logOut();
+          }, 2000);
+        } else {
+          return res;
+        }
+      });
   };
 
   const formData = (data) => {
@@ -72,9 +78,17 @@ const DmwApiProvider = ({ children }) => {
         })
         .catch((err) => {
           console.warn(err.message, "---+++");
-          resolve('');
+          resolve("");
         });
     });
+  };
+
+  const Toast = (msg) => {
+    setShow(true);
+    setToastVal(msg);
+    setTimeout(() => {
+      setShow(false);
+    }, 2000);
   };
 
   useEffect(() => {
@@ -88,7 +102,10 @@ const DmwApiProvider = ({ children }) => {
         formData,
         post,
         get,
-        BaseUrl
+        BaseUrl,
+        show,
+        toastVal,
+        Toast,
       }}
     >
       {children}

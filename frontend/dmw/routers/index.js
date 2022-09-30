@@ -19,6 +19,11 @@ const router = [
         title: '', //头部展示标题
         component: require("../login/ForgetPassword").default,
     },
+    {
+        name: "FaceLogin", //跳转路径
+        title: null, //头部展示标题
+        component: require("../login/faceLogin/FaceLogin").default,
+    },
    
 ]
 export default router

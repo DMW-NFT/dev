@@ -24,7 +24,7 @@ const StackNavigator = () => {
                             //     color: '#000',
                             //     fontSize: 15
                             // },
-                            headerShown:item.name == 'Index'  ?  false : true, //不显示头部标题
+                            headerShown:item.name == 'Index' || item.name == 'FaceLogin'  ?  false : true, //不显示头部标题
                         })} />
                     )
                 })
