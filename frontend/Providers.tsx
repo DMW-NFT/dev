@@ -13,6 +13,7 @@ import {Provider as StoreProvider} from 'react-redux'
 import store from "../frontend/dmw/redux/store"
 import { DmwLoginProvider } from "./loginProvider/constans/DmwLoginProvider";
 import {DmwApiProvider} from "./DmwApiProvider/DmwApiProvider.jsx"
+import { DmwWalletProvider } from "./DmwWallet/DmwWalletProvider";
 
 interface ProvidersProps {
   readonly children: JSX.Element;
@@ -40,6 +41,7 @@ export const Providers = ({ children }: ProvidersProps) => {
   return (
     <WalletConnectProvider {...walletConnectOptions}>
       <DmwWeb3Provider>
+        <DmwWalletProvider>
         <DmwLoginProvider>
           <DmwApiProvider>
         <PaperProvider>
@@ -52,6 +54,7 @@ export const Providers = ({ children }: ProvidersProps) => {
         </PaperProvider>
         </DmwApiProvider>
         </DmwLoginProvider>
+        </DmwWalletProvider>
       </DmwWeb3Provider>
     </WalletConnectProvider>
   );
