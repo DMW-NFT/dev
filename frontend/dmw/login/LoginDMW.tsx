@@ -45,7 +45,7 @@ const LoginDMW = (props) => {
   const [agree, setAgree] = useState(false);
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("温馨提示");
-  const { post, formData } = useDmwApi();
+  const { post, formData,Toast } = useDmwApi();
   const onChangeText = (e, num) => {
     if (num == 1) {
       setEmail(e);
@@ -68,13 +68,17 @@ const LoginDMW = (props) => {
     setShowareaCode(false);
   };
   // 提示弹窗
-  const DT = (val) => {
-    setVisible(true);
-    setMessage(val);
-  };
+  // const DT = (val) => {
+  //   setVisible(true);
+  //   setMessage(val);
+  // };
 
   // 登录按钮
   const loginFn = () => {
+    if(!agree){
+      Toast('请先勾选用户协议')
+      return
+    }
     let data = {};
     let Fdata = {};
     let url = "";
@@ -93,10 +97,10 @@ const LoginDMW = (props) => {
       .then((res) => {
         console.log(res, "res");
         if (res.code == 202) {
-          DT(res.message);
+          Toast(res.message);
           return;
         }
-        DT("登陆成功！");
+        Toast("登陆成功！");
         console.log(res.data.token);
 
         storage.save({
@@ -109,12 +113,12 @@ const LoginDMW = (props) => {
           expires: null,
         });
         setTimeout(() => {
-        //   login();
-        props.navigation.navigate("FaceLogin")
+          login();
+        // props.navigation.navigate("FaceLogin") 
         }, 2000);
       })
       .catch((err) => {
-        DT(err.message);
+        Toast(err.message);
       });
   };
 
@@ -306,7 +310,7 @@ const LoginDMW = (props) => {
         <Text style={[styles.text]}>《隐私政策》</Text>
       </View>
 
-      <DialogToast
+      {/* <DialogToast
         visible={visible}
         isClose={true}
         value={message}
@@ -318,7 +322,7 @@ const LoginDMW = (props) => {
         }}
       >
         <Text style={{ fontSize: 16 }}>OK</Text>
-      </DialogToast>
+      </DialogToast> */}
     </SafeAreaView>
   );
 };

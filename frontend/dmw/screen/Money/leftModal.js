@@ -34,11 +34,9 @@ export default class Lmodal extends Component {
 
         {visible ? (
           <View style={styles.Lm_box}>
-           
-        
-            
             <View>
-              <TouchableWithoutFeedback
+             <Image></Image>
+              {/* <TouchableWithoutFeedback
                 onPress={() => this.cilck('MessageCenter')}
                 onStartShouldSetResponderCapture={() => true}>
                 {
@@ -56,7 +54,7 @@ export default class Lmodal extends Component {
                 />
               </View>
   }
-              </TouchableWithoutFeedback>
+              </TouchableWithoutFeedback> */}
 
               
             </View>
