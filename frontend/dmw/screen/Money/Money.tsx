@@ -50,6 +50,9 @@ const Money = (props) => {
         position: "relative",
       }}
     >
+
+
+
       <View style={styles.hearder}>
         <View>
           <Text style={styles.hello}>hello</Text>

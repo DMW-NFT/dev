@@ -28,9 +28,13 @@ export default class Exchange extends Component {
         let { visible } = this.state;
         return (
             <SafeAreaView style={[this.props.style, { position: 'relative', backgroundColor: '#fff', flex: 1, paddingTop: 30 }]}>
+                <View style={{ width: 40, height: 40, backgroundColor: 'pink', position: 'absolute',top:-40,zIndex:9999}}>
+                    <Text>123456</Text>
+                </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                    
 
-                    <TouchableWithoutFeedback onPress={()=>this.open()}>
+                    <TouchableWithoutFeedback onPress={() => this.open()}>
                         <View style={styles.EthsStyle}>
                             <Image style={styles.Ethimg} source={require('../../assets/img/money/duihuan1.png')}></Image>
                             <Text style={{ marginLeft: 15, marginRight: 22, fontSize: 12, fontWeight: '500' }}>ETH</Text>
@@ -83,7 +87,7 @@ export default class Exchange extends Component {
                     <Text style={{ textAlign: 'center', marginTop: 20 }}>复制地址以接收付款</Text>
                 </Modal>
 
-                <Text style={styles.btn}>保存更改</Text>
+                <Text style={styles.btn}>兑换</Text>
             </SafeAreaView>
         );
     }
@@ -92,19 +96,19 @@ export default class Exchange extends Component {
 const styles = StyleSheet.create({
 
     btn: {
-        width:screenWidth - 40 ,
-        backgroundColor:'#897EF8',
-        color:'#fff',
-        height:50,
-        lineHeight:50,
-        textAlign:'center',
-        marginRight:20,
-        marginLeft:20,
-        borderRadius:50,
-        position:'absolute',
-        bottom:14
-    
-      },
+        width: screenWidth - 40,
+        backgroundColor: '#897EF8',
+        color: '#fff',
+        height: 50,
+        lineHeight: 50,
+        textAlign: 'center',
+        marginRight: 20,
+        marginLeft: 20,
+        borderRadius: 50,
+        position: 'absolute',
+        bottom: 14
+
+    },
     Ethimg: {
         width: 15,
         height: 24
