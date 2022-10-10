@@ -12,7 +12,7 @@ import { StatusBar } from "react-native";
 import {Provider as StoreProvider} from 'react-redux'
 import store from "../frontend/dmw/redux/store"
 import { DmwLoginProvider } from "./loginProvider/constans/DmwLoginProvider";
-import {DmwApiProvider} from "./DmwApiProvider/DmwApiProvider.jsx"
+import {DmwApiProvider} from "./DmwApiProvider/DmwApiProvider"
 import { DmwWalletProvider } from "./DmwWallet/DmwWalletProvider";
 
 interface ProvidersProps {

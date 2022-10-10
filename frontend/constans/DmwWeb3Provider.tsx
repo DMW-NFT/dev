@@ -109,7 +109,7 @@ const DmwWeb3Provider = ({ children }) => {
 
     return (
 
-        <DmwWeb3Context.Provider value={{ currentWallet, connector, connectWallet, disconnectWallet, web3, tranferNative, mintNft }}>
+        <DmwWeb3Context.Provider value={{ connected,currentWallet, connector, connectWallet,setConnected, disconnectWallet, web3, tranferNative, mintNft }}>
             {children}
         </DmwWeb3Context.Provider>
     )

@@ -15,7 +15,7 @@ import Search from "../../Components/Searchbox";
 import Lmodal from "./leftModal";
 import Api from "../../Request/http";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
-import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider.jsx";
+import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 const api = new Api();
 
 const data = [

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import DmwWeb3Context from './DmwWeb3context'
 import Web3 from "web3";
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
-import getProvider from '../components/rpcProvider'
+import getProvider from '../../frontend/constans/rpcProvicer'
 import NFT1155 from '../contract/NFT1155.json'
 
 
@@ -16,20 +16,26 @@ const DmwWeb3Provider = ({ children }) => {
     const [connected, setConnected] = useState(false);
 
     const web3 = new Web3()
-    const connectWallet = async () => {
-        console.log('Connecting')
-        connector.connect().then(() => { setConnected(true); });
-
-        if (connector.connected) {
-            console.log(connector.accounts[0], 'is connected');
-            setCurrentWallet(connector.accounts[0]);
-            setCurrenChainId(connector.chainId);
-            console.log(currentChainId, getProvider(currentChainId));
-            web3.eth.setProvider(getProvider(currentChainId));
-            web3.eth.getBlockNumber().then((res => console.log(res)))
-        }
-
-    }
+      // 链接第三方钱包
+    //   const connectWallet = async () => {
+    //     console.log('Connecting')
+    //   return  
+    //     //.then((res) => { setConnected(true);
+    //     // return res }).catch(error => {
+    //     //   // Error returned when rejected
+    //     //   return error
+    //     };
+    
+        // if (connector.connected) {
+        //   console.log(connector.accounts[0], 'is connected');
+        //   setCurrentWallet(connector.accounts[0]);
+        //   setCurrenChainId(connector.chainId);
+        //   console.log(currentChainId, getProvider(currentChainId));
+        //   web3.eth.setProvider(getProvider(currentChainId));
+        //   web3.eth.getBlockNumber().then((res => console.log(res)))
+ // }
+    
+// }
 
     const disconnectWallet = () => {
         console.log('disonnecting');
@@ -180,7 +186,7 @@ const DmwWeb3Provider = ({ children }) => {
 
     return (
 
-        <DmwWeb3Context.Provider value={{ currentWallet, connector, connected,connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature,getWalletNfts,checkIsApproveForAll }}>
+        <DmwWeb3Context.Provider value={{setConnected,connector, currentWallet, connected, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature,getWalletNfts,checkIsApproveForAll }}>
             {children}
         </DmwWeb3Context.Provider>
     )

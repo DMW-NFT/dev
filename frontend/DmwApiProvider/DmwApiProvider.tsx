@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import DmwApiContext from "./DmwApiContext";
 import { useDmwLogin } from "../loginProvider/constans/DmwLoginProvider";
+// import { useDmwWeb3 } from "../DmwWeb3/DmwWeb3Provider"
 import storage from "../dmw/Storage/storage";
 const DmwApiProvider = ({ children }) => {
   const [BaseUrl, setBaseUrl] = useState("https://dmw.cougogo.com");
@@ -8,6 +9,10 @@ const DmwApiProvider = ({ children }) => {
   const [show, setShow] = useState(false);
   const [time, setTime] = useState(2000);
   const [toastVal, setToastVal] = useState("温馨提示");
+  const [MoneyRouteState,setMoneyRouteState] = useState('createMoney')
+  // const {connected} = useDmwWeb3()
+
+
 
   const get = async (url) => {
     let token = await GetStorage();
@@ -19,6 +24,7 @@ const DmwApiProvider = ({ children }) => {
       },
     }).then((res) => res.json());
   };
+  
 
   const post = async (url, data) => {
     let token = await GetStorage();
@@ -95,6 +101,7 @@ const DmwApiProvider = ({ children }) => {
     console.log("using dmwlogin provider");
   }, []);
 
+
   return (
     <DmwApiContext.Provider
       value={{
@@ -106,6 +113,8 @@ const DmwApiProvider = ({ children }) => {
         show,
         toastVal,
         Toast,
+        MoneyRouteState,
+        setMoneyRouteState
       }}
     >
       {children}
