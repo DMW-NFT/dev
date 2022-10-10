@@ -19,14 +19,14 @@ const CreateMoney = (props) => {
   const { connector, connected, setConnected, disconnectWallet } = useDmwWeb3();
 
   const { Toast, setMoneyRouteState } = useDmwApi();
-  const { getWalletListFromAccountStorage } = useDmwWallet();
+  const { dmwWalletList } = useDmwWallet();
   const navigate = (val) => {
     props.navigation.navigate(val);
     setvisible(false);
   };
 
   const clickWallet = () => {
-    // disconnectWallet()
+    
     connector
       .connect()
       .then((res) => {
@@ -46,14 +46,12 @@ const CreateMoney = (props) => {
   };
 
   useEffect(() => {
-    getWalletListFromAccountStorage().then((res) => {
-      console.log("====================================");
-      console.log(res, "获取内置钱包");
-      console.log("====================================");
-      if (!res['walletIndex'].length) {
+      if (!dmwWalletList.length) {
         clickWallet();
+        // disconnectWallet()
+      }else{
+        setMoneyRouteState("money");
       }
-    });
   }, [connected]);
 
   return (

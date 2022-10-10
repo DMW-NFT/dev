@@ -7,15 +7,27 @@ import {
   TouchableWithoutFeedback,
   TextInput,
 } from "react-native";
+
 import React, { Component, useEffect, useState, useContext } from "react";
 
 import StepComp from "./StepComp";
+import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 
 const ImportWord = (props) => {
   const [secureTextEntry, setsecureTextEntry] = useState(false);
   const [word, setword] = useState("");
   const [password, setpassword] = useState("");
   const [password1, setpassword1] = useState("");
+const {Toast} = useDmwApi()
+
+ const CreatePassword = () => {
+  if(password != password1){
+    Toast('两次密码不一致！')
+  }else{
+    Toast('创建成功！')
+    props.navigation.navigate("walletSafe",{password,password1});
+  }
+ }
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff",flex:1 }}>
@@ -35,7 +47,7 @@ const ImportWord = (props) => {
               flexDirection: "row",
             }}
           >
-            <Text style={styles.text}>新密码</Text>
+            <Text style={styles.text}>密码</Text>
             <TouchableWithoutFeedback
               onPress={() => {
                 setsecureTextEntry(!setsecureTextEntry);
@@ -57,7 +69,7 @@ const ImportWord = (props) => {
           <TextInput
             maxLength={6}
             secureTextEntry={secureTextEntry}
-            placeholder="新密码"
+            placeholder="密码"
             keyboardType="decimal-pad"
             style={[styles.input]}
             onChangeText={(e) => setpassword(e)}
@@ -65,11 +77,11 @@ const ImportWord = (props) => {
           />
         </View>
         <View style={styles.lis}>
-          <Text style={styles.text}>新密码</Text>
+          <Text style={styles.text}>确认密码</Text>
           <TextInput
             maxLength={6}
             secureTextEntry={secureTextEntry}
-            placeholder="确认新密码"
+            placeholder="确认密码"
             keyboardType="decimal-pad"
             style={[styles.input]}
             onChangeText={(e) => setpassword1(e)}
@@ -82,7 +94,7 @@ const ImportWord = (props) => {
         <Text
           style={[styles.import]}
           onPress={() => {
-            props.navigation.navigate("walletSafe",{password,password1});
+            CreatePassword()
           }}
         >
           创建密码

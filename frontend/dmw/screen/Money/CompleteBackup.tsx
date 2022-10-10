@@ -2,14 +2,15 @@ import { Text, StyleSheet, View, SafeAreaView, Image, } from 'react-native'
 import React, { Component } from 'react'
 
 import StepComp from './StepComp'
+import { finished } from 'stream'
+import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider'
 
-export default class ImportWord extends Component {
-    state = {
-        data: [{ id: 1, name: "what" }, { id: 2, name: "what" }, { id: 3, name: "what" }, { id: 4, name: "what" },
-        { id: 5, name: "what" }, { id: 6, name: "what" }, { id: 7, name: "what" }, { id: 8, name: "what" }, { id: 9, name: "what" }, { id: 10, name: "what" }, { id: 11, name: "what" }, { id: 12, name: "what" }
-        ],
-    }
-    render() {
+const CompleteBackup = (props) =>{
+    const {setMoneyRouteState } = useDmwApi()
+const CreateWalletFinish = () => {
+    setMoneyRouteState('456')
+    props.navigation.popToTop()
+}
         return (
             <SafeAreaView style={{backgroundColor:'#fff',flex:1}}>
                 <View style={[styles.container]}>
@@ -23,15 +24,16 @@ export default class ImportWord extends Component {
                             您可在“设置”-“助记词”中找到助记词。</Text>
                     </View>
 
-                    <Text style={[styles.import]} onPress={() => { this.props.navigation.navigate('determineWord') }} >完成</Text>
+                    <Text style={[styles.import]} onPress={() => { CreateWalletFinish() }} >完成</Text>
                 </View>
 
 
             </SafeAreaView>
         )
-    }
 }
 
+
+export default CompleteBackup
 const styles = StyleSheet.create({
 
     Image: {

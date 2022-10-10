@@ -82,7 +82,7 @@ const WalletSafe = (props) => {
         <Text
           style={[styles.import]}
           onPress={() => {
-            props.navigation.navigate("walletSafeShow");
+            props.navigation.navigate("walletSafeShow",{password});
           }}
         >
           继续
