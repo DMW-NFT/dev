@@ -12,37 +12,49 @@ import React, { useContext, useEffect, useState } from "react";
 import { Modal } from "react-native-paper";
 import { useDmwWeb3 } from "../../../constans/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
+import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
+
 const CreateMoney = (props) => {
   const [visible, setvisible] = useState(false);
-  const { connector, connected,setConnected, disconnectWallet } = useDmwWeb3();
+  const { connector, connected, setConnected, disconnectWallet } = useDmwWeb3();
 
-  const { Toast ,setMoneyRouteState} = useDmwApi();
+  const { Toast, setMoneyRouteState } = useDmwApi();
+  const { getWalletListFromAccountStorage } = useDmwWallet();
   const navigate = (val) => {
     props.navigation.navigate(val);
     setvisible(false);
   };
 
-
   const clickWallet = () => {
-    // disconnectWallet()    
-    connector.connect().then((res) =>{
+    // disconnectWallet()
+    connector
+      .connect()
+      .then((res) => {
         console.log(res);
         if (res) {
-            Toast("已链接！");
-            setConnected(true);
-            setMoneyRouteState('money')
-          }else{
-            Toast("链接失败！");
-          }
-    
-    })
+          Toast("已链接！");
+          setConnected(true);
+          setMoneyRouteState("money");
+        } else {
+          setMoneyRouteState("createMoney");
+          Toast("链接失败！");
+        }
+      })
+      .catch((err) => {
+        Toast("链接失败！");
+      });
   };
 
-//   useEffect(() => {
-//     if (!connected) {
-//         Toast("未连接钱包");
-//       }
-//   }, [connected]);
+  useEffect(() => {
+    getWalletListFromAccountStorage().then((res) => {
+      console.log("====================================");
+      console.log(res, "获取内置钱包");
+      console.log("====================================");
+      if (!res['walletIndex'].length) {
+        clickWallet();
+      }
+    });
+  }, [connected]);
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff" }}>
