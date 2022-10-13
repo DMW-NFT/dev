@@ -8,28 +8,76 @@ import {
   ImageBackground,
   Dimensions,
   TouchableWithoutFeedback,
+  TextInput,
 } from "react-native";
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, createRef, useRef } from "react";
 import Screen from "./BottomPopUpWindow";
 import Lmodal from "./leftModal";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
+import { Button, Card, Layout, Modal } from '@ui-kitten/components';
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
 const scale = Dimensions.get("window").scale;
 const Money = (props) => {
+  // inputRef = React.createRef();
+  const inputRefX = useRef(null);
+  const inputRef = useRef(null);
+  const inputRef2 = useRef(null);
+  const inputRef3 = useRef(null);
+  const inputRef4 = useRef(null);
+  const inputRef5 = useRef(null);
+  const inputRef6 = useRef(null);
   const [type, setType] = useState(2);
   const [list, setList] = useState([{}, {}]);
   const [visible, setVisible] = useState(false);
   const [lMvisible, setLMvisible] = useState(false);
+  const [Modalvisible, setModalvisible] = useState(false)
   const { dmwWalletList } = useDmwWallet();
+  const [password, setpassword] = useState("");
+  const [passwordlist, setpasswordlist] = useState([]);
+  const [password1, setpassword1] = useState("");
+  const [password2, setpassword2] = useState("");
+  const [password3, setpassword3] = useState("");
+  const [password4, setpassword4] = useState("");
+  const [password5, setpassword5] = useState("");
+  const [password6, setpassword6] = useState("");
 
   const axios = () => {
-  
+
   };
 
+  const empty = () => {
+    setpassword('')
+    setpassword1('')
+    setpassword2('')
+    setpassword3('')
+    setpassword4('')
+    setpassword5('')
+    setpassword6('')
+  }
+
+  useEffect(() => {
+    let blackPointArry = [null, null, null, null, null, null]
+
+    let arr = password.split('');
+    arr.map((item, index) => {
+      blackPointArry[index] = item;
+    })
+
+    console.log(blackPointArry, '----');
+
+    console.log(arr, 'shuzu ');
+    console.log(password);
+    setpasswordlist(blackPointArry)
+    console.log(password.length);
+  }, [password])
+
+
   const close = () => {
+    console.log(456);
     setVisible(false);
     setLMvisible(false);
+    console.log(lMvisible);
   };
   const lMvisibleopen = () => {
     setLMvisible(true);
@@ -40,6 +88,9 @@ const Money = (props) => {
   const changetype = (val) => {
     setType(val);
   };
+
+
+
   return (
     <SafeAreaView
       style={{
@@ -76,7 +127,8 @@ const Money = (props) => {
             marginLeft: -20,
           }}
         >
-          <View style={styles.USDT}>
+          <View style={styles.USDT} >
+            <Text style={styles.active}>当前登录</Text>
             <Text style={styles.WName}>DMW</Text>
             <View
               style={{ flexDirection: "row", marginTop: 15, marginBottom: 14 }}
@@ -101,6 +153,7 @@ const Money = (props) => {
           </View>
 
           <View style={styles.WFCA}>
+            <Image style={{ width: 36, height: 36, position: 'absolute', top: 0, right: 0 }} source={require('../../assets/img/money/SwitchwalletA.png')}></Image>
             <Text style={[styles.WName, { color: "#897EF8" }]}>DMW</Text>
             <View
               style={{ flexDirection: "row", marginTop: 15, marginBottom: 14 }}
@@ -143,7 +196,7 @@ const Money = (props) => {
           </View>
         </TouchableWithoutFeedback>
 
-        
+
 
         <TouchableWithoutFeedback
           onPress={() => {
@@ -292,6 +345,166 @@ const Money = (props) => {
         close={() => close()}
       ></Screen>
 
+
+
+      <Modal
+        visible={Modalvisible}
+        backdropStyle={{ "backgroundColor": 'rgba(0, 0, 0, 0.5)' }}
+        onBackdropPress={() => { setModalvisible(false) }}>
+        <Card disabled={true} style={styles.CardBox}>
+
+          <TextInput
+            ref={inputRefX}
+            maxLength={6}
+            caretHidden={true}
+            secureTextEntry={true}
+            onKeyPress={() => { }}
+            placeholder='123456'
+            keyboardType="numeric"
+            style={{ position: 'absolute', zIndex: 1, top: -40 }}
+            onChangeText={(e) => {
+              setpassword(e);
+            }
+            }
+            value={password}
+          />
+          <View style={{ justifyContent: 'flex-end', flexDirection: 'row', position: 'absolute', top: 10, right: 20, width: 22, height: 22 }}>
+            <TouchableWithoutFeedback onPress={() => { setModalvisible(false) }}>
+            <Image style={styles.colose} source={require('../../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png')}></Image>
+            </TouchableWithoutFeedback>
+            
+          </View>
+          <View>
+            <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>请输入支付密码</Text>
+            <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>Uzumaki Naruto #0001</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
+              <Text style={{ color: '#999999', fontSize: 16, fontWeight: '700' }}>价格</Text>
+              <Text style={{ flexDirection: 'row' }}>
+                <Text style={{ fontSize: 16, fontWeight: '700' }}>4,218</Text>
+                <Text>&nbsp;</Text>
+                <Text style={{ fontSize: 10 }}>Wfca</Text>
+              </Text>
+            </View>
+
+
+
+            <View style={{ height: 48, flexDirection: 'row', justifyContent: 'space-between', }}>
+              {
+                passwordlist.map((item, index) => (
+                  <Text style={[index == 0 ? styles.passinputfirst : styles.passinput]}>{item ? "●" : ''}</Text>
+                ))
+
+              }
+              {/* <Text style={{ textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, fontSize: 40 }}></Text>
+              <Text style={{ textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, borderLeftWidth: 0, fontSize: 40 }}></Text>
+              <Text style={{ textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, borderLeftWidth: 0, fontSize: 40 }}></Text>
+              <Text style={{ textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, borderLeftWidth: 0, fontSize: 40 }}></Text>
+              <Text style={{ textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, borderLeftWidth: 0, fontSize: 40 }}></Text>
+              <Text style={{ textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, borderLeftWidth: 0, fontSize: 40 }}></Text> */}
+              {/* 
+              <TextInput
+                ref={inputRef}
+                maxLength={1}
+                caretHidden={true}
+                secureTextEntry={true}
+                onKeyPress={() => { }}
+                keyboardType="numeric"
+                style={{ textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, fontSize: 40 }}
+                onChangeText={(e) => {
+                  setpassword1(e)
+                  inputRef2.current.focus()
+                  inputRef.current.blur()
+                }
+                }
+                value={password1}
+              /> */}
+              {/* <TextInput
+                caretHidden={true}
+                ref={inputRef2}
+                maxLength={1}
+                secureTextEntry={true}
+                keyboardType="decimal-pad"
+                style={{ textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, borderLeftWidth: 0, fontSize: 40 }}
+                onChangeText={(e) => {
+                  setpassword2(e)
+                  inputRef3.current.focus()
+                  inputRef2.current.blur()
+                }}
+                value={password2}
+              />
+              <TextInput
+                caretHidden={true}
+                ref={inputRef3}
+                maxLength={1}
+                secureTextEntry={true}
+                keyboardType="decimal-pad"
+                style={{ textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, borderLeftWidth: 0, fontSize: 40 }}
+                onChangeText={(e) => {
+                  setpassword3(e)
+                  inputRef4.current.focus()
+                  inputRef3.current.blur()
+                }}
+                value={password3}
+              />
+              <TextInput
+                caretHidden={true}
+                ref={inputRef4}
+                maxLength={1}
+                secureTextEntry={true}
+                keyboardType="decimal-pad"
+                style={{ textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, borderLeftWidth: 0, fontSize: 40 }}
+                onChangeText={(e) => {
+                  setpassword4(e)
+                  inputRef5.current.focus()
+                  inputRef4.current.blur()
+                }}
+                value={password4}
+              />
+              <TextInput
+                caretHidden={true}
+                ref={inputRef5}
+                maxLength={1}
+                secureTextEntry={true}
+                keyboardType="decimal-pad"
+                style={{ textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, borderLeftWidth: 0, fontSize: 40 }}
+                onChangeText={(e) => {
+                  setpassword5(e)
+                  inputRef6.current.focus()
+                  inputRef5.current.blur()
+                }}
+                value={password5}
+              />
+              <TextInput
+                caretHidden={true}
+                ref={inputRef6}
+                maxLength={1}
+                secureTextEntry={true}
+                keyboardType="decimal-pad"
+               
+                onChangeText={(e) => {
+                  setpassword6(e)
+                  inputRef6.current.blur()
+                  setModalvisible(false)
+                  let pass =  password1 + password2 + password3 + password4 + password5 + password6;
+                  if(pass.length == 6){
+                    props.navigation.navigate('ViewMnemonics', { password:pass })
+                  }else{
+                    
+                  }
+                  
+                  empty()
+                }}
+                value={password6}
+              /> */}
+            </View>
+
+
+
+          </View>
+        </Card>
+      </Modal>
+
+
       <Lmodal
         goto={(path) => {
           props.navigation.navigate(path);
@@ -299,7 +512,14 @@ const Money = (props) => {
         style={[styles.Screen]}
         close={() => close()}
         visible={lMvisible}
+        openModal={() => {
+          setModalvisible(true); setTimeout(() => {
+            inputRefX.current.focus();
+          }, 500);
+          empty();
+        }}
       ></Lmodal>
+
     </SafeAreaView>
   );
 };
@@ -307,6 +527,35 @@ const Money = (props) => {
 export default Money;
 
 const styles = StyleSheet.create({
+  passinputfirst: { textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, },
+  passinput: { textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, borderLeftWidth: 0, },
+
+  colose: {
+    width: 22, height: 22, borderWidth: 1, borderRadius: 11, borderColor: '#ccc', justifyContent: 'center', alignItems: 'center',
+    marginRight: -10,
+  },
+  CardBox: {
+    width: 640 / 2,
+    borderRadius: 20,
+    position: 'relative',
+    paddingBottom: 20,
+    zIndex: 100
+    // paddingTop: 10,
+    // paddingRight: 10
+  },
+  active: {
+    paddingTop: 6,
+    paddingBottom: 6,
+    paddingLeft: 10,
+    paddingRight: 10,
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 10,
+    backgroundColor: '#F9C94E',
+    color: "#fff"
+  },
   Screen: {
     width: screenWidth,
     position: "absolute",
@@ -357,7 +606,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: 15,
     paddingTop: 24,
-    paddingLeft: 20,
+    paddingLeft: 20, position: 'relative'
   },
   WName: {
     fontSize: 12,

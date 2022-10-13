@@ -10,14 +10,14 @@ import {
 import React, { useContext, useEffect, useState } from "react";
 // import * as Animatable from 'react-native-animatable'
 import { Modal } from "react-native-paper";
-import { useDmwWeb3 } from "../../../constans/DmwWeb3Provider";
+import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 
 const CreateMoney = (props) => {
   const [visible, setvisible] = useState(false);
   const { connector, connected, setConnected, disconnectWallet } = useDmwWeb3();
-
+  const [WalletState, setWalletState] = useState(connector.connected);
   const { Toast, setMoneyRouteState } = useDmwApi();
   const { dmwWalletList } = useDmwWallet();
   const navigate = (val) => {
@@ -26,7 +26,6 @@ const CreateMoney = (props) => {
   };
 
   const clickWallet = () => {
-    
     connector
       .connect()
       .then((res) => {
@@ -44,14 +43,27 @@ const CreateMoney = (props) => {
         Toast("链接失败！");
       });
   };
+  useEffect(()=>{
+    setTimeout(() => {
+      setWalletState(connector.connected);
+      console.log(connector.connected);
+      if(WalletState){
+        setMoneyRouteState("money");
+      }else{
+        setMoneyRouteState("createMoney");
+        Toast("钱包已失效！");
+      }
+    }, 5000);
+  },[])
 
   useEffect(() => {
-      if (!dmwWalletList.length) {
-        clickWallet();
-        // disconnectWallet()
-      }else{
-        setMoneyRouteState("money");
-      }
+    console.log("====================================");
+    console.log(dmwWalletList);
+    console.log("====================================");
+    if (WalletState || dmwWalletList.length) {
+      setMoneyRouteState("money");
+    } else {
+    }
   }, [connected]);
 
   return (

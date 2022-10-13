@@ -1,4 +1,8 @@
-import { StyleSheet } from "react-native";
+import {
+  StyleSheet,
+  TouchableWithoutFeedback,
+  ImageBackground,
+} from "react-native";
 import React, { Component, useContext, useEffect, useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import MoneyScreen from "../screen/Money/Money";
@@ -11,21 +15,20 @@ import DetermineWord from "../screen/Money/DetermineWord"; // 确认助记词
 import CompleteBackup from "../screen/Money/CompleteBackup"; // 完成备份
 import Exchange from "../screen/Money/Exchange"; // 兑换
 import Gift from "../screen/Money/Gift"; // 发送
+import ViewMnemonics from "../screen/Money/ViewMnemonics"; // 助记词
+import RedemptionSettings from "../screen/Money/RedemptionSettings"; // 发送
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 const Stack = createStackNavigator();
-const Home = () => {
+const Home = (props) => {
   const { MoneyRouteState, setMoneyRouteState } = useDmwApi();
-
 
   return (
     <Stack.Navigator
-      initialRouteName={'createMoney'}
+      initialRouteName={"createMoney"}
       screenOptions={{ headerShadowVisible: false }}
     >
       <Stack.Screen
-        component={
-          MoneyRouteState == "createMoney" ? CreateMoney : MoneyScreen
-        }
+        component={MoneyRouteState == "createMoney" ? CreateMoney : MoneyScreen}
         name="createMoney"
         options={{
           headerMode: "none",
@@ -88,6 +91,22 @@ const Home = () => {
         name="Exchange"
         options={{
           title: "兑换",
+          headerRight: () => {
+            return (
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  props.navigation.navigate("RedemptionSettings", {
+                    visible: true,
+                  });
+                }}
+              >
+                <ImageBackground
+                  source={require("../assets/img/money/setup.png")}
+                  style={{ width: 40, height: 40, marginRight: 15 }}
+                ></ImageBackground>
+              </TouchableWithoutFeedback>
+            );
+          },
         }}
       ></Stack.Screen>
 
@@ -98,6 +117,23 @@ const Home = () => {
           title: "发送",
         }}
       ></Stack.Screen>
+
+      <Stack.Screen
+        component={RedemptionSettings}
+        name="RedemptionSettings"
+        options={{
+          title: "兑换设置",
+        }}
+      ></Stack.Screen>
+
+<Stack.Screen
+        component={ViewMnemonics}
+        name="ViewMnemonics"
+        options={{
+          title: "助记词",
+        }}
+      ></Stack.Screen>
+
     </Stack.Navigator>
   );
 };
