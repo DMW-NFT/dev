@@ -9,19 +9,19 @@ const Stack = createStackNavigator()
 export default class Home extends Component {
   render() {
     return (
-      <Stack.Navigator initialRouteName='home' screenOptions={{headerShadowVisible: false}}>
-         <Stack.Screen
+      <Stack.Navigator initialRouteName='home' screenOptions={{ headerShadowVisible: false }}>
+        <Stack.Screen
           component={HomeScreen}
           name='home'
           defaultNavigationOptions={{
-            tabBarVisible:false
+            tabBarVisible: false
           }}
-          options={{ 
-            headerBackTitleVisible:false,//对于后退按钮标题是否应该可见
+          options={{
+            headerBackTitleVisible: false,//对于后退按钮标题是否应该可见
             headerMode: "none"
-          }} 
+          }}
         >
-        </Stack.Screen> 
+        </Stack.Screen>
         <Stack.Screen
           component={GoodsDetail}
           name='goodsDetail'
@@ -30,14 +30,16 @@ export default class Home extends Component {
           }}
         >
         </Stack.Screen>
-       
+
         <Stack.Screen
           component={SearchScreen}
           name='searchScreen'
           options={{
             title: "搜索",
             headerRight: () => {
-              return <TouchableWithoutFeedback onPress={() => { this.props.navigation.navigate('searchScreen', { visible: true }) }}><ImageBackground source={require('../assets/img/allIconAndlImage/3574.png')} style={{ width: 40, height: 40, marginRight: 15 }}></ImageBackground></TouchableWithoutFeedback>
+              // return <TouchableWithoutFeedback onPress={() => { 
+              //   this.props.navigation.navigate('searchScreen', { visible: true }) 
+              // }}><ImageBackground source={require('../assets/img/allIconAndlImage/3574.png')} style={{ width: 40, height: 40, marginRight: 15 }}></ImageBackground></TouchableWithoutFeedback>
             }
           }}
         >

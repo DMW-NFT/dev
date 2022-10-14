@@ -22,7 +22,8 @@ const DmwApiProvider = ({ children }) => {
     return fetch(BaseUrl + url, {
       method: "GET",
       headers: {
-        token: token,
+        'token': token,
+        'accept-language' :'zh'
       },
     }).then((res) => res.json());
   };
@@ -36,6 +37,7 @@ const DmwApiProvider = ({ children }) => {
       body: data,
       headers: {
         token: token,
+        'accept-language' :'zh'
       },
     })
       .then((res) => res.json())
