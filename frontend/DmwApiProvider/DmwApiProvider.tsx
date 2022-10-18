@@ -5,15 +5,21 @@ import { useDmwLogin } from "../loginProvider/constans/DmwLoginProvider";
 
 import storage from "../dmw/Storage/storage";
 const DmwApiProvider = ({ children }) => {
-  
+
   const [BaseUrl, setBaseUrl] = useState("https://dmw.cougogo.com");
   const { logOut } = useDmwLogin();
   const [show, setShow] = useState(false);
   const [time, setTime] = useState(2000);
   const [toastVal, setToastVal] = useState("温馨提示");
-  const [MoneyRouteState,setMoneyRouteState] = useState('createMoney')
-  
+  const [MoneyRouteState, setMoneyRouteState] = useState('createMoney')
 
+  // 地址切割
+  const shortenAddress = (address) => {
+    console.log(address,'*****************');
+    
+    let addressNew = address.slice(0,7) + '...' + address.slice(-4)
+    return addressNew
+  }
 
 
   const get = async (url) => {
@@ -23,11 +29,11 @@ const DmwApiProvider = ({ children }) => {
       method: "GET",
       headers: {
         'token': token,
-        'accept-language' :'zh'
+        'accept-language': 'zh'
       },
     }).then((res) => res.json());
   };
-  
+
 
   const post = async (url, data) => {
     let token = await GetStorage();
@@ -37,7 +43,7 @@ const DmwApiProvider = ({ children }) => {
       body: data,
       headers: {
         token: token,
-        'accept-language' :'zh'
+        'accept-language': 'zh'
       },
     })
       .then((res) => res.json())
@@ -118,7 +124,8 @@ const DmwApiProvider = ({ children }) => {
         toastVal,
         Toast,
         MoneyRouteState,
-        setMoneyRouteState
+        setMoneyRouteState,
+        shortenAddress
       }}
     >
       {children}

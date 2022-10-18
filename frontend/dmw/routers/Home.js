@@ -5,6 +5,7 @@ import HomeScreen from '../screen/Home/Home'
 import SearchScreen from '../screen/Home/Search'
 import CategrayScreen from '../screen/Home/Categray'
 import GoodsDetail from '../screen/Other/GoodsDetail'
+import QuotationDetails from '../screen/Other/QuotationDetails'
 const Stack = createStackNavigator()
 export default class Home extends Component {
   render() {
@@ -25,6 +26,14 @@ export default class Home extends Component {
         <Stack.Screen
           component={GoodsDetail}
           name='goodsDetail'
+          options={{
+            title: "",
+          }}
+        >
+        </Stack.Screen>
+        <Stack.Screen
+          component={QuotationDetails}
+          name='QuotationDetails'
           options={{
             title: "",
           }}

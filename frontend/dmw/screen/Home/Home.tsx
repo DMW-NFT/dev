@@ -56,7 +56,7 @@ const Home = (props) => {
 
   const geNftList = (type, page) => {
     setLoding(true)
-    let params = { type: type || 1, page: page || 1, limit: 2 }
+    let params = { type: type || 1, page: page || 1, limit: 4 }
     console.log(params,'传参');
     
     let nftDataObj = formData(params)
@@ -81,8 +81,10 @@ const Home = (props) => {
   const paging = (typename) => {
     setTypename(typename)
     if (typename == 'nft' && !NftList.length) {
+      setNftList([])
       geNftList(1, 1)
     } else if(!blindlist.length){
+      setblindlist([])
       geNftList(2, 1)
     }
   }
@@ -222,7 +224,9 @@ const Home = (props) => {
               numColumns={2}
               data={typename == 'nft' ? NftList : blindlist}
               renderItem={({ item }) => {
-                return <List list={item} type={1} navigatetoDetail={(id) => { props.navigation.navigate('goodsDetail', { id: id }) }} />
+                return <List list={item} type={1} navigatetoDetail={(id,unique_id,contract_address,token_id,network) =>
+                   { props.navigation.navigate('goodsDetail', { id: id,unique_id,contract_address,token_id,network }) }} 
+                   />
               }}
               keyExtractor={(item, index) => item.id}
               ListFooterComponent={() => {
@@ -230,7 +234,7 @@ const Home = (props) => {
                 return NftList.length ? <Text style={{ textAlign: 'center' }}>没有更多了</Text> : null
               }}
               // 下刷新
-              onEndReachedThreshold={0.3} //表示还有10% 的时候加载onRefresh 函数
+              onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
               onEndReached={getList}
             >
             </FlatList> : <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: '40%' }}>

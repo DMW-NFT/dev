@@ -23,7 +23,7 @@ const List = (props) => {
 
     return (
         <TouchableWithoutFeedback onPress={() => {
-            props.navigatetoDetail(1)
+            props.navigatetoDetail(1,item.unique_id,item.contract_address,item.token_id,item.network)
         }}>
             <View style={[styles.lis]} >
                 <View>
