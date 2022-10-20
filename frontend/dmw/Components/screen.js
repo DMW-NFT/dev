@@ -101,6 +101,7 @@ export default class CreateMoney extends Component {
 const styles = StyleSheet.create({
   modal_data: {
     marginBottom: 20,
+    zIndex:999
   },
   btn_data: {
     flexDirection: 'row',
@@ -146,7 +147,6 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     position: 'absolute',
     bottom: 0,
-    zIndex: 10,
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,

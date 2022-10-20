@@ -36,10 +36,10 @@ const DmwApiProvider = ({ children }) => {
 
 
   const post = async (url, data) => {
-    console.log(url,'url');
+    // console.log(url,'url');
     
     let token = await GetStorage();
-    console.log(token, "----------------");
+    // console.log(token, "----------------");
     return fetch(BaseUrl + url, {
       method: "POST",
       body: data,
@@ -70,7 +70,6 @@ const DmwApiProvider = ({ children }) => {
   };
 
   const GetStorage = () => {
-    console.log(123);
     return new Promise((resolve) => {
       storage
         .load({

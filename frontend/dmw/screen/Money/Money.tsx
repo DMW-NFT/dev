@@ -9,6 +9,7 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   TextInput,
+  FlatList
 } from "react-native";
 import React, { useContext, useState, useEffect, createRef, useRef } from "react";
 import Screen from "./BottomPopUpWindow";
@@ -18,7 +19,7 @@ import { Button, Card, Layout, Modal } from '@ui-kitten/components';
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
-
+import CryptoJS from 'crypto-js'
 
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
@@ -47,25 +48,67 @@ const Money = (props) => {
   const [password4, setpassword4] = useState("");
   const [password5, setpassword5] = useState("");
   const [password6, setpassword6] = useState("");
-  const {WalletInUse,setWalletInUse} = useDmwLogin()
-  const {disconnectWallet,connected} = useDmwWeb3()
-  const {MoneyRouteState,setMoneyRouteState} = useDmwApi()
+  const { WalletInUse, setWalletInUse } = useDmwLogin()
+  const { disconnectWallet, connected, currentWallet, lastConnected, connectWallet ,getNativeBalance } = useDmwWeb3()
+  const { MoneyRouteState, setMoneyRouteState, post, formData, Toast, shortenAddress } = useDmwApi()
+  const [loading, setLoding] = useState(false)
+  const [address, setaddress] = useState('--')
+  const [address1, setaddress1] = useState('--')
+  const [ThirdPartyBalance, setThirdPartyBalance] = useState([])
+  const [NativeBalance, setNativeBalance] = useState('')
   const axios = () => {
 
   };
 
+  useEffect(() => {
+    getAddressBalance(currentWallet)
+    getNativeBalance(currentWallet).then(res=>{
+      console.log(res,'以太坊余额');
+      setNativeBalance(res)
+      
+    })
+  }, [])
+  
+  const getAddressBalance = (address) => {
+    fetch(`https://deep-index.moralis.io/api/v2/${address}/erc20?chain=goerli`, {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        'X-API-Key': 'Lf0hom3miHg82XaKYaQg1Ej3LiyXmfO9kCSAsfws9XpUX1V9sh1isIsOorRf1xYf'
+      }
+    }).then((response) => {
+      const res = response.json()
+      res.then(data => {
+        if (WalletInUse == 1) {
+
+        } else {
+          // let balance = Number(data[0].balance) / 10**18
+          // console.log(balance);
+          setThirdPartyBalance(data)
+          console.log(data, '钱包余额')
+        }
+
+      })
+    });
+  }
+
   const empty = () => {
     setpassword('')
-    setpassword1('')
-    setpassword2('')
-    setpassword3('')
-    setpassword4('')
-    setpassword5('')
-    setpassword6('')
   }
-  useEffect(()=>{
-    setMoneyRouteState(connected || dmwWalletList.length  ? '12345'  : 'createMoney')
-  },[connected,dmwWalletList])
+  useEffect(() => {
+    if (dmwWalletList[0]) {
+      setaddress(shortenAddress(dmwWalletList[0]))
+    }
+
+    setaddress1(shortenAddress(currentWallet))
+    setMoneyRouteState(connected || dmwWalletList.length ? '12345' : 'createMoney')
+  }, [connected, dmwWalletList, currentWallet])
+
+
+
+  useEffect(() => {
+    console.log("monney useeffect currentwallet", currentWallet)
+  }, [currentWallet])
 
   useEffect(() => {
     let blackPointArry = [null, null, null, null, null, null]
@@ -91,8 +134,56 @@ const Money = (props) => {
   const changetype = (val) => {
     setType(val);
   };
+  const Switchwallet = (type) => {
+    setWalletInUse(type)
+    // var message = JSON.stringify()
+    var iv = 'aaaaaaaaaaaaaaaa';//随机生成长度为32的16进制字符串。IV称为初始向量，不同的IV加密后的字符串是不同的，加密和解密需要相同的IV。
+    // console.log(iv, 'iv')
+    // var key = "u38rOBN6lYOKHenn2oYSGmDbbGpp88ao";//秘钥。长度32的16进制字符串。
+    // var cryptkey = CryptoJS.enc.Hex.parse(key);//将16进制字符串转换为 WordArray对象
+    // console.log(cryptkey);
+    // var ciphertext = encrypt(message, key, iv);//加密
+    // console.log(ciphertext.toString(), 'jiami');
+    let wallet_address = ''
+    if (type == 1) {
+      wallet_address = dmwWalletList[0]
+    } else {
+      wallet_address = currentWallet
+    }
+    let str = JSON.stringify({ wallet_address: wallet_address })
+    let data = formData({ iv: iv, param: str })
+    post('/index/login/login_by_wallet', data).then(res => {
+      console.log(res, 'qianbao denglu');
+      if (res.code == 200) {
+        Toast('登录成功！')
+      }
+    }).catch(err => {
+      Toast(err.message)
+    })
+  }
 
+  const encrypt = (word, keyStr, ivStr) => {
+    const key = CryptoJS.enc.Latin1.parse(keyStr);
+    const iv = CryptoJS.enc.Latin1.parse(ivStr);
+    const encoded = CryptoJS.AES.encrypt(word, key, {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      adding: CryptoJS.pad.ZeroPadding
+    }).toString()
 
+    return encoded;
+  }
+
+  const randomString = (len) => {
+    len = len || 32;
+    var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';    /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+    var maxPos = $chars.length;
+    var pwd = '';
+    for (var i = 0; i < len; i++) {
+      pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+    }
+    return pwd;
+  }
 
   return (
     <SafeAreaView
@@ -131,14 +222,16 @@ const Money = (props) => {
           }}
         >
           <View style={styles.USDT} >
-          {
+            {
               WalletInUse == 1 ?
                 <Text style={styles.active}>当前登录</Text>
                 :
-                <TouchableWithoutFeedback onPress={()=>{setWalletInUse(1)}} >
-                <Image 
-                style={{ width: 36, height: 36, position: 'absolute', top: 0, right: 0 }} 
-                source={require('../../assets/img/money/SwitchwalletA.png')}></Image>
+                <TouchableWithoutFeedback onPress={() =>
+                  Switchwallet(1)
+                } >
+                  <Image
+                    style={{ width: 36, height: 36, position: 'absolute', top: 0, right: 0 }}
+                    source={require('../../assets/img/money/SwitchwalletA.png')}></Image>
                 </TouchableWithoutFeedback>
             }
             <Text style={styles.WName}>DMW</Text>
@@ -149,14 +242,14 @@ const Money = (props) => {
                 source={require("../../assets/img/money/WFCA.png")}
                 style={{ marginRight: 10, justifyContent: "center" }}
               >
-                <Text style={styles.CurrencyName}>USDT</Text>
+                <Text style={styles.CurrencyName}>ETH</Text>
               </ImageBackground>
 
               <Text style={styles.balance}>999.99</Text>
             </View>
-            <Text style={{ color: "#fff" }}>$10.000</Text>
+            {/* <Text style={{ color: "#fff" }}>$10.000</Text> */}
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ color: "#fff" }}>0xD652fw…G673C7C4</Text>
+              <Text style={{ color: "#fff" }}>{address}</Text>
               <Image
                 style={{ width: 10, height: 10, marginLeft: 5 }}
                 source={require("../../assets/img/money/copyW.png")}
@@ -164,45 +257,51 @@ const Money = (props) => {
             </View>
           </View>
 
-          <View style={styles.WFCA}>
-            {
-              WalletInUse == 2 ?
-                <Text style={styles.active}>当前登录</Text>
-                :
-                <TouchableWithoutFeedback onPress={()=>{setWalletInUse(2)}} >
-                <Image 
-                style={{ width: 36, height: 36, position: 'absolute', top: 0, right: 0 }} 
-                source={require('../../assets/img/money/SwitchwalletA.png')}></Image>
-                </TouchableWithoutFeedback>
-            }
+          {
+            connected ?
 
-            <Text style={[styles.WName, { color: "#897EF8" }]}>DMW</Text>
-            <View
-              style={{ flexDirection: "row", marginTop: 15, marginBottom: 14 }}
-            >
-              <ImageBackground
-                source={require("../../assets/img/money/USDT.png")}
-                style={{ marginRight: 10, justifyContent: "center" }}
-              >
-                <Text style={[styles.CurrencyName, { color: "#897EF8" }]}>
-                  USDT
-                </Text>
-              </ImageBackground>
+              <View style={styles.WFCA}>
+                {
+                  WalletInUse == 2 ?
+                    <Text style={styles.active}>当前登录</Text>
+                    :
+                    <TouchableWithoutFeedback onPress={() => Switchwallet(2)} >
+                      <Image
+                        style={{ width: 36, height: 36, position: 'absolute', top: 0, right: 0 }}
+                        source={require('../../assets/img/money/SwitchwalletA.png')}></Image>
+                    </TouchableWithoutFeedback>
+                }
 
-              <Text style={[styles.balance, { color: "#897EF8" }]}>999.99</Text>
-            </View>
-          <View style={{flexDirection:'row',justifyContent:'space-between',paddingRight:40}}>  
-            <Text style={{ color: "#897EF8" }}>$10.000</Text>
-            <Text style={{ color: "#897EF8" }} onPress={()=>{disconnectWallet()}}>断开链接</Text>
-          </View>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ color: "#897EF8" }}>0xD652fw…G673C7C4</Text>
-              <Image
-                style={{ width: 10, height: 10, marginLeft: 5 }}
-                source={require("../../assets/img/my/copy.png")}
-              ></Image>
-            </View>
-          </View>
+                <Text style={[styles.WName, { color: "#897EF8" }]}>外部钱包</Text>
+                <View
+                  style={{ flexDirection: "row", marginTop: 15, marginBottom: 14 }}
+                >
+                  <ImageBackground
+                    source={require("../../assets/img/money/USDT.png")}
+                    style={{ marginRight: 10, justifyContent: "center" }}
+                  >
+                    <Text style={[styles.CurrencyName, { color: "#897EF8" }]}>
+                     ETH
+                    </Text>
+                  </ImageBackground>
+
+                  <Text style={[styles.balance, { color: "#897EF8" }]}>{NativeBalance}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingRight: 20 }}>
+                  {/* <Text style={{ color: "#897EF8" }}>$10.000</Text> */}
+                  <Text></Text>
+                  <Text style={{ color: "#897EF8" }} onPress={() => { disconnectWallet() }}>断开链接</Text>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text style={{ color: "#897EF8" }}>{address1}</Text>
+                  <Image
+                    style={{ width: 10, height: 10, marginLeft: 5 }}
+                    source={require("../../assets/img/my/copy.png")}
+                  ></Image>
+                </View>
+              </View> : null
+
+          }
         </ScrollView>
       </View>
 
@@ -251,7 +350,7 @@ const Money = (props) => {
           </View>
         </TouchableWithoutFeedback>
 
-        <TouchableWithoutFeedback onPress={() => axios()}>
+        <TouchableWithoutFeedback>
           <View style={styles.ListService}>
             <Image
               style={styles.ListServiceImg}
@@ -284,85 +383,72 @@ const Money = (props) => {
       {/* tab栏 -- end */}
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={[styles.listbox]}>
-          <View style={styles.ListLi}>
-            <Image
-              style={{ width: 40, height: 40 }}
-              source={require("../../assets/img/money/list4.png")}
-            ></Image>
-            <View style={styles.ListLeftText}>
-              <Text style={{ fontSize: 16, fontWeight: "700", lineHeight: 24 }}>
-                999.99 USDT
-              </Text>
-              <Text style={{ fontSize: 12 }}>$10.000</Text>
-            </View>
-          </View>
+          {
 
-          <View style={styles.ListLi}>
-            <Image
-              style={{ width: 40, height: 40 }}
-              source={require("../../assets/img/money/list4.png")}
-            ></Image>
-            <View style={styles.ListLeftText}>
-              <Text style={{ fontSize: 16, fontWeight: "700", lineHeight: 24 }}>
-                999.99 USDT
-              </Text>
-              <Text style={{ fontSize: 12 }}>$10.000</Text>
-            </View>
-          </View>
+            ThirdPartyBalance.map((item, index) => (
+              <View style={styles.ListLi}>
+                <Image
+                  style={{ width: 40, height: 40 }}
+                  source={require("../../assets/img/money/list4.png")}
+                ></Image>
+                <View style={styles.ListLeftText}>
+                  <Text style={{ fontSize: 16, fontWeight: "700", lineHeight: 40 }}>
+                   {Number(item.balance) / 10**item.decimals + ' ' + item.symbol}
+                  </Text>
+                  {/* <Text style={{ fontSize: 12 }}>$10.000</Text> */}
+                </View>
+              </View>
 
-          <View style={styles.ListLi}>
-            <Image
-              style={{ width: 40, height: 40 }}
-              source={require("../../assets/img/money/list4.png")}
-            ></Image>
-            <View style={styles.ListLeftText}>
-              <Text style={{ fontSize: 16, fontWeight: "700", lineHeight: 24 }}>
-                999.99 USDT
-              </Text>
-              <Text style={{ fontSize: 12 }}>$10.000</Text>
-            </View>
-          </View>
+            ))
 
-          <View style={styles.ListLi}>
-            <Image
-              style={{ width: 40, height: 40 }}
-              source={require("../../assets/img/money/list4.png")}
-            ></Image>
-            <View style={styles.ListLeftText}>
-              <Text style={{ fontSize: 16, fontWeight: "700", lineHeight: 24 }}>
-                999.99 USDT
-              </Text>
-              <Text style={{ fontSize: 12 }}>$10.000</Text>
-            </View>
-          </View>
+          }
 
-          <View style={styles.ListLi}>
-            <Image
-              style={{ width: 40, height: 40 }}
-              source={require("../../assets/img/money/list4.png")}
-            ></Image>
-            <View style={styles.ListLeftText}>
-              <Text style={{ fontSize: 16, fontWeight: "700", lineHeight: 24 }}>
-                999.99 USDT
-              </Text>
-              <Text style={{ fontSize: 12 }}>$10.000</Text>
-            </View>
-          </View>
 
-          <View style={styles.ListLi}>
-            <Image
-              style={{ width: 40, height: 40 }}
-              source={require("../../assets/img/money/list4.png")}
-            ></Image>
-            <View style={styles.ListLeftText}>
-              <Text style={{ fontSize: 16, fontWeight: "700", lineHeight: 24 }}>
-                999.99 USDT
-              </Text>
-              <Text style={{ fontSize: 12 }}>$10.000</Text>
-            </View>
-          </View>
+
+
         </View>
       </ScrollView>
+
+
+      <View style={[styles.listbox]}>
+        {/* onTouchStart={() => {onEnableScroll(false);}}
+                                onMomentumScrollEnd={() => {onEnableScroll(true);}} */}
+
+        {/* {
+            !loading ? <FlatList
+              refreshing={false}
+              style={{ height: '55%' }}
+              ListEmptyComponent={() => {
+                return <Text style={{ textAlign: 'center', marginTop: '50%' }}>空空如也</Text>
+                // 列表为空展示改组件
+              }}
+              // 一屏幕展示几个
+              number={4}
+              //  2列显示
+              numColumns={2}
+              data={typename == 'nft' ? NftList : blindlist}
+              renderItem={({ item }) => {
+                return <List list={item} type={1} navigatetoDetail={(id,unique_id,contract_address,token_id,network) =>
+                   { props.navigation.navigate('goodsDetail', { id: id,unique_id,contract_address,token_id,network }) }} 
+                   />
+              }}
+              keyExtractor={(item, index) => item.id}
+              ListFooterComponent={() => {
+                // 声明尾部组件
+                return NftList.length ? <Text style={{ textAlign: 'center' }}>没有更多了</Text> : null
+              }}
+              // 下刷新
+              onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
+              onEndReached={getList}
+            >
+            </FlatList> : <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: '40%' }}>
+              <Spinner />
+            </View>
+
+          } */}
+
+
+      </View>
 
       <Screen
         style={[styles.Screen]}
@@ -450,6 +536,11 @@ const Money = (props) => {
 export default Money;
 
 const styles = StyleSheet.create({
+  listbox: {
+    marginVertical: 20,
+    marginHorizontal: 20,
+    paddingBottom: 100
+  },
   passinputfirst: { textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, },
   passinput: { textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, borderLeftWidth: 0, },
 

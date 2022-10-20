@@ -7,16 +7,19 @@ import {
   ScrollView,
   SafeAreaView,
   Pressable,
+  FlatList
 } from "react-native";
-import React, { Component, useEffect, useState } from "react";
+import React, { Component, useEffect, useState, Context } from "react";
 import Tabcolumn from "./Tabcolumn";
 import Screen from "../../Components/screen";
 import Search from "../../Components/Searchbox";
 import Lmodal from "./leftModal";
-import Api from "../../Request/http";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
-const api = new Api();
+import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
+import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
+import { Spinner } from '@ui-kitten/components';
+import List from "../../Components/List";
 
 const data = [
   {
@@ -42,19 +45,25 @@ const data = [
 const screenWidth = Dimensions.get("window").width;
 const scale = Dimensions.get("window").scale;
 const Myself = (props) => {
-      const [typename, setTypename] = useState("我的藏品");
-      const [visible, setVisible] = useState(false);
-      const [strText, setStrText] = useState();
-      const [lMvisible, setlMvisible] = useState(false);
-      const [userInfo, setUserInfo] = useState({});
-      const { username, setUsername } = useDmwLogin();
-      const { avatarUrl, setAvatarUrl } = useDmwLogin();
-      const { logOut } = useDmwLogin();
-      const { post } = useDmwApi();
+  const [typename, setTypename] = useState("我的藏品");
+  const [visible, setVisible] = useState(false);
+  const [strText, setStrText] = useState();
+  const [lMvisible, setlMvisible] = useState(false);
+  const [userInfo, setUserInfo] = useState({});
+  const { username, setUsername } = useDmwLogin();
+  const { avatarUrl, setAvatarUrl } = useDmwLogin();
+  const [loading, setLoding] = useState(false)
+  const [myNftList, setmyNftList] = useState([])
 
-      const visibleFn = () => {
-       setVisible(true);
-       };
+  // Context方法
+  const { logOut } = useDmwLogin();
+  const { post, formData } = useDmwApi();
+  const { currentWallet } = useDmwWeb3()
+  const { dmwWalletList } = useDmwWallet()
+
+  const visibleFn = () => {
+    setVisible(true);
+  };
 
   const close = () => {
     setlMvisible(false);
@@ -69,10 +78,49 @@ const Myself = (props) => {
         console.log(userInfo, "用户信息打印");
         setUsername(res.data.nickname);
         setAvatarUrl(res.data.avatar_url);
+        getMyNft('/index/nft/get_my_nft', { network: 'Goerli' })
       }
     });
-    return () => { };
+
+   
+
   }, []);
+
+  useEffect(() => {
+    setmyNftList([])
+    if(typename == '我创建的'){
+      getMyNft('/index/nft/get_my_create_nft_by_search', { keyword: '', })
+    }else if(typename == '事件'){
+    }else if(typename=='我喜欢的'){
+      getMyNft('/index/nft/get_my_likes_nft_by_search', { keyword: '', })
+    }else if(typename=='我的藏品'){
+      getMyNft('/index/nft/get_my_nft', { network: 'Goerli' })
+    }
+  }, [typename])
+
+
+  useEffect(() => {
+    setLoding(false)
+  }, [myNftList])
+
+  const getMyNft = (posturl:string, data) => {
+    let params = {}
+    if(data){
+      params = formData(data)
+    }
+    
+    setLoding(true)
+    console.log(posturl,'url,yemian');
+    
+    post(posturl, params).then(res => {
+      console.log(res, '回调----------');
+      setmyNftList(res.data.result)
+    }).catch(err=>{
+      console.log(err,'----');
+
+      
+    })
+  }
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
@@ -158,13 +206,59 @@ const Myself = (props) => {
         </View>
         {/* <Text onPress={() => this.visible()}>123</Text> */}
 
-        <Screen
+        {
+          visible ? 
+          <Screen
           title="select filter"
           style={[styles.Screen]}
           visible={visible}
           close={() => close()}
           datalist={data}
-        ></Screen>
+        ></Screen> : null
+        }
+
+
+
+
+        <View style={{paddingRight:20,paddingLeft:20,paddingTop:20,zIndex:1}}>
+          {/*  navigatetoDetail={(id, unique_id, contract_address, token_id, network)
+                   =>
+                  { props.navigation.navigate('goodsDetail', { id: id, unique_id, contract_address, token_id, network }) }} */}
+          {
+            !loading ? <FlatList
+              refreshing={false}
+              style={{ height: '55%',zIndex:1 }}
+              ListEmptyComponent={() => {
+                return <Text style={{ textAlign: 'center', marginTop: '50%' }}>空空如也</Text>
+                // 列表为空展示改组件
+              }}
+              // 一屏幕展示几个
+              number={4}
+              //  2列显示
+              numColumns={2}
+              data={myNftList}
+              renderItem={({ item }) => {
+                return <List list={item} type={4} 
+                navigatetoDetail={(id,unique_id,contract_address,token_id,network) =>
+                  { props.navigation.navigate('goodsDetail', { id: id,unique_id,contract_address,token_id,network }) }}
+                />
+              }}
+              keyExtractor={(item, index) => item.id}
+              ListFooterComponent={() => {
+                // 声明尾部组件
+                return myNftList && myNftList.length ? <Text style={{ textAlign: 'center' }} >没有更多了</Text> : null
+              }}
+              // 下刷新
+              onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
+
+            >
+            </FlatList> : <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: '40%' }}>
+              <Spinner />
+            </View>
+//               onEndReached={}
+          }
+        </View>
+
       </View>
       <Lmodal
         goto={(path) => {
@@ -174,6 +268,8 @@ const Myself = (props) => {
         close={() => close()}
         visible={lMvisible}
       ></Lmodal>
+
+
 
       {/* <Image  style={{width:50,height:50}}
         source={{uri:imgurl}}></Image> */}
@@ -187,6 +283,7 @@ const styles = StyleSheet.create({
   Screen: {
     width: screenWidth,
     position: "absolute",
+    zIndex:100
   },
   index_box: {
     paddingLeft: 20,

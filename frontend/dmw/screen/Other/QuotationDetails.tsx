@@ -473,12 +473,6 @@ const styles = StyleSheet.create({
         marginRight:20,
         lineHeight:40,
         textAlign:'center'
-//         width: 470px;
-// height: 80px;
-// background: #FFFFFF;
-// border: 2px solid #C2C2C2;
-// opacity: 1;
-// border-radius: 20px;
     },
     BuyBtnQ: {
         width: 120,

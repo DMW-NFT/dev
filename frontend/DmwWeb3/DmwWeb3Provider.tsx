@@ -17,26 +17,33 @@ const DmwWeb3Provider = ({ children }) => {
     const [currentWallet, setCurrentWallet] = useState('');
     const [currentChainId, setCurrenChainId] = useState('5');
     const [connected, setConnected] = useState(false);
+    const [lastConnected, setLastConnected] = useState(true)
     const [transactionMap, setTransactionMap] = useState({})
     const [transactionList, setTransactionList] = useState([])
     const web3 = new Web3()
 
 
     useEffect(() => {
-        if (connector.connected){
+        if (connector.connected) {
             setCurrentWallet(connector.accounts[0]);
+            setConnected(true);
             setCurrenChainId(String(connector.chainId));
-            console.log("is connected!---,-,-",currentWallet)
+            console.log("is connected!---,-,-", currentWallet, connector.accounts[0])
         }
-    },[])
+    }, [connected])
+
+
+
     useEffect(() => {
         (connected && currentChainId) ? web3.eth.setProvider(getProvider(currentChainId)) : null
     }, [currentChainId, connected])
 
-    
+
     useEffect(() => {
         console.log(transactionList)
         console.log(transactionMap)
+        console.log(transactionList[transactionList.length - 1])
+
     }, [transactionList, transactionMap])
 
     // useEffect(() =>{
@@ -59,18 +66,31 @@ const DmwWeb3Provider = ({ children }) => {
     // }, [])
 
 
+    // 
+    const getNativeBalance = (address) => {
+        web3.eth.setProvider(getProvider('5'))
+        const balance = web3.eth.getBalance(address).then((res) => {
+            return web3.utils.fromWei(res, 'ether')
+        })
+        return balance
+    }
+
     // 链接第三方钱包
     const connectWallet = async () => {
         console.log('Connecting')
         connector.connect().then((res) => {
+            console.log(res);
             setConnected(true);
-            setCurrentWallet(connector.accounts[0]);
+            setCurrentWallet(res.accounts[0]);
+            console.log(res.accounts[0], '????????')
             setCurrenChainId(connector.chainId);
+            setLastConnected(true)
             web3.eth.setProvider(getProvider(currentChainId));
             web3.eth.getBlockNumber().then((res => console.log(res)))
             return res
         }).catch(error => {
             // Error returned when rejected
+            console.log(error)
             return error
         });;
 
@@ -89,10 +109,10 @@ const DmwWeb3Provider = ({ children }) => {
         console.log('disonnecting');
         connector.killSession();
         setConnected(false);
-
+        setLastConnected(false)
         if (!connector.connected) {
             console.log('disconnected');
-            // setCurrentWallet(connector.accounts[0]);
+            setCurrentWallet(null);
             // setCurrenChainId(connector.chainId);
         }
     }
@@ -210,19 +230,23 @@ const DmwWeb3Provider = ({ children }) => {
     // 检测地址：account是否向某地址：operator授权所有NFT地址nftContractAddress，返回bool，true为已授权，false反之
     const checkIsApproveForAll = (nftContractAddress: string, account: string, operator: string, contractType: string): boolean => {
 
-        web3.eth.setProvider(getProvider(currentChainId));
+        web3.eth.setProvider(getProvider('5'));
         const contract = new web3.eth.Contract((contractType == "1155") ? NFT1155ABI : NFT721ABI, nftContractAddress)
-        const isApprovedForAll = contract.methods.isApprovedForAll(account, operator).call().then((res) => {
-            // console.log(res)
-            // res ? console.log(nftContractAddress, 'is approved to ', operator) : console.log(nftContractAddress, 'is not approved to ', operator)
-            return res
-        })
+        const isApprovedForAll = contract.methods.isApprovedForAll(account, '0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4').call()
+        return isApprovedForAll
+    }
+    const getBalanceOf1155 = (nftContractAddress: string, account: string, tokenId: number): number => {
+
+        web3.eth.setProvider(getProvider('5'));
+        const contract = new web3.eth.Contract(NFT1155ABI, nftContractAddress)
+        const isApprovedForAll = contract.methods.balanceOf(account, tokenId).call()
         return isApprovedForAll
     }
 
+
     const syncTransactionSatus = async (txHash: string) => {
         web3.eth.setProvider(getProvider('5'));
-        setTransactionList([...[transactionList, txHash]])
+        setTransactionList([...transactionList, txHash])
         setTransactionMap({ ...transactionMap, [txHash]: { "payload": null, "state": "pending" } })
 
         let syncInterval = setInterval(() => {
@@ -380,12 +404,15 @@ const DmwWeb3Provider = ({ children }) => {
             });
     }
 
-    
-    const createListing = (assetContract:string, tokenId:number, startTime:number, secondsUntilEndTime:number, quantityToList:number, currencyToAccept:string, reservePricePerToken:string, buyoutPricePerToken:string, listingType:number) => {
+
+    const createListing = (assetContract: string, tokenId: number, startTime: number, secondsUntilEndTime: number, quantityToList: number, reservePricePerToken: string, buyoutPricePerToken: string, listingType: number) => {
         web3.eth.setProvider(getProvider(currentChainId));
         const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
-        const rawdata = contract.methods.createListing([assetContract, tokenId, startTime, secondsUntilEndTime, quantityToList, currencyToAccept, web3.utils.toWei(reservePricePerToken), web3.utils.toWei(buyoutPricePerToken), listingType]).encodeABI()
+        console.log(web3.utils.toWei(reservePricePerToken, 'ether'))
+        console.log(assetContract, tokenId, startTime, secondsUntilEndTime, quantityToList, reservePricePerToken, buyoutPricePerToken, listingType)
+        const rawdata = contract.methods.createListing([assetContract, tokenId, startTime, secondsUntilEndTime, quantityToList, '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', web3.utils.toWei(reservePricePerToken, 'ether'), web3.utils.toWei(buyoutPricePerToken, 'ether'), listingType]).encodeABI()
+
         const tx = {
             from: currentWallet, // Required
             to: contractAddress, // Required (for non contract deployments)
@@ -395,25 +422,26 @@ const DmwWeb3Provider = ({ children }) => {
             value: web3.utils.toWei("0", 'ether'), // Optional
             // nonce: "0x0114", // Optional
         };
+        console.log(tx);
         connector
-        .sendTransaction(tx)
+            .sendTransaction(tx)
 
-        .then(result => {
-            // Returns transaction id (hash)
-            console.log(result);
-            syncTransactionSatus(result);
-        })
-        .catch(error => {
-            // Error returned when rejected
-            console.error(error);
-        });
+            .then(result => {
+                // Returns transaction id (hash)
+                console.log(result);
+                syncTransactionSatus(result);
+            })
+            .catch(error => {
+                // Error returned when rejected
+                console.error(error);
+            });
     }
 
-    const ApprovalForAll = (operator: string, approved: boolean) => {
+    const ApprovalForAll = (contractAddress: string) => {
         web3.eth.setProvider(getProvider(currentChainId));
-        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+
         const contract = new web3.eth.Contract(NFT1155ABI, contractAddress)
-        const rawdata = contract.methods.setApprovalForAll(operator, approved).encodeABI()
+        const rawdata = contract.methods.setApprovalForAll('0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4', true).encodeABI()
         const tx = {
             from: currentWallet, // Required
             to: contractAddress, // Required (for non contract deployments)
@@ -446,7 +474,7 @@ const DmwWeb3Provider = ({ children }) => {
 
     return (
 
-        <DmwWeb3Context.Provider value={{ currentWallet, connector, connected,setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT }}>
+        <DmwWeb3Context.Provider value={{getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing }}>
             {children}
         </DmwWeb3Context.Provider>
     )

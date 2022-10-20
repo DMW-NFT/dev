@@ -22,6 +22,9 @@ import TradeSuccessfully from '../screen/Myself/TradeSuccessfully'
 import CollectionDetails from '../screen/Other/CollectionDetails'
 import MyCollection from '../screen/Myself/MyCollection'  
 import Sell from '../screen/Myself/Sell'  //卖出
+
+import GoodsDetail from '../screen/Other/GoodsDetail'
+import QuotationDetails from '../screen/Other/QuotationDetails'
 const Stack=createStackNavigator()
 export default class Home extends Component {
   render() {
@@ -202,6 +205,23 @@ export default class Home extends Component {
              }}
           >  
          </Stack.Screen>
+
+         <Stack.Screen
+          component={GoodsDetail}
+          name='goodsDetail'
+          options={{
+            title: "",
+          }}
+        >
+        </Stack.Screen>
+        <Stack.Screen
+          component={QuotationDetails}
+          name='QuotationDetails'
+          options={{
+            title: "",
+          }}
+        >
+        </Stack.Screen>
 
       </Stack.Navigator>
     )

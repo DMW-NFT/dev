@@ -10,21 +10,22 @@ const List = (props) => {
     // 1是首页进入
     // 2是交易里的寄售  
     // 3是交易里的拍卖
+    // 4是我的页面
     const [refreshing, setrefreshing] = useState(false)
     const [imgs, setimgs] = useState(true)
     const [type, setype] = useState(props.type)
     const item = props.list
     const [imgurl, setImgurl] = useState(item.image_attachment_url)
 
-    useEffect(() => {
-        console.log(imgurl);
+    // useEffect(() => {
+    //     console.log(imgurl);
 
-    }, [imgurl])
+    // }, [imgurl])
 
     return (
         <TouchableWithoutFeedback onPress={() => {
-            console.log(1,item.unique_id,item.contract_address,item.token_id,item.network,'详情传参');
-            props.navigatetoDetail(1,item.unique_id,item.contract_address,item.token_id,item.network)
+            console.log(1, item.unique_id, item.contract_address, item.token_id, item.network, '详情传参');
+            props.navigatetoDetail(1, item.unique_id, item.contract_address, item.token_id, item.network)
         }}>
             <View style={[styles.lis]} >
                 <View>
@@ -39,6 +40,16 @@ const List = (props) => {
                                     {
                                         type == 3 ?
                                             <Text style={[styles.time, styles.timeBox]} >4h 16m 27s</Text> : <Text></Text>
+                                    }
+                                    {
+                                        type == 4 ? 
+                                        <View style={{
+                                            width:22,height:22,backgroundColor:'rgba(255,255,255,0.2)',borderWidth:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingLeft:2,paddingRight:2,position:'absolute',top:10,right:10,
+                                           }}>
+                                            <Text style={{width:4,height:4,backgroundColor:'#666666',borderRadius:2}}></Text>
+                                            <Text style={{width:4,height:4,backgroundColor:'#666666',borderRadius:2}}></Text>
+                                            <Text style={{width:4,height:4,backgroundColor:'#666666',borderRadius:2}}></Text>
+                                           </View> : null
                                     }
                                 </ImageBackground> :
 
@@ -61,13 +72,25 @@ const List = (props) => {
                     </View>
                 </View>
                 <View style={[styles.lisBottom, { height: type == 3 ? 248 / 2 : 100 }]} >
-                    <Text style={[styles.name]} numberOfLines={1}>{item.collection_name || '--'}</Text>
-                    <Text numberOfLines={2} style={[styles.collName]}>
-                        {item.nft_name || ''}
-                    </Text>
+                    {
+                        type != 4 ?
+                            <>
+                                <Text style={[styles.name]} numberOfLines={1}>{item.collection_name || '--'}</Text>
+                                <Text numberOfLines={2} style={[styles.collName]}>
+                                    {item.nft_name || ''}
+                                </Text></> :
+                            <>
+                                <Text style={[styles.name]} numberOfLines={1}>{item.collection_name || '--'}</Text>
+                                <Text numberOfLines={2} style={[styles.collName]}>
+                                    {item.nft_name || ''}
+                                </Text>
+                            </>
+                    }
                     <View>
+
+
                         {
-                            type != 3 ?
+                            type != 3 && type != 4 ?
                                 <View style={[styles.priceBox]}>
                                     <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
                                         <Text style={[styles.price]}>{item.reserve_price_per ? item.reserve_price_per.number : '--'}</Text>
@@ -78,22 +101,32 @@ const List = (props) => {
                                         <Text style={[styles.like]} >{item.likes}</Text>
                                     </View>
                                 </View> :
-                                <View style={[styles.auction]}>
-                                    {/* <Text style={[styles.name]} numberOfLines={1}>当前出价</Text> */}
-                                    <Text style={[styles.name]} numberOfLines={1}>起拍价</Text>
-                                    <View style={[styles.priceBox]}>
-                                        <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                            <Text style={[styles.price]}>4,218</Text>
-                                            <Text style={[styles.coinType]}>Wfca</Text>
-                                        </View>
-                                        {/* <Text style={[styles.button]}>
+                                type == 3 ?
+                                    <View style={[styles.auction]}>
+                                        {/* <Text style={[styles.name]} numberOfLines={1}>当前出价</Text> */}
+                                        <Text style={[styles.name]} numberOfLines={1}>起拍价</Text>
+                                        <View style={[styles.priceBox]}>
+                                            <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                                                <Text style={[styles.price]}>4,218</Text>
+                                                <Text style={[styles.coinType]}>Wfca</Text>
+                                            </View>
+                                            {/* <Text style={[styles.button]}>
                                             查看
                                         </Text> */}
-                                        <Text style={[styles.button, { backgroundColor: '#897EF8' }]}>
-                                            出价
-                                        </Text>
+                                            <Text style={[styles.button, { backgroundColor: '#897EF8' }]}>
+                                                出价
+                                            </Text>
+                                        </View>
+                                    </View> :
+                                    <View style={[styles.auction]}>
+
+                                        <View style={[styles.priceBox]}>
+                                            <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                                                <Text style={{ fontWeight: '700' }}>#{item.token_id}</Text>
+                                            </View>
+                                        </View>
                                     </View>
-                                </View>
+
                         }
                     </View>
                 </View>
