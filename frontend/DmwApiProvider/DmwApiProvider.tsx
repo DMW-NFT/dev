@@ -36,6 +36,8 @@ const DmwApiProvider = ({ children }) => {
 
 
   const post = async (url, data) => {
+    console.log(url,'url');
+    
     let token = await GetStorage();
     console.log(token, "----------------");
     return fetch(BaseUrl + url, {

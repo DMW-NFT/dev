@@ -16,6 +16,7 @@ import List from '../../Components/List';
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { Spinner } from '@ui-kitten/components';
 import {Card, Modal } from '@ui-kitten/components';
+import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider';
 
 
 
@@ -40,6 +41,13 @@ const Home = (props) => {
   const [lastbpage, setlastbpage] = useState(null)
   const [password, setpassword] = useState("");
   const [passwordlist, setpasswordlist] = useState([]);
+  const {buyNFT,currentWallet,transactionMap,transactionList,connectWallet,connected} = useDmwWeb3()
+
+
+  useEffect(()=>{
+    console.log("Home useEffe currentWallet,connected",currentWallet)
+  },[currentWallet,connected])
+
   useEffect(() => {
     let blackPointArry = [null, null, null, null, null, null]
     let arr = password.split('');
@@ -51,7 +59,7 @@ const Home = (props) => {
 
   useEffect(() => {
     console.log('post请求');
-
+    // console.log("currenwallet !!!!",currentWallet)
     get('/index/banner/list').then(res => {
       console.log(res, 'banner');
       setImglist(res.data)
@@ -64,8 +72,10 @@ const Home = (props) => {
   }, [])
 
   useEffect(() => {
-    setLoding(false)
-  }, [NftList])
+    setTimeout(() => {
+      setLoding(false)
+    }, 2000);
+  }, [NftList,blindlist])
 
   const geNftList = (type, page) => {
     setLoding(true)
@@ -73,20 +83,29 @@ const Home = (props) => {
     console.log(params,'传参');
     
     let nftDataObj = formData(params)
-    post('/index/home/get_home_nft', nftDataObj).then(res => {
+    post('/index/nft/get_home_nft_by_search', nftDataObj).then(res => {
       console.log(res.data.data, 'nft数据');
       if(type == 1){
-        setNftList([...NftList,...res.data.data])
+        console.log(852);
+        
+        if(page == 1){
+          setNftList([...res.data.data])
+        }else{
+          setNftList([...NftList,...res.data.data])
+        }
+        
         setlast_page(res.data.last_page)
-        setLoding(false)
+        // setLoding(false)
       }else{
-        setblindlist([...blindlist,...res.data.data])
+        if(page == 1){
+          setblindlist([...res.data.data])
+        }else{
+          setblindlist([...blindlist,...res.data.data])
+        }
+        // setblindlist([...blindlist,...res.data.data])
         setlastbpage(res.data.last_page)
-        setLoding(false)
+        // setLoding(false)
       }
-      
-     
-      
     })
   }
 
@@ -96,7 +115,7 @@ const Home = (props) => {
     if (typename == 'nft' && !NftList.length) {
       setNftList([])
       geNftList(1, 1)
-    } else if(!blindlist.length){
+    } else if(typename != 'nft' && !blindlist.length){
       setblindlist([])
       geNftList(2, 1)
     }
@@ -261,7 +280,7 @@ const Home = (props) => {
       </View>
 
 
-      <Modal
+      {currentWallet&&<Modal
         visible={Modalvisible}
         backdropStyle={{ "backgroundColor": 'rgba(0, 0, 0, 0.5)' }}
         onBackdropPress={() => { setModalvisible(false) }}>
@@ -309,7 +328,7 @@ const Home = (props) => {
             </View>
           </View>
         </Card>
-      </Modal>
+      </Modal>}
 
 
     </SafeAreaView>

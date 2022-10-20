@@ -15,9 +15,15 @@ import Screen from "./BottomPopUpWindow";
 import Lmodal from "./leftModal";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import { Button, Card, Layout, Modal } from '@ui-kitten/components';
+import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
+import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
+import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
+
+
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
 const scale = Dimensions.get("window").scale;
+
 const Money = (props) => {
   // inputRef = React.createRef();
   const inputRefX = useRef(null);
@@ -41,7 +47,9 @@ const Money = (props) => {
   const [password4, setpassword4] = useState("");
   const [password5, setpassword5] = useState("");
   const [password6, setpassword6] = useState("");
-
+  const {WalletInUse,setWalletInUse} = useDmwLogin()
+  const {disconnectWallet,connected} = useDmwWeb3()
+  const {MoneyRouteState,setMoneyRouteState} = useDmwApi()
   const axios = () => {
 
   };
@@ -55,6 +63,9 @@ const Money = (props) => {
     setpassword5('')
     setpassword6('')
   }
+  useEffect(()=>{
+    setMoneyRouteState(connected || dmwWalletList.length  ? '12345'  : 'createMoney')
+  },[connected,dmwWalletList])
 
   useEffect(() => {
     let blackPointArry = [null, null, null, null, null, null]
@@ -63,21 +74,13 @@ const Money = (props) => {
     arr.map((item, index) => {
       blackPointArry[index] = item;
     })
-
-    console.log(blackPointArry, '----');
-
-    console.log(arr, 'shuzu ');
-    console.log(password);
     setpasswordlist(blackPointArry)
-    console.log(password.length);
   }, [password])
 
 
   const close = () => {
-    console.log(456);
     setVisible(false);
     setLMvisible(false);
-    console.log(lMvisible);
   };
   const lMvisibleopen = () => {
     setLMvisible(true);
@@ -128,7 +131,16 @@ const Money = (props) => {
           }}
         >
           <View style={styles.USDT} >
-            <Text style={styles.active}>当前登录</Text>
+          {
+              WalletInUse == 1 ?
+                <Text style={styles.active}>当前登录</Text>
+                :
+                <TouchableWithoutFeedback onPress={()=>{setWalletInUse(1)}} >
+                <Image 
+                style={{ width: 36, height: 36, position: 'absolute', top: 0, right: 0 }} 
+                source={require('../../assets/img/money/SwitchwalletA.png')}></Image>
+                </TouchableWithoutFeedback>
+            }
             <Text style={styles.WName}>DMW</Text>
             <View
               style={{ flexDirection: "row", marginTop: 15, marginBottom: 14 }}
@@ -153,7 +165,17 @@ const Money = (props) => {
           </View>
 
           <View style={styles.WFCA}>
-            <Image style={{ width: 36, height: 36, position: 'absolute', top: 0, right: 0 }} source={require('../../assets/img/money/SwitchwalletA.png')}></Image>
+            {
+              WalletInUse == 2 ?
+                <Text style={styles.active}>当前登录</Text>
+                :
+                <TouchableWithoutFeedback onPress={()=>{setWalletInUse(2)}} >
+                <Image 
+                style={{ width: 36, height: 36, position: 'absolute', top: 0, right: 0 }} 
+                source={require('../../assets/img/money/SwitchwalletA.png')}></Image>
+                </TouchableWithoutFeedback>
+            }
+
             <Text style={[styles.WName, { color: "#897EF8" }]}>DMW</Text>
             <View
               style={{ flexDirection: "row", marginTop: 15, marginBottom: 14 }}
@@ -169,7 +191,10 @@ const Money = (props) => {
 
               <Text style={[styles.balance, { color: "#897EF8" }]}>999.99</Text>
             </View>
+          <View style={{flexDirection:'row',justifyContent:'space-between',paddingRight:40}}>  
             <Text style={{ color: "#897EF8" }}>$10.000</Text>
+            <Text style={{ color: "#897EF8" }} onPress={()=>{disconnectWallet()}}>断开链接</Text>
+          </View>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={{ color: "#897EF8" }}>0xD652fw…G673C7C4</Text>
               <Image
@@ -370,9 +395,9 @@ const Money = (props) => {
           />
           <View style={{ justifyContent: 'flex-end', flexDirection: 'row', position: 'absolute', top: 10, right: 20, width: 22, height: 22 }}>
             <TouchableWithoutFeedback onPress={() => { setModalvisible(false) }}>
-            <Image style={styles.colose} source={require('../../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png')}></Image>
+              <Image style={styles.colose} source={require('../../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png')}></Image>
             </TouchableWithoutFeedback>
-            
+
           </View>
           <View>
             <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>请输入支付密码</Text>
@@ -393,7 +418,7 @@ const Money = (props) => {
                 passwordlist.map((item, index) => (
                   <Text style={[index == 0 ? styles.passinputfirst : styles.passinput]}>{item ? "●" : ''}</Text>
                 ))
-}
+              }
             </View>
 
 

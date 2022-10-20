@@ -9,6 +9,7 @@ import {
 import React, { useState, useContext, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 const scale = Dimensions.get("window").scale;
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -23,6 +24,8 @@ const Lmodal = (props) => {
   const FNZ = () => {
     props.openModal()
   }
+
+  const {disconnectWallet , connectWallet} = useDmwWeb3()
 
   return (
     <View style={{ position: "absolute" }}>
@@ -95,7 +98,7 @@ const Lmodal = (props) => {
           </TouchableWithoutFeedback>
 
 
-          <TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={()=>{connectWallet()}}>
             <View style={styles.listBox}>
               <Image
                 style={styles.Limg}

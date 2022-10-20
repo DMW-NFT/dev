@@ -54,7 +54,7 @@ setLoding(false)
 let nftObj = res.data.nft_data
 nftObj.contract_address = shortenAddress(res.data.nft_data.contract_address)
 setDetailsObj(res.data.nft_data)
-setImgurl(res.data.nft_data.image_attachment)
+setImgurl(res.data.nft_data.image_attachment_url)
 // console.log('====================================');
 console.log(res.data.nft_data);
 // console.log('====================================');

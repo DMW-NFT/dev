@@ -6,6 +6,9 @@ import List from '../../Components/List'
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider'
 import { Spinner } from '@ui-kitten/components';
 import { Button, Card, Layout, Modal } from '@ui-kitten/components';
+import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider'
+import { useDmwWallet } from '../../../DmwWallet/DmwWalletProvider'
+
 const QuotationDetails = (props) => {
 
     const inputRefX = useRef(null);
@@ -13,12 +16,13 @@ const QuotationDetails = (props) => {
     const [showoffer, setshowoffer] = useState(false)
     const [loading, setLoding] = useState(true) //loading
     const [detailsObj, setDetailsObj] = useState({})
-    const [imgurl, setImgurl] = useState(props.route.params.imgUrl)
+    const [imgurl, setImgurl] = useState(null)
     const [likes, setlikes] = useState(props.route.params.likes)
     const [imgShow, setimgShow] = useState(true)
     const [userInfo, setUserInfo] = useState({ userAvatar: props.route.params.userAvatar, shortenAddress: props.route.params.shortenAddress })
-    const [orderList, setOrderList] = useState({quantity:0})
+    const [orderList, setOrderList] = useState({quantity:1})
     const [Price, setPrice] = useState(null)
+    const [UnitPrice, setUnitPrice] = useState({UnitPrice:null,Company:''})
     const [NftInfo, setNftInfo] = useState(null)
     const [collection, setcollection] = useState(null)
     const [offersList, setOffersList] = useState([])
@@ -29,32 +33,77 @@ const QuotationDetails = (props) => {
     const [BuyNumber, setBuyNumber] = useState('1')
     // Context 方法
     const { Toast, post, get, formData, shortenAddress } = useDmwApi()
+    const {buyNFT,currentWallet,transactionMap,transactionList,connectWallet} = useDmwWeb3()
+    const {dmwBuyNFT} = useDmwWallet()
 
-
+    const [latestHash,setLatestHash] =useState()
     const empty = () => {
         setpassword('')
-
     }
 
     useEffect(() => {
-        let blackPointArry = [null, null, null, null, null, null]
+        transactionList&&setLatestHash(transactionList[transactionList.length -1])
+    }, [transactionList])
 
+    useEffect(() => {
+        console.log("QuotationDetail currentWallet:",currentWallet);
+
+    },[currentWallet])
+    useEffect (() => {
+        if (transactionMap&&transactionMap[latestHash]){
+            console.log(transactionMap[latestHash])
+            if (transactionMap[latestHash].state == "comfirmed") {
+                Toast('购买成功')
+
+            }
+        }
+        
+    },[transactionMap])
+
+    useEffect(() => {
+        let blackPointArry = [null, null, null, null, null, null]
         let arr = password.split('');
         arr.map((item, index) => {
             blackPointArry[index] = item;
         })
-
         console.log(blackPointArry, '----');
 
         console.log(arr, 'shuzu ');
         console.log(password);
         setpasswordlist(blackPointArry)
         console.log(password.length);
+        if(password.length == 6){
+            console.log({
+                listingId:orderList.listing_id,
+                buyFor:currentWallet,quantityToBuy:Number(BuyNumber),
+                currency:orderList.currency,
+                totalPrice:String(UnitPrice.UnitPrice * Number(BuyNumber))
+            });
+
+            // 第三方钱包购买
+            // try {
+            //     new buyNFT(
+            //         String(orderList.listing_id),Number(BuyNumber),orderList.currency,String(UnitPrice.UnitPrice * Number(BuyNumber))
+            //     )
+            // } catch (error) {
+            //     console.log("catch!!!",error)
+            // }
+
+            // 本地钱包购买
+                try {
+                    dmwBuyNFT('123456',String(orderList.listing_id),Number(BuyNumber),orderList.currency,String(UnitPrice.UnitPrice * Number(BuyNumber)))
+                } catch (err) {
+                    console.log("catch!!!",err);
+                }
+
+                
+            Toast('触发购买')
+        }
     }, [password])
 
     useEffect(()=>{
         let newBuyNumber = null;
-        if(Number(BuyNumber) > orderList.quantity){
+        if(Number(BuyNumber) > orderList.quantity && orderList){
             Toast('剩余数量不足！')
             newBuyNumber = String(orderList.quantity)
         }else if(Number(BuyNumber) < 0){
@@ -81,10 +130,12 @@ const QuotationDetails = (props) => {
         let data = { order_no: props.route.params.id }
         let formdata = formData(data)
         post('/index/order/get_order_details', formdata).then(res => {
-            console.log(res.data.offers, '订单接口');
+            console.log(res.data, '订单接口');
             setOrderList(res.data)
+            setImgurl(res.data.nft.image_attachment_url)
             setNftInfo(res.data.nft)
             setPrice(`${res.data.reserve_price_per.number} ${res.data.reserve_price_per.currency_name}`)
+            setUnitPrice({UnitPrice:res.data.reserve_price_per.number,Company:res.data.reserve_price_per.currency_name})
             setcollection(res.data.nft.collection)
             setOffersList(res.data.offers)
         })
@@ -103,7 +154,7 @@ const QuotationDetails = (props) => {
     }
     // 确认购买
     const ConfirmPurchase = () => {
-       console.log()
+       openPassWordModal()
     }
 
     return (
@@ -265,7 +316,7 @@ const QuotationDetails = (props) => {
                         </TouchableWithoutFeedback>
                     </View>
                     <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>购买{NftInfo ? NftInfo.name : '---'}？</Text>
+                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>购买</Text>
                         <Image source={{ uri: imgurl }} style={styles.BuyNowImg}></Image>
                         <View style={styles.nameBox}>
                             <Text style={{ fontSize: 14, fontWeight: '700', textAlign: 'center', marginBottom: 5 }}>{collection ? collection.name : '--'}</Text>
@@ -313,7 +364,7 @@ const QuotationDetails = (props) => {
                             <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>价格</Text>
                         </View>
                         <View style={{ flexDirection: 'row', alignItems:'center',justifyContent:'space-between'}}>
-                            <Text style={{ fontSize: 16, color: '#333333', fontWeight: '700', marginRight: 5 }}>{Price}</Text>
+                            <Text style={{ fontSize: 16, color: '#333333', fontWeight: '700', marginRight: 5 }}>{`${Price} X ${BuyNumber}`}</Text>
                             {/* <Text style={{ fontSize: 10, lineHeight: 22 }}>Wfca</Text> */}
                         </View>
                     </View>
@@ -376,13 +427,13 @@ const QuotationDetails = (props) => {
                     </View>
                     <View>
                         <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>请输入支付密码</Text>
-                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>Uzumaki Naruto #0001</Text>
+                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{NftInfo ? NftInfo.name : '--'}</Text>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
                             <Text style={{ color: '#999999', fontSize: 16, fontWeight: '700' }}>价格</Text>
                             <Text style={{ flexDirection: 'row' }}>
-                                <Text style={{ fontSize: 16, fontWeight: '700' }}>4,218</Text>
+                                <Text style={{ fontSize: 16, fontWeight: '700' }}>{UnitPrice.UnitPrice * Number(BuyNumber)}</Text>
                                 <Text>&nbsp;</Text>
-                                <Text style={{ fontSize: 10 }}>Wfca</Text>
+                                <Text style={{ fontSize: 10 }}>{UnitPrice.Company ? UnitPrice.Company : 'USDT' }</Text>
                             </Text>
                         </View>
 
@@ -391,7 +442,7 @@ const QuotationDetails = (props) => {
                         <View style={{ height: 48, flexDirection: 'row', justifyContent: 'space-between', }}>
                             {
                                 passwordlist.map((item, index) => (
-                                    <Text style={[index == 0 ? styles.passinputfirst : styles.passinput]}>{item ? "●" : ''}</Text>
+                                    <Text  style={[index == 0 ? styles.passinputfirst : styles.passinput]}>{item ? "●" : ''}</Text>
                                 ))
                             }
                         </View>

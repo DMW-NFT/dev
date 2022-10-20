@@ -7,13 +7,19 @@ import { ethers, Wallet } from "ethers";
 import CryptoJS from 'crypto-js'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { promises } from 'dns';
-import { time } from 'console';
+import { clear, time } from 'console';
 import getProvider from '../../frontend/constans/rpcProvicer'
+import { TransactionConfig } from 'web3-eth';
+import { on } from 'stream';
+import NFT1155 from '../contract/NFT1155.json'
+
 const DmwWalletProvider = ({ children }) => {
 
     const [dmwWalletList, setDmwWalletList] = useState([])
     const [currentDmwWallet, setcurrentDmwWallet] = useState('')
-    const [dmwChainId, setDmwChainId] = useState()
+    const [dmwChainId, setDmwChainId] = useState(5)
+    const [dmwTransactionMap, setDmwTransactionMap] = useState({})
+    const [dmwTransactionList, setDmwTransactionList] = useState([])
 
     const web3 = new Web3()
 
@@ -160,28 +166,89 @@ const DmwWalletProvider = ({ children }) => {
     }
 
 
-    const dmwTransferNavtie = async (privateKey: string) => {
+    const dmwTransferNavtie = async (secretKey: string) => {
+        web3.eth.setProvider(getProvider(dmwChainId));
         let tx = {
             from: currentDmwWallet, // Required
             to: "0x1b56FC073b1f1929A3aB01b4FC26848afAc702Da", // Required (for non contract deployments)
             value: web3.utils.toWei('0.01', 'ether'), // Optional
+            // gasPrice: "34544552563",
         };
+        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",hash)).catch(error => console.log("!!!",error))
+
+    }
+
+    const dmwMintWithSignature = async (secretKey:string) =>{
+        const contractAddress = "0x0ba15eE8874b930c49c7E65fFdEDf41BE9D0847d"
+
+        const contract = new web3.eth.Contract(NFT1155, contractAddress)
+
+        const rawdata = contract.methods.mintWithSignature(['0xe403E8011CdB251c12ccF6911F44D160699CCC3c', '0x0000000000000000000000000000000000000000', 0, '0x0000000000000000000000000000000000000000', '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'https://gateway.ipfscdn.io/ipfs/QmZJ2uN4bM81FTbLzGNHzXeXSSdEF9dJGmvi48V5cWXETd/0', 10, '10000000000000000', '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', 1666073290, 88066073290, '0x3837643533366562366135613464343138333335326465366130306636626436'], '0x8aad991cb52c9ccdf71d74720da3bc5ed297cf5104a69ad93cf061fe73186f7a780f3002c80516c59411e12392564d551d669e551c115bee6eafd8c7b15369c31c').encodeABI()
+        console.log(rawdata);
+        const tx = {
+            from: currentDmwWallet, // Required
+            to: contractAddress, // Required (for non contract deployments)
+            data: rawdata, // Required
+            // gasPrice: "0x02540be400", // Optional
+            // gasLimit: "0x9c40", // Optional
+            value: web3.utils.toWei('0.1', 'ether'), // Optional
+            // nonce: "0x0114", // Optional
+        };
+        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
+        
+    }
+
+    const dmwBuyNFT = async (secretKey:string,listingId: number, quantityToBuy: number, currency: string, totalPrice: string) => {
+        web3.eth.setProvider(getProvider(dmwChainId));
+        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
+        const rawdata = contract.methods.buy(listingId, currentDmwWallet, quantityToBuy, currency, web3.utils.toWei(totalPrice, 'ether')).encodeABI()
+        console.log(rawdata);
+        const tx = {
+            from: currentDmwWallet, // Required
+            to: contractAddress, // Required (for non contract deployments)
+            data: rawdata, // Required
+            // gasPrice: "0x02540be400", // Optional
+            // gasLimit: "0x9c40", // Optional
+            value: (currency == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") ? web3.utils.toWei(totalPrice, 'ether') : web3.utils.toWei("0", 'ether'), // Optional
+            // nonce: "0x0114", // Optional
+        };
+        console.log(tx)
+        // Send transaction
+        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
+    }
+
+    const dmwSendTransaction = async (tx: TransactionConfig, secretKey: string) => {
+
+        const walletList = await getWalletListFromAccountStorage(secretKey)
+        const privateKey = walletList.walletDict[currentDmwWallet].privateKey
+        // console.log(privateKey)
         const gas = await web3.eth.estimateGas(tx)
         tx["gas"] = gas
-        console.log(tx);
-        try {
-            const signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
-            web3.eth.sendSignedTransaction(signedTx.rawTransaction, function (error, hash) {
-                if (!error) {
-                    console.log("🎉 The hash of your transaction is: ", hash, "\n Check Alchemy's Mempool to view the status of your transaction!");
-                    return hash
-                } else {
-                    console.log("❗Something went wrong while submitting your transaction:", error)
-                }
-            });
-        } catch (error) {
-            console.log(error);
-        }
+
+        const signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
+        const hash = signedTx.transactionHash;
+        setDmwTransactionList([...dmwTransactionList, hash]);
+        const result = web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+            .once("sending", ((payload) => {
+                setDmwTransactionMap({ ...dmwTransactionMap, [hash]: { "payload": payload, "state": "sending" } })
+            }))
+            .once("sent", ((payload) => {
+                setDmwTransactionMap({ ...dmwTransactionMap, [hash]: { "payload": payload, "state": "sent" } })
+            }))
+            .once("confirmation", ((confNumber, receipt, latestBlockHash) => {
+                setDmwTransactionMap({ ...dmwTransactionMap, [hash]: { "payload": receipt, "state": "confirmed" } })
+            }))
+            .on("error", ((error) => {
+                setDmwTransactionMap({ ...dmwTransactionMap, [hash]: { "payload": "", "state": "error", "error": error.message } })
+                return error
+            }))
+            .then(receipt=>{
+
+                return receipt})
+        return result
+        
+
 
     }
 
@@ -218,6 +285,7 @@ const DmwWalletProvider = ({ children }) => {
 
     useEffect(() => {
         setcurrentDmwWallet(dmwWalletList[(dmwWalletList).length - 1])
+        web3.eth.setProvider(getProvider(dmwChainId));
     }, [dmwWalletList])
 
 
@@ -226,10 +294,16 @@ const DmwWalletProvider = ({ children }) => {
         web3.eth.getBlockNumber().then((res => console.log(res)))
     }, [dmwChainId, currentDmwWallet])
 
+    useEffect(() => {
+        console.log("transaction",dmwTransactionList, dmwTransactionMap)
+    }, [dmwTransactionList, dmwTransactionMap])
+
+
+
 
     return (
 
-        <DmwWalletContext.Provider value={{newMnemonic,loadMnemonicFromStorage,loadWalletFromMnemonic, dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtie }}>
+        <DmwWalletContext.Provider value={{dmwBuyNFT,loadWalletFromMnemonic, loadMnemonicFromStorage , newMnemonic , dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtie ,dmwMintWithSignature}}>
             {children}
         </DmwWalletContext.Provider>
 
