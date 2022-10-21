@@ -28,12 +28,6 @@ const scale = Dimensions.get("window").scale;
 const Money = (props) => {
   // inputRef = React.createRef();
   const inputRefX = useRef(null);
-  const inputRef = useRef(null);
-  const inputRef2 = useRef(null);
-  const inputRef3 = useRef(null);
-  const inputRef4 = useRef(null);
-  const inputRef5 = useRef(null);
-  const inputRef6 = useRef(null);
   const [type, setType] = useState(2);
   const [list, setList] = useState([{}, {}]);
   const [visible, setVisible] = useState(false);
@@ -59,6 +53,8 @@ const Money = (props) => {
     if (WalletInUse == 1 && dmwWalletList[0]) {
       getAddressBalance(dmwWalletList[0])
     } else if (currentWallet) {
+      console.log(currentWallet,'钱包地址');
+      
       setWalletInUse(2)
       getAddressBalance(currentWallet)
     }
@@ -84,10 +80,11 @@ const Money = (props) => {
     setpassword('')
   }
   useEffect(() => {
-
+      console.log('钱包变化',connected,currentWallet);
     if (dmwWalletList[0]) {
       setaddress(shortenAddress(dmwWalletList[0]))
     } else if (currentWallet) {
+      setWalletInUse(2)
       getNativeBalance(currentWallet).then(res => {
         setNativeBalance(res)
       })
@@ -121,9 +118,11 @@ const Money = (props) => {
       blackPointArry[index] = item;
     })
     setpasswordlist(blackPointArry)
-    if (password.length == 6) {
+    if (password.length == 6 && dmwWalletList[0]) {
       setModalvisible(false)
       props.navigation.navigate('ViewMnemonics', { password })
+    }else if(password.length == 6 && !dmwWalletList[0]){
+      Toast('密码错误或暂未创建DMW钱包')
     }
   }, [password])
 

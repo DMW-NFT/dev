@@ -6,6 +6,7 @@ import {
   Image,
   TouchableWithoutFeedback,
 } from "react-native";
+import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import React, { useState, useContext, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
@@ -15,6 +16,7 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const Lmodal = (props) => {
+  const { dmwWalletList } = useDmwWallet();
   const close = () => {
     props.close();
   };

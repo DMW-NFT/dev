@@ -16,7 +16,7 @@ import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 
 const CreateMoney = (props) => {
   const [visible, setvisible] = useState(false);
-  const { connector, connected, setConnected, disconnectWallet } = useDmwWeb3();
+  const { connected, connectWallet } = useDmwWeb3();
   const { Toast, setMoneyRouteState } = useDmwApi();
   const { dmwWalletList } = useDmwWallet();
   const navigate = (val) => {
@@ -25,25 +25,7 @@ const CreateMoney = (props) => {
   };
 
   const clickWallet = () => {
-    // disconnectWallet()
-    connector
-      .connect()
-      .then((res) => {
-        console.log(res);
-        if (res) {
-          Toast("已链接！");
-          setConnected(true);
-          setMoneyRouteState("money");
-        } else {
-          setMoneyRouteState("createMoney");
-          Toast("链接失败！");
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        
-        Toast("链接失败！");
-      });
+    connectWallet()
   };
   useEffect(()=>{
     // clickWallet()
@@ -57,7 +39,14 @@ const CreateMoney = (props) => {
     //     Toast("钱包已失效！");
     //   }
     // }, 5000);
-  },[])
+
+    if(connected){
+          setMoneyRouteState("money");
+        }else{
+          setMoneyRouteState("createMoney");
+          Toast("钱包已断开链接！");
+        }
+  },[connected])
 
   useEffect(() => {
     console.log("====================================");
