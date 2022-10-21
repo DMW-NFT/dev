@@ -57,7 +57,7 @@ const Myself = (props) => {
 
   // Context方法
   const { logOut } = useDmwLogin();
-  const { post, formData } = useDmwApi();
+  const { post, formData , Toast } = useDmwApi();
   const { currentWallet } = useDmwWeb3()
   const { dmwWalletList } = useDmwWallet()
 
@@ -114,7 +114,13 @@ const Myself = (props) => {
     
     post(posturl, params).then(res => {
       console.log(res, '回调----------');
-      setmyNftList(res.data.result)
+      if(res.code == 200){
+        setmyNftList(res.data.result)
+      }else{
+        Toast(res.message)
+        setLoding(false)
+      }
+     
     }).catch(err=>{
       console.log(err,'----');
 
@@ -255,7 +261,6 @@ const Myself = (props) => {
             </FlatList> : <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: '40%' }}>
               <Spinner />
             </View>
-//               onEndReached={}
           }
         </View>
 
@@ -268,11 +273,6 @@ const Myself = (props) => {
         close={() => close()}
         visible={lMvisible}
       ></Lmodal>
-
-
-
-      {/* <Image  style={{width:50,height:50}}
-        source={{uri:imgurl}}></Image> */}
     </SafeAreaView>
   );
 };

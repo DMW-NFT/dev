@@ -54,7 +54,7 @@ const DmwApiProvider = ({ children }) => {
           setTimeout(() => {
             Toast('登录失效，重新登录')
             logOut();
-          }, 2000);
+          }, 500);
         } else {
           return res;
         }
