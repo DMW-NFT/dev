@@ -42,12 +42,6 @@ const Money = (props) => {
   const { dmwWalletList } = useDmwWallet();
   const [password, setpassword] = useState("");
   const [passwordlist, setpasswordlist] = useState([]);
-  const [password1, setpassword1] = useState("");
-  const [password2, setpassword2] = useState("");
-  const [password3, setpassword3] = useState("");
-  const [password4, setpassword4] = useState("");
-  const [password5, setpassword5] = useState("");
-  const [password6, setpassword6] = useState("");
   const { WalletInUse, setWalletInUse } = useDmwLogin()
   const { disconnectWallet, connected, currentWallet, lastConnected, connectWallet, getNativeBalance } = useDmwWeb3()
   const { MoneyRouteState, setMoneyRouteState, post, formData, Toast, shortenAddress } = useDmwApi()
@@ -65,6 +59,7 @@ const Money = (props) => {
     if (WalletInUse == 1 && dmwWalletList[0]) {
       getAddressBalance(dmwWalletList[0])
     } else if (currentWallet) {
+      setWalletInUse(2)
       getAddressBalance(currentWallet)
     }
   }, [])
@@ -89,25 +84,23 @@ const Money = (props) => {
     setpassword('')
   }
   useEffect(() => {
+
     if (dmwWalletList[0]) {
       setaddress(shortenAddress(dmwWalletList[0]))
-    } else {
+    } else if (currentWallet) {
+      getNativeBalance(currentWallet).then(res => {
+        setNativeBalance(res)
+      })
       getAddressBalance(currentWallet)
+      setaddress1(shortenAddress(currentWallet))
     }
+
+
     if (dmwWalletList[0] && WalletInUse == 1) {
       setaddress(shortenAddress(dmwWalletList[0]))
       getNativeBalance(dmwWalletList[0]).then(res => {
-        console.log(res, '以太坊余额');
         setNativeBalanceBenDi(res)
       })
-    }
-    if (currentWallet && WalletInUse == 2) {
-      getAddressBalance(currentWallet)
-      getNativeBalance(currentWallet).then(res => {
-        console.log(res, '以太坊余额');
-        setNativeBalance(res)
-      })
-      setaddress1(shortenAddress(currentWallet))
     }
 
 
@@ -194,6 +187,7 @@ const Money = (props) => {
       mode: CryptoJS.mode.CBC,
       adding: CryptoJS.pad.ZeroPadding
     }).toString()
+
 
     return encoded;
   }
@@ -413,7 +407,7 @@ const Money = (props) => {
           {
 
             ThirdPartyBalance.map((item, index) => (
-              <View style={styles.ListLi}>
+              <View style={styles.ListLi} >
                 <Image
                   style={{ width: 40, height: 40 }}
                   source={require("../../assets/img/money/list4.png")}
@@ -436,46 +430,6 @@ const Money = (props) => {
         </View>
       </ScrollView>
 
-
-      <View style={[styles.listbox]}>
-        {/* onTouchStart={() => {onEnableScroll(false);}}
-                                onMomentumScrollEnd={() => {onEnableScroll(true);}} */}
-
-        {/* {
-            !loading ? <FlatList
-              refreshing={false}
-              style={{ height: '55%' }}
-              ListEmptyComponent={() => {
-                return <Text style={{ textAlign: 'center', marginTop: '50%' }}>空空如也</Text>
-                // 列表为空展示改组件
-              }}
-              // 一屏幕展示几个
-              number={4}
-              //  2列显示
-              numColumns={2}
-              data={typename == 'nft' ? NftList : blindlist}
-              renderItem={({ item }) => {
-                return <List list={item} type={1} navigatetoDetail={(id,unique_id,contract_address,token_id,network) =>
-                   { props.navigation.navigate('goodsDetail', { id: id,unique_id,contract_address,token_id,network }) }} 
-                   />
-              }}
-              keyExtractor={(item, index) => item.id}
-              ListFooterComponent={() => {
-                // 声明尾部组件
-                return NftList.length ? <Text style={{ textAlign: 'center' }}>没有更多了</Text> : null
-              }}
-              // 下刷新
-              onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
-              onEndReached={getList}
-            >
-            </FlatList> : <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: '40%' }}>
-              <Spinner />
-            </View>
-
-          } */}
-
-
-      </View>
 
       <Screen
         style={[styles.Screen]}
