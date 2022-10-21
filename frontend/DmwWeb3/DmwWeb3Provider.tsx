@@ -6,6 +6,7 @@ import getProvider from '../../frontend/constans/rpcProvicer'
 import NFT1155ABI from '../../frontend/contract/NFT1155.json'
 import NFT721ABI from '../../frontend/contract/NFT721.json'
 import marketplaceABI from '../../frontend/contract/MARKETPLACE.json'
+import ERC20ABI from '../contract/ERC20.json'
 import { BigNumber } from 'ethers';
 
 
@@ -65,6 +66,44 @@ const DmwWeb3Provider = ({ children }) => {
     //     }
     // }, [])
 
+
+    // 转移
+    const transferERC20 = (to: string, amount: string) => {
+        web3.eth.setProvider(getProvider('5'));
+        const contractAddress = "0x0B99a72bebFE91B14529ea412eb2B1dBEE604c4C"
+        const contract = new web3.eth.Contract(ERC20ABI, contractAddress)
+        const rawdata = contract.methods.transferFrom(currentWallet, to, web3.utils.toWei(amount, 'ether')).encodeABI()
+        const tx = {
+            from: currentWallet, // Required
+            to: contractAddress, // Required (for non contract deployments)
+            data: rawdata, // Required
+            // gasPrice: "0x02540be400", // Optional
+            // gasLimit: "0x9c40", // Optional
+            value: web3.utils.toWei("0", 'ether'), // Optional
+            // nonce: "0x0114", // Optional
+        };
+        connector
+            .sendTransaction(tx)
+
+            .then(result => {
+                // Returns transaction id (hash)
+                console.log(result);
+                syncTransactionSatus(result);
+            })
+            .catch(error => {
+                // Error returned when rejected
+                console.error(error);
+            });
+    }
+
+    const transferToken = (token: string, to: string, amount: string) => {
+        if ("USDT" == token) {
+            transferERC20(to, amount)
+        }
+        if ("nativeToken" == token) {
+            tranferNative(to, amount)
+        }
+    }
 
     // 
     const getNativeBalance = (address) => {
@@ -474,7 +513,7 @@ const DmwWeb3Provider = ({ children }) => {
 
     return (
 
-        <DmwWeb3Context.Provider value={{getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing }}>
+        <DmwWeb3Context.Provider value={{ transferToken,getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing }}>
             {children}
         </DmwWeb3Context.Provider>
     )

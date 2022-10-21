@@ -1,91 +1,144 @@
 import { Text, StyleSheet, View, Dimensions, SafeAreaView, Image, TouchableWithoutFeedback, TextInput } from 'react-native';
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal } from 'react-native-paper';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { IndexPath, Select, SelectItem } from '@ui-kitten/components';
+import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider';
+import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
+
 const scale = Dimensions.get('window').scale;
 const screenWidth = Dimensions.get('window').width;
 
-export default class Gift extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            visible: false,
-            Blockchainval: ''
-        };
+const Gift = (props) => {
+
+    const [visible, setvisible] = useState(false)
+    const [Blockchainval, setBlockchainval] = useState('0xe403E8011CdB251c12ccF6911F44D160699CCC3c')
+    const [TokenType, setTokenType] = useState('USDT')
+    const [selectedIndex, setSelectedIndex] = useState(new IndexPath(0));
+    const [number, setnumber] = useState(null)
+    const {transferToken} = useDmwWeb3()
+    const {Toast} = useDmwApi()
+
+
+     useEffect(()=>{
+console.log(props.route.params,'传参');
+
+     },[])
+    const close = () => {
+        setvisible(false)
     }
-    close() {
-        this.setState({
-            visible: false
-        })
+    const open = () => {
+        setvisible(true)
     }
-    open() {
-        this.setState({
-            visible: true
-        })
+    useEffect(() => {
+        console.log(selectedIndex, '下拉框')
+        setnumber('')
+        if (selectedIndex.row == 0) {
+            setTokenType('USDT')
+        } else {
+            setTokenType('ETH')
+        }
+        
+
+    }, [selectedIndex])
+
+    const sendout = () => {
+        if(!number){
+            Toast('请输入数量')
+            return
+        }
+        transferToken(String(TokenType),String(Blockchainval),String(number))
+        setTimeout(() => {
+            setnumber('') 
+        }, 3000);
     }
 
-    render() {
-        let { visible } = this.state;
-        return (
-            <SafeAreaView style={[{ position: 'relative', backgroundColor: '#fff', flex: 1, paddingTop: 30, paddingRight: 20, paddingLeft: 20 }]}>
-                <View style={{}}>
-                    <View style={{ paddingLeft: 15, marginBottom: 10 }}>
-                        <Text style={{ fontSize: 12, fontWeight: '700' }}>来自</Text>
-                    </View>
-                    <TouchableWithoutFeedback onPress={() => this.open()}>
-                        <View style={styles.userlist}>
-                            <Image style={{ width: 40, height: 40, borderRadius: 20 }} source={require('../../assets/img/my/any2.jpg')}></Image>
-                            <View style={{ flex: 1, marginLeft: 10 }}>
-                                <Text>Account 1</Text>
-                                <Text>余额：999.99 USDT</Text>
-                            </View>
-                            <FontAwesomeIcon
-                                icon={faCaretDown}
-                                color="#707070"
-                                size={17}
-                            />
-                        </View>
-                    </TouchableWithoutFeedback>
+    return (
+        <SafeAreaView style={[{ position: 'relative', backgroundColor: '#fff', flex: 1, paddingTop: 30, paddingRight: 20, paddingLeft: 20 }]}>
+            <View style={{}}>
+                <View style={{ paddingLeft: 15, marginBottom: 10 }}>
+                    <Text style={{ fontSize: 12, fontWeight: '700' }}>来自</Text>
                 </View>
 
+                <Select
+                    style={styles.userlist}
+                    selectedIndex={selectedIndex}
+                    onSelect={index => setSelectedIndex(index)}
+                    value={TokenType}
+                >
+                    <SelectItem title='USDT' />
+                    <SelectItem title='ETH' />
+                </Select>
 
 
-                <View style={{ paddingLeft: 15, marginBottom: 10 }}>
-                        <Text style={{ fontSize: 12, fontWeight: '700' }}>发送到</Text>
-                    </View>
-                <TextInput
-                    multiline={true}
-                    textAlignVertical="top"
-                    numberOfLines={5}
-                    placeholder='输入地址'
-                    keyboardType="decimal"
-                    style={[styles.textarea]}
-                    onChangeText={e => this.setState({ Blockchainval: e })}
-                    value={this.state.Blockchainval}
-                />
+                {
+
+                    true ?
+                        <>
+                            <View style={styles.userlist}>
+                                <View style={{ flex: 1, marginLeft: 10 }}>
+                                    {
+                                        TokenType == 'USDT' ? <Text>USDT：{props.route.params.USDT}</Text> : <Text>USDT：{props.route.params.ETH}</Text>
+                                    }
+                                   
+                                    {/* <Text>USDT：999.99 </Text> */}
+                                </View>
 
 
-                <View style={styles.container}></View>
-                <Modal
-                    visible={this.state.visible}
-                    onDismiss={() => this.close()}
+                                <TextInput
+                                    textAlignVertical="top"
+                                    placeholder='输入数量'
+                                    keyboardType="decimal"
+                                    style={[styles.textarea,{flex:1,marginTop:10}]}
+                                    onChangeText={e => { setnumber(Number(e)) }}
+                                    value={number}
+                                />
+                            </View>
+
+                        </>
+                        : null
+                }
+            </View>
+
+
+
+            <View style={{ paddingLeft: 15, marginBottom: 10 }}>
+                <Text style={{ fontSize: 12, fontWeight: '700' }}>发送到</Text>
+            </View>
+            <TextInput
+                multiline={true}
+                textAlignVertical="top"
+                numberOfLines={5}
+                placeholder='输入地址'
+                keyboardType="decimal"
+                style={[styles.textarea]}
+                onChangeText={e => {setBlockchainval(e)}}
+                value={Blockchainval}
+            />
+
+
+            <View style={styles.container}></View>
+            {/* <Modal
+                    visible={visible}
+                    onDismiss={() => close()}
                     contentContainerStyle={[styles.footer]}>
                     <View style={[styles.btnline]}></View>
                     <View style={{ flexDirection: 'row', justifyContent: 'center' }}><View style={styles.copy}>
-                        <Text sty={{ fontSize: 12 }}>0xD652fw…G673C7C4</Text>
+                        <Text style={{ fontSize: 12 }}>0xD652fw…G673C7C4</Text>
                         <Text style={styles.CopyBtn}>复制</Text>
                     </View></View>
                     <Text style={{ textAlign: 'center', marginTop: 20 }}>复制地址以接收付款</Text>
-                </Modal>
+                </Modal> */}
 
-                {
-                 !this.state.visible ?   <Text style={styles.btn}>发送</Text> : null
-                }
-            </SafeAreaView>
-        );
-    }
+            {
+                !visible ? <Text style={styles.btn} onPress={()=>sendout()}>发送</Text> : null
+            }
+        </SafeAreaView>
+    );
 }
+
+export default Gift
 
 const styles = StyleSheet.create({
 

@@ -76,6 +76,8 @@ const DmwWalletProvider = ({ children }) => {
                 return mnemonic
             }
         } catch (e) {
+            console.log(e);
+            
             console.log("no mnemonic from local storage!!!")
             // error reading value
         }

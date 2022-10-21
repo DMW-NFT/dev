@@ -56,12 +56,17 @@ const Money = (props) => {
   const [address1, setaddress1] = useState('--')
   const [ThirdPartyBalance, setThirdPartyBalance] = useState([])
   const [NativeBalance, setNativeBalance] = useState('')
+  const [NativeBalanceBenDi, setNativeBalanceBenDi] = useState('')
   const axios = () => {
 
   };
 
   useEffect(() => {
-
+    if (WalletInUse == 1 && dmwWalletList[0]) {
+      getAddressBalance(dmwWalletList[0])
+    } else if (currentWallet) {
+      getAddressBalance(currentWallet)
+    }
   }, [])
 
   const getAddressBalance = (address) => {
@@ -74,15 +79,8 @@ const Money = (props) => {
     }).then((response) => {
       const res = response.json()
       res.then(data => {
-        if (WalletInUse == 1) {
-
-        } else {
-          // let balance = Number(data[0].balance) / 10**18
-          // console.log(balance);
-          setThirdPartyBalance(data)
-          console.log(data, '钱包余额')
-        }
-
+        setThirdPartyBalance(data)
+        console.log(data, '钱包余额')
       })
     });
   }
@@ -91,10 +89,14 @@ const Money = (props) => {
     setpassword('')
   }
   useEffect(() => {
-    if (dmwWalletList[0]) {
+    if (dmwWalletList[0] && WalletInUse == 1) {
       setaddress(shortenAddress(dmwWalletList[0]))
+      getNativeBalance(dmwWalletList[0]).then(res => {
+        console.log(res, '以太坊余额');
+        setNativeBalanceBenDi(res)
+      })
     }
-    if (currentWallet) {
+    if (currentWallet && WalletInUse == 2) {
       getAddressBalance(currentWallet)
       getNativeBalance(currentWallet).then(res => {
         console.log(res, '以太坊余额');
@@ -121,6 +123,10 @@ const Money = (props) => {
       blackPointArry[index] = item;
     })
     setpasswordlist(blackPointArry)
+    if (password.length == 6) {
+      setModalvisible(false)
+      props.navigation.navigate('ViewMnemonics', { password })
+    }
   }, [password])
 
 
@@ -139,6 +145,7 @@ const Money = (props) => {
   };
   const Switchwallet = (type) => {
     setWalletInUse(type)
+    setThirdPartyBalance([])
     // var message = JSON.stringify()
     var iv = 'aaaaaaaaaaaaaaaa';//随机生成长度为32的16进制字符串。IV称为初始向量，不同的IV加密后的字符串是不同的，加密和解密需要相同的IV。
     // console.log(iv, 'iv')
@@ -159,6 +166,15 @@ const Money = (props) => {
       console.log(res, 'qianbao denglu');
       if (res.code == 200) {
         Toast('登录成功！')
+        if (type == 1 && dmwWalletList[0]) {
+          console.log(1);
+
+          getAddressBalance(dmwWalletList[0])
+        } else if (currentWallet && type == 2) {
+          console.log(2);
+
+          getAddressBalance(currentWallet)
+        }
       }
     }).catch(err => {
       Toast(err.message)
@@ -248,7 +264,7 @@ const Money = (props) => {
                 <Text style={styles.CurrencyName}>ETH</Text>
               </ImageBackground>
 
-              <Text style={styles.balance}>999.99</Text>
+              <Text style={styles.balance}>{NativeBalanceBenDi ? NativeBalanceBenDi : '--'}</Text>
             </View>
             {/* <Text style={{ color: "#fff" }}>$10.000</Text> */}
             <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -341,7 +357,10 @@ const Money = (props) => {
 
         <TouchableWithoutFeedback
           onPress={() => {
-            props.navigation.navigate("Gift");
+            props.navigation.navigate("Gift", {
+               USDT: ThirdPartyBalance ? Number(ThirdPartyBalance[0].balance) / 10 ** ThirdPartyBalance[0].decimals : 0, 
+               ETH: WalletInUse == 1 ? NativeBalanceBenDi : NativeBalance
+              });
           }}
         >
           <View style={styles.ListService}>

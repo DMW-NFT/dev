@@ -37,7 +37,7 @@ const GoodsDetail = (props) => {
     const [MorenNftList, setMorenNftList] = useState([])
     const [isApproved, setisApproved] = useState(false)
     const [buyText, setbuyText] = useState('售卖')
-    const [NftNumber, setNftNumber] = useState(1)
+    const [NftNumber, setNftNumber] = useState(0)
     const [BuyNowVisible, setBuyNowVisible] = useState(false)
     const [BuyNumber, setBuyNumber] = useState('1')
     const [latestHash, setLatestHash] = useState()
@@ -46,12 +46,12 @@ const GoodsDetail = (props) => {
     const [dateEnd, setDateEnd] = React.useState(new Date());
     // Context 方法
     const { Toast, post, get, formData, shortenAddress } = useDmwApi()
-    const { getBalanceOf1155, currentWallet, checkIsApproveForAll, ApprovalForAll, transactionMap, transactionList, setTransactionList , createListing } = useDmwWeb3()
+    const { getBalanceOf1155, currentWallet, checkIsApproveForAll, ApprovalForAll, transactionMap, transactionList, setTransactionList, createListing } = useDmwWeb3()
     useEffect(() => {
         if (transactionMap && transactionMap[latestHash]) {
-            console.log(transactionMap[latestHash],'latest hash!')
+            console.log(transactionMap[latestHash], 'latest hash!')
             if (transactionMap[latestHash].state == "comfirmed") {
-                console.log("got you !",transactionMap[latestHash])
+                console.log("got you !", transactionMap[latestHash])
                 setLatestHash(null)
                 if (!isApproved) {
 
@@ -63,14 +63,14 @@ const GoodsDetail = (props) => {
             }
         }
     }, [transactionMap])
-    
+
     useEffect(() => {
 
-        console.log("asdasasd",transactionList)
-        if(transactionList && transactionList.length){
+        console.log("asdasasd", transactionList)
+        if (transactionList && transactionList.length) {
             console.log("get latest hash1")
             setLatestHash(transactionList[transactionList.length - 1])
-            console.log("get latest hash!",transactionList[transactionList.length - 1])
+            console.log("get latest hash!", transactionList[transactionList.length - 1])
         }
     }, [transactionList])
 
@@ -78,7 +78,7 @@ const GoodsDetail = (props) => {
     //     console.log(transactionList)
     //     console.log(transactionMap)
     //     console.log(transactionList[transactionList.length - 1])
-        
+
     // }, [transactionList, transactionMap])
 
 
@@ -121,7 +121,7 @@ const GoodsDetail = (props) => {
 
     useEffect(() => {
         let newBuyNumber = null;
-        if (Number(BuyNumber) > NftNumber) {
+        if (Number(BuyNumber) > NftNumber && NftNumber != 0) {
             Toast('剩余数量不足！')
             newBuyNumber = String(NftNumber)
         } else if (Number(BuyNumber) < 0) {
@@ -134,32 +134,33 @@ const GoodsDetail = (props) => {
 
 
     useEffect(() => {
+        if (currentWallet) {
+            if (detailsObj && detailsObj.contract_address) {
+                GetMorenNft(detailsObj.collection ? detailsObj.collection.id : null)
+                console.log(detailsObj.contract_address, currentWallet, detailsObj.token_id, 'goodsdetail get balance')
+            }
 
-        if (detailsObj && detailsObj.contract_address) {
-            GetMorenNft(detailsObj.collection ? detailsObj.collection.id : null)
-            console.log(detailsObj.contract_address, currentWallet, detailsObj.token_id, 'goodsdetail get balance')
+            (detailsObj && detailsObj.contract_address) && getBalanceOf1155(detailsObj.contract_address, currentWallet, detailsObj.token_id).then(res => {
+                console.log(res, 'shulaing');
+                if (res > 0) {
+                    checkIsApproveForAll(detailsObj.contract_address, currentWallet,).then(isApproved => {
+                        console.log("isApproved:", isApproved)
+                        if (isApproved) {
+                            setbuyText('售卖')
+                        } else {
+                            setbuyText('Approve to sell')
+                        }
+                        setNftNumber(res)
+                        setisApproved(isApproved)
+                    })
+                } else {
+                    setbuyText('已售罄')
+                }
+            })
         }
 
-        (detailsObj && detailsObj.contract_address) && getBalanceOf1155(detailsObj.contract_address, currentWallet, detailsObj.token_id).then(res => {
-            console.log(res, 'shulaing');
-            if (res > 0) {
-                checkIsApproveForAll(detailsObj.contract_address, currentWallet,).then(isApproved => {
-                    console.log("isApproved:", isApproved)
-                    if (isApproved) {
-                        setbuyText('售卖')
-                    } else {
-                        setbuyText('Approve to sell')
-                    }
-                    setNftNumber(res)
-                    setisApproved(isApproved)
-                })
-            } else {
-                setbuyText('已售罄')
-                Toast('已售罄！')
-            }
-        })
 
-    }, [detailsObj])
+    }, [detailsObj, currentWallet])
 
     const GetMorenNft = (id) => {
         if (detailsObj.create_way == 1) {
@@ -186,16 +187,16 @@ const GoodsDetail = (props) => {
         if (isApproved) {
             setBuyNowVisible(true)
         } else {
-            ApprovalForAll(detailsObj.contract_address,detailsObj.token_id)
+            ApprovalForAll(detailsObj.contract_address, detailsObj.token_id)
         }
 
     }
 
     const ConfirmSales = () => {
-        let sTime = Math.round(new Date().getTime()/1000).toString()
+        let sTime = Math.round(new Date().getTime() / 1000).toString()
         // console.log();
-        console.log(detailsObj.contract_address,detailsObj.token_id,sTime,'6485760733',BuyNumber,Price,Price,'1')
-        createListing(detailsObj.contract_address,detailsObj.token_id,sTime,'6485760733',BuyNumber,Price,Price,'1')
+        console.log(detailsObj.contract_address, detailsObj.token_id, sTime, '6485760733', BuyNumber, Price, Price, '1')
+        createListing(detailsObj.contract_address, detailsObj.token_id, sTime, '6485760733', BuyNumber, Price, Price, '1')
     }
 
     useEffect(() => {
@@ -218,7 +219,6 @@ const GoodsDetail = (props) => {
                         <View style={[styles.container]}>
                             {
                                 imgShow ? <Image source={{ uri: imgurl }} onError={() => {
-                                    console.log(123456);
                                     setImgurl('../../assets/img/index/any2.jpg')
                                     setimgShow(false)
                                 }} style={[styles.topImg]}></Image> :
@@ -248,16 +248,22 @@ const GoodsDetail = (props) => {
 
                         {/* 发行数量 */}
                         {
-                            <View style={[styles.flex, { paddingHorizontal: 20, }]}>
-                                <View style={[styles.faxingNum, styles.flex]}>
-                                    <Text style={[styles.faxingNumLeft]}>剩余数量</Text>
-                                    <Text style={[styles.faxingNumRight]}>{NftNumber}</Text>
-                                </View>
-                                <Text onPress={() => buyClick()} style={[styles.buyBtn, { backgroundColor: buyText ? '#897EF8' : '#CCC' }]}>
-                                    {buyText}
-                                </Text>
-                                <Text onPress={()=> {setTransactionList([...transactionList,'========'])}}>123</Text>
-                            </View>
+
+                            <>
+                                {
+                                    NftNumber > 0 ?
+                                        <View style={[styles.flex, { paddingHorizontal: 20, }]}>
+                                            <View style={[styles.faxingNum, styles.flex]}>
+                                                <Text style={[styles.faxingNumLeft]}>剩余数量</Text>
+                                                <Text style={[styles.faxingNumRight]}>{NftNumber}</Text>
+                                            </View>
+                                            <Text onPress={() => buyClick()} style={[styles.buyBtn, { backgroundColor: buyText ? '#897EF8' : '#CCC' }]}>
+                                                {buyText}
+                                            </Text>
+                                        </View> : null
+                                }
+                            </>
+
 
                         }
 
