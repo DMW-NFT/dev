@@ -89,6 +89,11 @@ const Money = (props) => {
     setpassword('')
   }
   useEffect(() => {
+    if (dmwWalletList[0]) {
+      setaddress(shortenAddress(dmwWalletList[0]))
+    } else {
+      getAddressBalance(currentWallet)
+    }
     if (dmwWalletList[0] && WalletInUse == 1) {
       setaddress(shortenAddress(dmwWalletList[0]))
       getNativeBalance(dmwWalletList[0]).then(res => {
@@ -358,9 +363,9 @@ const Money = (props) => {
         <TouchableWithoutFeedback
           onPress={() => {
             props.navigation.navigate("Gift", {
-               USDT: ThirdPartyBalance ? Number(ThirdPartyBalance[0].balance) / 10 ** ThirdPartyBalance[0].decimals : 0, 
-               ETH: WalletInUse == 1 ? NativeBalanceBenDi : NativeBalance
-              });
+              USDT: ThirdPartyBalance ? Number(ThirdPartyBalance[0].balance) / 10 ** ThirdPartyBalance[0].decimals : 0,
+              ETH: WalletInUse == 1 ? NativeBalanceBenDi : NativeBalance
+            });
           }}
         >
           <View style={styles.ListService}>

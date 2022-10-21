@@ -37,8 +37,8 @@ const DmwWalletProvider = ({ children }) => {
 
         // const wallet = web3.eth.accounts.create()
         // console.log(wallet.privateKey)
-        // const mnemonic = generateMnemonic()
-        const mnemonic = "survey caught snap typical veteran area mutual stay wide invite fresh climb"
+        const mnemonic = generateMnemonic()
+        // const mnemonic = "survey caught snap typical veteran area mutual stay wide invite fresh climb"
         var ciphertext = CryptoJS.AES.encrypt(
             mnemonic
             ,

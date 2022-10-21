@@ -8,6 +8,7 @@ import { Spinner } from '@ui-kitten/components';
 import { Button, Card, Layout, Modal } from '@ui-kitten/components';
 import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider'
 import { useDmwWallet } from '../../../DmwWallet/DmwWalletProvider'
+import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider'
 
 const QuotationDetails = (props) => {
 
@@ -20,9 +21,9 @@ const QuotationDetails = (props) => {
     const [likes, setlikes] = useState(props.route.params.likes)
     const [imgShow, setimgShow] = useState(true)
     const [userInfo, setUserInfo] = useState({ userAvatar: props.route.params.userAvatar, shortenAddress: props.route.params.shortenAddress })
-    const [orderList, setOrderList] = useState({quantity:1})
+    const [orderList, setOrderList] = useState({ quantity: 1 })
     const [Price, setPrice] = useState(null)
-    const [UnitPrice, setUnitPrice] = useState({UnitPrice:null,Company:''})
+    const [UnitPrice, setUnitPrice] = useState({ UnitPrice: null, Company: '' })
     const [NftInfo, setNftInfo] = useState(null)
     const [collection, setcollection] = useState(null)
     const [offersList, setOffersList] = useState([])
@@ -32,33 +33,34 @@ const QuotationDetails = (props) => {
     const [BuyNowVisible, setBuyNowVisible] = useState(false)
     const [BuyNumber, setBuyNumber] = useState('1')
     // Context 方法
-    const { Toast, post, get, formData, shortenAddress } = useDmwApi()
-    const {buyNFT,currentWallet,transactionMap,transactionList,connectWallet} = useDmwWeb3()
-    const {dmwBuyNFT} = useDmwWallet()
+    const { Toast, post, get, formData, shortenAddress, } = useDmwApi()
+    const { buyNFT, currentWallet, transactionMap, transactionList, connectWallet } = useDmwWeb3()
+    const { dmwBuyNFT } = useDmwWallet()
+    const { WalletInUse } = useDmwLogin
 
-    const [latestHash,setLatestHash] =useState()
+    const [latestHash, setLatestHash] = useState()
     const empty = () => {
         setpassword('')
     }
 
     useEffect(() => {
-        transactionList&&setLatestHash(transactionList[transactionList.length -1])
+        transactionList && setLatestHash(transactionList[transactionList.length - 1])
     }, [transactionList])
 
     useEffect(() => {
-        console.log("QuotationDetail currentWallet:",currentWallet);
+        console.log("QuotationDetail currentWallet:", currentWallet);
 
-    },[currentWallet])
-    useEffect (() => {
-        if (transactionMap&&transactionMap[latestHash]){
+    }, [currentWallet])
+    useEffect(() => {
+        if (transactionMap && transactionMap[latestHash]) {
             console.log(transactionMap[latestHash])
             if (transactionMap[latestHash].state == "comfirmed") {
                 Toast('购买成功')
 
             }
         }
-        
-    },[transactionMap])
+
+    }, [transactionMap])
 
     useEffect(() => {
         let blackPointArry = [null, null, null, null, null, null]
@@ -72,47 +74,47 @@ const QuotationDetails = (props) => {
         console.log(password);
         setpasswordlist(blackPointArry)
         console.log(password.length);
-        if(password.length == 6){
+        if (password.length == 6) {
             console.log({
-                listingId:orderList.listing_id,
-                buyFor:currentWallet,quantityToBuy:Number(BuyNumber),
-                currency:orderList.currency,
-                totalPrice:String(UnitPrice.UnitPrice * Number(BuyNumber))
+                listingId: orderList.listing_id,
+                buyFor: currentWallet, quantityToBuy: Number(BuyNumber),
+                currency: orderList.currency,
+                totalPrice: String(UnitPrice.UnitPrice * Number(BuyNumber))
             });
-
-            // 第三方钱包购买
-            // try {
-            //     new buyNFT(
-            //         String(orderList.listing_id),Number(BuyNumber),orderList.currency,String(UnitPrice.UnitPrice * Number(BuyNumber))
-            //     )
-            // } catch (error) {
-            //     console.log("catch!!!",error)
-            // }
-
-            // 本地钱包购买
+            if (WalletInUse == 1) {
+                // 本地钱包购买
                 try {
-                    dmwBuyNFT('123456',String(orderList.listing_id),Number(BuyNumber),orderList.currency,String(UnitPrice.UnitPrice * Number(BuyNumber)))
+                    dmwBuyNFT('123456', String(orderList.listing_id), Number(BuyNumber), orderList.currency, String(UnitPrice.UnitPrice * Number(BuyNumber)))
                 } catch (err) {
-                    console.log("catch!!!",err);
+                    console.log("catch!!!", err);
                 }
+            } else {
+                // 第三方钱包购买
+                try {
+                    new buyNFT(
+                        String(orderList.listing_id), Number(BuyNumber), orderList.currency, String(UnitPrice.UnitPrice * Number(BuyNumber))
+                    )
+                } catch (error) {
+                    console.log("catch!!!", error)
+                }
+            }
 
-                
-            Toast('触发购买')
+            // Toast('购买')
         }
     }, [password])
 
-    useEffect(()=>{
+    useEffect(() => {
         let newBuyNumber = null;
-        if(Number(BuyNumber) > orderList.quantity && orderList){
+        if (Number(BuyNumber) > orderList.quantity && orderList) {
             Toast('剩余数量不足！')
             newBuyNumber = String(orderList.quantity)
-        }else if(Number(BuyNumber) < 0){
+        } else if (Number(BuyNumber) < 0) {
             newBuyNumber = String(1)
-        }else if (BuyNumber == 'NaN'){
+        } else if (BuyNumber == 'NaN') {
             newBuyNumber = String(1)
         }
-        setBuyNumber(newBuyNumber?newBuyNumber:String(Number(BuyNumber)))
-    },[BuyNumber])
+        setBuyNumber(newBuyNumber ? newBuyNumber : String(Number(BuyNumber)))
+    }, [BuyNumber])
 
     useEffect(() => {
         getList()
@@ -135,7 +137,7 @@ const QuotationDetails = (props) => {
             setImgurl(res.data.nft.image_attachment_url)
             setNftInfo(res.data.nft)
             setPrice(`${res.data.reserve_price_per.number} ${res.data.reserve_price_per.currency_name}`)
-            setUnitPrice({UnitPrice:res.data.reserve_price_per.number,Company:res.data.reserve_price_per.currency_name})
+            setUnitPrice({ UnitPrice: res.data.reserve_price_per.number, Company: res.data.reserve_price_per.currency_name })
             setcollection(res.data.nft.collection)
             setOffersList(res.data.offers)
         })
@@ -154,7 +156,7 @@ const QuotationDetails = (props) => {
     }
     // 确认购买
     const ConfirmPurchase = () => {
-       openPassWordModal()
+        openPassWordModal()
     }
 
     return (
@@ -326,44 +328,44 @@ const QuotationDetails = (props) => {
 
 
                     {/* 购买数量 */}
-                    <View style={{flexDirection:'row',alignItems:'center',marginBottom:20}}>
-                       {
-                        Number(BuyNumber) != 1 ?
-                        <TouchableWithoutFeedback onPress={()=>{setBuyNumber(String(Number(BuyNumber) - 1))}}>
-                                <Image style={styles.addImg} source={require('../../assets/img/index/-.png')}></Image>
-                        </TouchableWithoutFeedback>
-                        
-                         :
-                         <Image style={styles.addImg} source={require('../../assets/img/index/no-.png')}></Image>
-                       }
-                    <TextInput
-                        caretHidden={true}
-                        secureTextEntry={true}
-                        onKeyPress={() => { }}
-                        keyboardType="phone-pad"
-                        style={styles.buyInput}
-                        onChangeText={(e) => {
-                            if(Number(e) > orderList.quantity){
-                              Toast('剩余数量不足！')
-                              setBuyNumber(String(orderList.quantity))
-                            }else{
-                                setBuyNumber(e);
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
+                        {
+                            Number(BuyNumber) != 1 ?
+                                <TouchableWithoutFeedback onPress={() => { setBuyNumber(String(Number(BuyNumber) - 1)) }}>
+                                    <Image style={styles.addImg} source={require('../../assets/img/index/-.png')}></Image>
+                                </TouchableWithoutFeedback>
+
+                                :
+                                <Image style={styles.addImg} source={require('../../assets/img/index/no-.png')}></Image>
+                        }
+                        <TextInput
+                            caretHidden={true}
+                            secureTextEntry={true}
+                            onKeyPress={() => { }}
+                            keyboardType="phone-pad"
+                            style={styles.buyInput}
+                            onChangeText={(e) => {
+                                if (Number(e) > orderList.quantity) {
+                                    Toast('剩余数量不足！')
+                                    setBuyNumber(String(orderList.quantity))
+                                } else {
+                                    setBuyNumber(e);
+                                }
                             }
-                        }
-                        }
-                        value={BuyNumber}
-                    />
-                    <TouchableWithoutFeedback onPress={()=>{setBuyNumber(String(Number(BuyNumber) + 1))}}>
-                        <Image style={styles.addImg} source={require('../../assets/img/index/+.png')}></Image>
-                    </TouchableWithoutFeedback>
-                      
+                            }
+                            value={BuyNumber}
+                        />
+                        <TouchableWithoutFeedback onPress={() => { setBuyNumber(String(Number(BuyNumber) + 1)) }}>
+                            <Image style={styles.addImg} source={require('../../assets/img/index/+.png')}></Image>
+                        </TouchableWithoutFeedback>
+
                     </View>
 
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between',  }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
                         <View>
                             <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>价格</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', alignItems:'center',justifyContent:'space-between'}}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                             <Text style={{ fontSize: 16, color: '#333333', fontWeight: '700', marginRight: 5 }}>{`${Price} X ${BuyNumber}`}</Text>
                             {/* <Text style={{ fontSize: 10, lineHeight: 22 }}>Wfca</Text> */}
                         </View>
@@ -371,7 +373,7 @@ const QuotationDetails = (props) => {
 
                     {
                         false ?
-                            <View style={{marginTop: 40}}>
+                            <View style={{ marginTop: 40 }}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
                                     <Text></Text>
                                     <Text style={{ fontSize: 10, color: '#897EF8' }}>编辑</Text>
@@ -391,7 +393,7 @@ const QuotationDetails = (props) => {
 
 
                     <View style={{ flexDirection: 'row', marginTop: 30, justifyContent: 'space-between' }}>
-                        <Text style={[styles.BuyBtnC, {}]} onPress={() => {setBuyNowVisible(false)}}>取消</Text>
+                        <Text style={[styles.BuyBtnC, {}]} onPress={() => { setBuyNowVisible(false) }}>取消</Text>
                         <Text style={[styles.BuyBtnQ, {}]} onPress={() => ConfirmPurchase()}>确定</Text>
                     </View>
                 </Card>
@@ -433,7 +435,7 @@ const QuotationDetails = (props) => {
                             <Text style={{ flexDirection: 'row' }}>
                                 <Text style={{ fontSize: 16, fontWeight: '700' }}>{UnitPrice.UnitPrice * Number(BuyNumber)}</Text>
                                 <Text>&nbsp;</Text>
-                                <Text style={{ fontSize: 10 }}>{UnitPrice.Company ? UnitPrice.Company : 'USDT' }</Text>
+                                <Text style={{ fontSize: 10 }}>{UnitPrice.Company ? UnitPrice.Company : 'USDT'}</Text>
                             </Text>
                         </View>
 
@@ -442,7 +444,7 @@ const QuotationDetails = (props) => {
                         <View style={{ height: 48, flexDirection: 'row', justifyContent: 'space-between', }}>
                             {
                                 passwordlist.map((item, index) => (
-                                    <Text  style={[index == 0 ? styles.passinputfirst : styles.passinput]}>{item ? "●" : ''}</Text>
+                                    <Text style={[index == 0 ? styles.passinputfirst : styles.passinput]}>{item ? "●" : ''}</Text>
                                 ))
                             }
                         </View>
@@ -459,20 +461,20 @@ const QuotationDetails = (props) => {
 export default QuotationDetails
 
 const styles = StyleSheet.create({
-    addImg:{
-        width:30,height:30
+    addImg: {
+        width: 30, height: 30
     },
-    buyInput:{
-        flex:1,
-        height:40,
-        backgroundColor:'#ffffff',
-        borderColor:'#C2C2C2',
-        borderWidth:1,
-        borderRadius:10,
-        marginLeft:20,
-        marginRight:20,
-        lineHeight:40,
-        textAlign:'center'
+    buyInput: {
+        flex: 1,
+        height: 40,
+        backgroundColor: '#ffffff',
+        borderColor: '#C2C2C2',
+        borderWidth: 1,
+        borderRadius: 10,
+        marginLeft: 20,
+        marginRight: 20,
+        lineHeight: 40,
+        textAlign: 'center'
     },
     BuyBtnQ: {
         width: 120,
