@@ -49,7 +49,7 @@ const Money = (props) => {
   const [password5, setpassword5] = useState("");
   const [password6, setpassword6] = useState("");
   const { WalletInUse, setWalletInUse } = useDmwLogin()
-  const { disconnectWallet, connected, currentWallet, lastConnected, connectWallet ,getNativeBalance } = useDmwWeb3()
+  const { disconnectWallet, connected, currentWallet, lastConnected, connectWallet, getNativeBalance } = useDmwWeb3()
   const { MoneyRouteState, setMoneyRouteState, post, formData, Toast, shortenAddress } = useDmwApi()
   const [loading, setLoding] = useState(false)
   const [address, setaddress] = useState('--')
@@ -61,14 +61,9 @@ const Money = (props) => {
   };
 
   useEffect(() => {
-    getAddressBalance(currentWallet)
-    getNativeBalance(currentWallet).then(res=>{
-      console.log(res,'以太坊余额');
-      setNativeBalance(res)
-      
-    })
+
   }, [])
-  
+
   const getAddressBalance = (address) => {
     fetch(`https://deep-index.moralis.io/api/v2/${address}/erc20?chain=goerli`, {
       method: 'GET',
@@ -99,8 +94,16 @@ const Money = (props) => {
     if (dmwWalletList[0]) {
       setaddress(shortenAddress(dmwWalletList[0]))
     }
+    if (currentWallet) {
+      getAddressBalance(currentWallet)
+      getNativeBalance(currentWallet).then(res => {
+        console.log(res, '以太坊余额');
+        setNativeBalance(res)
+      })
+      setaddress1(shortenAddress(currentWallet))
+    }
 
-    setaddress1(shortenAddress(currentWallet))
+
     setMoneyRouteState(connected || dmwWalletList.length ? '12345' : 'createMoney')
   }, [connected, dmwWalletList, currentWallet])
 
@@ -281,7 +284,7 @@ const Money = (props) => {
                     style={{ marginRight: 10, justifyContent: "center" }}
                   >
                     <Text style={[styles.CurrencyName, { color: "#897EF8" }]}>
-                     ETH
+                      ETH
                     </Text>
                   </ImageBackground>
 
@@ -393,7 +396,7 @@ const Money = (props) => {
                 ></Image>
                 <View style={styles.ListLeftText}>
                   <Text style={{ fontSize: 16, fontWeight: "700", lineHeight: 40 }}>
-                   {Number(item.balance) / 10**item.decimals + ' ' + item.symbol}
+                    {Number(item.balance) / 10 ** item.decimals + ' ' + item.symbol}
                   </Text>
                   {/* <Text style={{ fontSize: 12 }}>$10.000</Text> */}
                 </View>
@@ -487,18 +490,8 @@ const Money = (props) => {
           </View>
           <View>
             <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>请输入支付密码</Text>
-            <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>Uzumaki Naruto #0001</Text>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
-              <Text style={{ color: '#999999', fontSize: 16, fontWeight: '700' }}>价格</Text>
-              <Text style={{ flexDirection: 'row' }}>
-                <Text style={{ fontSize: 16, fontWeight: '700' }}>4,218</Text>
-                <Text>&nbsp;</Text>
-                <Text style={{ fontSize: 10 }}>Wfca</Text>
-              </Text>
             </View>
-
-
-
             <View style={{ height: 48, flexDirection: 'row', justifyContent: 'space-between', }}>
               {
                 passwordlist.map((item, index) => (
@@ -506,9 +499,6 @@ const Money = (props) => {
                 ))
               }
             </View>
-
-
-
           </View>
         </Card>
       </Modal>

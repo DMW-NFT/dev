@@ -202,7 +202,7 @@ const Home = (props) => {
           <View style={[styles.index_box, { marginBottom: 25, }]}>
             <View style={{ height: 140, }}>
               {
-                imgList.length ? <Swiper
+               imgList && imgList.length ? <Swiper
                   showsPagination={false}
                   autoplayTimeout={4}
                   autoplay={true}
