@@ -47,7 +47,7 @@ const Data = (props) => {
     }
   } 
   useEffect(() => {
-    console.log(page,'ppppppppppppppppppppppppppppppp')
+
     if(page==1){
       getList()
     }else{
@@ -72,13 +72,11 @@ const Data = (props) => {
 
   useEffect(() => {
     getList() 
-    console.log('222222222222222')
     return () => {};
   }, [page]);
 
   const getList = () => { 
     let params = formData({ categories: category.value?category.value:'',network:chain.value?chain.value:'',day:time.value?time.value:'' ,page:page,limit:20})
-    console.log(params,total!=list.length,total,list.length,'paramsparamsparamsparamsparamsparamsparamsparamsparamsparams')
    
       post("/index/stats/get_rankings",params).then((res) => {
         if (res.code == 200) {
@@ -89,7 +87,6 @@ const Data = (props) => {
           }else{
             changegetList( res.data.data)
           }
-          console.log(total,res.data.total,'99999999999') 
         } 
       });  
   }

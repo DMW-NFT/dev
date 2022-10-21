@@ -40,32 +40,11 @@ const DmwWeb3Provider = ({ children }) => {
     }, [currentChainId, connected])
 
 
-    useEffect(() => {
-        console.log(transactionList)
-        console.log(transactionMap)
-        console.log(transactionList[transactionList.length - 1])
-
-    }, [transactionList, transactionMap])
-
-    // useEffect(() =>{
-    //     connector.accounts&&console.log("current connect wallet:",connector.accounts[0]);
-    //     connector.accounts&&setCurrentWallet(connector.accounts[0]);
-    // },[connected])
-
     // useEffect(() => {
-    //     // connector.on('disconnect', connectWallet);
-    //     if (connector.connected) {            
-    //         console.log('connected');
-    //         setCurrentWallet(connector.accounts[0]);
-    //         setCurrenChainId(connector.chainId);
-    //         console.log(currentChainId, getProvider(currentChainId));
-    //         web3.eth.setProvider(getProvider(currentChainId));
-    //         web3.eth.getBlockNumber().then((res => console.log(res)))
-    //     }else{
-    //         console.log("disconnected from init")
-    //     }
-    // }, [])
-
+    //     console.log(transactionList)
+    //     console.log(transactionMap)
+    //     console.log(transactionList[transactionList.length - 1])
+    // }, [transactionList, transactionMap])
 
     // 转移
     const transferERC20 = (to: string, amount: string) => {

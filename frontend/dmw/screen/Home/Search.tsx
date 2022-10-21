@@ -42,7 +42,6 @@ const Searchsc = (props) => {
     }, []);
     const getList = () => {
         let params = formData({ page: page, limit: 10, type: 1, keyword: input })
-        console.log(params, 'paramsparamsparamsparamsparamsparamsparamsparamsparamsparams')
 
         post("/index/nft/get_home_nft_by_search", params).then((res) => {
             if (res.code == 200) {

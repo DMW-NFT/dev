@@ -6,7 +6,7 @@ import { useDmwLogin } from "../loginProvider/constans/DmwLoginProvider";
 import storage from "../dmw/Storage/storage";
 const DmwApiProvider = ({ children }) => {
 
-  const [BaseUrl, setBaseUrl] = useState("http://192.168.31.199");
+  const [BaseUrl, setBaseUrl] = useState("https://dmw.cougogo.com");
   const { logOut } = useDmwLogin();
   const [show, setShow] = useState(false);
   const [time, setTime] = useState(2000);
@@ -14,9 +14,7 @@ const DmwApiProvider = ({ children }) => {
   const [MoneyRouteState, setMoneyRouteState] = useState('createMoney')
 
   // 地址切割
-  const shortenAddress = (address) => {
-    console.log(address,'*****************');
-    
+  const shortenAddress = (address) => {    
     let addressNew = address.slice(0,7) + '...' + address.slice(-4)
     return addressNew
   }

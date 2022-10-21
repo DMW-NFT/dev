@@ -186,13 +186,16 @@ const QuotationDetails = (props) => {
                             </View>
                             {/* 卖家详情 */}
                             <View style={[styles.coll]}>
+                                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                                 <Text style={[styles.collName]}>{NftInfo ? NftInfo.name : '--'}</Text>
-                                <View style={styles.flexJBC}>
-                                    <Text style={styles.collIntrDetail}>{NftInfo ? NftInfo.abstract : '--'}</Text>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center',}}>
                                         <Image style={{ width: 15, height: 15 }} source={require('../../assets/img/money/offer.png')}></Image>
                                         <Text style={{ fontSize: 14, color: "#333" }}>{Price}</Text>
                                     </View>
+                                </View>
+                                <View style={styles.flexJBC}>
+                                    <Text style={styles.collIntrDetail}>{NftInfo ? NftInfo.abstract : '--'}</Text>
+                                    
                                 </View>
                             </View>
                         </View>
@@ -674,6 +677,7 @@ const styles = StyleSheet.create({
     },
     coll: {
         marginTop: 20,
+        padding:20
     },
     likenum: {
         color: "#ccc",
