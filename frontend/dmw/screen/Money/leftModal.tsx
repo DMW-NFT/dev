@@ -121,7 +121,7 @@ const Lmodal = (props) => {
 
 
 
-          <TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={()=>cilck('TermsOfService')}>
             <View style={styles.listBox}>
               <Image
                 style={styles.Limg}

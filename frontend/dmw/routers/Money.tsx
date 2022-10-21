@@ -17,6 +17,7 @@ import Exchange from "../screen/Money/Exchange"; // 兑换
 import Gift from "../screen/Money/Gift"; // 发送
 import ViewMnemonics from "../screen/Money/ViewMnemonics"; // 助记词
 import RedemptionSettings from "../screen/Money/RedemptionSettings"; // 发送
+import TermsOfService from "../screen/Money/TermsOfService"; // 发送
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 const Stack = createStackNavigator();
 const Home = (props) => {
@@ -131,6 +132,14 @@ const Home = (props) => {
         name="ViewMnemonics"
         options={{
           title: "助记词",
+        }}
+      ></Stack.Screen>
+
+<Stack.Screen
+        component={TermsOfService}
+        name="TermsOfService"
+        options={{
+          title: "服务条款",
         }}
       ></Stack.Screen>
 
