@@ -31,7 +31,7 @@ const DmwWeb3Provider = ({ children }) => {
             setCurrenChainId(String(connector.chainId));
             console.log("is connected!---,-,-", currentWallet, connector.accounts[0])
         }
-    }, [connected])
+    }, [])
 
 
 
@@ -84,7 +84,7 @@ const DmwWeb3Provider = ({ children }) => {
         }
     }
 
-    // 
+
     const getNativeBalance = (address) => {
         web3.eth.setProvider(getProvider('5'))
         const balance = web3.eth.getBalance(address).then((res) => {
