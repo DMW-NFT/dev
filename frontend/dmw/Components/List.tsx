@@ -23,7 +23,8 @@ const List = (props) => {
     // }, [imgurl])
 
     return (
-        <TouchableWithoutFeedback onPress={() => {
+        <TouchableWithoutFeedback  onPress={() => {
+           
             console.log(1, item.unique_id, item.contract_address, item.token_id, item.network, '详情传参');
             props.navigatetoDetail(1, item.unique_id, item.contract_address, item.token_id, item.network)
         }}>

@@ -1,11 +1,12 @@
-import { Text, StyleSheet, View, TextInput, SafeAreaView, ScrollView, Image, Dimensions, TouchableWithoutFeedback } from 'react-native'
-import React, { Component, useState } from 'react'
+import { Text, StyleSheet, View, TextInput, FlatList, SafeAreaView, ScrollView, Image, Dimensions, TouchableWithoutFeedback } from 'react-native'
+import React, {useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faSearchMinus } from '@fortawesome/free-solid-svg-icons'
 import Screen from "../../Components/screen";
 import Search from "../../Components/Searchbox";
 import List from '../../Components/List'
 import Model from '../../Components/Model'
+import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { faChevronRight, faAngleDown } from "@fortawesome/free-solid-svg-icons";
 const scale = Dimensions.get('window').scale;
 const Searchsc = (props) => {
@@ -15,12 +16,10 @@ const Searchsc = (props) => {
     const [strText, setStrText] = useState();
     const [show, setshow] = useState(false)
     const [imgshow, setimg] = useState(false)
-    // state = {
-    //     input: "",
-    //     list:[{},{},{}],
-    //     visible:false,
-    // }
-
+    const [type, setType] = useState(2)
+    const { post, get, formData, Toast } = useDmwApi()
+    const [page, setpage] = useState(1)
+    const [total, settotal] = useState(null)
 
     const visibleFn = () => {
         setvisible(true);
@@ -29,11 +28,43 @@ const Searchsc = (props) => {
 
     const changeVisible = (val) => {
         console.log(val)
-        // setState({visible:val})
         setvisible(val)
     }
-    const getList = () => {
+    useEffect(() => {
+        getList()
+        console.log('222222222222222')
+        return () => { };
+    }, [page])
 
+    useEffect(() => {
+           setpage(1)
+        return () => { };
+    }, []);
+    const getList = () => {
+        let params = formData({ page: page, limit: 10, type: 1, keyword: input })
+        console.log(params, 'paramsparamsparamsparamsparamsparamsparamsparamsparamsparams')
+
+        post("/index/nft/get_home_nft_by_search", params).then((res) => {
+            if (res.code == 200) {
+                console.log(res.data.data[0], 'ressssssssssssssssssss11111111ssssssss')
+                  settotal(res.data.total)  
+                  if(page>1){
+                    // 触底
+                    setlist( [...list,...res.data.data])
+                  }else{
+                    setlist( res.data.data) 
+                  }
+                  console.log(total,res.data.total,'99999999999') 
+            }
+        });
+    }
+
+    // 触底
+    const getList1 = () => {
+        console.log('触底111111111111')
+        if (total !== list.length) {
+            setpage(page => page++)
+        } 
     }
     return (
         <SafeAreaView style={{ backgroundColor: '#fff', flex: 1 }}>
@@ -47,10 +78,32 @@ const Searchsc = (props) => {
                             visible={() => visibleFn()}
                         ></Search>
                     </View>
-
-
-
-                    <List list={list} type={1} getList={getList} />
+                    <FlatList
+                        refreshing={false}
+                        style={{ height: '55%', flex: 1, }}
+                        ListEmptyComponent={() => {
+                            return <Text style={{ textAlign: 'center', marginTop: '50%' }}>空空如也</Text>
+                            // 列表为空展示改组件
+                        }}
+                        // 一屏幕展示几个
+                        number={4}
+                        //  2列显示
+                        numColumns={2}
+                        data={list}
+                        renderItem={({ item }) => {
+                            return <List list={item} type={1} navigatetoDetail={(id,unique_id,contract_address,token_id,network) =>
+                                { props.navigation.navigate('goodsDetail', { id: item.id,unique_id,contract_address,token_id,network}) }}  />
+                        }}
+                        // keyExtractor={(item, index) => item.id}
+                        ListFooterComponent={() => {
+                            // 声明尾部组件
+                            return list.length > 0 ? <Text style={{ textAlign: 'center' }}>没有更多了</Text> : null
+                        }}
+                        // 下刷新
+                        onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
+                        onEndReached={getList}
+                    >
+                    </FlatList>
                 </View>
 
             </ScrollView>
