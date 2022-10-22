@@ -22,6 +22,7 @@ import TradeSuccessfully from '../screen/Myself/TradeSuccessfully'
 import CollectionDetails from '../screen/Other/CollectionDetails'
 import MyCollection from '../screen/Myself/MyCollection'  
 import Sell from '../screen/Myself/Sell'  //卖出
+import AddCreateCollection from '../screen/Myself/AddCreateCollection'  //卖出
 
 import GoodsDetail from '../screen/Other/GoodsDetail'
 import QuotationDetails from '../screen/Other/QuotationDetails'
@@ -193,6 +194,15 @@ export default class Home extends Component {
             name='CreateCollection'
             options={{  
               title:'创建藏品'  
+             }}
+          >  
+         </Stack.Screen>
+
+         <Stack.Screen  
+            component={AddCreateCollection} 
+            name='AddCreateCollection'
+            options={{  
+              title:'创建合集'  
              }}
           >  
          </Stack.Screen>

@@ -45,7 +45,7 @@ const ModifyInfo = (props) => {
       const file = await DocumentPicker.pick({
         type: [DocumentPicker.types.images],
       });
-      console.log(file[0], "文件");
+      console.log(file, "文件");
 
       let formData = new FormData();
       formData.append("file", file[0]);

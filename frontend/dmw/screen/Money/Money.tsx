@@ -38,7 +38,7 @@ const Money = (props) => {
   const [passwordlist, setpasswordlist] = useState([]);
   const { WalletInUse, setWalletInUse } = useDmwLogin()
   const { disconnectWallet, connected, currentWallet, lastConnected, connectWallet, getNativeBalance } = useDmwWeb3()
-  const { MoneyRouteState, setMoneyRouteState, post, formData, Toast, shortenAddress } = useDmwApi()
+  const { MoneyRouteState, setMoneyRouteState, post, formData, Toast, shortenAddress , Copy } = useDmwApi()
   const [loading, setLoding] = useState(false)
   const [address, setaddress] = useState('--')
   const [address1, setaddress1] = useState('--')
@@ -83,6 +83,7 @@ const Money = (props) => {
       console.log('钱包变化',connected,currentWallet);
     if (dmwWalletList[0]) {
       setaddress(shortenAddress(dmwWalletList[0]))
+      Switchwallet(1)
     } else if (currentWallet) {
       setWalletInUse(2)
       getNativeBalance(currentWallet).then(res => {
@@ -90,6 +91,7 @@ const Money = (props) => {
       })
       getAddressBalance(currentWallet)
       setaddress1(shortenAddress(currentWallet))
+      Switchwallet(2)
     }
 
 
@@ -141,8 +143,7 @@ const Money = (props) => {
     setType(val);
   };
   const Switchwallet = (type) => {
-    setWalletInUse(type)
-    setThirdPartyBalance([])
+   
     // var message = JSON.stringify()
     var iv = 'aaaaaaaaaaaaaaaa';//随机生成长度为32的16进制字符串。IV称为初始向量，不同的IV加密后的字符串是不同的，加密和解密需要相同的IV。
     // console.log(iv, 'iv')
@@ -153,7 +154,13 @@ const Money = (props) => {
     // console.log(ciphertext.toString(), 'jiami');
     let wallet_address = ''
     if (type == 1) {
-      wallet_address = dmwWalletList[0]
+      if(dmwWalletList[0]){
+        wallet_address = dmwWalletList[0]
+      }else{
+        Toast("请先创建DMW钱包")
+        return
+      }
+      
     } else {
       wallet_address = currentWallet
     }
@@ -165,11 +172,9 @@ const Money = (props) => {
         Toast('登录成功！')
         if (type == 1 && dmwWalletList[0]) {
           console.log(1);
-
           getAddressBalance(dmwWalletList[0])
         } else if (currentWallet && type == 2) {
           console.log(2);
-
           getAddressBalance(currentWallet)
         }
       }
@@ -231,13 +236,16 @@ const Money = (props) => {
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
-          style={{
+          style={[{
             marginBottom: 20,
             marginRight: -20,
             height: 336 / 2,
             marginLeft: -20,
-          }}
+          },{marginLeft:dmwWalletList && dmwWalletList[0] ? null :20 }]}
         >
+          {
+ dmwWalletList && dmwWalletList[0] ?
+        
           <View style={styles.USDT} >
             {
               WalletInUse == 1 ?
@@ -267,12 +275,16 @@ const Money = (props) => {
             {/* <Text style={{ color: "#fff" }}>$10.000</Text> */}
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={{ color: "#fff" }}>{address}</Text>
+              <TouchableWithoutFeedback onPress={()=>{Copy(dmwWalletList[0])}}>
               <Image
                 style={{ width: 10, height: 10, marginLeft: 5 }}
                 source={require("../../assets/img/money/copyW.png")}
               ></Image>
+              </TouchableWithoutFeedback>
+            
             </View>
-          </View>
+          </View> : null
+            }
 
           {
             connected ?
@@ -311,10 +323,12 @@ const Money = (props) => {
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Text style={{ color: "#897EF8" }}>{address1}</Text>
+                  <TouchableWithoutFeedback onPress={()=>{Copy(currentWallet)}}>
                   <Image
                     style={{ width: 10, height: 10, marginLeft: 5 }}
                     source={require("../../assets/img/my/copy.png")}
                   ></Image>
+                </TouchableWithoutFeedback>
                 </View>
               </View> : null
 

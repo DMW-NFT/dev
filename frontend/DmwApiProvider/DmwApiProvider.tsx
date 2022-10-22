@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 
 import DmwApiContext from "./DmwApiContext";
 import { useDmwLogin } from "../loginProvider/constans/DmwLoginProvider";
-
+import Clipboard from '@react-native-clipboard/clipboard'
 import storage from "../dmw/Storage/storage";
 const DmwApiProvider = ({ children }) => {
 
@@ -18,6 +18,12 @@ const DmwApiProvider = ({ children }) => {
     let addressNew = address.slice(0,7) + '...' + address.slice(-4)
     return addressNew
   }
+
+  // 复制
+  const Copy = (Text) => {
+    Clipboard.setString(Text);
+    Toast('复制成功！')
+  };
 
 
   const get = async (url) => {
@@ -124,7 +130,8 @@ const DmwApiProvider = ({ children }) => {
         Toast,
         MoneyRouteState,
         setMoneyRouteState,
-        shortenAddress
+        shortenAddress,
+        Copy
       }}
     >
       {children}

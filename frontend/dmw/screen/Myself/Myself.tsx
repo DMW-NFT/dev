@@ -91,6 +91,7 @@ const Myself = (props) => {
     if(typename == '我创建的'){
       getMyNft('/index/nft/get_my_create_nft_by_search', { keyword: '', })
     }else if(typename == '事件'){
+      getMyNft('/index/nft/get_nft_activity', { keyword: '',})
     }else if(typename=='我喜欢的'){
       getMyNft('/index/nft/get_my_likes_nft_by_search', { keyword: '', })
     }else if(typename=='我的藏品'){
@@ -100,7 +101,7 @@ const Myself = (props) => {
 
 
   useEffect(() => {
-    setLoding(false)
+    // setLoding(false)
   }, [myNftList])
 
   const getMyNft = (posturl:string, data) => {
@@ -116,6 +117,7 @@ const Myself = (props) => {
       console.log(res, '回调----------');
       if(res.code == 200){
         setmyNftList(res.data.result)
+        setLoding(false)
       }else{
         Toast(res.message)
         setLoding(false)
