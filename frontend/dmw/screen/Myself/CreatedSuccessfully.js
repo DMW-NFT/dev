@@ -29,8 +29,8 @@ export default class CreatedSuccessfully extends Component {
 <View style={{paddingLeft:20}}>
 <Image
                   style={{ width: 590 / 2, height: 590 / 2 ,}}
-                  source={require('../../assets/img/my/any2.jpg')}></Image>
-                  <Text style={{fontSize:14,color:'#8197C4',marginTop:27,marginBottom:8}}>海贼王</Text>
+                  source={{uri:this.props.route.params.imgurlUp1}}></Image>
+                  <Text style={{fontSize:14,color:'#8197C4',marginTop:27,marginBottom:8}}>{this.props.route.params.title}</Text>
                   <Text style={{fontSize:16}}>海贼王-恶魔果实</Text>
 </View>
 

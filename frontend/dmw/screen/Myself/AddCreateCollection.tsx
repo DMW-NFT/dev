@@ -93,7 +93,9 @@ const AddCreateCollection = (props) => {
         }
 
         console.log(formData({ content: res.assets[0], path: '123' }));
-        post('/index/interface/upload_folder', formData({ content: res.assets[0], path: '123' })).then(resp => {
+        console.log(res.assets[0]);
+        
+        post('/index/interface/upload_folder', formData({ content: JSON.stringify(res.assets[0]), path: '123' })).then(resp => {
           console.log(resp);
           if (resp.code == 200) {
             Toast('上传成功！')

@@ -188,12 +188,12 @@ const DmwWeb3Provider = ({ children }) => {
                 console.error(error);
             });
     }
-    const mintNftWithSignature = () => {
+    const mintNftWithSignature = (SignedPayload,Signature) => {
         const contractAddress = "0x0ba15eE8874b930c49c7E65fFdEDf41BE9D0847d"
 
         const contract = new web3.eth.Contract(NFT1155ABI, contractAddress)
 
-        const rawdata = contract.methods.mintWithSignature(['0xe403E8011CdB251c12ccF6911F44D160699CCC3c', '0x0000000000000000000000000000000000000000', 0, '0x0000000000000000000000000000000000000000', '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'https://gateway.ipfscdn.io/ipfs/QmZJ2uN4bM81FTbLzGNHzXeXSSdEF9dJGmvi48V5cWXETd/0', 10, '10000000000000000', '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', 1666072910, 88066072910, '0x6232313062663039663364313431373339303530646365656664356136656131'], '0xc4e4ab356e0bce66fe4e39653a6526b572932c5de5f9221a1c02e292e4ec22d453a03e18cf32b9a8a30239b6b3662f22d409a605c133aad2af306a539d503b331b').encodeABI()
+        const rawdata = contract.methods.mintWithSignature(SignedPayload,Signature).encodeABI()
         console.log(rawdata);
         const tx = {
             from: currentWallet, // Required
@@ -201,7 +201,7 @@ const DmwWeb3Provider = ({ children }) => {
             data: rawdata, // Required
             // gasPrice: "0x02540be400", // Optional
             // gasLimit: "0x9c40", // Optional
-            value: web3.utils.toWei('0.1', 'ether'), // Optional
+            value: web3.utils.toWei('0', 'ether'), // Optional
             // nonce: "0x0114", // Optional
         };
 

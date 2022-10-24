@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DocumentPicker from "react-native-document-picker";
 import {
   StyleSheet,
@@ -15,9 +15,14 @@ import {
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Spinner } from '@ui-kitten/components';
-import {  Card, Layout, Modal } from '@ui-kitten/components';
+import { Card, Layout, Modal } from '@ui-kitten/components';
 import { Surface } from 'react-native-paper';
+import { useDmwWallet } from '../../../DmwWallet/DmwWalletProvider';
 
+import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider';
+import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider';
+
+useDmwWallet
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
 const screenHeight = Dimensions.get('window').height;
@@ -30,11 +35,46 @@ const TransferredIntoCollection = (props) => {
   const [Modalvisible, setModalvisible] = useState(false)
   const inputRefX = useRef(null);
   const [loading, setLoding] = useState(false)
-
+  const [screenloading, setscreenLoding] = useState(false)
+  const [imgurlUp1, setimgurlUp1] = useState('')
+  const [ipfsImgUrl, setIpfsImgUrl] = useState('')
+  const [IpfsPath, setIpfsPath] = useState('')
   const { post, formData, Toast } = useDmwApi()
+  const [latestHash, setLatestHash] = useState()
+  const { currentWallet, mintNftWithSignature, transactionMap, transactionList } = useDmwWeb3()
+  const { WalletInUse } = useDmwLogin()
+  const { dmwWalletList } = useDmwWallet()
 
   useEffect(() => {
-    console.log(123);
+
+    console.log("asdasasd", transactionList)
+    if (transactionList && transactionList.length) {
+      console.log("get latest hash1")
+      setLatestHash(transactionList[transactionList.length - 1])
+      console.log("get latest hash!", transactionList[transactionList.length - 1])
+    }
+  }, [transactionList])
+
+  useEffect(() => {
+    if (transactionMap && transactionMap[latestHash]) {
+      console.log(transactionMap[latestHash], 'latest hash!')
+      if (transactionMap[latestHash].state == "comfirmed") {
+        console.log("got you !", transactionMap[latestHash])
+        setLatestHash(null)
+        Toast('创建成功！')
+        setscreenLoding(false)
+        props.navigation.navigate('CreatedSuccessfully',{title,imgurlUp1})
+      } else {
+        setscreenLoding(true)
+        Toast('等待链上确认！')
+      }
+    }
+  }, [transactionMap])
+
+
+
+  useEffect(() => {
+    // console.log(123);
 
   }, [loading])
   useEffect(() => {
@@ -47,8 +87,62 @@ const TransferredIntoCollection = (props) => {
     setpasswordlist(blackPointArry)
     if (password.length == 6) {
       setModalvisible(false)
-      props.navigation.navigate('CreatedSuccessfully')
-    }else if(password.length == 6){
+
+      let data = {
+        description: explain,
+        image: ipfsImgUrl,
+        name: title
+      }
+      fetch('https://deep-index.moralis.io/api/v2/ipfs/uploadFolder', {
+        method: "POST",
+        body: JSON.stringify([{ content: data, path: `${title}.json` }]),
+        headers: {
+          accept: 'application/json',
+          'content-type': 'application/json',
+          'X-API-Key': 'Lf0hom3miHg82XaKYaQg1Ej3LiyXmfO9kCSAsfws9XpUX1V9sh1isIsOorRf1xYf'
+        },
+      })
+        .then((res) => res.json()).then(res => {
+          console.log(res[0].path, '上传');
+          setIpfsPath(res[0].path)
+          let meta = {
+            metadataUri: res[0].path,
+            mintTo: WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
+            mintAmount: 1,
+            network: 'goerli'
+          }
+
+          fetch('http://192.168.31.6:6666/getSignature', {
+            method: "POST",
+            body: JSON.stringify({
+              metadataUri: res[0].path,
+              mintTo: WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
+              mintAmount: 1,
+              network: 'goerli'
+            }),
+            headers: {
+              accept: 'application/json',
+              'content-type': 'application/json',
+            },
+          })
+            .then((res) => res.json()).then(resp => {
+              console.log(resp, 'zoubianjiekou');
+
+              mintNftWithSignature(resp.result.SignedPayload[0], resp.result.SignedPayload[resp.result.SignedPayload.length - 1])
+
+            }).catch(err => {
+              console.log(err, '左边报错');
+            })
+
+
+
+        }).catch(err => {
+          console.log(err, '上传报错');
+        })
+
+
+
+    } else if (password.length == 6) {
       Toast('密码错误或暂未创建DMW钱包')
     }
   }, [password])
@@ -63,46 +157,67 @@ const TransferredIntoCollection = (props) => {
     }, 500);
   }
 
+
+
+
   // b本地
   const uuup = () => {
-
-    launchImageLibrary({
+    setLoding(true)
+    let options = {
+      maxWidth: 300,
+      maxHeight: 550,
+      quality: 1,
       mediaType: 'photo',
-      maxWidth: 1000,// 设置选择照片的大小，设置小的话会相应的进行压缩
-      maxHeight: 1000,
-      quality: 0.8,
-      // videoQuality: 'low',
-      // includeBase64: true
-    }, res => {
-      if (res.assets) {
-        setLoding(true)
-        console.log(formData({ content: res.assets[0], path: '123' }));
-        post('/index/interface/upload_folder', formData({ content: res.assets[0], path: '123' })).then(resp => {
-          console.log(resp);
-          if (resp.code == 200) {
-            Toast('上传成功！')
-          }
+      includeBase64: true
+    };
+    // You can also use as a promise without 'callback':
+    launchImageLibrary(options, ((response) => {
+      // console.log('Response = ', response);
+      if (response.didCancel) {
+        setscreenLoding(false)
+        return;
+      } else if (response.errorCode == 'camera_unavailable') {
+        setscreenLoding(false)
+        return;
+      } else if (response.errorCode == 'permission') {
+        setscreenLoding(false)
+        return;
+      } else if (response.errorCode == 'others') {
+        setscreenLoding(false)
+        return;
+      }
+      // console.log('base64 => ', response.assets[0].base64)
+      setimgurlUp1(response.assets[0].base64)
+      // let data =formData({content:response.assets[0].base64,path:'123'}) 
+      // console.log(response.assets[0],'上传数据');
+      console.log('pandaun');
+
+      fetch('https://deep-index.moralis.io/api/v2/ipfs/uploadFolder', {
+        method: "POST",
+        body: JSON.stringify([{ content: response.assets[0].base64, path: response.assets[0].fileName }]),
+        headers: {
+          accept: 'application/json',
+          'content-type': 'application/json',
+          'X-API-Key': 'Lf0hom3miHg82XaKYaQg1Ej3LiyXmfO9kCSAsfws9XpUX1V9sh1isIsOorRf1xYf'
+        },
+      })
+        .then((res) => res.json()).then(res => {
+          Toast('上传成功！')
           setLoding(false)
+          console.log(res[0].path, '上传');
+          setIpfsImgUrl(res[0].path)
         }).catch(err => {
-          setLoding(false)
-          Toast('因未知原因上传失败')
-          console.log(err, 789);
+          console.log(err, '上传报错');
         })
-
-      } else {
-        console.log('根本没进去');
-
-        return
-      }
-
-
-      if (res.didCancel) {
-        return false;
-      }
-      // 对获取的图片进行处理
-    })
-
+    }))
   }
+
+
+  useEffect(() => {
+
+  }, [imgurlUp1])
+
+
   return (
     <SafeAreaView
       style={{
@@ -114,137 +229,166 @@ const TransferredIntoCollection = (props) => {
         paddingBottom: 200,
         backgroundColor: '#fff'
       }}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* <Text>dnfjhsbdhfbhsdb电脑上减肥不上班分别少部分黑死病封神榜风寒湿痹封神榜粉红色部分少部分火山爆发s是
+      {
+        screenloading ? <View style={{flex:1,flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+          <Spinner />
+          <Text style={{marginTop:10}}>正在上链中...</Text>
+        </View> :
+          <>
+            {/* <Image source={{ uri: imgurlUp1 }} style={{ width: 100, height: 100 }}></Image> */}
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {/* <Text>dnfjhsbdhfbhsdb电脑上减肥不上班分别少部分黑死病封神榜风寒湿痹封神榜粉红色部分少部分火山爆发s是
                 分三年级奋笔疾书不放是吧风寒湿痹红色不是基本上还不是吧
             </Text> */}
-        {
-          loading ? <View style={styles.up}><Spinner /></View> : <TouchableWithoutFeedback onPress={() => uuup()}>
-            <View style={styles.up}>
-              <Image
-                style={{ width: 96 / 2, height: 96 / 2 }}
-                source={require('../../assets/img/my/3336.png')}></Image>
-              <Text>上传图像、视频</Text>
-            </View>
-          </TouchableWithoutFeedback>
-        }
-
-        <Text style={{ fontSize: 10, color: '#999999', marginBottom: 27 }}>
-          支持的文件类型：JPG、SVG、png
-        </Text>
-        <View style={styles.lis}>
-          <Text style={styles.text}>标题</Text>
-          {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
-                       
-                    </TouchableWithoutFeedback> */}
-          <TextInput
-            maxLength={6}
-            placeholder="请输入藏品名"
-            keyboardType="decimal-pad"
-            style={[styles.input]}
-            onChangeText={e => setTitle(e)}
-            value={title}
-          />
-        </View>
-
-        <View style={[styles.lis, { marginBottom: 20 }]}>
-          <Text style={styles.text}>简介</Text>
-          {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
-                       
-                    </TouchableWithoutFeedback> */}
-          <TextInput
-            placeholder="请输入简介"
-            keyboardType="decimal-pad"
-            style={[styles.input, { marginBottom: 20, height: 151, }]}
-            onChangeText={e => setExplain(e)}
-            value={explain}
-            multiline={true}
-            maxLength={200}
-            numberOfLines={5}
-          />
-        </View>
-
-        <View style={[styles.lis, { marginBottom: 20 }]}>
-          <Text style={styles.text}>选择合集</Text>
-          {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
-                       
-                    </TouchableWithoutFeedback> */}
-          <TextInput
-            maxLength={6}
-            placeholder="请输入地址"
-            keyboardType="decimal-pad"
-            style={[styles.input, { marginBottom: 20 }]}
-            onChangeText={e => setaddress(e)}
-            value={address}
-          />
-        </View>
-
-        <View style={[styles.lis, { marginBottom: 20 }]}>
-          <Text style={styles.text}>选择区块链</Text>
-          {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
-                       
-                    </TouchableWithoutFeedback> */}
-          <TextInput
-            maxLength={6}
-            placeholder="请输入地址"
-            keyboardType="decimal-pad"
-            style={[styles.input, { marginBottom: 20 }]}
-            onChangeText={e => setaddress(e)}
-            value={address}
-          />
-        </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
-          <Text style={{ fontSize: 12, color: '#999999', }}>
-            上链费：
-          </Text>
-          <Text style={{ fontSize: 16, color: '#897EF8' }}>0.027ETH</Text>
-        </View>
-      </ScrollView>
-
-      <Text onPress={() => Sure()} style={styles.btn}>创建并支付</Text>
-
-
-      <Modal
-        visible={Modalvisible}
-        backdropStyle={{ "backgroundColor": 'rgba(0, 0, 0, 0.5)' }}
-        onBackdropPress={() => { setModalvisible(false) }}>
-        <Card disabled={true} style={styles.CardBox}>
-
-          <TextInput
-            ref={inputRefX}
-            maxLength={6}
-            caretHidden={true}
-            secureTextEntry={true}
-            onKeyPress={() => { }}
-            placeholder='123456'
-            keyboardType="numeric"
-            style={{ position: 'absolute', zIndex: 1, top: -40 }}
-            onChangeText={(e) => {
-              setpassword(e);
-            }
-            }
-            value={password}
-          />
-          <View style={{ justifyContent: 'flex-end', flexDirection: 'row', position: 'absolute', top: 10, right: 20, width: 22, height: 22 }}>
-            <TouchableWithoutFeedback onPress={() => { setModalvisible(false) }}>
-              <Image style={styles.colose} source={require('../../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png')}></Image>
-            </TouchableWithoutFeedback>
-
-          </View>
-          <View>
-            <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>请输入支付密码</Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
-            </View>
-            <View style={{ height: 48, flexDirection: 'row', justifyContent: 'space-between', }}>
               {
-                passwordlist.map((item, index) => (
-                  <Text style={[index == 0 ? styles.passinputfirst : styles.passinput]}>{item ? "●" : ''}</Text>
-                ))
+                loading ? <View style={styles.up}><Spinner /></View> : <TouchableWithoutFeedback onPress={() => uuup()}>
+                  <View style={styles.up}>
+                    {
+
+
+
+                      imgurlUp1 && imgurlUp1
+                        ?
+                        <Image
+                          style={{ width: '100%', height: '100%' }}
+                          source={{ uri: `data:image/jpeg;base64,${imgurlUp1}` }}></Image>
+                        :
+                        <>
+                          <Image
+                            style={{ width: 96 / 2, height: 96 / 2 }}
+                            source={require('../../assets/img/my/3336.png')}></Image>
+                          <Text>上传图像、视频</Text>
+                        </>
+                    }
+
+                  </View>
+                </TouchableWithoutFeedback>
               }
-            </View>
-          </View>
-        </Card>
-      </Modal>
+
+              <Text style={{ fontSize: 10, color: '#999999', marginBottom: 27 }}>
+                支持的文件类型：JPG、SVG、png
+              </Text>
+              <View style={styles.lis}>
+                <Text style={styles.text}>标题</Text>
+                {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
+                       
+                    </TouchableWithoutFeedback> */}
+                <TextInput
+                  maxLength={6}
+                  placeholder="请输入藏品名"
+                  keyboardType="decimal-pad"
+                  style={[styles.input]}
+                  onChangeText={e => setTitle(e)}
+                  value={title}
+                />
+              </View>
+
+              <View style={[styles.lis, { marginBottom: 20 }]}>
+                <Text style={styles.text}>简介</Text>
+                {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
+                       
+                    </TouchableWithoutFeedback> */}
+                <TextInput
+                  placeholder="请输入简介"
+                  keyboardType="decimal-pad"
+                  style={[styles.input, { marginBottom: 20, height: 151, }]}
+                  onChangeText={e => setExplain(e)}
+                  value={explain}
+                  multiline={true}
+                  maxLength={200}
+                  numberOfLines={5}
+                />
+              </View>
+
+              <View style={[styles.lis, { marginBottom: 20 }]}>
+                <Text style={styles.text}>选择合集</Text>
+                {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
+                       
+                    </TouchableWithoutFeedback> */}
+                <TextInput
+                  maxLength={6}
+                  placeholder="请输入地址"
+                  keyboardType="decimal-pad"
+                  style={[styles.input, { marginBottom: 20 }]}
+                  onChangeText={e => setaddress(e)}
+                  value={address}
+                />
+              </View>
+
+              <View style={[styles.lis, { marginBottom: 20 }]}>
+                <Text style={styles.text}>选择区块链</Text>
+                {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
+                       
+                    </TouchableWithoutFeedback> */}
+                <TextInput
+                  maxLength={6}
+                  placeholder="请输入地址"
+                  keyboardType="decimal-pad"
+                  style={[styles.input, { marginBottom: 20 }]}
+                  onChangeText={e => setaddress(e)}
+                  value={address}
+                />
+              </View>
+              {
+                WalletInUse == 1 ?
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
+                <Text style={{ fontSize: 12, color: '#999999', }}>
+                  上链费：
+                </Text>
+                <Text style={{ fontSize: 16, color: '#897EF8' }}>0.027ETH</Text>
+              </View>
+               : null
+
+              }
+              
+            </ScrollView>
+
+            <Text onPress={() => Sure()} style={styles.btn}>创建并支付</Text>
+
+
+            <Modal
+              visible={Modalvisible}
+              backdropStyle={{ "backgroundColor": 'rgba(0, 0, 0, 0.5)' }}
+              onBackdropPress={() => { setModalvisible(false) }}>
+              <Card disabled={true} style={styles.CardBox}>
+
+                <TextInput
+                  ref={inputRefX}
+                  maxLength={6}
+                  caretHidden={true}
+                  secureTextEntry={true}
+                  onKeyPress={() => { }}
+                  placeholder='123456'
+                  keyboardType="numeric"
+                  style={{ position: 'absolute', zIndex: 1, top: -40 }}
+                  onChangeText={(e) => {
+                    setpassword(e);
+                  }
+                  }
+                  value={password}
+                />
+                <View style={{ justifyContent: 'flex-end', flexDirection: 'row', position: 'absolute', top: 10, right: 20, width: 22, height: 22 }}>
+                  <TouchableWithoutFeedback onPress={() => { setModalvisible(false) }}>
+                    <Image style={styles.colose} source={require('../../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png')}></Image>
+                  </TouchableWithoutFeedback>
+
+                </View>
+                <View>
+                  <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>请输入支付密码</Text>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
+                  </View>
+                  <View style={{ height: 48, flexDirection: 'row', justifyContent: 'space-between', }}>
+                    {
+                      passwordlist.map((item, index) => (
+                        <Text style={[index == 0 ? styles.passinputfirst : styles.passinput]}>{item ? "●" : ''}</Text>
+                      ))
+                    }
+                  </View>
+                </View>
+              </Card>
+            </Modal>
+          </>
+      }
     </SafeAreaView>
   );
 }
@@ -277,7 +421,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     flexDirection: 'column',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    overflow: 'hidden'
   },
   btn: {
     width: screenWidth - 40,

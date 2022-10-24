@@ -23,8 +23,8 @@ const List = (props) => {
     // }, [imgurl])
 
     return (
-        <TouchableWithoutFeedback  onPress={() => {
-           
+        <TouchableWithoutFeedback onPress={() => {
+
             console.log(1, item.unique_id, item.contract_address, item.token_id, item.network, '详情传参');
             props.navigatetoDetail(1, item.unique_id, item.contract_address, item.token_id, item.network)
         }}>
@@ -43,14 +43,27 @@ const List = (props) => {
                                             <Text style={[styles.time, styles.timeBox]} >4h 16m 27s</Text> : <Text></Text>
                                     }
                                     {
-                                        type == 4 ? 
-                                        <View style={{
-                                            width:22,height:22,backgroundColor:'rgba(255,255,255,0.2)',borderWidth:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingLeft:2,paddingRight:2,position:'absolute',top:10,right:10,
-                                           }}>
-                                            <Text style={{width:4,height:4,backgroundColor:'#666666',borderRadius:2}}></Text>
-                                            <Text style={{width:4,height:4,backgroundColor:'#666666',borderRadius:2}}></Text>
-                                            <Text style={{width:4,height:4,backgroundColor:'#666666',borderRadius:2}}></Text>
-                                           </View> : null
+                                        type == 4 ?
+                                            <View style={{
+                                                width: 22,
+                                                height: 22,
+                                                backgroundColor: 'rgba(255,255,255,0.2)',
+                                                borderWidth: 1,
+                                                flexDirection: 'row',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                                paddingLeft: 2,
+                                                paddingRight: 2,
+                                                position: 'absolute',
+                                                top: 10,
+                                                right: 10,
+                                                borderRadius:6,
+                                                borderColor:'#ccc'
+                                            }}>
+                                                <Text style={{ width: 4, height: 4, backgroundColor: '#ccc', borderRadius: 2 }}></Text>
+                                                <Text style={{ width: 4, height: 4, backgroundColor: '#ccc', borderRadius: 2 }}></Text>
+                                                <Text style={{ width: 4, height: 4, backgroundColor: '#ccc', borderRadius: 2 }}></Text>
+                                            </View> : null
                                     }
                                 </ImageBackground> :
 
