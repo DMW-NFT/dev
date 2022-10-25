@@ -1,22 +1,30 @@
-import { Text, StyleSheet, View, SafeAreaView, ScrollView, Image, TextInput, FlatList, Dimensions,TouchableWithoutFeedback } from 'react-native'
+import { Text, StyleSheet, View, SafeAreaView, ScrollView, Image, TextInput, FlatList, Dimensions, TouchableWithoutFeedback } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
+import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider';
+
 const screenHeight = Dimensions.get("window").height;
 
 const MyCollection = (props) => {
-
-
     const [strText, setStrText] = useState('')
     const [list, setList] = useState([])
     const { post, formData } = useDmwApi()
+    const {username} = useDmwLogin()
+
+    useEffect(() => {
+        getCollection()
+    }, [])
+    useEffect(() => {
+        getCollection()
+    }, [props,strText])
 
 
-    useEffect(()=>{
-        post('/index/collection/get_user_collection').then(res=>{
-            console.log(res,'合集列表');
+    const getCollection = () => {
+        post('/index/collection/get_user_collection',formData({keyword:strText})).then(res => {
+            console.log(res.data.data[0], '合集列表');
             setList(res.data.data)
         })
-    },[])
+    }
 
     const onChange = (strText) => {
         setStrText(strText)
@@ -41,7 +49,7 @@ const MyCollection = (props) => {
                                 onChangeText={(strText) => onChange(strText)}
                             />
                         </View>
-                        <Text onPress={()=>{props.navigation.navigate('AddCreateCollection')}} style={[styles.TopAdd]}>+</Text>
+                        <Text onPress={() => { props.navigation.navigate('AddCreateCollection') }} style={[styles.TopAdd]}>+</Text>
                     </View>
                 </View>
 
@@ -52,7 +60,7 @@ const MyCollection = (props) => {
                 showsVerticalScrollIndicator={false}
                 refreshing={true}
                 ListEmptyComponent={() => {
-                    return <Text style={{textAlign:'center',marginTop:'70%'}}>空空如也</Text>
+                    return <Text style={{ textAlign: 'center', marginTop: '70%' }}>空空如也</Text>
                     // 列表为空展示改组件
                 }}
                 // 一屏幕展示几个
@@ -60,20 +68,22 @@ const MyCollection = (props) => {
                 data={list}
                 renderItem={({ item }) => {
                     return (
+                        <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('collectionDetails',{ID:item.id})}}>
                         <View style={[styles.lisBox]}>
-                            <Image source={require('../../assets/img/index/any.jpeg')} style={{ width: '100%', height: 254 / 2, borderRadius: 16 }}></Image>
-                            <Image source={require('../../assets/img/index/any.jpeg')} style={[styles.logo]}></Image>
+                            <Image source={{uri:item.banner_url}} style={{ width: '100%', height: 254 / 2, borderRadius: 16 }}></Image>
+                            <Image source={{uri:item.logo_url}} style={[styles.logo]}></Image>
                             <View>
-                                <Text style={[styles.collname]}>海贼王-恶魔果实</Text>
-                                <Text style={[styles.name]}>d_xrxr</Text>
+                                <Text style={[styles.collname]}>{item.name}</Text>
+                                <Text style={[styles.name]}>{username}</Text>
                             </View>
                         </View>
+                        </TouchableWithoutFeedback>
                     )
                 }}
                 keyExtractor={(item, index) => index}
                 ListFooterComponent={() => {
                     // 声明尾部组件
-                    return list && list.length  ? <Text style={{ textAlign: 'center' }}>{setList.length}</Text> : null
+                    return list && list.length ? <Text style={{ textAlign: 'center' }}>{setList.length}</Text> : null
                 }}
                 // 下刷新
                 onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
