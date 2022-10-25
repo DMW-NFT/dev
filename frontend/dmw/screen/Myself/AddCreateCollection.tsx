@@ -17,7 +17,8 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Spinner } from '@ui-kitten/components';
 import { Card, Layout, Modal } from '@ui-kitten/components';
 import { Surface } from 'react-native-paper';
-
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
 const screenHeight = Dimensions.get('window').height;
@@ -28,33 +29,45 @@ const AddCreateCollection = (props) => {
   const [loading, setLoding] = useState(false)
   const [loading1, setLoding1] = useState(false)
   const [loading3, setLoding3] = useState(false)
-  const [listType,setListTtpe] = useState([])
-  const [BlockchainList,setBlockchainList] = useState([])
+  const [listType, setListTtpe] = useState([])
+  const [listE, setlistE] = useState([])
+  const [BlockchainList, setBlockchainList] = useState([])
   const { post, formData, Toast } = useDmwApi()
+  const [IpfsImgUrl1, setIpfsImgUrl1] = useState({ base64: '', url: '' })
+  const [IpfsImgUrl2, setIpfsImgUrl2] = useState({ base64: '', url: '' })
+  const [IpfsImgUrl3, setIpfsImgUrl3] = useState({ base64: '', url: '' })
+  const [upUrl, setUpUrl] = useState('')
+  const [upUrl2, setUpUrl2] = useState('')
+  const [upUrl3, setUpUrl3] = useState('')
+  const [activeType, setactiveType] = useState({ value: '1', name: '收藏品' })
+  const [activeEm, setactiveEm] = useState({ value: 'Ethereum', name: 'Ethereum' })
+  const [isShowType, setisShowType] = useState(false)//是否展开类型选择框
+  const [isShowE, setisShowE] = useState(false)//是否展开区块链选择框
 
 
 
-  useEffect(()=>{
+
+  useEffect(() => {
     getCoType()
     getBlockchain()
-  },[])
+  }, [])
 
   useEffect(() => {
     console.log(123);
 
-  }, [loading])
+  }, [loading, upUrl])
 
   // 获取区块链
   const getBlockchain = () => {
     post('/index/common/get_network').then(res => {
-      console.log(res, '区块链类型');
-      setListTtpe(res.data)
+      // console.log(res, '区块链类型');
+      setlistE(res.data)
     })
   }
   // 获取type类型
   const getCoType = () => {
     post('/index/common/get_categories').then(res => {
-      console.log(res, '合集类型');
+      // console.log(res, '合集类型');
       setListTtpe(res.data)
     })
   }
@@ -72,67 +85,111 @@ const AddCreateCollection = (props) => {
     // let params = formData(data)
     // post('/index/collection/add',)
   }
-
-  // b本地
-  const uuup = (type) => {
-    launchImageLibrary({
-      mediaType: 'photo',
-      maxWidth: 1000,// 设置选择照片的大小，设置小的话会相应的进行压缩
-      maxHeight: 1000,
-      quality: 0.8,
-      // videoQuality: 'low',
-      // includeBase64: true
-    }, res => {
-      if (res.assets) {
-        if (type == 1) {
-          setLoding1(true)
-        } else if (type == 2) {
-          setLoding(true)
-        } else if (type == 3) {
-          setLoding3(true)
-        }
-
-        console.log(formData({ content: res.assets[0], path: '123' }));
-        console.log(res.assets[0]);
-        
-        post('/index/interface/upload_folder', formData({ content: JSON.stringify(res.assets[0]), path: '123' })).then(resp => {
-          console.log(resp);
-          if (resp.code == 200) {
-            Toast('上传成功！')
-          }
-          if (type == 1) {
-            setLoding1(false)
-          } else if (type == 2) {
-            setLoding(false)
-          } else if (type == 3) {
-            setLoding3(false)
-          }
-        }).catch(err => {
-          if (type == 1) {
-            setLoding1(false)
-          } else if (type == 2) {
-            setLoding(false)
-          } else if (type == 3) {
-            setLoding3(false)
-          }
-          Toast('因未知原因上传失败')
-          console.log(err, 789);
-        })
-
-      } else {
-        console.log('根本没进去');
-
-        return
-      }
-
-
-      if (res.didCancel) {
-        return false;
-      }
-      // 对获取的图片进行处理
-    })
-
+  const typeTf = (type, boll) => {
+    if (type == 1) {
+      setLoding1(boll)
+    } else if (type == 2) {
+      setLoding(boll)
+    } else if (type == 3) {
+      setLoding3(boll)
+    }
   }
+
+  const up = async () => {
+    console.log(123);
+
+    try {
+      const file = await DocumentPicker.pick({
+        type: [DocumentPicker.types.images],
+      });
+      console.log(file, "文件");
+
+      let formData = new FormData();
+      formData.append("file", file[0]);
+      formData.append("type", "1");
+      post("/index/collection/upload_logo", formData).then((res) => {
+        console.log(res, "上传");
+        let jex = {
+          "code": 200, "data":
+          {
+            "att_dir": "/storage/20221024/aa7074129064a7d83ba06e15c2636769.jpg", "att_size": 62301,
+            "att_type": "jpg", "id": "SQLSTATE[HY000]: General error: 1205 Lock wait timeout exceeded; try restarting transaction",
+            "module_type": 2, "name": "20221024/aa7074129064a7d83ba06e15c2636769.jpg",
+            "real_name": "rn_image_picker_lib_temp_0745d4c1-c474-4f53-8e8e-c0eaf3f77d03.jpg",
+            "upload_type": 1, "url": "https://dmw.cougogo.com//storage/20221024/aa7074129064a7d83ba06e15c2636769.jpg"
+          }, "message": "ok"
+        }
+        if (res.code == 200) {
+          setUpUrl(res.data.url)
+        }
+      });
+    } catch (err) {
+      // 在文件上传过程中出现错误
+      if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+        throw err;
+      }
+    }
+  };
+
+
+  const uuup = (type) => {
+    // typeTf(type, true)
+    let options = {
+      maxWidth: 300,
+      maxHeight: 550,
+      quality: 1,
+      mediaType: 'photo',
+    };
+    launchImageLibrary(options, ((response) => {
+      if (response.didCancel) {
+        typeTf(type, false)
+        return;
+      } else if (response.errorCode == 'camera_unavailable') {
+        typeTf(type, false)
+        return;
+      } else if (response.errorCode == 'permission') {
+        typeTf(type, false)
+        return;
+      } else if (response.errorCode == 'others') {
+        typeTf(type, false)
+        return;
+      }
+
+      console.log(response.assets[0], '4578');
+      let formData = new FormData();
+      let data = {
+        "fileCopyUri": null,
+        "name": response.assets[0].fileName,
+        "size": response.assets[0].fileSize,
+        "type": "image/jpeg",
+        "uri": response.assets[0].uri
+      }
+
+
+      formData.append("file", data);
+
+      if (type == 1) {
+        setLoding1(true)
+        // setIpfsImgUrl1({ base64: response.assets[0].base64, url: '' })
+        post('/index/collection/upload_logo', formData).then(res => {
+          console.log(res, '标识');
+          Toast('上传成功!')
+          setLoding1(false)
+        })
+      } else if (type == 2) {
+        setIpfsImgUrl2({ base64: response.assets[0].base64, url: '' })
+      } else if (type == 3) {
+        setIpfsImgUrl3({ base64: response.assets[0].base64, url: '' })
+      }
+
+
+
+    }))
+  }
+
+
   return (
     <SafeAreaView
       style={{
@@ -152,10 +209,20 @@ const AddCreateCollection = (props) => {
         {
           loading1 ? <View style={styles.up1}><Spinner /></View> : <TouchableWithoutFeedback onPress={() => uuup(1)}>
             <View style={styles.up1}>
-              <Image
-                style={{ width: 96 / 2, height: 96 / 2 }}
-                source={require('../../assets/img/my/3336.png')}></Image>
-              <Text>上传图像</Text>
+              {
+                upUrl ?
+                  <Image
+                    style={{ width: '100%', height: '100%' }}
+                    source={{ uri: upUrl }}></Image>
+                  :
+                  <>
+                    <Image
+                      style={{ width: 96 / 2, height: 96 / 2 }}
+                      source={require('../../assets/img/my/3336.png')}></Image>
+                    <Text>上传图像</Text>
+                  </>
+              }
+
             </View>
           </TouchableWithoutFeedback>
         }
@@ -167,10 +234,21 @@ const AddCreateCollection = (props) => {
         {
           loading ? <View style={styles.up}><Spinner /></View> : <TouchableWithoutFeedback onPress={() => uuup(2)}>
             <View style={styles.up}>
-              <Image
-                style={{ width: 96 / 2, height: 96 / 2 }}
-                source={require('../../assets/img/my/3336.png')}></Image>
-              <Text>上传图像、视频</Text>
+              {
+                IpfsImgUrl2.base64 ?
+                  <Image
+                    style={{ width: '100%', height: '100%' }}
+                    source={{ uri: `data:image/jpeg;base64,${IpfsImgUrl2.base64}` }}></Image>
+                  :
+                  <>
+                    <Image
+                      style={{ width: 96 / 2, height: 96 / 2 }}
+                      source={require('../../assets/img/my/3336.png')}></Image>
+                    <Text>上传图像、视频</Text>
+                  </>
+              }
+
+
             </View>
           </TouchableWithoutFeedback>
         }
@@ -181,10 +259,18 @@ const AddCreateCollection = (props) => {
         {
           loading3 ? <View style={styles.up3}><Spinner /></View> : <TouchableWithoutFeedback onPress={() => uuup(3)}>
             <View style={styles.up3}>
-              <Image
-                style={{ width: 96 / 2, height: 96 / 2 }}
-                source={require('../../assets/img/my/3336.png')}></Image>
-              <Text>上传图像、视频</Text>
+              {
+                IpfsImgUrl3.base64 ?
+                  <Image
+                    style={{ width: '100%', height: '100%' }}
+                    source={{ uri: `data:image/jpeg;base64,${IpfsImgUrl3.base64}` }}></Image> :
+                  <>
+                    <Image
+                      style={{ width: 96 / 2, height: 96 / 2 }}
+                      source={require('../../assets/img/my/3336.png')}></Image>
+                    <Text>上传图像、视频</Text></>
+              }
+
             </View>
           </TouchableWithoutFeedback>
         }
@@ -225,36 +311,96 @@ const AddCreateCollection = (props) => {
 
         <View style={[styles.lis, { marginBottom: 20 }]}>
           <Text style={{ fontSize: 16, marginBottom: 17 }}>
-            添加类别
+            选择合集
           </Text>
-          {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
-                       
-                    </TouchableWithoutFeedback> */}
-          <TextInput
-            maxLength={6}
-            placeholder="请输入地址"
-            keyboardType="decimal-pad"
-            style={[styles.input, { marginBottom: 20 }]}
-            onChangeText={e => setaddress(e)}
-            value={address}
-          />
+
+          <TouchableWithoutFeedback onPress={() => { setisShowType(!isShowType) }}>
+            <View style={[styles.input, {
+              flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
+            }]}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Image source={require('../../assets/img/index/any2.jpg')} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
+                <Text style={{ marginLeft: 10 }}>
+                  {activeType.name}
+                </Text></View>
+              <FontAwesomeIcon
+                icon={faAngleDown}
+                color="#707070"
+                size={16}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+          {
+            isShowType ?
+              <View style={{
+                paddingTop: 20, backgroundColor: '#fff', marginBottom: 20, marginTop: 2, borderRadius: 12, borderWidth: 1, borderColor: '#ccc', paddingBottom: 20
+              }}>
+
+                {
+                  listType && listType.length ?
+                    listType.map((item, index) => (
+                      <Text onPress={() => { setactiveType({ value: item.value, name: item.name }) }}
+                        style={{
+                          color: activeType.value == item.value ? 'blue' : '#333',
+                          paddingTop: 10, paddingBottom: 10,
+                          backgroundColor: activeType.value == item.value ? 'rgba(40, 120, 255,0.1)' : '#fff',
+                          paddingLeft: 20
+                        }}>{item.name}</Text>
+
+                    )) : null
+                }
+
+
+              </View> : null
+          }
+
         </View>
 
         <View style={[styles.lis, { marginBottom: 20 }]}>
           <Text style={{ fontSize: 16, marginBottom: 17 }}>
             选择区块链
           </Text>
-          {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
-                       
-                    </TouchableWithoutFeedback> */}
-          <TextInput
-            maxLength={6}
-            placeholder="请输入地址"
-            keyboardType="decimal-pad"
-            style={[styles.input, { marginBottom: 20 }]}
-            onChangeText={e => setaddress(e)}
-            value={address}
-          />
+
+          <TouchableWithoutFeedback onPress={() => { setisShowE(!isShowE) }}>
+            <View style={[styles.input, {
+              flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
+            }]}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Image source={require('../../assets/img/index/any2.jpg')} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
+                <Text style={{ marginLeft: 10 }}>
+                  {activeEm.name}
+                </Text></View>
+              <FontAwesomeIcon
+                icon={faAngleDown}
+                color="#707070"
+                size={16}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+          {
+            isShowE ?
+              <View style={{
+                paddingTop: 20, backgroundColor: '#fff', marginBottom: 20, marginTop: 2, borderRadius: 12, borderWidth: 1, borderColor: '#ccc', paddingBottom: 20
+              }}>
+
+                {
+                  listE && listE.length ?
+                    listE.map((item, index) => (
+                      <Text onPress={() => { if (!listE) return setactiveEm({ value: item.value, name: item.name }) }}
+                        style={{
+                          color: activeEm.value == item.value ? 'blue' : '#333',
+                          paddingTop: 10, paddingBottom: 10,
+                          backgroundColor: activeEm.value == item.value ? 'rgba(40, 120, 255,0.1)' : '#fff',
+                          paddingLeft: 20
+                        }}>{item.name}</Text>
+
+                    )) : null
+                }
+
+
+              </View> : null
+          }
+
         </View>
       </ScrollView>
 
@@ -279,6 +425,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
     justifyContent: 'center',
+    overflow: 'hidden'
   },
   up1: {
     height: 100,
@@ -290,6 +437,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
     justifyContent: 'center',
+    overflow: 'hidden'
   },
   passinputfirst: { textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, },
   passinput: { textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, borderLeftWidth: 0, },
@@ -315,7 +463,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     flexDirection: 'column',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    overflow: 'hidden'
   },
   btn: {
     width: screenWidth - 40,
