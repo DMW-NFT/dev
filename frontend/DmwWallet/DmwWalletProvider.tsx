@@ -180,12 +180,12 @@ const DmwWalletProvider = ({ children }) => {
 
     }
 
-    const dmwMintWithSignature = async (secretKey:string) =>{
+    const dmwMintWithSignature = async (secretKey:string,SignedPayload, Signature) =>{
         const contractAddress = "0x0ba15eE8874b930c49c7E65fFdEDf41BE9D0847d"
 
-        const contract = new web3.eth.Contract(NFT1155, contractAddress)
+        const contract = new web3.eth.Contract(NFT1155ABI, contractAddress)
 
-        const rawdata = contract.methods.mintWithSignature(['0xe403E8011CdB251c12ccF6911F44D160699CCC3c', '0x0000000000000000000000000000000000000000', 0, '0x0000000000000000000000000000000000000000', '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'https://gateway.ipfscdn.io/ipfs/QmZJ2uN4bM81FTbLzGNHzXeXSSdEF9dJGmvi48V5cWXETd/0', 10, '10000000000000000', '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', 1666073290, 88066073290, '0x3837643533366562366135613464343138333335326465366130306636626436'], '0x8aad991cb52c9ccdf71d74720da3bc5ed297cf5104a69ad93cf061fe73186f7a780f3002c80516c59411e12392564d551d669e551c115bee6eafd8c7b15369c31c').encodeABI()
+        const rawdata = contract.methods.mintWithSignature(SignedPayload, Signature).encodeABI()
         console.log(rawdata);
         const tx = {
             from: currentDmwWallet, // Required
@@ -193,7 +193,7 @@ const DmwWalletProvider = ({ children }) => {
             data: rawdata, // Required
             // gasPrice: "0x02540be400", // Optional
             // gasLimit: "0x9c40", // Optional
-            value: web3.utils.toWei('0.1', 'ether'), // Optional
+            value: web3.utils.toWei('0', 'ether'), // Optional
             // nonce: "0x0114", // Optional
         };
         dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
