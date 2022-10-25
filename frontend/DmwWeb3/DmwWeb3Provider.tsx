@@ -188,12 +188,12 @@ const DmwWeb3Provider = ({ children }) => {
                 console.error(error);
             });
     }
-    const mintNftWithSignature = (SignedPayload,Signature) => {
+    const mintNftWithSignature = (SignedPayload, Signature) => {
         const contractAddress = "0x0ba15eE8874b930c49c7E65fFdEDf41BE9D0847d"
 
         const contract = new web3.eth.Contract(NFT1155ABI, contractAddress)
 
-        const rawdata = contract.methods.mintWithSignature(SignedPayload,Signature).encodeABI()
+        const rawdata = contract.methods.mintWithSignature(SignedPayload, Signature).encodeABI()
         console.log(rawdata);
         const tx = {
             from: currentWallet, // Required
@@ -422,12 +422,23 @@ const DmwWeb3Provider = ({ children }) => {
             });
     }
 
+    /*
+    创建直接出售/拍卖订单：
+        assetContract:NFT 合约地址
+        tokenId:NFT的ID
+        startTime：开始时间十位精确到秒的 unix时间戳
+        secondsUntilEndTime：挂单/拍卖持续时间
+        quantityToList：挂单/拍卖的NFT数量
+        reservePricePerToken：拍卖单个NFT最低价，如果创建直接出售订单则此参数应当与buyoutPricePerToken相同
+        buyoutPricePerToken：拍卖单个NFT一口成交价，如果创建直接出售订单，则此为单个NFT出售价格
+        listingType：创建订单类型 1为直接出售 2为拍卖
+    */
 
     const createListing = (assetContract: string, tokenId: number, startTime: number, secondsUntilEndTime: number, quantityToList: number, reservePricePerToken: string, buyoutPricePerToken: string, listingType: number) => {
         web3.eth.setProvider(getProvider(currentChainId));
         const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
-        console.log(web3.utils.toWei(reservePricePerToken, 'ether'))
+        // console.log(web3.utils.toWei(reservePricePerToken, 'ether'))
         console.log(assetContract, tokenId, startTime, secondsUntilEndTime, quantityToList, reservePricePerToken, buyoutPricePerToken, listingType)
         const rawdata = contract.methods.createListing([assetContract, tokenId, startTime, secondsUntilEndTime, quantityToList, '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', web3.utils.toWei(reservePricePerToken, 'ether'), web3.utils.toWei(buyoutPricePerToken, 'ether'), listingType]).encodeABI()
 
@@ -454,12 +465,49 @@ const DmwWeb3Provider = ({ children }) => {
                 console.error(error);
             });
     }
-
+    /*
+    授权交易合约转移NFT
+    contractAddress：NFT的合约地址
+    */
     const ApprovalForAll = (contractAddress: string) => {
         web3.eth.setProvider(getProvider(currentChainId));
 
         const contract = new web3.eth.Contract(NFT1155ABI, contractAddress)
         const rawdata = contract.methods.setApprovalForAll('0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4', true).encodeABI()
+        const tx = {
+            from: currentWallet, // Required
+            to: contractAddress, // Required (for non contract deployments)
+            data: rawdata, // Required
+            // gasPrice: "0x02540be400", // Optional
+            // gasLimit: "0x9c40", // Optional
+            value: web3.utils.toWei("0", 'ether'), // Optional
+            // nonce: "0x0114", // Optional
+        };
+
+        connector
+            .sendTransaction(tx)
+
+            .then(result => {
+                // Returns transaction id (hash)
+                console.log(result);
+                syncTransactionSatus(result);
+            })
+            .catch(error => {
+                // Error returned when rejected
+                console.error(error);
+            });
+    }
+
+    /* 
+    关闭拍卖：仅当拍卖还未开始或拍卖已结束了才可以关闭
+    listingId:要关闭的订单的订单ID
+    closeFor:要关闭订单的钱包地址
+    */
+    const closeAuction = (listingId: string, closeFor: string) => {
+        web3.eth.setProvider(getProvider(currentChainId));
+        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
+        const rawdata = contract.methods.closeAuction(listingId,closeFor).encodeABI()
         const tx = {
             from: currentWallet, // Required
             to: contractAddress, // Required (for non contract deployments)
@@ -492,7 +540,7 @@ const DmwWeb3Provider = ({ children }) => {
 
     return (
 
-        <DmwWeb3Context.Provider value={{ transferToken,getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing }}>
+        <DmwWeb3Context.Provider value={{ transferToken, getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing }}>
             {children}
         </DmwWeb3Context.Provider>
     )
