@@ -331,7 +331,7 @@ const DmwWalletProvider = ({ children }) => {
         dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
     }
 
-    const cancelDirectListing = async (listingId: BigNumber) => {
+    const cancelDirectListing = async (secretKey:string,listingId: BigNumber) => {
         web3.eth.setProvider(getProvider(dmwChainId));
         const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
@@ -347,6 +347,24 @@ const DmwWalletProvider = ({ children }) => {
         };
         dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
     }
+
+    const dmwErc20Approve = (secretKey:string,tokenAddress: string, amount: string) => {
+        web3.eth.setProvider(getProvider(dmwChainId));
+        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contract = new web3.eth.Contract(ERC20ABI, tokenAddress)
+        const rawdata = contract.methods.approve(contractAddress, web3.utils.toWei(amount, 'ether')).encodeABI()
+        const tx = {
+            from: currentDmwWallet, // Required
+            to: contractAddress, // Required (for non contract deployments)
+            data: rawdata, // Required
+            // gasPrice: "0x02540be400", // Optional
+            // gasLimit: "0x9c40", // Optional
+            value: web3.utils.toWei("0", 'ether'), // Optional
+            // nonce: "0x0114", // Optional
+        };
+        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
+    }
+
 
     useEffect(() => {
         web3.eth.setProvider(getProvider(dmwChainId));
@@ -401,7 +419,7 @@ const DmwWalletProvider = ({ children }) => {
 
     return (
 
-        <DmwWalletContext.Provider value={{dmwBuyNFT,loadWalletFromMnemonic, loadMnemonicFromStorage , newMnemonic , dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtie ,dmwMintWithSignature,dmwTransactionList,dmwTransactionMap,dmwApprovalForAll,dmwCreateListing,dmwMakeOffer,dmwAcceptOffer,cancelDirectListing}}>
+        <DmwWalletContext.Provider value={{dmwBuyNFT,loadWalletFromMnemonic, loadMnemonicFromStorage , newMnemonic , dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtie ,dmwMintWithSignature,dmwTransactionList,dmwTransactionMap,dmwApprovalForAll,dmwCreateListing,dmwMakeOffer,dmwAcceptOffer,cancelDirectListing,dmwErc20Approve}}>
             {children}
         </DmwWalletContext.Provider>
 
