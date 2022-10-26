@@ -105,43 +105,7 @@ const AddCreateCollection = (props) => {
     }
   }
 
-  // const up = async () => {
-  //   console.log(123);
 
-  //   try {
-  //     const file = await DocumentPicker.pick({
-  //       type: [DocumentPicker.types.images],
-  //     });
-  //     console.log(file, "文件");
-
-  //     let formData = new FormData();
-  //     formData.append("file", file[0]);
-  //     formData.append("type", "1");
-  //     post("/index/collection/upload_logo", formData).then((res) => {
-  //       console.log(res, "上传");
-  //       let jex = {
-  //         "code": 200, "data":
-  //         {
-  //           "att_dir": "/storage/20221024/aa7074129064a7d83ba06e15c2636769.jpg", "att_size": 62301,
-  //           "att_type": "jpg", "id": "SQLSTATE[HY000]: General error: 1205 Lock wait timeout exceeded; try restarting transaction",
-  //           "module_type": 2, "name": "20221024/aa7074129064a7d83ba06e15c2636769.jpg",
-  //           "real_name": "rn_image_picker_lib_temp_0745d4c1-c474-4f53-8e8e-c0eaf3f77d03.jpg",
-  //           "upload_type": 1, "url": "https://dmw.cougogo.com//storage/20221024/aa7074129064a7d83ba06e15c2636769.jpg"
-  //         }, "message": "ok"
-  //       }
-  //       if (res.code == 200) {
-  //         setUpUrl(res.data.url)
-  //       }
-  //     });
-  //   } catch (err) {
-  //     // 在文件上传过程中出现错误
-  //     if (DocumentPicker.isCancel(err)) {
-  //       // User cancelled the picker, exit any dialogs or menus and move on
-  //     } else {
-  //       throw err;
-  //     }
-  //   }
-  // };
 
 
   const uuup = (type) => {
