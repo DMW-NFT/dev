@@ -63,6 +63,34 @@ const DmwWalletProvider = ({ children }) => {
 
 
     }
+    // 导入新的助记忆词，需要传入用户的支付密码，助记词将会用AES加密后储存到AsyncStorage的@dmw_mnemonic_storage中。
+    const addMnemonic = async (secretKey, mnemonic,reset = false) => {
+
+        // const wallet = web3.eth.accounts.create()
+        // console.log(wallet.privateKey)
+        // const mnemonic = generateMnemonic()
+        // const mnemonic = "survey caught snap typical veteran area mutual stay wide invite fresh climb"
+        var ciphertext = CryptoJS.AES.encrypt(
+            mnemonic
+            ,
+            secretKey
+        );
+        try {
+
+            if (!await AsyncStorage.getItem('@dmw_mnemonic_storage') || reset) {
+                await AsyncStorage.setItem('@dmw_mnemonic_storage', ciphertext.toString())
+                return { "result": true, "reset": reset, "error": "" }
+            } else {
+                throw '@dmw_mnemonic_storage is not valid'
+            }
+        } catch (e) {
+            // saving error
+            console.log(e)
+            // throw '@dmw_mnemonic_storage is not valid!'
+        }
+
+
+    }
 
     // 从AsyncStorage中读取助记词
     const loadMnemonicFromStorage = async (secretKey) => {
@@ -355,7 +383,7 @@ const DmwWalletProvider = ({ children }) => {
         const rawdata = contract.methods.approve(contractAddress, web3.utils.toWei(amount, 'ether')).encodeABI()
         const tx = {
             from: currentDmwWallet, // Required
-            to: contractAddress, // Required (for non contract deployments)
+            to: tokenAddress, // Required (for non contract deployments)
             data: rawdata, // Required
             // gasPrice: "0x02540be400", // Optional
             // gasLimit: "0x9c40", // Optional
@@ -365,6 +393,41 @@ const DmwWalletProvider = ({ children }) => {
         dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
     }
 
+    const dmwTransfer721NFT = (secretKey:string,conratctAddress:string,tokenId:Number,to:string) =>{
+        web3.eth.setProvider(getProvider(dmwChainId));
+        const contract = new web3.eth.Contract(NFT721ABI, conratctAddress)
+        const rawdata = contract.methods.transferFrom(currentDmwWallet, to,tokenId).encodeABI()
+        const tx = {
+            from: currentDmwWallet, // Required
+            to: conratctAddress, // Required (for non contract deployments)
+            data: rawdata, // Required
+            // gasPrice: "0x02540be400", // Optional
+            // gasLimit: "0x9c40", // Optional
+            value: web3.utils.toWei("0", 'ether'), // Optional
+            // nonce: "0x0114", // Optional
+        };
+
+        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
+    }
+
+    const dmwTransfer1155NFT = (secretKey:string,conratctAddress:string,tokenId:Number,to:string,amount:number) =>{
+        web3.eth.setProvider(getProvider(dmwChainId));
+        const contract = new web3.eth.Contract(NFT1155ABI, conratctAddress)
+        const rawdata = contract.methods.safeTransferFrom(currentDmwWallet, to,tokenId,amount,[]).encodeABI()
+        const tx = {
+            from: currentDmwWallet, // Required
+            to: conratctAddress, // Required (for non contract deployments)
+            data: rawdata, // Required
+            // gasPrice: "0x02540be400", // Optional
+            // gasLimit: "0x9c40", // Optional
+            value: web3.utils.toWei("0", 'ether'), // Optional
+            // nonce: "0x0114", // Optional
+        };
+
+        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
+    }
+
+    
 
     useEffect(() => {
         web3.eth.setProvider(getProvider(dmwChainId));
@@ -419,7 +482,7 @@ const DmwWalletProvider = ({ children }) => {
 
     return (
 
-        <DmwWalletContext.Provider value={{dmwBuyNFT,loadWalletFromMnemonic, loadMnemonicFromStorage , newMnemonic , dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtie ,dmwMintWithSignature,dmwTransactionList,dmwTransactionMap,dmwApprovalForAll,dmwCreateListing,dmwMakeOffer,dmwAcceptOffer,cancelDirectListing,dmwErc20Approve}}>
+        <DmwWalletContext.Provider value={{dmwBuyNFT,loadWalletFromMnemonic, loadMnemonicFromStorage , newMnemonic , dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtie ,dmwMintWithSignature,dmwTransactionList,dmwTransactionMap,dmwApprovalForAll,dmwCreateListing,dmwMakeOffer,dmwAcceptOffer,cancelDirectListing,dmwErc20Approve,dmwTransfer721NFT,dmwTransfer1155NFT,addMnemonic}}>
             {children}
         </DmwWalletContext.Provider>
 

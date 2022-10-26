@@ -564,13 +564,69 @@ const DmwWeb3Provider = ({ children }) => {
                 // Error returned when rejected
                 console.error(error);
             });
+    }  
+
+    const transfer721NFT = (conratctAddress:string,tokenId:Number,to:string) =>{
+        web3.eth.setProvider(getProvider(currentChainId));
+        const contract = new web3.eth.Contract(NFT721ABI, conratctAddress)
+        const rawdata = contract.methods.transferFrom(currentWallet, to,tokenId).encodeABI()
+        const tx = {
+            from: currentWallet, // Required
+            to: conratctAddress, // Required (for non contract deployments)
+            data: rawdata, // Required
+            // gasPrice: "0x02540be400", // Optional
+            // gasLimit: "0x9c40", // Optional
+            value: web3.utils.toWei("0", 'ether'), // Optional
+            // nonce: "0x0114", // Optional
+        };
+
+        connector
+            .sendTransaction(tx)
+
+            .then(result => {
+                // Returns transaction id (hash)
+                console.log(result);
+                syncTransactionSatus(result);
+            })
+            .catch(error => {
+                // Error returned when rejected
+                console.error(error);
+            });
+    }
+
+    const transfer1155NFT = (conratctAddress:string,tokenId:Number,to:string,amount:number) =>{
+        web3.eth.setProvider(getProvider(currentChainId));
+        const contract = new web3.eth.Contract(NFT1155ABI, conratctAddress)
+        const rawdata = contract.methods.safeTransferFrom(currentWallet, to,tokenId,amount,[]).encodeABI()
+        const tx = {
+            from: currentWallet, // Required
+            to: conratctAddress, // Required (for non contract deployments)
+            data: rawdata, // Required
+            // gasPrice: "0x02540be400", // Optional
+            // gasLimit: "0x9c40", // Optional
+            value: web3.utils.toWei("0", 'ether'), // Optional
+            // nonce: "0x0114", // Optional
+        };
+
+        connector
+            .sendTransaction(tx)
+
+            .then(result => {
+                // Returns transaction id (hash)
+                console.log(result);
+                syncTransactionSatus(result);
+            })
+            .catch(error => {
+                // Error returned when rejected
+                console.error(error);
+            });
     }
 
 
 
 
     return (
-        <DmwWeb3Context.Provider value={{ makeOffer,transferToken, getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing, getErc20Allowance,erc20Approve }}>
+        <DmwWeb3Context.Provider value={{ makeOffer,transferToken, getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing, getErc20Allowance,erc20Approve,transfer721NFT,transfer1155NFT }}>
             {children}
         </DmwWeb3Context.Provider>
     )
