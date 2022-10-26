@@ -507,7 +507,45 @@ const DmwWeb3Provider = ({ children }) => {
         web3.eth.setProvider(getProvider(currentChainId));
         const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
-        const rawdata = contract.methods.closeAuction(listingId,closeFor).encodeABI()
+        const rawdata = contract.methods.closeAuction(listingId, closeFor).encodeABI()
+        const tx = {
+            from: currentWallet, // Required
+            to: contractAddress, // Required (for non contract deployments)
+            data: rawdata, // Required
+            // gasPrice: "0x02540be400", // Optional
+            // gasLimit: "0x9c40", // Optional
+            value: web3.utils.toWei("0", 'ether'), // Optional
+            // nonce: "0x0114", // Optional
+        };
+
+        connector
+            .sendTransaction(tx)
+
+            .then(result => {
+                // Returns transaction id (hash)
+                console.log(result);
+                syncTransactionSatus(result);
+            })
+            .catch(error => {
+                // Error returned when rejected
+                console.error(error);
+            });
+    }
+
+
+    const getErc20Allowance = (tokenAddress: string, account: string) => {
+        web3.eth.setProvider(getProvider(currentChainId));
+        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contract = new web3.eth.Contract(ERC20ABI, tokenAddress)
+        const allowance = contract.methods.allowance(account, contractAddress).call()
+        return allowance
+    }
+
+    const erc20Approve = (tokenAddress: string, amount: string) => {
+        web3.eth.setProvider(getProvider(currentChainId));
+        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contract = new web3.eth.Contract(ERC20ABI, tokenAddress)
+        const rawdata = contract.methods.approve(contractAddress, web3.utils.toWei(amount, 'ether')).encodeABI()
         const tx = {
             from: currentWallet, // Required
             to: contractAddress, // Required (for non contract deployments)
@@ -535,12 +573,9 @@ const DmwWeb3Provider = ({ children }) => {
 
 
 
-
-
-
     return (
 
-        <DmwWeb3Context.Provider value={{ transferToken, getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing }}>
+        <DmwWeb3Context.Provider value={{ transferToken, getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing, getErc20Allowance,erc20Approve }}>
             {children}
         </DmwWeb3Context.Provider>
     )
