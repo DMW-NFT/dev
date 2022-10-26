@@ -36,6 +36,8 @@ const QuotationDetails = (props) => {
     const [listE, setlistE] = useState([{ value: 'USDT', name: 'USDT' }])
     const [isShowE, setisShowE] = useState(false)//是否展开区块链选择框
     const [activeEm, setactiveEm] = useState({ value: 'USDT', name: 'USDT' })
+    const [isOffer, setIsOffer] = useState(false)
+    const [QuotationAmount, setQuotationAmount] = useState('')//报价金额
     // Context 方法
     const { Toast, post, get, formData, shortenAddress, } = useDmwApi()
     const { buyNFT, currentWallet, transactionMap, transactionList, connectWallet } = useDmwWeb3()
@@ -138,11 +140,215 @@ const QuotationDetails = (props) => {
     // 打开直接购买弹窗
     const openBuyNowModal = () => {
         setBuyNowVisible(true)
+        setIsOffer(false)
         setBuyNumber('1')
     }
     // 确认购买
     const ConfirmPurchase = () => {
         openPassWordModal()
+    }
+
+    const OfferFn = () => {
+        setBuyNowVisible(true)
+        setIsOffer(true)
+        setBuyNumber('1')
+        setQuotationAmount('')
+    }
+
+
+
+    // return页面方法
+    const buynowPries = () => { //返回直接购买价格页面
+        if(isOffer){
+            if(QuotationAmount){
+
+                return (
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                        <View>
+                            <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>价格</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Text style={{ fontSize: 16, color: '#333333', fontWeight: '700', marginRight: 5 }}>{`${QuotationAmount} ${activeEm.name} X ${BuyNumber}`}</Text>
+                            {/* <Text style={{ fontSize: 10, lineHeight: 22 }}>Wfca</Text> */}
+                        </View>
+                    </View>
+                )
+            }else{
+                return null
+            }
+            
+
+        }else{
+            return (
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                    <View>
+                        <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>价格</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Text style={{ fontSize: 16, color: '#333333', fontWeight: '700', marginRight: 5 }}>{`${Price} X ${BuyNumber}`}</Text>
+                        {/* <Text style={{ fontSize: 10, lineHeight: 22 }}>Wfca</Text> */}
+                    </View>
+                </View>
+            )
+        }
+       
+    }
+
+
+    const bttt = () => {//货币下拉框
+        return (
+            <View style={[styles.lis, { marginBottom: 20 }]}>
+                {/* <Text style={{ fontSize: 16, marginBottom: 17 }}>
+        选择区块链
+    </Text> */}
+
+                <TouchableWithoutFeedback onPress={() => {
+                    if (!listE) {
+                        Toast('未加载到其他')
+                        return
+                    } setisShowE(!isShowE)
+                }}>
+                    <View style={[styles.input, {
+                        flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
+                    }]}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Image source={require('../../assets/img/index/USDTLOGO.jpeg')} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
+                            <Text style={{ marginLeft: 10 }}>
+                                {activeEm.name}
+                            </Text></View>
+                        <FontAwesomeIcon
+                            icon={faAngleDown}
+                            color="#707070"
+                            size={16}
+                        />
+                    </View>
+                </TouchableWithoutFeedback>
+                {
+                    isShowE ?
+                        <View style={{
+                            paddingTop: 20, backgroundColor: '#fff', marginBottom: 20, marginTop: 2, borderRadius: 12, borderWidth: 1, borderColor: '#ccc', paddingBottom: 20
+                        }}>
+
+                            {
+                                listE && listE.length ?
+                                    listE.map((item, index) => (
+                                        <Text onPress={() => { setactiveEm({ value: item.value, name: item.name }); setisShowE(false) }}
+                                            style={{
+                                                color: activeEm.value == item.value ? 'blue' : '#333',
+                                                paddingTop: 10, paddingBottom: 10,
+                                                backgroundColor: activeEm.value == item.value ? 'rgba(40, 120, 255,0.1)' : '#fff',
+                                                paddingLeft: 20
+                                            }}>{item.name}</Text>
+
+                                    )) : null
+                            }
+
+
+                        </View> : null
+                }
+
+            </View>
+        )
+    }
+
+    const LocalPurchase = () => {//本地直接购买展示gas费
+        return (
+            <View style={{ marginTop: 40 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
+                    <Text></Text>
+                    <Text style={{ fontSize: 10, color: '#897EF8' }}>编辑</Text>
+                </View>
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
+                    <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>预估GAS费</Text>
+                    <Text style={{ fontSize: 10, }}>0.001Wfca</Text>
+                </View>
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={{ fontSize: 10, color: '#3FAA85' }}>有可能在30秒内</Text>
+                    <Text style={{ fontSize: 10, color: '#999999' }}>最高收费：0.0002ETH</Text>
+                </View></View>
+        )
+    }
+
+    const isBuyNFTNumber = () => {//购买数量
+        return(
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
+            {
+                Number(BuyNumber) != 1 ?
+                    <TouchableWithoutFeedback onPress={() => { setBuyNumber(String(Number(BuyNumber) - 1)) }}>
+                        <Image style={styles.addImg} source={require('../../assets/img/index/-.png')}></Image>
+                    </TouchableWithoutFeedback>
+
+                    :
+                    <Image style={styles.addImg} source={require('../../assets/img/index/no-.png')}></Image>
+            }
+            <TextInput
+                caretHidden={true}
+                secureTextEntry={true}
+                onKeyPress={() => { }}
+                keyboardType="phone-pad"
+                style={styles.buyInput}
+                onChangeText={(e) => {
+                    if (Number(e) > orderList.quantity) {
+                        Toast('剩余数量不足！')
+                        setBuyNumber(String(orderList.quantity))
+                    } else {
+                        setBuyNumber(e);
+                    }
+                }
+                }
+                value={BuyNumber}
+            />
+            <TouchableWithoutFeedback onPress={() => { setBuyNumber(String(Number(BuyNumber) + 1)) }}>
+                <Image style={styles.addImg} source={require('../../assets/img/index/+.png')}></Image>
+            </TouchableWithoutFeedback>
+
+        </View>
+        )
+    }
+
+    const OKCancel = () => {//弹窗确定取消按钮
+        return(
+            <View style={{ flexDirection: 'row', marginTop: 30, justifyContent: 'space-between' }}>
+                        <Text style={[styles.BuyBtnC, {}]} onPress={() => { setBuyNowVisible(false) }}>取消</Text>
+                        <Text style={[styles.BuyBtnQ, {}]} onPress={() => ConfirmPurchase()}>确定</Text>
+                    </View>
+        )
+    }
+
+    const modalTitle = () => {//弹窗头部
+        return(
+            <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
+                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{isOffer ? '报价' : '购买'}</Text>
+                        <Image source={{ uri: imgurl }} style={styles.BuyNowImg}></Image>
+                        <View style={styles.nameBox}>
+                            <Text style={{ fontSize: 14, fontWeight: '700', textAlign: 'center', marginBottom: 5 }}>{collection ? collection.name : '--'}</Text>
+                            <Text style={{ fontSize: 12, textAlign: 'center', fontWeight: '500' }}>{NftInfo ? NftInfo.name : '--'}</Text>
+                        </View>
+                    </View>
+        )
+    }
+
+    const importValue = () => {//输入金额
+        return ( 
+            <>
+              <TextInput
+
+                secureTextEntry={true}
+                onKeyPress={() => { }}
+                keyboardType="phone-pad"
+                style={[styles.buyInput,{width:'100%',marginLeft:0,marginBottom:20,borderRadius:20,textAlign:'left',paddingLeft:20,paddingRight:20}]}
+                placeholder='请输入单价'
+                onChangeText={(e) => {
+                    setQuotationAmount(e)
+                }
+                }
+                value={QuotationAmount}
+            />
+
+            </>
+        )
     }
 
     return (
@@ -283,7 +489,7 @@ const QuotationDetails = (props) => {
                                     { flex: 1, borderTopLeftRadius: 25, borderBottomLeftRadius: 25 }]}
                                 >Buy now </Text>
                                 <Text
-                                    onPress={() => openPassWordModal()}
+                                    onPress={() => OfferFn()}
                                     style={[styles.bottomBtn,
                                     { flex: 1, backgroundColor: '#fff', color: '#333', borderColor: '#897EF8', borderWidth: 1, borderTopRightRadius: 25, borderBottomRightRadius: 25 }]}
                                 >Offer </Text>
@@ -305,143 +511,34 @@ const QuotationDetails = (props) => {
                             <Image style={styles.colose} source={require('../../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png')}></Image>
                         </TouchableWithoutFeedback>
                     </View>
-                    <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>购买</Text>
-                        <Image source={{ uri: imgurl }} style={styles.BuyNowImg}></Image>
-                        <View style={styles.nameBox}>
-                            <Text style={{ fontSize: 14, fontWeight: '700', textAlign: 'center', marginBottom: 5 }}>{collection ? collection.name : '--'}</Text>
-                            <Text style={{ fontSize: 12, textAlign: 'center', fontWeight: '500' }}>{NftInfo ? NftInfo.name : '--'}</Text>
-                        </View>
-                    </View>
-
-
-                    {/* 购买数量 */}
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
-                        {
-                            Number(BuyNumber) != 1 ?
-                                <TouchableWithoutFeedback onPress={() => { setBuyNumber(String(Number(BuyNumber) - 1)) }}>
-                                    <Image style={styles.addImg} source={require('../../assets/img/index/-.png')}></Image>
-                                </TouchableWithoutFeedback>
-
-                                :
-                                <Image style={styles.addImg} source={require('../../assets/img/index/no-.png')}></Image>
-                        }
-                        <TextInput
-                            caretHidden={true}
-                            secureTextEntry={true}
-                            onKeyPress={() => { }}
-                            keyboardType="phone-pad"
-                            style={styles.buyInput}
-                            onChangeText={(e) => {
-                                if (Number(e) > orderList.quantity) {
-                                    Toast('剩余数量不足！')
-                                    setBuyNumber(String(orderList.quantity))
-                                } else {
-                                    setBuyNumber(e);
-                                }
-                            }
-                            }
-                            value={BuyNumber}
-                        />
-                        <TouchableWithoutFeedback onPress={() => { setBuyNumber(String(Number(BuyNumber) + 1)) }}>
-                            <Image style={styles.addImg} source={require('../../assets/img/index/+.png')}></Image>
-                        </TouchableWithoutFeedback>
-
-                    </View>
-
-
-
-                    <View style={[styles.lis, { marginBottom: 20 }]}>
-                        {/* <Text style={{ fontSize: 16, marginBottom: 17 }}>
-                            选择区块链
-                        </Text> */}
-
-                        <TouchableWithoutFeedback onPress={() => {
-                            if (!listE) {
-                                Toast('未加载到其他')
-                                return
-                            } setisShowE(!isShowE)
-                        }}>
-                            <View style={[styles.input, {
-                                flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
-                            }]}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Image source={require('../../assets/img/index/any2.jpg')} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
-                                    <Text style={{ marginLeft: 10 }}>
-                                        {activeEm.name}
-                                    </Text></View>
-                                <FontAwesomeIcon
-                                    icon={faAngleDown}
-                                    color="#707070"
-                                    size={16}
-                                />
-                            </View>
-                        </TouchableWithoutFeedback>
-                        {
-                            isShowE ?
-                                <View style={{
-                                    paddingTop: 20, backgroundColor: '#fff', marginBottom: 20, marginTop: 2, borderRadius: 12, borderWidth: 1, borderColor: '#ccc', paddingBottom: 20
-                                }}>
-
-                                    {
-                                        listE && listE.length ?
-                                            listE.map((item, index) => (
-                                                <Text onPress={() => { setactiveEm({ value: item.value, name: item.name }); setisShowE(false) }}
-                                                    style={{
-                                                        color: activeEm.value == item.value ? 'blue' : '#333',
-                                                        paddingTop: 10, paddingBottom: 10,
-                                                        backgroundColor: activeEm.value == item.value ? 'rgba(40, 120, 255,0.1)' : '#fff',
-                                                        paddingLeft: 20
-                                                    }}>{item.name}</Text>
-
-                                            )) : null
-                                    }
-
-
-                                </View> : null
-                        }
-
-                    </View>
-
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                        <View>
-                            <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>价格</Text>
-                        </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <Text style={{ fontSize: 16, color: '#333333', fontWeight: '700', marginRight: 5 }}>{`${Price} X ${BuyNumber}`}</Text>
-                            {/* <Text style={{ fontSize: 10, lineHeight: 22 }}>Wfca</Text> */}
-                        </View>
-                    </View>
-
-
-
-
-
                     {
-                        false ?
-                            <View style={{ marginTop: 40 }}>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
-                                    <Text></Text>
-                                    <Text style={{ fontSize: 10, color: '#897EF8' }}>编辑</Text>
-                                </View>
-
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
-                                    <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>预估GAS费</Text>
-                                    <Text style={{ fontSize: 10, }}>0.001Wfca</Text>
-                                </View>
-
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <Text style={{ fontSize: 10, color: '#3FAA85' }}>有可能在30秒内</Text>
-                                    <Text style={{ fontSize: 10, color: '#999999' }}>最高收费：0.0002ETH</Text>
-                                </View></View> : null
+                        modalTitle()
                     }
 
+                    {/* 购买数量 */}
+                    {
+                        isBuyNFTNumber()
+                    }
+                    {
+                        importValue()
+                    }
+                    {
+                        isOffer ?
+                            bttt()
+                            : null
+                    }
+                    {
+                            buynowPries()
+                    }
+                    {
+                        false ?
+                            LocalPurchase() : null
+                    }
+                    {
+                        OKCancel()
+                    }
 
-
-                    <View style={{ flexDirection: 'row', marginTop: 30, justifyContent: 'space-between' }}>
-                        <Text style={[styles.BuyBtnC, {}]} onPress={() => { setBuyNowVisible(false) }}>取消</Text>
-                        <Text style={[styles.BuyBtnQ, {}]} onPress={() => ConfirmPurchase()}>确定</Text>
-                    </View>
+                    
                 </Card>
             </Modal>
 
