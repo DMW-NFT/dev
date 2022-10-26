@@ -63,6 +63,34 @@ const DmwWalletProvider = ({ children }) => {
 
 
     }
+    // 导入新的助记忆词，需要传入用户的支付密码，助记词将会用AES加密后储存到AsyncStorage的@dmw_mnemonic_storage中。
+    const addMnemonic = async (secretKey, mnemonic,reset = false) => {
+
+        // const wallet = web3.eth.accounts.create()
+        // console.log(wallet.privateKey)
+        // const mnemonic = generateMnemonic()
+        // const mnemonic = "survey caught snap typical veteran area mutual stay wide invite fresh climb"
+        var ciphertext = CryptoJS.AES.encrypt(
+            mnemonic
+            ,
+            secretKey
+        );
+        try {
+
+            if (!await AsyncStorage.getItem('@dmw_mnemonic_storage') || reset) {
+                await AsyncStorage.setItem('@dmw_mnemonic_storage', ciphertext.toString())
+                return { "result": true, "reset": reset, "error": "" }
+            } else {
+                throw '@dmw_mnemonic_storage is not valid'
+            }
+        } catch (e) {
+            // saving error
+            console.log(e)
+            // throw '@dmw_mnemonic_storage is not valid!'
+        }
+
+
+    }
 
     // 从AsyncStorage中读取助记词
     const loadMnemonicFromStorage = async (secretKey) => {
@@ -454,7 +482,7 @@ const DmwWalletProvider = ({ children }) => {
 
     return (
 
-        <DmwWalletContext.Provider value={{dmwBuyNFT,loadWalletFromMnemonic, loadMnemonicFromStorage , newMnemonic , dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtie ,dmwMintWithSignature,dmwTransactionList,dmwTransactionMap,dmwApprovalForAll,dmwCreateListing,dmwMakeOffer,dmwAcceptOffer,cancelDirectListing,dmwErc20Approve,dmwTransfer721NFT,dmwTransfer1155NFT}}>
+        <DmwWalletContext.Provider value={{dmwBuyNFT,loadWalletFromMnemonic, loadMnemonicFromStorage , newMnemonic , dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtie ,dmwMintWithSignature,dmwTransactionList,dmwTransactionMap,dmwApprovalForAll,dmwCreateListing,dmwMakeOffer,dmwAcceptOffer,cancelDirectListing,dmwErc20Approve,dmwTransfer721NFT,dmwTransfer1155NFT,addMnemonic}}>
             {children}
         </DmwWalletContext.Provider>
 
