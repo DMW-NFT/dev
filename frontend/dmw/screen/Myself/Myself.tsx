@@ -125,8 +125,6 @@ const Myself = (props) => {
      
     }).catch(err=>{
       console.log(err,'----');
-
-      
     })
   }
 

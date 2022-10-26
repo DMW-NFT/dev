@@ -16,6 +16,7 @@ const List = (props) => {
     const [type, setype] = useState(props.type)
     const item = props.list
     const [imgurl, setImgurl] = useState(item.image_attachment_url)
+    const [show, setshow] = useState(false)
 
     return (
         <TouchableWithoutFeedback onPress={() => {
@@ -23,7 +24,23 @@ const List = (props) => {
             console.log(1, item.unique_id, item.contract_address, item.token_id, item.network, '详情传参');
             props.navigatetoDetail(1, item.unique_id, item.contract_address, item.token_id, item.network)
         }}>
+
             <View style={[styles.lis]} >
+                {
+                    show ?
+                        <TouchableWithoutFeedback onPress={() => {
+                            setshow(false)
+                        }}>
+                            <View
+                                style={{ backgroundColor: 'rgba(0,0,0,0.3)', width: '100%', height: '100%', position: 'absolute', top: 0, zIndex: 100, borderRadius: 10,
+                                paddingTop:40, paddingLeft:12,paddingRight:12}}>
+                                <View>
+                                    <Text style={{paddingTop:6,paddingBottom:6,backgroundColor:'#fff',borderRadius:15,textAlign:'center',marginBottom:20}}>复制链接</Text>
+                    
+                                    <Text style={{paddingTop:6,paddingBottom:6,backgroundColor:'#fff',borderRadius:15,textAlign:'center',marginBottom:20}}>转移/赠与</Text>
+                                </View>
+                            </View></TouchableWithoutFeedback> : null
+                }
                 <View>
                     <View style={[styles.imgBox]} >
                         {
@@ -38,31 +55,36 @@ const List = (props) => {
                                             <Text style={[styles.time, styles.timeBox]} >4h 16m 27s</Text> : <Text></Text>
                                     }
                                     {
-                                        type == 4 ?
-                                            <View style={{
-                                                width: 22,
-                                                height: 22,
-                                                backgroundColor: 'rgba(255,255,255,0.2)',
-                                                borderWidth: 1,
-                                                flexDirection: 'row',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                paddingLeft: 2,
-                                                paddingRight: 2,
-                                                position: 'absolute',
-                                                top: 10,
-                                                right: 10,
-                                                borderRadius: 6,
-                                                borderColor: '#ccc'
+                                        type == 4 && !show ?
+                                            <TouchableWithoutFeedback onPress={() => {
+                                                setshow(true)
                                             }}>
-                                                <Text style={{ width: 4, height: 4, backgroundColor: '#ccc', borderRadius: 2 }}></Text>
-                                                <Text style={{ width: 4, height: 4, backgroundColor: '#ccc', borderRadius: 2 }}></Text>
-                                                <Text style={{ width: 4, height: 4, backgroundColor: '#ccc', borderRadius: 2 }}></Text>
-                                            </View> : null
+                                                <View style={{
+                                                    width: 22,
+                                                    height: 22,
+                                                    backgroundColor: 'rgba(255,255,255,0.2)',
+                                                    borderWidth: 1,
+                                                    flexDirection: 'row',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                    paddingLeft: 2,
+                                                    paddingRight: 2,
+                                                    position: 'absolute',
+                                                    top: 10,
+                                                    right: 10,
+                                                    borderRadius: 6,
+                                                    borderColor: '#ccc'
+                                                }}>
+                                                    <Text style={{ width: 4, height: 4, backgroundColor: '#ccc', borderRadius: 2 }}></Text>
+                                                    <Text style={{ width: 4, height: 4, backgroundColor: '#ccc', borderRadius: 2 }}></Text>
+                                                    <Text style={{ width: 4, height: 4, backgroundColor: '#ccc', borderRadius: 2 }}></Text>
+                                                </View>
+                                            </TouchableWithoutFeedback> : null
                                     }
                                 </ImageBackground> :
 
                                 <ImageBackground onError={() => {
+
                                 }} style={[styles.imageBox]} resizeMode='cover' source={require('../assets/img/index/any2.jpg')}>
 
 

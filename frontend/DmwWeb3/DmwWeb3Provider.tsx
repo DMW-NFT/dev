@@ -512,15 +512,11 @@ const DmwWeb3Provider = ({ children }) => {
             from: currentWallet, // Required
             to: contractAddress, // Required (for non contract deployments)
             data: rawdata, // Required
-            // gasPrice: "0x02540be400", // Optional
-            // gasLimit: "0x9c40", // Optional
             value: web3.utils.toWei("0", 'ether'), // Optional
-            // nonce: "0x0114", // Optional
         };
 
         connector
             .sendTransaction(tx)
-
             .then(result => {
                 // Returns transaction id (hash)
                 console.log(result);
@@ -548,7 +544,7 @@ const DmwWeb3Provider = ({ children }) => {
         const rawdata = contract.methods.approve(contractAddress, web3.utils.toWei(amount, 'ether')).encodeABI()
         const tx = {
             from: currentWallet, // Required
-            to: contractAddress, // Required (for non contract deployments)
+            to: tokenAddress, // Required (for non contract deployments)
             data: rawdata, // Required
             // gasPrice: "0x02540be400", // Optional
             // gasLimit: "0x9c40", // Optional
@@ -574,7 +570,6 @@ const DmwWeb3Provider = ({ children }) => {
 
 
     return (
-
         <DmwWeb3Context.Provider value={{ makeOffer,transferToken, getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing, getErc20Allowance,erc20Approve }}>
             {children}
         </DmwWeb3Context.Provider>

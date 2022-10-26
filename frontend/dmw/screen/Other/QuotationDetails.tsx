@@ -33,16 +33,17 @@ const QuotationDetails = (props) => {
     const [Modalvisible, setModalvisible] = useState(false)
     const [BuyNowVisible, setBuyNowVisible] = useState(false)
     const [BuyNumber, setBuyNumber] = useState('1')
-    const [listE, setlistE] = useState([{ value: 'USDT', name: 'USDT' }])
+    const [listE, setlistE] = useState([{ value: 'USDT', name: 'USDT' }, { value: 'WFCA', name: 'WFCA' }])
     const [isShowE, setisShowE] = useState(false)//是否展开区块链选择框
     const [activeEm, setactiveEm] = useState({ value: 'USDT', name: 'USDT' })
     const [isOffer, setIsOffer] = useState(false)
     const [QuotationAmount, setQuotationAmount] = useState('')//报价金额
+    const [AvailableBalance, setAvailableBalance] = useState(0)//报价金额
     // Context 方法
     const { Toast, post, get, formData, shortenAddress, } = useDmwApi()
-    const { buyNFT, currentWallet, transactionMap, transactionList, connectWallet } = useDmwWeb3()
+    const { buyNFT, currentWallet, transactionMap, transactionList, connectWallet, getErc20Allowance, erc20Approve, makeOffer } = useDmwWeb3()
     const { dmwBuyNFT } = useDmwWallet()
-    const { WalletInUse } = useDmwLogin
+    const { WalletInUse, dmwWalletList } = useDmwLogin
 
     const [latestHash, setLatestHash] = useState()
     const empty = () => {
@@ -58,7 +59,7 @@ const QuotationDetails = (props) => {
     useEffect(() => {
         if (transactionMap && transactionMap[latestHash]) {
             if (transactionMap[latestHash].state == "comfirmed") {
-                Toast('购买成功')
+                Toast('成功')
             }
         }
     }, [transactionMap])
@@ -71,21 +72,29 @@ const QuotationDetails = (props) => {
         })
         setpasswordlist(blackPointArry)
         if (password.length == 6) {
-            if (WalletInUse == 1) {
-                // 本地钱包购买
-                try {
-                    dmwBuyNFT('123456', String(orderList.listing_id), Number(BuyNumber), orderList.currency, String(UnitPrice.UnitPrice * Number(BuyNumber)))
-                } catch (err) {
-                }
+            if (isOffer) {
+                let sTime = Math.round(new Date().getTime() / 1000 + 60)
+                let address = activeEm.name == 'USDT' ? '0x0B99a72bebFE91B14529ea412eb2B1dBEE604c4C' : '0xC07Dd9487D93acD4B06e2fB9A6Fc2643968A6D29'
+                console.log("parma:",String(orderList.listing_id), Number(BuyNumber), address, QuotationAmount, sTime)
+                makeOffer(orderList.listing_id, Number(BuyNumber), address, QuotationAmount, sTime)
             } else {
-                // 第三方钱包购买
-                try {
-                    new buyNFT(
-                        String(orderList.listing_id), Number(BuyNumber), orderList.currency, String(UnitPrice.UnitPrice * Number(BuyNumber))
-                    )
-                } catch (error) {
+                if (WalletInUse == 1) {
+                    // 本地钱包购买
+                    try {
+                        dmwBuyNFT('123456', String(orderList.listing_id), Number(BuyNumber), orderList.currency, String(UnitPrice.UnitPrice * Number(BuyNumber)))
+                    } catch (err) {
+                    }
+                } else {
+                    // 第三方钱包购买
+                    try {
+                        new buyNFT(
+                            String(orderList.listing_id), Number(BuyNumber), orderList.currency, String(UnitPrice.UnitPrice * Number(BuyNumber))
+                        )
+                    } catch (error) {
+                    }
                 }
             }
+
         }
     }, [password])
 
@@ -130,6 +139,8 @@ const QuotationDetails = (props) => {
             setOffersList(res.data.offers)
         })
     }
+
+
     // 打开支付密码弹窗
     const openPassWordModal = () => {
         setModalvisible(true); setTimeout(() => {
@@ -155,12 +166,34 @@ const QuotationDetails = (props) => {
         setQuotationAmount('')
     }
 
+    useEffect(() => {
+        console.log(activeEm, '----7efhbhdvgfhsjh');
+        if (activeEm.name == 'USDT') {
+            getErc20Allowance('0x0B99a72bebFE91B14529ea412eb2B1dBEE604c4C', WalletInUse == 1 ? dmwWalletList[0] : currentWallet).then(res => {
+                console.log(res / 10 ** 18, '回调磨磨唧唧usdt');
+                setAvailableBalance(res / 10 ** 18)
+            })
+        } else if (activeEm.name == 'WFCA') {
+            getErc20Allowance('0xC07Dd9487D93acD4B06e2fB9A6Fc2643968A6D29', WalletInUse == 1 ? dmwWalletList[0] : currentWallet).then(res => {
+                console.log(res / 10 ** 18, '回调磨磨唧唧wfca');
+                setAvailableBalance(res / 10 ** 18)
+            })
+        }
+    }, [activeEm])
+
+    const allow = () => {
+        if (activeEm.name == 'USDT') {
+            erc20Approve('0x0B99a72bebFE91B14529ea412eb2B1dBEE604c4C', String(Number(BuyNumber) * Number(QuotationAmount)))
+        } else if (activeEm.name == 'WFCA') {
+            erc20Approve('0xC07Dd9487D93acD4B06e2fB9A6Fc2643968A6D29', String(Number(BuyNumber) * Number(QuotationAmount)))
+        }
+    }
 
 
     // return页面方法
     const buynowPries = () => { //返回直接购买价格页面
-        if(isOffer){
-            if(QuotationAmount){
+        if (isOffer) {
+            if (QuotationAmount) {
 
                 return (
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
@@ -173,12 +206,12 @@ const QuotationDetails = (props) => {
                         </View>
                     </View>
                 )
-            }else{
+            } else {
                 return null
             }
-            
 
-        }else{
+
+        } else {
             return (
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
                     <View>
@@ -191,7 +224,7 @@ const QuotationDetails = (props) => {
                 </View>
             )
         }
-       
+
     }
 
 
@@ -272,80 +305,99 @@ const QuotationDetails = (props) => {
     }
 
     const isBuyNFTNumber = () => {//购买数量
-        return(
+        return (
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
-            {
-                Number(BuyNumber) != 1 ?
-                    <TouchableWithoutFeedback onPress={() => { setBuyNumber(String(Number(BuyNumber) - 1)) }}>
-                        <Image style={styles.addImg} source={require('../../assets/img/index/-.png')}></Image>
-                    </TouchableWithoutFeedback>
+                {
+                    Number(BuyNumber) != 1 ?
+                        <TouchableWithoutFeedback onPress={() => { setBuyNumber(String(Number(BuyNumber) - 1)) }}>
+                            <Image style={styles.addImg} source={require('../../assets/img/index/-.png')}></Image>
+                        </TouchableWithoutFeedback>
 
-                    :
-                    <Image style={styles.addImg} source={require('../../assets/img/index/no-.png')}></Image>
-            }
-            <TextInput
-                caretHidden={true}
-                secureTextEntry={true}
-                onKeyPress={() => { }}
-                keyboardType="phone-pad"
-                style={styles.buyInput}
-                onChangeText={(e) => {
-                    if (Number(e) > orderList.quantity) {
-                        Toast('剩余数量不足！')
-                        setBuyNumber(String(orderList.quantity))
-                    } else {
-                        setBuyNumber(e);
+                        :
+                        <Image style={styles.addImg} source={require('../../assets/img/index/no-.png')}></Image>
+                }
+                <TextInput
+                    caretHidden={true}
+                    secureTextEntry={true}
+                    onKeyPress={() => { }}
+                    keyboardType="phone-pad"
+                    style={styles.buyInput}
+                    onChangeText={(e) => {
+                        if (Number(e) > orderList.quantity) {
+                            Toast('剩余数量不足！')
+                            setBuyNumber(String(orderList.quantity))
+                        } else {
+                            setBuyNumber(e);
+                        }
                     }
-                }
-                }
-                value={BuyNumber}
-            />
-            <TouchableWithoutFeedback onPress={() => { setBuyNumber(String(Number(BuyNumber) + 1)) }}>
-                <Image style={styles.addImg} source={require('../../assets/img/index/+.png')}></Image>
-            </TouchableWithoutFeedback>
+                    }
+                    value={BuyNumber}
+                />
+                <TouchableWithoutFeedback onPress={() => { setBuyNumber(String(Number(BuyNumber) + 1)) }}>
+                    <Image style={styles.addImg} source={require('../../assets/img/index/+.png')}></Image>
+                </TouchableWithoutFeedback>
 
-        </View>
+            </View>
         )
     }
 
     const OKCancel = () => {//弹窗确定取消按钮
-        return(
-            <View style={{ flexDirection: 'row', marginTop: 30, justifyContent: 'space-between' }}>
+        if (isOffer) {
+            if (Number(BuyNumber) * Number(QuotationAmount) > AvailableBalance) {
+                return (
+                    <View style={{ flexDirection: 'row', marginTop: 30, justifyContent: 'space-between' }}>
+                        <Text style={[styles.BuyBtnC, {}]} onPress={() => { setBuyNowVisible(false) }}>取消</Text>
+                        <Text style={[styles.BuyBtnQ, {}]} onPress={() => allow()}>授权转移额度</Text>
+                    </View>
+                )
+            } else {
+                return (
+                    <View style={{ flexDirection: 'row', marginTop: 30, justifyContent: 'space-between' }}>
                         <Text style={[styles.BuyBtnC, {}]} onPress={() => { setBuyNowVisible(false) }}>取消</Text>
                         <Text style={[styles.BuyBtnQ, {}]} onPress={() => ConfirmPurchase()}>确定</Text>
                     </View>
-        )
+                )
+            }
+        } else {
+            return (
+                <View style={{ flexDirection: 'row', marginTop: 30, justifyContent: 'space-between' }}>
+                    <Text style={[styles.BuyBtnC, {}]} onPress={() => { setBuyNowVisible(false) }}>取消</Text>
+                    <Text style={[styles.BuyBtnQ, {}]} onPress={() => ConfirmPurchase()}>确定</Text>
+                </View>
+            )
+        }
+
     }
 
     const modalTitle = () => {//弹窗头部
-        return(
+        return (
             <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{isOffer ? '报价' : '购买'}</Text>
-                        <Image source={{ uri: imgurl }} style={styles.BuyNowImg}></Image>
-                        <View style={styles.nameBox}>
-                            <Text style={{ fontSize: 14, fontWeight: '700', textAlign: 'center', marginBottom: 5 }}>{collection ? collection.name : '--'}</Text>
-                            <Text style={{ fontSize: 12, textAlign: 'center', fontWeight: '500' }}>{NftInfo ? NftInfo.name : '--'}</Text>
-                        </View>
-                    </View>
+                <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{isOffer ? '报价' : '购买'}</Text>
+                <Image source={{ uri: imgurl }} style={styles.BuyNowImg}></Image>
+                <View style={styles.nameBox}>
+                    <Text style={{ fontSize: 14, fontWeight: '700', textAlign: 'center', marginBottom: 5 }}>{collection ? collection.name : '--'}</Text>
+                    <Text style={{ fontSize: 12, textAlign: 'center', fontWeight: '500' }}>{NftInfo ? NftInfo.name : '--'}</Text>
+                </View>
+            </View>
         )
     }
 
     const importValue = () => {//输入金额
-        return ( 
+        return (
             <>
-              <TextInput
+                <TextInput
 
-                secureTextEntry={true}
-                onKeyPress={() => { }}
-                keyboardType="phone-pad"
-                style={[styles.buyInput,{width:'100%',marginLeft:0,marginBottom:20,borderRadius:20,textAlign:'left',paddingLeft:20,paddingRight:20}]}
-                placeholder='请输入单价'
-                onChangeText={(e) => {
-                    setQuotationAmount(e)
-                }
-                }
-                value={QuotationAmount}
-            />
+                    secureTextEntry={true}
+                    onKeyPress={() => { }}
+                    keyboardType="phone-pad"
+                    style={[styles.buyInput, { width: '100%', marginLeft: 0, marginBottom: 20, borderRadius: 20, textAlign: 'left', paddingLeft: 20, paddingRight: 20 }]}
+                    placeholder='请输入单价'
+                    onChangeText={(e) => {
+                        setQuotationAmount(e)
+                    }
+                    }
+                    value={QuotationAmount}
+                />
 
             </>
         )
@@ -528,7 +580,7 @@ const QuotationDetails = (props) => {
                             : null
                     }
                     {
-                            buynowPries()
+                        buynowPries()
                     }
                     {
                         false ?
@@ -538,7 +590,7 @@ const QuotationDetails = (props) => {
                         OKCancel()
                     }
 
-                    
+
                 </Card>
             </Modal>
 
