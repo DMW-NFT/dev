@@ -81,7 +81,7 @@ const QuotationDetails = (props) => {
                 if (WalletInUse == 1) {
                     // 本地钱包购买
                     try {
-                        dmwBuyNFT('123456', String(orderList.listing_id), Number(BuyNumber), orderList.currency, String(UnitPrice.UnitPrice * Number(BuyNumber)))
+                        dmwBuyNFT(password, String(orderList.listing_id), Number(BuyNumber), orderList.currency, String(UnitPrice.UnitPrice * Number(BuyNumber)))
                     } catch (err) {
                     }
                 } else {

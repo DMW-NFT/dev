@@ -179,7 +179,7 @@ console.log(123);
     let str = JSON.stringify({ wallet_address: wallet_address })
     let data = formData({ iv: iv, param: str })
     post('/index/login/login_by_wallet', data).then(res => {
-      console.log(res, 'qianbao denglu');
+      console.log(res,wallet_address,'qianbao denglu');
       if (res.code == 200) {
         Toast('登录成功！')
         if (type == 1 && dmwWalletList[0]) {

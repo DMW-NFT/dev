@@ -21,7 +21,7 @@ const MyCollection = (props) => {
 
     const getCollection = () => {
         post('/index/collection/get_user_collection',formData({keyword:strText})).then(res => {
-            console.log(res.data.data[0], '合集列表');
+            console.log(res.data.data, '合集列表');
             setList(res.data.data)
         })
     }

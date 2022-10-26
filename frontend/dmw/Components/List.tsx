@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { Item } from 'react-native-paper/lib/typescript/components/List/List'
+import { useDmwApi } from '../../DmwApiProvider/DmwApiProvider'
 
 
 const List = (props) => {
@@ -17,7 +18,7 @@ const List = (props) => {
     const item = props.list
     const [imgurl, setImgurl] = useState(item.image_attachment_url)
     const [show, setshow] = useState(false)
-
+    const {Copy} = useDmwApi()
     return (
         <TouchableWithoutFeedback onPress={() => {
 
@@ -33,11 +34,13 @@ const List = (props) => {
                         }}>
                             <View
                                 style={{ backgroundColor: 'rgba(0,0,0,0.3)', width: '100%', height: '100%', position: 'absolute', top: 0, zIndex: 100, borderRadius: 10,
-                                paddingTop:40, paddingLeft:12,paddingRight:12}}>
+                                paddingTop:60, paddingLeft:12,paddingRight:12}}>
                                 <View>
-                                    <Text style={{paddingTop:6,paddingBottom:6,backgroundColor:'#fff',borderRadius:15,textAlign:'center',marginBottom:20}}>复制链接</Text>
-                    
-                                    <Text style={{paddingTop:6,paddingBottom:6,backgroundColor:'#fff',borderRadius:15,textAlign:'center',marginBottom:20}}>转移/赠与</Text>
+                                    <Text 
+                                    onPress={()=>{Copy(`${item.contract_address}/${item.token_id}`)}}
+                                    style={{paddingTop:6,paddingBottom:6,backgroundColor:'#fff',borderRadius:15,textAlign:'center',marginBottom:20}}>复制链接</Text>
+                                    <Text 
+                                    style={{paddingTop:6,paddingBottom:6,backgroundColor:'#fff',borderRadius:15,textAlign:'center',marginBottom:20}}>转移/赠与</Text>
                                 </View>
                             </View></TouchableWithoutFeedback> : null
                 }

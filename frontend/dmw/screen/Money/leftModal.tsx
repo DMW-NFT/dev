@@ -11,11 +11,16 @@ import React, { useState, useContext, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
+import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
+import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
+
 const scale = Dimensions.get("window").scale;
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const Lmodal = (props) => {
+  const { Toast } = useDmwApi()
+const {WalletInUse} = useDmwLogin()
   const { dmwWalletList } = useDmwWallet();
   const close = () => {
     props.close();
@@ -24,10 +29,15 @@ const Lmodal = (props) => {
     props.goto(path);
   };
   const FNZ = () => {
-    props.openModal()
+    if (WalletInUse == 1 && dmwWalletList && dmwWalletList[0]) {
+      props.openModal()
+    } else {
+      // props.navigation.navigate("Exchange");
+      Toast('请先导入助记词或登录DMW！')
+    }
   }
 
-  const {disconnectWallet , connectWallet} = useDmwWeb3()
+  const { disconnectWallet, connectWallet } = useDmwWeb3()
 
   return (
     <View style={{ position: "absolute" }}>
@@ -100,7 +110,7 @@ const Lmodal = (props) => {
           </TouchableWithoutFeedback>
 
 
-          <TouchableWithoutFeedback onPress={()=>{connectWallet()}}>
+          <TouchableWithoutFeedback onPress={() => { connectWallet() }}>
             <View style={styles.listBox}>
               <Image
                 style={styles.Limg}
@@ -123,7 +133,7 @@ const Lmodal = (props) => {
 
 
 
-          <TouchableWithoutFeedback onPress={()=>cilck('TermsOfService')}>
+          <TouchableWithoutFeedback onPress={() => cilck('TermsOfService')}>
             <View style={styles.listBox}>
               <Image
                 style={styles.Limg}
@@ -144,7 +154,7 @@ const styles = StyleSheet.create({
   listBox: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom:20
+    marginBottom: 20
   },
   Limg: {
     width: 24,

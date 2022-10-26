@@ -7,7 +7,8 @@ import {
   ScrollView,
   SafeAreaView,
   Pressable,
-  FlatList
+  FlatList,
+  TouchableWithoutFeedback
 } from "react-native";
 import React, { Component, useEffect, useState, Context } from "react";
 import Tabcolumn from "./Tabcolumn";
@@ -51,13 +52,13 @@ const Myself = (props) => {
   const [lMvisible, setlMvisible] = useState(false);
   const [userInfo, setUserInfo] = useState({});
   const { username, setUsername } = useDmwLogin();
-  const { avatarUrl, setAvatarUrl } = useDmwLogin();
+  const { avatarUrl, setAvatarUrl,WalletInUse } = useDmwLogin();
   const [loading, setLoding] = useState(false)
   const [myNftList, setmyNftList] = useState([])
 
   // Context方法
   const { logOut } = useDmwLogin();
-  const { post, formData , Toast } = useDmwApi();
+  const { post, formData , Toast ,Copy} = useDmwApi();
   const { currentWallet } = useDmwWeb3()
   const { dmwWalletList } = useDmwWallet()
 
@@ -178,14 +179,18 @@ const Myself = (props) => {
             ></Image>
           </View>
           <Text style={styles.nickname}>{username}</Text>
+          <TouchableWithoutFeedback onPress={()=>{Copy(WalletInUse == 1 ? dmwWalletList[0] : currentWallet)}}>
           <Text style={styles.identification}>
             {/* 此处勿忘加空格 */}
-            Byf3234ye89wcnc8ecbcvsc9dbcw{" "}
+            {WalletInUse == 1 ? dmwWalletList[0] : currentWallet}{" "}
+           
             <Image
               style={{ width: 12, height: 12 }}
               source={require("../../assets/img/my/copy.png")}
             ></Image>
+           
           </Text>
+          </TouchableWithoutFeedback>
           {/* 头像 -- end */}
         </View>
 
