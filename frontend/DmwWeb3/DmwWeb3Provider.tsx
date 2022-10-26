@@ -575,7 +575,7 @@ const DmwWeb3Provider = ({ children }) => {
 
     return (
 
-        <DmwWeb3Context.Provider value={{ transferToken, getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing, getErc20Allowance,erc20Approve }}>
+        <DmwWeb3Context.Provider value={{ makeOffer,transferToken, getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing, getErc20Allowance,erc20Approve }}>
             {children}
         </DmwWeb3Context.Provider>
     )

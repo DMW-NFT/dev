@@ -17,11 +17,6 @@ const List = (props) => {
     const item = props.list
     const [imgurl, setImgurl] = useState(item.image_attachment_url)
 
-    // useEffect(() => {
-    //     console.log(imgurl);
-
-    // }, [imgurl])
-
     return (
         <TouchableWithoutFeedback onPress={() => {
 
@@ -57,8 +52,8 @@ const List = (props) => {
                                                 position: 'absolute',
                                                 top: 10,
                                                 right: 10,
-                                                borderRadius:6,
-                                                borderColor:'#ccc'
+                                                borderRadius: 6,
+                                                borderColor: '#ccc'
                                             }}>
                                                 <Text style={{ width: 4, height: 4, backgroundColor: '#ccc', borderRadius: 2 }}></Text>
                                                 <Text style={{ width: 4, height: 4, backgroundColor: '#ccc', borderRadius: 2 }}></Text>
@@ -79,10 +74,6 @@ const List = (props) => {
                                 </ImageBackground>
 
                         }
-
-
-
-
                     </View>
                 </View>
                 <View style={[styles.lisBottom, { height: type == 3 ? 248 / 2 : 100 }]} >
@@ -101,8 +92,6 @@ const List = (props) => {
                             </>
                     }
                     <View>
-
-
                         {
                             type != 3 && type != 4 ?
                                 <View style={[styles.priceBox]}>
@@ -117,16 +106,12 @@ const List = (props) => {
                                 </View> :
                                 type == 3 ?
                                     <View style={[styles.auction]}>
-                                        {/* <Text style={[styles.name]} numberOfLines={1}>当前出价</Text> */}
                                         <Text style={[styles.name]} numberOfLines={1}>起拍价</Text>
                                         <View style={[styles.priceBox]}>
                                             <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
                                                 <Text style={[styles.price]}>4,218</Text>
                                                 <Text style={[styles.coinType]}>Wfca</Text>
                                             </View>
-                                            {/* <Text style={[styles.button]}>
-                                            查看
-                                        </Text> */}
                                             <Text style={[styles.button, { backgroundColor: '#897EF8' }]}>
                                                 出价
                                             </Text>
@@ -140,7 +125,6 @@ const List = (props) => {
                                             </View>
                                         </View>
                                     </View>
-
                         }
                     </View>
                 </View>

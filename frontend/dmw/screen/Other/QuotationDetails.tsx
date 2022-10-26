@@ -9,6 +9,7 @@ import { Button, Card, Layout, Modal } from '@ui-kitten/components';
 import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider'
 import { useDmwWallet } from '../../../DmwWallet/DmwWalletProvider'
 import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider'
+import { read } from 'fs/promises'
 
 const QuotationDetails = (props) => {
 
@@ -18,9 +19,9 @@ const QuotationDetails = (props) => {
     const [loading, setLoding] = useState(true) //loading
     const [detailsObj, setDetailsObj] = useState({})
     const [imgurl, setImgurl] = useState(null)
-    const [likes, setlikes] = useState(props.route.params.likes)
+    const [likes, setlikes] = useState(0)
     const [imgShow, setimgShow] = useState(true)
-    const [userInfo, setUserInfo] = useState({ userAvatar: props.route.params.userAvatar, shortenAddress: props.route.params.shortenAddress })
+    const [userInfo, setUserInfo] = useState({ userAvatar: '', shortenAddress: '' })
     const [orderList, setOrderList] = useState({ quantity: 1 })
     const [Price, setPrice] = useState(null)
     const [UnitPrice, setUnitPrice] = useState({ UnitPrice: null, Company: '' })
@@ -32,6 +33,9 @@ const QuotationDetails = (props) => {
     const [Modalvisible, setModalvisible] = useState(false)
     const [BuyNowVisible, setBuyNowVisible] = useState(false)
     const [BuyNumber, setBuyNumber] = useState('1')
+    const [listE, setlistE] = useState([{ value: 'USDT', name: 'USDT' }])
+    const [isShowE, setisShowE] = useState(false)//是否展开区块链选择框
+    const [activeEm, setactiveEm] = useState({ value: 'USDT', name: 'USDT' })
     // Context 方法
     const { Toast, post, get, formData, shortenAddress, } = useDmwApi()
     const { buyNFT, currentWallet, transactionMap, transactionList, connectWallet } = useDmwWeb3()
@@ -48,18 +52,13 @@ const QuotationDetails = (props) => {
     }, [transactionList])
 
     useEffect(() => {
-        console.log("QuotationDetail currentWallet:", currentWallet);
-
     }, [currentWallet])
     useEffect(() => {
         if (transactionMap && transactionMap[latestHash]) {
-            console.log(transactionMap[latestHash])
             if (transactionMap[latestHash].state == "comfirmed") {
                 Toast('购买成功')
-
             }
         }
-
     }, [transactionMap])
 
     useEffect(() => {
@@ -68,25 +67,13 @@ const QuotationDetails = (props) => {
         arr.map((item, index) => {
             blackPointArry[index] = item;
         })
-        console.log(blackPointArry, '----');
-
-        console.log(arr, 'shuzu ');
-        console.log(password);
         setpasswordlist(blackPointArry)
-        console.log(password.length);
         if (password.length == 6) {
-            console.log({
-                listingId: orderList.listing_id,
-                buyFor: currentWallet, quantityToBuy: Number(BuyNumber),
-                currency: orderList.currency,
-                totalPrice: String(UnitPrice.UnitPrice * Number(BuyNumber))
-            });
             if (WalletInUse == 1) {
                 // 本地钱包购买
                 try {
                     dmwBuyNFT('123456', String(orderList.listing_id), Number(BuyNumber), orderList.currency, String(UnitPrice.UnitPrice * Number(BuyNumber)))
                 } catch (err) {
-                    console.log("catch!!!", err);
                 }
             } else {
                 // 第三方钱包购买
@@ -95,11 +82,8 @@ const QuotationDetails = (props) => {
                         String(orderList.listing_id), Number(BuyNumber), orderList.currency, String(UnitPrice.UnitPrice * Number(BuyNumber))
                     )
                 } catch (error) {
-                    console.log("catch!!!", error)
                 }
             }
-
-            // Toast('购买')
         }
     }, [password])
 
@@ -128,12 +112,14 @@ const QuotationDetails = (props) => {
 
     const getList = () => {
         setLoding(true)
-        console.log(props.route.params.id, 'yaoer');
         let data = { order_no: props.route.params.id }
         let formdata = formData(data)
         post('/index/order/get_order_details', formdata).then(res => {
-            console.log(res.data, '订单接口');
+            console.log(res.data.nft.likes, '订单详情');
+
             setOrderList(res.data)
+            setUserInfo({ userAvatar: res.data.wallet_address_avatar, shortenAddress: shortenAddress(res.data.wallet_address) })
+            setlikes(res.data.nft.likes)
             setImgurl(res.data.nft.image_attachment_url)
             setNftInfo(res.data.nft)
             setPrice(`${res.data.reserve_price_per.number} ${res.data.reserve_price_per.currency_name}`)
@@ -169,7 +155,6 @@ const QuotationDetails = (props) => {
                         <View style={[styles.container]}>
                             {
                                 imgShow ? <Image source={{ uri: imgurl }} onError={() => {
-                                    console.log(123456);
                                     setImgurl('../../assets/img/index/any2.jpg')
                                     setimgShow(false)
                                 }} style={[styles.topImg]}></Image> :
@@ -186,16 +171,16 @@ const QuotationDetails = (props) => {
                             </View>
                             {/* 卖家详情 */}
                             <View style={[styles.coll]}>
-                                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                                <Text style={[styles.collName]}>{NftInfo ? NftInfo.name : '--'}</Text>
-                                <View style={{ flexDirection: 'row', alignItems: 'center',}}>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    <Text style={[styles.collName]}>{NftInfo ? NftInfo.name : '--'}</Text>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                                         <Image style={{ width: 15, height: 15 }} source={require('../../assets/img/money/offer.png')}></Image>
                                         <Text style={{ fontSize: 14, color: "#333" }}>{Price}</Text>
                                     </View>
                                 </View>
                                 <View style={styles.flexJBC}>
                                     <Text style={styles.collIntrDetail}>{NftInfo ? NftInfo.abstract : '--'}</Text>
-                                    
+
                                 </View>
                             </View>
                         </View>
@@ -364,6 +349,60 @@ const QuotationDetails = (props) => {
 
                     </View>
 
+
+
+                    <View style={[styles.lis, { marginBottom: 20 }]}>
+                        {/* <Text style={{ fontSize: 16, marginBottom: 17 }}>
+                            选择区块链
+                        </Text> */}
+
+                        <TouchableWithoutFeedback onPress={() => {
+                            if (!listE) {
+                                Toast('未加载到其他')
+                                return
+                            } setisShowE(!isShowE)
+                        }}>
+                            <View style={[styles.input, {
+                                flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
+                            }]}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Image source={require('../../assets/img/index/any2.jpg')} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
+                                    <Text style={{ marginLeft: 10 }}>
+                                        {activeEm.name}
+                                    </Text></View>
+                                <FontAwesomeIcon
+                                    icon={faAngleDown}
+                                    color="#707070"
+                                    size={16}
+                                />
+                            </View>
+                        </TouchableWithoutFeedback>
+                        {
+                            isShowE ?
+                                <View style={{
+                                    paddingTop: 20, backgroundColor: '#fff', marginBottom: 20, marginTop: 2, borderRadius: 12, borderWidth: 1, borderColor: '#ccc', paddingBottom: 20
+                                }}>
+
+                                    {
+                                        listE && listE.length ?
+                                            listE.map((item, index) => (
+                                                <Text onPress={() => { setactiveEm({ value: item.value, name: item.name }); setisShowE(false) }}
+                                                    style={{
+                                                        color: activeEm.value == item.value ? 'blue' : '#333',
+                                                        paddingTop: 10, paddingBottom: 10,
+                                                        backgroundColor: activeEm.value == item.value ? 'rgba(40, 120, 255,0.1)' : '#fff',
+                                                        paddingLeft: 20
+                                                    }}>{item.name}</Text>
+
+                                            )) : null
+                                    }
+
+
+                                </View> : null
+                        }
+
+                    </View>
+
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
                         <View>
                             <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>价格</Text>
@@ -373,6 +412,10 @@ const QuotationDetails = (props) => {
                             {/* <Text style={{ fontSize: 10, lineHeight: 22 }}>Wfca</Text> */}
                         </View>
                     </View>
+
+
+
+
 
                     {
                         false ?
@@ -457,6 +500,10 @@ const QuotationDetails = (props) => {
                     </View>
                 </Card>
             </Modal>
+
+
+
+
         </SafeAreaView>
     )
 }
@@ -464,6 +511,20 @@ const QuotationDetails = (props) => {
 export default QuotationDetails
 
 const styles = StyleSheet.create({
+    input: {
+        height: 48,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        borderBottomRightRadius: 24,
+        borderBottomLeftRadius: 24,
+        paddingLeft: 15,
+        paddingRight: 15,
+    },
+    lis: {
+        marginBottom: 52 / 2,
+    },
     addImg: {
         width: 30, height: 30
     },
@@ -677,7 +738,7 @@ const styles = StyleSheet.create({
     },
     coll: {
         marginTop: 20,
-        padding:20
+        padding: 20
     },
     likenum: {
         color: "#ccc",
