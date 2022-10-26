@@ -431,7 +431,7 @@ const DmwWeb3Provider = ({ children }) => {
         quantityToList：挂单/拍卖的NFT数量
         reservePricePerToken：拍卖单个NFT最低价，如果创建直接出售订单则此参数应当与buyoutPricePerToken相同
         buyoutPricePerToken：拍卖单个NFT一口成交价，如果创建直接出售订单，则此为单个NFT出售价格
-        listingType：创建订单类型 1为直接出售 2为拍卖
+        listingType：创建订单类型 0为直接出售 1为拍卖
     */
 
     const createListing = (assetContract: string, tokenId: number, startTime: number, secondsUntilEndTime: number, quantityToList: number, reservePricePerToken: string, buyoutPricePerToken: string, listingType: number) => {
