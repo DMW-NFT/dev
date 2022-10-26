@@ -68,7 +68,7 @@ const CollectionDetails = (props) => {
     }
     // 活动列表
     const getActivityList = () => {
-        post('/index/collection/get_collection_activity', formData({ id: ID })).then(res => {
+        post('/index/collection/get_collection_activity', formData({ collection_id: ID })).then(res => {
             console.log(res, '活动列表');
             setActivityList(res.data.data)
             setActivityTotal(res.data.total)
@@ -76,7 +76,7 @@ const CollectionDetails = (props) => {
     }
     // nft列表
     const getList = (page) => {
-        post('/index/collection/get_collection_nft_by_search', formData({ id: ID,limit:4,page:page?page:1, })).then(res => {
+        post('/index/collection/get_collection_nft_by_search', formData({ collection_id: ID,limit:4,page:page?page:1, })).then(res => {
             console.log(res, '合集nft');
             let ar = [...list,...res.data.data]
             setlist(Array.from(new Set(ar)))

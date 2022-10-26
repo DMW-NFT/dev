@@ -18,11 +18,11 @@ import { Spinner } from '@ui-kitten/components';
 import { Card, Layout, Modal } from '@ui-kitten/components';
 import { Surface } from 'react-native-paper';
 import { useDmwWallet } from '../../../DmwWallet/DmwWalletProvider';
-
 import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider';
 import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider';
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 
-useDmwWallet
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
 const screenHeight = Dimensions.get('window').height;
@@ -41,9 +41,65 @@ const TransferredIntoCollection = (props) => {
   const [IpfsPath, setIpfsPath] = useState('')
   const { post, formData, Toast } = useDmwApi()
   const [latestHash, setLatestHash] = useState()
+  const [DmwlatestHash, setDmwLatestHash] = useState()
   const { currentWallet, mintNftWithSignature, transactionMap, transactionList } = useDmwWeb3()
   const { WalletInUse } = useDmwLogin()
-  const { dmwWalletList } = useDmwWallet()
+  const { dmwWalletList,dmwMintWithSignature,dmwTransactionList,dmwTransactionMap} = useDmwWallet()
+  const [activeType, setactiveType] = useState({ id: '', name: '请选择合集',logo:'' })
+  const [activeEm, setactiveEm] = useState({ value: 'Ethereum', name: 'Ethereum',logo:'' })
+  const [isShowType, setisShowType] = useState(false)//是否展开类型选择框
+  const [isShowE, setisShowE] = useState(false)//是否展开区块链选择框
+  const [listType, setListTtpe] = useState([])
+  const [listE, setlistE] = useState([])
+
+  useEffect(()=>{
+    getBlockchain()
+    getCoType()
+  },[])
+
+  // 获取区块链
+  const getBlockchain = () => {
+    post('/index/common/get_network').then(res => {
+      // console.log(res, '区块链类型');
+      setlistE(res.data)
+    })
+  }
+  // 获取type类型
+  const getCoType = () => {
+    post('/index/collection/get_user_collection').then(res => {
+      console.log(res.data.data, '合集类型');
+      setactiveType({id:res.data.data[0].id,name:res.data.data[0].name,logo:res.data.data[0].logo_url})
+      setListTtpe(res.data.data)
+    })
+  }
+
+  useEffect(() => {
+
+    console.log("asdasasd", dmwTransactionList)
+    if (dmwTransactionList && dmwTransactionList.length) {
+      console.log("get latest hash1")
+      setDmwLatestHash(dmwTransactionList[dmwTransactionList.length - 1])
+      console.log("get latest hash!", dmwTransactionList[dmwTransactionList.length - 1])
+    }
+  }, [dmwTransactionList])
+
+  useEffect(() => {
+    if (dmwTransactionMap && dmwTransactionMap[DmwlatestHash]) {
+      console.log(dmwTransactionMap[DmwlatestHash], 'latest hash!')
+      if (dmwTransactionMap[DmwlatestHash].state == "confirmed") {
+        console.log("got you !", dmwTransactionMap[DmwlatestHash])
+        setDmwLatestHash(null)
+        Toast('创建成功！')
+        setscreenLoding(false)
+        props.navigation.navigate('CreatedSuccessfully', { title, imgurlUp1 })
+      } else {
+        setscreenLoding(true)
+        Toast('等待链上确认！')
+      }
+    }
+  }, [dmwTransactionMap])
+
+
 
   useEffect(() => {
 
@@ -63,7 +119,7 @@ const TransferredIntoCollection = (props) => {
         setLatestHash(null)
         Toast('创建成功！')
         setscreenLoding(false)
-        props.navigation.navigate('CreatedSuccessfully',{title,imgurlUp1})
+        props.navigation.navigate('CreatedSuccessfully', { title, imgurlUp1 })
       } else {
         setscreenLoding(true)
         Toast('等待链上确认！')
@@ -127,21 +183,17 @@ const TransferredIntoCollection = (props) => {
           })
             .then((res) => res.json()).then(resp => {
               console.log(resp, 'zoubianjiekou');
-
-              mintNftWithSignature(resp.result.SignedPayload[0], resp.result.SignedPayload[resp.result.SignedPayload.length - 1])
-
+              if(WalletInUse == 1){
+                dmwMintWithSignature(password,resp.result.SignedPayload[0],resp.result.SignedPayload[resp.result.SignedPayload.length - 1])
+              }else{
+                mintNftWithSignature(resp.result.SignedPayload[0], resp.result.SignedPayload[resp.result.SignedPayload.length - 1])
+              }
             }).catch(err => {
               console.log(err, '左边报错');
             })
-
-
-
         }).catch(err => {
           console.log(err, '上传报错');
         })
-
-
-
     } else if (password.length == 6) {
       Toast('密码错误或暂未创建DMW钱包')
     }
@@ -230,9 +282,9 @@ const TransferredIntoCollection = (props) => {
         backgroundColor: '#fff'
       }}>
       {
-        screenloading ? <View style={{flex:1,flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+        screenloading ? <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
           <Spinner />
-          <Text style={{marginTop:10}}>正在上链中...</Text>
+          <Text style={{ marginTop: 10 }}>正在上链中...</Text>
         </View> :
           <>
             {/* <Image source={{ uri: imgurlUp1 }} style={{ width: 100, height: 100 }}></Image> */}
@@ -299,48 +351,114 @@ const TransferredIntoCollection = (props) => {
                   numberOfLines={5}
                 />
               </View>
-
               <View style={[styles.lis, { marginBottom: 20 }]}>
-                <Text style={styles.text}>选择合集</Text>
-                {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
-                       
-                    </TouchableWithoutFeedback> */}
-                <TextInput
-                  maxLength={6}
-                  placeholder="请输入地址"
-                  keyboardType="decimal-pad"
-                  style={[styles.input, { marginBottom: 20 }]}
-                  onChangeText={e => setaddress(e)}
-                  value={address}
-                />
+                <Text style={{ fontSize: 16, marginBottom: 17 }}>
+                  选择合集
+                </Text>
+
+                <TouchableWithoutFeedback onPress={() => { setisShowType(!isShowType) }}>
+                  <View style={[styles.input, {
+                    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
+                  }]}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Image source={{uri:activeType.logo}} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
+                      <Text style={{ marginLeft: 10 }}>
+                        {activeType.name}
+                      </Text></View>
+                    <FontAwesomeIcon
+                      icon={faAngleDown}
+                      color="#707070"
+                      size={16}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+                {
+                  isShowType ?
+                    <View style={{
+                      paddingTop: 20, backgroundColor: '#fff', marginBottom: 20, marginTop: 2, borderRadius: 12, borderWidth: 1, borderColor: '#ccc', paddingBottom: 20
+                    }}>
+
+                      {
+                        listType && listType.length ?
+                          listType.map((item, index) => (
+                            <Text onPress={() => { setactiveType({ id: item.value, name: item.name ,logo:item.logo_url}); setisShowType(false) }}
+                              style={{
+                                color: activeType.id == item.id ? 'blue' : '#333',
+                                paddingTop: 10, paddingBottom: 10,
+                                backgroundColor: activeType.id == item.id ? 'rgba(40, 120, 255,0.1)' : '#fff',
+                                paddingLeft: 20
+                              }}>{item.name}</Text>
+                          )) : null
+                      }
+
+
+                    </View> : null
+                }
+
               </View>
-
               <View style={[styles.lis, { marginBottom: 20 }]}>
-                <Text style={styles.text}>选择区块链</Text>
-                {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
-                       
-                    </TouchableWithoutFeedback> */}
-                <TextInput
-                  maxLength={6}
-                  placeholder="请输入地址"
-                  keyboardType="decimal-pad"
-                  style={[styles.input, { marginBottom: 20 }]}
-                  onChangeText={e => setaddress(e)}
-                  value={address}
-                />
+                <Text style={{ fontSize: 16, marginBottom: 17 }}>
+                  选择区块链
+                </Text>
+
+                <TouchableWithoutFeedback onPress={() => {
+                  if (!listE) {
+                    Toast('未加载到其他')
+                    return
+                  } setisShowE(!isShowE)
+                }}>
+                  <View style={[styles.input, {
+                    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
+                  }]}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Image source={require('../../assets/img/index/any2.jpg')} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
+                      <Text style={{ marginLeft: 10 }}>
+                        {activeEm.name}
+                      </Text></View>
+                    <FontAwesomeIcon
+                      icon={faAngleDown}
+                      color="#707070"
+                      size={16}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+                {
+                  isShowE ?
+                    <View style={{
+                      paddingTop: 20, backgroundColor: '#fff', marginBottom: 20, marginTop: 2, borderRadius: 12, borderWidth: 1, borderColor: '#ccc', paddingBottom: 20
+                    }}>
+
+                      {
+                        listE && listE.length ?
+                          listE.map((item, index) => (
+                            <Text onPress={() => { setactiveEm({ value: item.value, name: item.name }); setisShowE(false) }}
+                              style={{
+                                color: activeEm.value == item.value ? 'blue' : '#333',
+                                paddingTop: 10, paddingBottom: 10,
+                                backgroundColor: activeEm.value == item.value ? 'rgba(40, 120, 255,0.1)' : '#fff',
+                                paddingLeft: 20
+                              }}>{item.name}</Text>
+
+                          )) : null
+                      }
+
+
+                    </View> : null
+                }
+
               </View>
               {
                 WalletInUse == 1 ?
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
-                <Text style={{ fontSize: 12, color: '#999999', }}>
-                  上链费：
-                </Text>
-                <Text style={{ fontSize: 16, color: '#897EF8' }}>0.027ETH</Text>
-              </View>
-               : null
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
+                    <Text style={{ fontSize: 12, color: '#999999', }}>
+                      上链费：
+                    </Text>
+                    <Text style={{ fontSize: 16, color: '#897EF8' }}>0.027ETH</Text>
+                  </View>
+                  : null
 
               }
-              
+
             </ScrollView>
 
             <Text onPress={() => Sure()} style={styles.btn}>创建并支付</Text>

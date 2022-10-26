@@ -6,7 +6,7 @@ import Clipboard from '@react-native-clipboard/clipboard'
 import storage from "../dmw/Storage/storage";
 const DmwApiProvider = ({ children }) => {
 
-  const [BaseUrl, setBaseUrl] = useState("https://dmw.cougogo.com");
+  const [BaseUrl, setBaseUrl] = useState("http://192.168.1.105");
   const { logOut } = useDmwLogin();
   const [show, setShow] = useState(false);
   const [time, setTime] = useState(2000);

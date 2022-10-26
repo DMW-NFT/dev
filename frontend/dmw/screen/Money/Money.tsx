@@ -48,15 +48,25 @@ const Money = (props) => {
   const axios = () => {
 
   };
+  useEffect(()=>{
+console.log(123);
+
+  },[WalletInUse])
 
   useEffect(() => {
     if (WalletInUse == 1 && dmwWalletList[0]) {
       getAddressBalance(dmwWalletList[0])
-    } else if (currentWallet) {
+      getNativeBalance(dmwWalletList[0]).then(res => {
+        setNativeBalanceBenDi(res)
+      })
+      setWalletInUse(1)
+    } else if (currentWallet && WalletInUse == 2) {
       console.log(currentWallet,'钱包地址');
-      
       setWalletInUse(2)
       getAddressBalance(currentWallet)
+      getNativeBalance(currentWallet).then(res => {
+        setNativeBalanceBenDi(res)
+      })
     }
   }, [])
 
@@ -80,24 +90,24 @@ const Money = (props) => {
     setpassword('')
   }
   useEffect(() => {
-      console.log('钱包变化',connected,currentWallet);
-    if (dmwWalletList[0]) {
-      setaddress(shortenAddress(dmwWalletList[0]))
-      Switchwallet(1)
-    } else if (currentWallet) {
-      setWalletInUse(2)
+      // console.log('钱包变化',connected,currentWallet);
+   if (currentWallet) {
+    if(WalletInUse == 2){
+      Switchwallet(2)
+    }
       getNativeBalance(currentWallet).then(res => {
         setNativeBalance(res)
       })
       getAddressBalance(currentWallet)
       setaddress1(shortenAddress(currentWallet))
-      Switchwallet(2)
     }
 
 
     if (dmwWalletList[0] && WalletInUse == 1) {
+      Switchwallet(1)
       setaddress(shortenAddress(dmwWalletList[0]))
       getNativeBalance(dmwWalletList[0]).then(res => {
+        console.log("native balance navtive token:",res)
         setNativeBalanceBenDi(res)
       })
     }
@@ -143,7 +153,9 @@ const Money = (props) => {
     setType(val);
   };
   const Switchwallet = (type) => {
-   
+    console.log(dmwWalletList[0]);
+    
+    setWalletInUse(type)
     // var message = JSON.stringify()
     var iv = 'aaaaaaaaaaaaaaaa';//随机生成长度为32的16进制字符串。IV称为初始向量，不同的IV加密后的字符串是不同的，加密和解密需要相同的IV。
     // console.log(iv, 'iv')

@@ -211,7 +211,7 @@ export default class Home extends Component {
             component={CreatedSuccessfully} 
             name='CreatedSuccessfully'
             options={{  
-              headerMode:'none'
+            title:''
              }}
           >  
          </Stack.Screen>

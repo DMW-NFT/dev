@@ -1,5 +1,5 @@
 import { Text, Image, StyleSheet, View, SafeAreaView, ScrollView, TouchableWithoutFeedback, FlatList, TextInput } from 'react-native'
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faAngleRight, faHeart, faAngleDown } from '@fortawesome/free-solid-svg-icons'
 import List from '../../Components/List'
@@ -7,17 +7,12 @@ import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider'
 import { Spinner } from '@ui-kitten/components';
 import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider'
 import { Card, Modal, Datepicker, Icon } from '@ui-kitten/components';
+import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider'
+import { useDmwWallet } from '../../../DmwWallet/DmwWalletProvider'
 
 const GoodsDetail = (props) => {
-    // state = {
-    //     id:props.route.params.id,
-    //     list: [{}, {}, {}],
-    //     showChain: true, //显示链上信息
-    //     showcollection: true, //显示合集
-    //     showoffer: true, //显示报价
-    //     showhistory:true, //显示交易历史
-    // }
 
+    const inputRefX = useRef(null);
     const [id, setID] = useState(props.route.params.id)
     const [list, setlist] = useState([{}, {}, {}])
     const [showChain, setshowChain] = useState(true)
@@ -44,17 +39,50 @@ const GoodsDetail = (props) => {
     const [Price, setPrice] = useState('1')
     const [date, setDate] = React.useState(new Date());
     const [dateEnd, setDateEnd] = React.useState(new Date());
+    const [Modalvisible, setModalvisible] = useState(false)
+    const [password, setpassword] = useState("");
+    const [passwordlist, setpasswordlist] = useState([]);
+    const [DmwlatestHash, setDmwLatestHash] = useState()
+    const [createListType, setCreateListType] = useState('DMW')
     // Context 方法
     const { Toast, post, get, formData, shortenAddress } = useDmwApi()
+    const { WalletInUse } = useDmwLogin()
+    const { dmwWalletList, dmwApprovalForAll, dmwCreateListing, dmwTransactionList, dmwTransactionMap } = useDmwWallet()
     const { getBalanceOf1155, currentWallet, checkIsApproveForAll, ApprovalForAll, transactionMap, transactionList, setTransactionList, createListing } = useDmwWeb3()
+
+
+    useEffect(() => {
+
+        console.log("asdasasd", dmwTransactionList)
+        if (dmwTransactionList && dmwTransactionList.length) {
+            console.log("get latest hash1")
+            setDmwLatestHash(dmwTransactionList[dmwTransactionList.length - 1])
+            console.log("get latest hash!", dmwTransactionList[dmwTransactionList.length - 1])
+        }
+    }, [dmwTransactionList])
+
+    useEffect(() => {
+        if (dmwTransactionMap && dmwTransactionMap[DmwlatestHash]) {
+            console.log(dmwTransactionMap[DmwlatestHash], 'latest hash!')
+            if (dmwTransactionMap[DmwlatestHash].state == "confirmed") {
+                if (!isApproved) {
+                    Toast('Aprover 成功')
+                    setisApproved(true)
+                } else {
+                    Toast('挂单成功')
+                }
+            }
+        }
+    }, [dmwTransactionMap])
+
+
     useEffect(() => {
         if (transactionMap && transactionMap[latestHash]) {
             console.log(transactionMap[latestHash], 'latest hash!')
             if (transactionMap[latestHash].state == "comfirmed") {
-                console.log("got you !", transactionMap[latestHash])
+                // console.log("got you !", transactionMap[latestHash])
                 setLatestHash(null)
                 if (!isApproved) {
-
                     Toast('Aprover 成功')
                     setisApproved(true)
                 } else {
@@ -66,25 +94,19 @@ const GoodsDetail = (props) => {
 
     useEffect(() => {
 
-        console.log("asdasasd", transactionList)
         if (transactionList && transactionList.length) {
-            console.log("get latest hash1")
             setLatestHash(transactionList[transactionList.length - 1])
-            console.log("get latest hash!", transactionList[transactionList.length - 1])
         }
     }, [transactionList])
 
-    // useEffect(() => {
-    //     console.log(transactionList)
-    //     console.log(transactionMap)
-    //     console.log(transactionList[transactionList.length - 1])
-
-    // }, [transactionList, transactionMap])
 
 
     useEffect(() => {
         let params = props.route.params;
         let data = { ...params }
+
+        data.network = 'goerli'
+        console.log(data, '我的页面nft 传参');
         getList(data)
     }, [])
     const getList = (data) => {
@@ -134,17 +156,17 @@ const GoodsDetail = (props) => {
 
 
     useEffect(() => {
-        if (currentWallet) {
+        if ((currentWallet && WalletInUse == 2) || (dmwWalletList[0] && WalletInUse == 1)) {
             if (detailsObj && detailsObj.contract_address) {
                 GetMorenNft(detailsObj.collection ? detailsObj.collection.id : null)
-                console.log(detailsObj.contract_address, currentWallet, detailsObj.token_id, 'goodsdetail get balance')
+                // console.log(detailsObj.contract_address, currentWallet, detailsObj.token_id, 'goodsdetail get balance')
             }
 
-            (detailsObj && detailsObj.contract_address) && getBalanceOf1155(detailsObj.contract_address, currentWallet, detailsObj.token_id).then(res => {
-                console.log(res, 'shulaing');
+            (detailsObj && detailsObj.contract_address) && getBalanceOf1155(detailsObj.contract_address, WalletInUse == 1 ? dmwWalletList[0] : currentWallet, detailsObj.token_id).then(res => {
+                // console.log(res, 'shulaing');
                 if (res > 0) {
-                    checkIsApproveForAll(detailsObj.contract_address, currentWallet,).then(isApproved => {
-                        console.log("isApproved:", isApproved)
+                    checkIsApproveForAll(detailsObj.contract_address, WalletInUse == 1 ? dmwWalletList[0] : currentWallet,).then(isApproved => {
+                        // console.log("isApproved:", isApproved)
                         if (isApproved) {
                             setbuyText('售卖')
                         } else {
@@ -187,24 +209,55 @@ const GoodsDetail = (props) => {
         if (isApproved) {
             setBuyNowVisible(true)
         } else {
-            ApprovalForAll(detailsObj.contract_address, detailsObj.token_id)
+            openPassWordModal('123')
         }
 
     }
 
     const ConfirmSales = () => {
-        let sTime = Math.round(new Date().getTime() / 1000).toString()
-        // console.log();
-        console.log(detailsObj.contract_address, detailsObj.token_id, sTime, '6485760733', BuyNumber, Price, Price, '1')
-        createListing(detailsObj.contract_address, detailsObj.token_id, sTime, '6485760733', BuyNumber, Price, Price, '1')
+            openPassWordModal('DMW')
+    }
+    const empty = () => {
+        setpassword('')
+    }
+
+    const openPassWordModal = (type) => {
+        setModalvisible(true); setTimeout(() => {
+            inputRefX.current.focus();
+        }, 500);
+        empty();
     }
 
     useEffect(() => {
-        console.log(date, dateEnd);
-
-    }, [date, dateEnd])
-
-
+        let blackPointArry = [null, null, null, null, null, null]
+        let arr = password.split('');
+        arr.map((item, index) => {
+            blackPointArry[index] = item;
+        })
+        console.log(blackPointArry, '----');
+        console.log(arr, 'shuzu ');
+        console.log(password);
+        setpasswordlist(blackPointArry)
+        console.log(password.length);
+        if (password.length == 6) {
+            if (isApproved) {
+                let sTime = Math.round(new Date().getTime() / 1000 +60).toString()
+                setModalvisible(false)
+                setBuyNowVisible(false)
+                if (currentWallet && WalletInUse == 2) {
+                    createListing(detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, Price, Price, '0')
+                } else if (dmwWalletList[0] && WalletInUse == 1) {
+                    dmwCreateListing(password, detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, Price, Price, '0')
+                }
+            } else {
+                if (currentWallet && WalletInUse == 2) {
+                    ApprovalForAll(detailsObj.contract_address, detailsObj.token_id)
+                } else if (dmwWalletList[0] && WalletInUse == 1) {
+                    dmwApprovalForAll(password, detailsObj.contract_address, detailsObj.token_id)
+                }
+            }
+        }
+    }, [password])
 
 
 
@@ -276,7 +329,7 @@ const GoodsDetail = (props) => {
                             </View>
                             {
                                 ownersArr.map((item, index) => (
-                                    <View style={[styles.flex, { marginTop: 10 }]}>
+                                    <View key={index} style={[styles.flex, { marginTop: 10 }]}>
                                         <Image source={{ uri: item.avatar }} style={[styles.createAndByuerImage]}></Image>
                                         <Text style={[styles.createAndByuerName]}>{item.wallet_address}</Text>
                                         <Text style={[styles.FromOrByuer]}>Buyer</Text>
@@ -332,7 +385,7 @@ const GoodsDetail = (props) => {
                                 showoffer ?
                                     (
                                         listing.map((item, index) => (
-                                            <View>
+                                            <View key={index}>
                                                 <TouchableWithoutFeedback onPress={() => {
                                                     props.navigation.navigate('QuotationDetails', { id: item.order_no, likes: detailsObj.likes, imgUrl: imgurl, userAvatar: userInfo.userAvatar, shortenAddress: userInfo.shortenAddress });
                                                 }}>
@@ -366,7 +419,6 @@ const GoodsDetail = (props) => {
                                                         <Text style={[styles.moreBottom]}>{item.end_time}</Text>
                                                     </View>
                                                 </View>
-
                                             </View>
                                         ))
                                     ) : <Text></Text>
@@ -389,7 +441,7 @@ const GoodsDetail = (props) => {
                                     (
                                         history.map((item, index) => (
 
-                                            <View>
+                                            <View key={index}>
                                                 <View style={[styles.offerBox,]}>
                                                     <View style={[styles.flexJBC]}>
                                                         <View>
@@ -475,14 +527,7 @@ const GoodsDetail = (props) => {
 
                             }
                         </View>
-                        {/* 底部按钮 */}
-                        {/* <View style={[styles.bottombtnBox, styles.flexJBC]}>
-    <View style={[styles.flex, { alignItems: "flex-end" }]}>
-        <Text style={[styles.bottomPrice]}> 4,218</Text>
-        <Text style={[styles.bottomcoinType]}> Wfca</Text>
-    </View>
-    <Text style={[styles.bottomBtn]}>Buy now </Text>
-</View> */}
+
 
 
                     </ScrollView>
@@ -553,22 +598,7 @@ const GoodsDetail = (props) => {
 
 
 
-                    {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                        <Datepicker
-                            label='Label'
-                            placeholder='Pick Date'
-                            date={date}
-                            onSelect={nextDate => setDate(nextDate)}
-                        />
-<Text>-</Text>
-                        <Datepicker
-                            label='Label'
-                            placeholder='Pick Date'
-                            date={date}
-                            onSelect={nextDate => setDate(nextDate)}
-                        />
 
-                    </View> */}
 
 
 
@@ -581,6 +611,63 @@ const GoodsDetail = (props) => {
             </Modal>
 
 
+            {/* 支付弹窗 */}
+            <Modal
+                visible={Modalvisible}
+                backdropStyle={{ "backgroundColor": 'rgba(0, 0, 0, 0.5)' }}
+                onBackdropPress={() => { setModalvisible(false) }}>
+                <Card disabled={true} style={styles.CardBox}>
+
+                    <TextInput
+                        ref={inputRefX}
+                        maxLength={6}
+                        caretHidden={true}
+                        secureTextEntry={true}
+                        onKeyPress={() => { }}
+                        placeholder='123456'
+                        keyboardType="numeric"
+                        style={{ position: 'absolute', zIndex: 1, top: -40 }}
+                        onChangeText={(e) => {
+                            setpassword(e);
+                        }
+                        }
+                        value={password}
+                    />
+                    <View style={{ justifyContent: 'flex-end', flexDirection: 'row', position: 'absolute', top: 10, right: 20, width: 22, height: 22 }}>
+                        <TouchableWithoutFeedback onPress={() => { setModalvisible(false) }}>
+                            <Image style={styles.colose} source={require('../../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png')}></Image>
+                        </TouchableWithoutFeedback>
+
+                    </View>
+                    <View>
+                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>请输入支付密码</Text>
+                        {/* <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{detailsObj ? detailsObj.name : '--'}</Text>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}> */}
+                        {/* <Text style={{ color: '#999999', fontSize: 16, fontWeight: '700' }}>价格</Text> */}
+                        {/* <Text style={{ flexDirection: 'row' }}>
+                                <Text style={{ fontSize: 16, fontWeight: '700' }}>{UnitPrice.UnitPrice * Number(BuyNumber)}</Text>
+                                <Text>&nbsp;</Text>
+                                <Text style={{ fontSize: 10 }}>{UnitPrice.Company ? UnitPrice.Company : 'USDT'}</Text>
+                            </Text> */}
+                        {/* </View> */}
+
+
+
+                        <View style={{ height: 48, flexDirection: 'row', justifyContent: 'space-between', }}>
+                            {
+                                passwordlist.map((item, index) => (
+                                    <Text style={[index == 0 ? styles.passinputfirst : styles.passinput]}>{item ? "●" : ''}</Text>
+                                ))
+                            }
+                        </View>
+
+
+
+                    </View>
+                </Card>
+            </Modal>
+
+
         </SafeAreaView>
     )
 }
@@ -588,6 +675,8 @@ const GoodsDetail = (props) => {
 export default GoodsDetail
 
 const styles = StyleSheet.create({
+    passinputfirst: { textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, },
+    passinput: { textAlign: 'center', lineHeight: 48, borderColor: '#CCCCCC', borderWidth: 1, width: 46, height: 48, borderLeftWidth: 0, },
     buyInput: {
         flex: 1,
         height: 40,

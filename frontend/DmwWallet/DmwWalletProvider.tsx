@@ -11,7 +11,10 @@ import { clear, time } from 'console';
 import getProvider from '../../frontend/constans/rpcProvicer'
 import { TransactionConfig } from 'web3-eth';
 import { on } from 'stream';
-import NFT1155 from '../contract/NFT1155.json'
+import NFT1155ABI from '../../frontend/contract/NFT1155.json'
+import NFT721ABI from '../../frontend/contract/NFT721.json'
+import marketplaceABI from '../../frontend/contract/MARKETPLACE.json'
+import ERC20ABI from '../contract/ERC20.json'
 
 const DmwWalletProvider = ({ children }) => {
 
@@ -221,12 +224,13 @@ const DmwWalletProvider = ({ children }) => {
     }
 
     const dmwSendTransaction = async (tx: TransactionConfig, secretKey: string) => {
-
+        web3.eth.setProvider(getProvider(dmwChainId));
         const walletList = await getWalletListFromAccountStorage(secretKey)
         const privateKey = walletList.walletDict[currentDmwWallet].privateKey
         // console.log(privateKey)
         const gas = await web3.eth.estimateGas(tx)
         tx["gas"] = gas
+        // tx["gasPrice"] = web3.utils.toHex(web3.utils.toWei('70','Gwei'))
 
         const signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
         const hash = signedTx.transactionHash;
@@ -252,6 +256,44 @@ const DmwWalletProvider = ({ children }) => {
         
 
 
+    }
+
+    const dmwApprovalForAll = (secretKey:string,contractAddress: string) => {
+        console.log(currentDmwWallet)
+        web3.eth.setProvider(getProvider(dmwChainId));
+        const contract = new web3.eth.Contract(NFT1155ABI, contractAddress)
+        const rawdata = contract.methods.setApprovalForAll('0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4', true).encodeABI()
+        const tx = {
+            from: currentDmwWallet, // Required
+            to: contractAddress, // Required (for non contract deployments)
+            data: rawdata, // Required
+            // gasPrice: "0x02540be400", // Optional
+            // gasLimit: "0x9c40", // Optional
+            value: web3.utils.toWei("0", 'ether'), // Optional
+            // nonce: "0x0114", // Optional
+        };
+        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
+    }
+    
+
+    const dmwCreateListing = (secretKey:string,assetContract: string, tokenId: number, startTime: number, secondsUntilEndTime: number, quantityToList: number, reservePricePerToken: string, buyoutPricePerToken: string, listingType: number) => {
+        web3.eth.setProvider(getProvider(dmwChainId));
+        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
+        // console.log(web3.utils.toWei(reservePricePerToken, 'ether'))
+        console.log(assetContract, tokenId, startTime, secondsUntilEndTime, quantityToList, reservePricePerToken, buyoutPricePerToken, listingType)
+        const rawdata = contract.methods.createListing([assetContract, tokenId, startTime, secondsUntilEndTime, quantityToList, '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', web3.utils.toWei(reservePricePerToken, 'ether'), web3.utils.toWei(buyoutPricePerToken, 'ether'), listingType]).encodeABI()
+
+        const tx = {
+            from: currentDmwWallet, // Required
+            to: contractAddress, // Required (for non contract deployments)
+            data: rawdata, // Required
+            // gasPrice: "0x02540be400", // Optional
+            // gasLimit: "0x9c40", // Optional
+            value: web3.utils.toWei("0", 'ether'), // Optional
+            // nonce: "0x0114", // Optional
+        };
+        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
     }
 
     useEffect(() => {
@@ -297,7 +339,7 @@ const DmwWalletProvider = ({ children }) => {
     }, [dmwChainId, currentDmwWallet])
 
     useEffect(() => {
-        console.log("transaction",dmwTransactionList, dmwTransactionMap)
+        console.log("transaction:",dmwTransactionList[dmwTransactionList.length -1], dmwTransactionMap[dmwTransactionList[dmwTransactionList.length -1]])
     }, [dmwTransactionList, dmwTransactionMap])
 
 
@@ -305,7 +347,7 @@ const DmwWalletProvider = ({ children }) => {
 
     return (
 
-        <DmwWalletContext.Provider value={{dmwBuyNFT,loadWalletFromMnemonic, loadMnemonicFromStorage , newMnemonic , dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtie ,dmwMintWithSignature}}>
+        <DmwWalletContext.Provider value={{dmwBuyNFT,loadWalletFromMnemonic, loadMnemonicFromStorage , newMnemonic , dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtie ,dmwMintWithSignature,dmwTransactionList,dmwTransactionMap,dmwApprovalForAll,dmwCreateListing}}>
             {children}
         </DmwWalletContext.Provider>
 

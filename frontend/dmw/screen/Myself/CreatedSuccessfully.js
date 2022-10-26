@@ -26,17 +26,17 @@ export default class CreatedSuccessfully extends Component {
       
 <Text style={{fontSize:16,color:'#0F172C',marginBottom:41}}>你成功上传了一个新的藏品！</Text>
         
-<View style={{paddingLeft:20}}>
+<View style={{paddingLeft:20,borderRadius:20,overflow:'hidden'}}>
 <Image
-                  style={{ width: 590 / 2, height: 590 / 2 ,}}
-                  source={{uri:this.props.route.params.imgurlUp1}}></Image>
+                  style={{ width: 590 / 2, height: 590 / 2 ,borderRadius:10}}
+                  source={{uri: `data:image/jpeg;base64,${this.props.route.params.imgurlUp1}`  }}></Image>
                   <Text style={{fontSize:14,color:'#8197C4',marginTop:27,marginBottom:8}}>{this.props.route.params.title}</Text>
                   {/* <Text style={{fontSize:16}}></Text> */}
 </View>
 
-<Text style={styles.Later}>Later</Text>
+<Text style={styles.Later} onPress={()=>{this.props.navigation.navigate('home')}}>Later</Text>
 
-       <Text style={styles.btn}>Sell Now</Text>
+       <Text style={styles.btn} onPress={()=>{this.props.navigation.navigate('myself')}}>OK</Text>
       </SafeAreaView>
     );
   }
