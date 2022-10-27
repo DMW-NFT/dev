@@ -1,64 +1,62 @@
-import React, {Component} from 'react';
+import React, {Component,useState,useEffect} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faChevronRight  } from '@fortawesome/free-solid-svg-icons'
 import {StyleSheet, View, Text,SafeAreaView} from 'react-native';
 import { Switch } from 'react-native-paper';
-export default class SetUp extends Component {
-    constructor(porps){
-        super(porps)
-        this.state = {
-            Switch : false
-        }
-    }
-  render() {
+import { useTranslation } from 'react-i18next'
+const  SetUp = (props) => {
+  const { t, i18n } = useTranslation();
+
+    const [Switchshow,setSwitchshow] = useState(false)
+
     return (
       <SafeAreaView style={{paddingLeft: 20, paddingRight: 20,backgroundColor:'#fff'}}>
         <View style={[{padding: 20},styles.box]}>
-          <Text style={styles.title}>账户</Text>
+          <Text style={styles.title}>{t("账户")}</Text>
           <View style={[styles.list,{ marginBottom:31}]}>
-            <Text style={styles.textname} onPress={()=>{this.props.navigation.navigate('ModifyInfo')}}>修改个人信息</Text> 
+            <Text style={styles.textname} onPress={()=>{props.navigation.navigate('ModifyInfo')}}>{t("修改个人信息")}</Text> 
             <FontAwesomeIcon icon={faChevronRight} color='#707070'  size={16} />
           </View>
 
           <View style={styles.list}>
-            <Text style={styles.textname} onPress={()=>{this.props.navigation.navigate('BlockchainQuery')}}>区块链信息查询</Text>
+            <Text style={styles.textname} onPress={()=>{props.navigation.navigate('BlockchainQuery')}}>{t("区块链信息查询")}</Text>
             <FontAwesomeIcon icon={faChevronRight} color='#707070'  size={16} />
           </View>
         </View>
 
         <View style={[{padding: 20},styles.box]}>
-          <Text style={styles.title}>设备</Text>
+          <Text style={styles.title}>{t("设备")}</Text>
           <View style={[styles.list,{ marginBottom:31}]}>
-            <Text style={styles.textname} onPress={()=>{this.props.navigation.navigate('SelectLanguage')}}>选择语言</Text> 
+            <Text style={styles.textname} onPress={()=>{props.navigation.navigate('SelectLanguage')}}>{t("选择语言")}</Text> 
             <View style={{flexDirection:'row'}}><Text style={styles.language}>Chinese</Text><FontAwesomeIcon icon={faChevronRight} color='#707070'  size={16} /></View>
           </View>
 
           <View style={styles.list}>
-            <Text style={styles.textname}>面容登陆</Text>
-            <Switch color='#897EF8' value={this.state.Switch} onValueChange={()=>{this.setState({Switch : !this.state.Switch})}} />
+            <Text style={styles.textname}>{t("面容登陆")}</Text>
+            <Switch color='#897EF8' value={Switchshow} onValueChange={()=>{setSwitchshow(!Switchshow)}} />
           </View>
         </View>
 
 
         <View style={[{padding: 20},styles.box]}>
-          <Text style={styles.title}>关于&支持</Text>
+          <Text style={styles.title}>{t("关于&支持")}</Text>
           <View style={[styles.list,{ marginBottom:31}]}>
-            <Text style={styles.textname}>联系我们</Text> 
+            <Text style={styles.textname}>{t("联系我们")}</Text> 
             <FontAwesomeIcon icon={faChevronRight} color='#707070'  size={16} />
           </View>
 
           <View style={[styles.list,{ marginBottom:31}]}>
-            <Text style={styles.textname}>常见问题解答</Text>
+            <Text style={styles.textname}>{t("常见问题解答")}</Text>
             <FontAwesomeIcon icon={faChevronRight} color='#707070'  size={16} />
           </View>
 
           <View style={[styles.list,{ marginBottom:31}]}>
-            <Text style={styles.textname}>服务条款</Text>
+            <Text style={styles.textname}>{t("服务条款")}</Text>
             <FontAwesomeIcon icon={faChevronRight} color='#707070'  size={16} />
           </View>
 
           <View style={[styles.list,{ marginBottom:31}]}>
-            <Text style={styles.textname}>隐私政策</Text>
+            <Text style={styles.textname}>{t("隐私政策")}</Text>
             <FontAwesomeIcon icon={faChevronRight} color='#707070'  size={16} />
           </View>
 
@@ -67,9 +65,10 @@ export default class SetUp extends Component {
 
       </SafeAreaView>
     );
-  }
 }
 
+
+export default SetUp
 
 const styles = StyleSheet.create({
     box:{marginBottom:20},

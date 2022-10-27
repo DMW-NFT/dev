@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component,useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -10,17 +10,19 @@ import {
   TextInput,
   Button,
 } from 'react-native';
+import { useTranslation } from 'react-i18next'
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
 const screenHeight = Dimensions.get('window').height;
-export default class BlockchainQuery extends Component {
-  constructor(porps) {
-    super(porps);
-    this.state = {
-        Blockchainval: '',
-    };
-  }
-  render() {
+const BlockchainQuery = () => {
+  const { t, i18n } = useTranslation();
+  // constructor(porps) {
+  //   super(porps);
+  //   state = {
+  //       Blockchainval: '',
+  //   };
+  // }
+  const [Blockchainval,setBlockchainval] = useState('')
     return (
       <SafeAreaView style={{paddingTop: 38, position: 'relative',height:Dimensions.get('window').height,backgroundColor:'#fff'}}>
        
@@ -29,24 +31,25 @@ export default class BlockchainQuery extends Component {
                     multiline={true}
                     textAlignVertical="top"
                     numberOfLines={5}
-                    placeholder='请输入' 
+                    placeholder={t("请输入地址")} 
                     keyboardType="decimal"
                     style={[styles.textarea]}
-                    onChangeText={e =>  this.setState({ Blockchainval:e })}
-                    value={this.state.Blockchainval}
+                    onChangeText={e =>  setBlockchainval(e)}
+                    value={Blockchainval}
                 />
 
-<Text style={{color:'#999999',fontSize:10}}>支持藏品、账户相关区块链信息查询</Text>
+<Text style={{color:'#999999',fontSize:10}}>{t("支持藏品、账户相关区块链信息查询")}</Text>
 
 </View>
    
 
 
-       <Text style={styles.btn}>查询</Text>
+       <Text style={styles.btn}>{t("查询")}</Text>
       </SafeAreaView>
     );
-  }
 }
+
+export default BlockchainQuery
 
 const styles = StyleSheet.create({
   btn: {

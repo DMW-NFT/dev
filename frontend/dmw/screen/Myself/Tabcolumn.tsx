@@ -1,57 +1,60 @@
-import React, {Component} from 'react';
+import React, {Component,useState} from 'react';
 import {StyleSheet, View, Text, ScrollView} from 'react-native';
-export default class Tabcolumn extends Component {
-  constructor(props) {
-    super(props);
+import { useTranslation } from 'react-i18next'
+const Tabcolumn = (props) => {
+  // constructor(props) {
+  //   super(props);
+  // }
+
+  const { t, i18n } = useTranslation();
+const  paging = (typename) => {
+    props.paging(typename);
   }
-  paging(typename) {
-    this.props.paging(typename);
-  }
-  render() {
     return (
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         <View style={[styles.daohang]}>
           <Text
             style={[
-              this.props.typename == '我的藏品'
+              props.typename == '我的藏品'
                 ? styles.daonghang_text_ative
                 : styles.daonghang_text,
             ]}
-            onPress={() => this.paging('我的藏品')}>
-            我的藏品
+            onPress={() => paging('我的藏品')}>
+            {t("我的藏品")}
           </Text>
           <Text
             style={[
-              this.props.typename == '我创建的'
+              props.typename == '我创建的'
                 ? styles.daonghang_text_ative
                 : styles.daonghang_text,
             ]}
-            onPress={() => this.paging('我创建的')}>
-            我创建的
+            onPress={() => paging('我创建的')}>
+            {t("我创建的")}
           </Text>
           <Text
             style={[
-              this.props.typename == '事件'
+              props.typename == '事件'
                 ? styles.daonghang_text_ative
                 : styles.daonghang_text,
             ]}
-            onPress={() => this.paging('事件')}>
-            事件
+            onPress={() => paging('事件')}>
+           {t("事件")} 
           </Text>
           <Text
             style={[
-              this.props.typename == '我喜欢的'
+              props.typename == '我喜欢的'
                 ? styles.daonghang_text_ative
                 : styles.daonghang_text,
             ]}
-            onPress={() => this.paging('我喜欢的')}>
-            我喜欢的
+            onPress={() => paging('我喜欢的')}>
+           {t("我喜欢的")} 
           </Text>
         </View>
       </ScrollView>
     );
-  }
 }
+
+export default Tabcolumn
 
 const styles = StyleSheet.create({
   daohang: {

@@ -7,33 +7,34 @@ import {
   TouchableWithoutFeedback,
   TextInput,
 } from "react-native";
+import { useTranslation } from 'react-i18next'
 import React, { useContext, useEffect, useState } from "react";
 import StepComp from "./StepComp";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 const WalletSafe = (props) => {
+  const { t, i18n } = useTranslation();
   const [password, setpassword] = useState(props.route.params.password);
   const [password1, setpassword1] = useState(props.route.params.password1);
   const { newMnemonic, loadMnemonicFromStorage } = useDmwWallet();
 
-            useEffect(() => {
-                newMnemonic(password, true).then((res) => {
-                console.log(res, "zhujici");
-                });
-               
-            }, []);
+  useEffect(() => {
+    newMnemonic(password, true).then((res) => {
+      console.log(res, "zhujici");
+    });
+
+  }, []);
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
       <View style={[styles.container]}>
         <StepComp type={2} />
         <View>
-          <Text style={[styles.topInfo]}>保护您的钱包安全</Text>
+          <Text style={[styles.topInfo]}>{t("保护您的钱包安全")}</Text>
           <Text style={[styles.topInfo1]}>
-            保护好您的钱包<Text style={[styles.textcolor]}>助记词</Text>
-            。下一个界面将显示助记词，
-            助记词是您钱包的唯一密钥。如果您的手机丢失或被盗，
-            它将允许您恢复对钱包的访问。
-            <Text style={[styles.textcolor]}>它为什么重要？</Text>
+          {t("保护您的钱包安全")}  <Text style={[styles.textcolor]}>{t("助记词")}</Text>
+            {t("保护好您的钱包助记词。下一个界面将显示助记词，助记词是您钱包的唯一密钥。如果您的手机丢失或被盗，它将允许您恢复对您钱包的访问。")}
+            
+            <Text style={[styles.textcolor]}>{t("它为什么重要？")}</Text>
           </Text>
         </View>
         <View style={[styles.blackBox]}>
@@ -56,7 +57,7 @@ const WalletSafe = (props) => {
                 fontSize: 14,
               }}
             >
-              点按可显示助记词
+              {t("点按可显示助记词")}
             </Text>
             <Text
               style={{
@@ -66,26 +67,26 @@ const WalletSafe = (props) => {
                 fontSize: 10,
               }}
             >
-              确保没有人在看您的屏幕。
+              {t("确保没有人在看您的屏幕。")} 
             </Text>
           </View>
           <Text
             style={[styles.lookBtn]}
             onPress={() => {
-              props.navigation.navigate("walletSafeShow",{password});
+              props.navigation.navigate("walletSafeShow", { password });
             }}
           >
-            查看
+           {t("查看")}  
           </Text>
         </View>
 
         <Text
           style={[styles.import]}
           onPress={() => {
-            props.navigation.navigate("walletSafeShow",{password});
+            props.navigation.navigate("walletSafeShow", { password });
           }}
         >
-          继续
+         {t("继续")}  
         </Text>
       </View>
     </SafeAreaView>

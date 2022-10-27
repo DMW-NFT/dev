@@ -13,8 +13,9 @@ import { Modal } from "react-native-paper";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
-
+import { useTranslation } from 'react-i18next'
 const CreateMoney = (props) => {
+  const { t, i18n } = useTranslation();
   const [visible, setvisible] = useState(false);
   const { connected, connectWallet } = useDmwWeb3();
   const { Toast, setMoneyRouteState } = useDmwApi();
@@ -28,23 +29,13 @@ const CreateMoney = (props) => {
     connectWallet()
   };
   useEffect(()=>{
-    // clickWallet()
-    // setTimeout(() => {
-    //   setWalletState(connector.connected);
-    //   console.log(connector.connected);
-    //   if(WalletState){
-    //     setMoneyRouteState("money");
-    //   }else{
-    //     setMoneyRouteState("createMoney");
-    //     Toast("钱包已失效！");
-    //   }
-    // }, 5000);
+ 
 
     if(connected){
           setMoneyRouteState("money");
         }else{
           setMoneyRouteState("createMoney");
-          Toast("钱包已断开链接！");
+          Toast( t("钱包已断开链接"));
         }
   },[connected])
 
@@ -97,7 +88,7 @@ const CreateMoney = (props) => {
             setvisible(true);
           }}
         >
-          创建新钱包
+         {t("创建新钱包")} 
         </Text>
 
         {/* <Animatable.View animation="fadeInUpBig" style={[styles.footer]}>
@@ -117,7 +108,7 @@ const CreateMoney = (props) => {
             navigate("createWord");
           }}
         >
-          暂无助记词，去新建
+         {t("暂无助记词，去新建")}  
         </Text>
         <Text
           style={[styles.createMoneyBtn]}
@@ -125,7 +116,7 @@ const CreateMoney = (props) => {
             navigate("importWord");
           }}
         >
-          已有助记词，去导入
+        {t("已有助记词，去导入")}   
         </Text>
       </Modal>
     </SafeAreaView>

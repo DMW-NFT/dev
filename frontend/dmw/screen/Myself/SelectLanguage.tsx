@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component,useState,useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -10,17 +10,25 @@ import {
   TextInput,
   Button,
 } from 'react-native';
+import { useTranslation } from 'react-i18next'
+
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
 const screenHeight = Dimensions.get('window').height;
-export default class SelectLanguage extends Component {
-  constructor(porps) {
-    super(porps);
-    this.state = {
-      type: 'ch',
-    };
-  }
-  render() {
+
+const SelectLanguage = (porps) => {
+  const [type,setType] = useState('jp')
+  const { t, i18n } = useTranslation();
+  // constructor(porps) {
+  //   super(porps);
+  //   state = {
+  //     type: 'ch',
+  //   };
+  // }
+  useEffect(()=>{
+    
+  },[])
+
     return (
       <SafeAreaView
         style={{
@@ -32,16 +40,16 @@ export default class SelectLanguage extends Component {
         <View style={{paddingLeft: 20, paddingRight: 20}}>
           <TouchableWithoutFeedback
             onPress={() => {
-              this.setState({type: 'ch'});
+             setType('ch')
             }}
-            onStartShouldSetResponderCapture={() => true}>
-            {this.state.type == 'ch' ? (
+            >
+            {type == 'ch' ? (
               <View style={[true ? styles.boxActive : styles.box]}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <Image
                     style={styles.img}
                     source={require('../../assets/img/my/Chinese.png')}></Image>
-                  <Text>中文</Text>
+                  <Text>{t("中文")}</Text>
                 </View>
 
                 <Image style={{width:17,height:11}} source={require('../../assets/img/my/217.png')}></Image>
@@ -59,10 +67,10 @@ export default class SelectLanguage extends Component {
 
           <TouchableWithoutFeedback
             onPress={() => {
-              this.setState({type: 'en'});
+              setType('en')
             }}
-            onStartShouldSetResponderCapture={() => true}>
-            {this.state.type == 'en' ? (
+           >
+            {type == 'en' ? (
               <View style={[true ? styles.boxActive : styles.box]}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <Image
@@ -86,10 +94,10 @@ export default class SelectLanguage extends Component {
 
           <TouchableWithoutFeedback
             onPress={() => {
-              this.setState({type: 'jp'});
+              setType('jp')
             }}
-            onStartShouldSetResponderCapture={() => true}>
-            {this.state.type == 'jp' ? (
+           >
+            {type == 'jp' ? (
               <View style={[true ? styles.boxActive : styles.box]}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <Image
@@ -114,8 +122,9 @@ export default class SelectLanguage extends Component {
 
       </SafeAreaView>
     );
-  }
 }
+
+export default SelectLanguage
 
 const styles = StyleSheet.create({
   img: {

@@ -2,10 +2,11 @@ import { Text, StyleSheet, View, SafeAreaView, ScrollView, Image, TextInput, Fla
 import React, { useState, useEffect } from 'react'
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider';
-
+import { useTranslation } from 'react-i18next'
 const screenHeight = Dimensions.get("window").height;
 
 const MyCollection = (props) => {
+    const { t, i18n } = useTranslation();
     const [strText, setStrText] = useState('')
     const [list, setList] = useState([])
     const { post, formData } = useDmwApi()

@@ -7,13 +7,14 @@ import {
   TouchableWithoutFeedback,
   TextInput,
 } from "react-native";
-
+import { useTranslation } from 'react-i18next'
 import React, { Component, useEffect, useState, useContext } from "react";
 
 import StepComp from "./StepComp";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 
 const ImportWord = (props) => {
+  const { t, i18n } = useTranslation();
   const [secureTextEntry, setsecureTextEntry] = useState(false);
   const [word, setword] = useState("");
   const [password, setpassword] = useState("");
@@ -22,9 +23,9 @@ const {Toast} = useDmwApi()
 
  const CreatePassword = () => {
   if(password != password1){
-    Toast('两次密码不一致！')
+    Toast(t('密码不一致'))
   }else{
-    Toast('创建成功！')
+    Toast(t('创建成功！'))
     props.navigation.navigate("walletSafe",{password,password1});
   }
  }
@@ -34,9 +35,9 @@ const {Toast} = useDmwApi()
       <View style={[styles.container]}>
         <StepComp type={1} />
         <View>
-          <Text style={[styles.topInfo]}>创建支付密码</Text>
+          <Text style={[styles.topInfo]}>{t("创建支付密码")}</Text>
           <Text style={[styles.topInfo1]}>
-            此密码将用在您签名资产或者您在支付代币时使用。
+          {t("此密码将用在您签名资产或者您在支付代币时使用。")}
           </Text>
         </View>
         <View style={styles.lis}>
@@ -47,7 +48,7 @@ const {Toast} = useDmwApi()
               flexDirection: "row",
             }}
           >
-            <Text style={styles.text}>密码</Text>
+            <Text style={styles.text}>{t("密码")}</Text>
             <TouchableWithoutFeedback
               onPress={() => {
                 setsecureTextEntry(!setsecureTextEntry);
@@ -69,7 +70,7 @@ const {Toast} = useDmwApi()
           <TextInput
             maxLength={6}
             secureTextEntry={secureTextEntry}
-            placeholder="密码"
+            placeholder={t("密码")}
             keyboardType="decimal-pad"
             style={[styles.input]}
             onChangeText={(e) => setpassword(e)}
@@ -77,18 +78,18 @@ const {Toast} = useDmwApi()
           />
         </View>
         <View style={styles.lis}>
-          <Text style={styles.text}>确认密码</Text>
+          <Text style={styles.text}>{t("确认密码")}</Text>
           <TextInput
             maxLength={6}
             secureTextEntry={secureTextEntry}
-            placeholder="确认密码"
+            placeholder={t("确认密码")}
             keyboardType="decimal-pad"
             style={[styles.input]}
             onChangeText={(e) => setpassword1(e)}
             value={password1}
           />
           <Text style={[styles.text, { marginTop: 10, marginBottom: 32 }]}>
-            请输入6位数数字
+            {t("请输入6位数字")}
           </Text>
         </View>
         <Text
@@ -97,7 +98,7 @@ const {Toast} = useDmwApi()
             CreatePassword()
           }}
         >
-          创建密码
+         {t("创建密码")} 
         </Text>
       </View>
     </SafeAreaView>

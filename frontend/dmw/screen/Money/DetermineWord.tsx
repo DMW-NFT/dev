@@ -3,7 +3,9 @@ import React, { useState, useEffect, useContext } from "react";
 import StepComp from "./StepComp";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
+import { useTranslation } from 'react-i18next'
 const DetermineWord = (props) => {
+  const { t, i18n } = useTranslation();
   const [checkdata, setCheckdata] = useState([]);
   const {
     loadMnemonicFromStorage,
@@ -63,9 +65,9 @@ const DetermineWord = (props) => {
       <View style={[styles.container]}>
         <StepComp type={3} />
         <View>
-          <Text style={[styles.topInfo]}>确认助记词</Text>
+          <Text style={[styles.topInfo]}>{t("确认助记词")}</Text>
           <Text style={[styles.topInfo1, { marginBottom: 20 }]}>
-            按照之前呈现的顺序选择每个字词
+          {t("按照之前按呈现的顺序选择每个字词")}
           </Text>
         </View>
         <View style={[styles.blackBox]}>
@@ -92,7 +94,7 @@ const DetermineWord = (props) => {
         </View>
 
         <Text style={[styles.import]} onPress={() => Complete()}>
-          完成备份
+          {t("完成备份")}
         </Text>
       </View>
     </SafeAreaView>

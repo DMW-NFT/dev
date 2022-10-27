@@ -13,8 +13,7 @@ import {
 import DocumentPicker from "react-native-document-picker";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
 import DialogToast from "../../Components/DialogToast.js";
-// import Api from "../../Request/http";
-// const api = new Api();
+import { useTranslation } from 'react-i18next'
 import {useDmwApi} from "../../../DmwApiProvider/DmwApiProvider"
 
 const screenWidth = Dimensions.get("window").width;
@@ -22,6 +21,7 @@ const scale = Dimensions.get("window").scale;
 const screenHeight = Dimensions.get("window").height;
 
 const ModifyInfo = (props) => {
+  const { t, i18n } = useTranslation();
   const [userInfo, setUserInfo] = useState({});
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("温馨提示");
@@ -123,13 +123,13 @@ const ModifyInfo = (props) => {
       <View style={styles.line}></View>
 
       <View style={styles.lis}>
-        <Text style={styles.text}>昵称</Text>
+        <Text style={styles.text}>{t("昵称")}</Text>
         {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
                        
                     </TouchableWithoutFeedback> */}
         <TextInput
           maxLength={6}
-          placeholder="请输入昵称"
+          placeholder={t("请输入昵称")}
           keyboardType="decimal-pad"
           style={[styles.input]}
           onChangeText={(e) => setUsername(e)}
@@ -137,14 +137,14 @@ const ModifyInfo = (props) => {
         />
       </View>
       <Text style={styles.btn} onPress={() => sava()}>
-        保存更改
+      {t("保存")}
       </Text>
 
       <DialogToast
         visible={visible}
         isClose={true}
         value={message}
-        title="温馨提示"
+        title={t("温馨提示")}
         Size="18"
         textAlign="left"
         close={() => {

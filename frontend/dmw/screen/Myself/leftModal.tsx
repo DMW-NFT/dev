@@ -11,13 +11,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import storage from "../../Storage/storage";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
-
+import { useTranslation } from 'react-i18next'
 const scale = Dimensions.get("window").scale;
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const Lmodal = (props) => {
   const {logOut} = useDmwLogin()
+  const { t, i18n } = useTranslation();
   const close = () => {
     props.close();
   };
@@ -48,7 +49,7 @@ const Lmodal = (props) => {
 
       {visible ? (
         <View style={styles.Lm_box}>
-          <Text style={styles.title}>常用功能</Text>
+          <Text style={styles.title}>{t("常用功能")}</Text>
           <View
             style={{
               flexDirection: "row",
@@ -66,7 +67,7 @@ const Lmodal = (props) => {
                   style={{ width: 96 / 2, height: 96 / 2 }}
                   source={require("../../assets/img/my/3422.png")}
                 ></Image>
-                <Text style={styles.img_bottom_text}>拍卖订单</Text>
+                <Text style={styles.img_bottom_text}>{t("拍卖订单")}</Text>
               </View>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback
@@ -79,7 +80,7 @@ const Lmodal = (props) => {
                   style={{ width: 96 / 2, height: 96 / 2 }}
                   source={require("../../assets/img/my/3338.png")}
                 ></Image>
-                <Text style={styles.img_bottom_text}>售卖订单</Text>
+                <Text style={styles.img_bottom_text}>{t("售卖订单")}</Text>
               </View>
             </TouchableWithoutFeedback>
 
@@ -93,7 +94,7 @@ const Lmodal = (props) => {
                   style={{ width: 96 / 2, height: 96 / 2 }}
                   source={require("../../assets/img/my/3337.png")}
                 ></Image>
-                <Text style={styles.img_bottom_text}>合集</Text>
+                <Text style={styles.img_bottom_text}>{t("合集")}</Text>
               </View>
             </TouchableWithoutFeedback>
 
@@ -104,12 +105,12 @@ const Lmodal = (props) => {
                     style={{ width: 96 / 2, height: 96 / 2 }}
                     source={require("../../assets/img/my/3336.png")}
                   ></Image>
-                  <Text style={styles.img_bottom_text}>创建</Text>
+                  <Text style={styles.img_bottom_text}>{t("创建")}</Text>
                 </View>
               }
             </TouchableWithoutFeedback>
           </View>
-          <Text style={styles.title}>更多功能</Text>
+          <Text style={styles.title}>{t("更多功能")}</Text>
           <View>
             <TouchableWithoutFeedback
               onPress={() => cilck("TransferredIntoCollection")}
@@ -121,7 +122,7 @@ const Lmodal = (props) => {
                       style={styles.moreimg}
                       source={require("../../assets/img/my/b3.png")}
                     ></Image>
-                    <Text style={styles.more_text}>转入藏品</Text>
+                    <Text style={styles.more_text}>{t("转入藏品")}</Text>
                   </View>
                   <FontAwesomeIcon
                     icon={faChevronRight}
@@ -140,7 +141,7 @@ const Lmodal = (props) => {
                       style={styles.moreimg}
                       source={require("../../assets/img/my/b1.png")}
                     ></Image>
-                    <Text style={styles.more_text}>消息中心</Text>
+                    <Text style={styles.more_text}>{t("消息中心")}</Text>
                   </View>
                   <FontAwesomeIcon
                     icon={faChevronRight}
@@ -157,7 +158,7 @@ const Lmodal = (props) => {
                   style={styles.moreimg}
                   source={require("../../assets/img/my/b5.png")}
                 ></Image>
-                <Text style={styles.more_text}>新闻资讯</Text>
+                <Text style={styles.more_text}>{t("新闻资讯")}</Text>
               </View>
               <FontAwesomeIcon
                 icon={faChevronRight}
@@ -172,7 +173,7 @@ const Lmodal = (props) => {
                   style={styles.moreimg}
                   source={require("../../assets/img/my/b2.png")}
                 ></Image>
-                <Text style={styles.more_text}>帮助</Text>
+                <Text style={styles.more_text}>{t("帮助")}</Text>
               </View>
               <FontAwesomeIcon
                 icon={faChevronRight}
@@ -189,7 +190,7 @@ const Lmodal = (props) => {
                       style={styles.moreimg}
                       source={require("../../assets/img/my/b4.png")}
                     ></Image>
-                    <Text style={styles.more_text}>退出</Text>
+                    <Text style={styles.more_text}>{t("退出")}</Text>
                   </View>
                   <FontAwesomeIcon
                     icon={faChevronRight}
@@ -231,7 +232,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   img_bottom_text: {
-    fontSize: 12,
+    fontSize: 8,
     textAlign: "center",
   },
   moreimg: {

@@ -7,11 +7,13 @@ import {
   TouchableWithoutFeedback,
   TextInput,
 } from "react-native";
+import { useTranslation } from 'react-i18next'
 import React, { useEffect, useContext, useState } from "react";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import StepComp from "./StepComp";
 
 const WalletSafeShow = (props) => {
+  const { t, i18n } = useTranslation();
   const { loadMnemonicFromStorage } = useDmwWallet();
   const [MnemonicList, SetMnemonicList] = useState([]);
   const [password, setpassword] = useState(props.route.params.password);
@@ -30,12 +32,9 @@ const WalletSafeShow = (props) => {
       <View style={[styles.container]}>
         <StepComp type={2} />
         <View>
-          <Text style={[styles.topInfo]}>保护您的钱包安全</Text>
+          <Text style={[styles.topInfo]}> {t("保护您的钱包安全")}</Text>
           <Text style={[styles.topInfo1]}>
-            这是您的助记词。将它写在纸上并存放在安全的地方。{" "}
-          </Text>
-          <Text style={[styles.topInfo1]}>
-            您将需要在下一步中重新输入此助记词
+          {t("这是您的助记词。将它写在纸上并存放在安全的地方。您将需要在下一步中重新输入此助记词（按顺序）。")}
           </Text>
           <Text style={[styles.topInfo1, { marginBottom: 72 / 2 }]}>
             （按顺序）。
@@ -64,7 +63,7 @@ const WalletSafeShow = (props) => {
             props.navigation.navigate("determineWord",{password});
           }}
         >
-          继续
+        {t("继续")}  
         </Text>
       </View>
     </SafeAreaView>
