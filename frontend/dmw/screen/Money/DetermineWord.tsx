@@ -56,7 +56,7 @@ const DetermineWord = (props) => {
         props.navigation.navigate("completeBackup");
       });
     } else {
-      Toast("助记词不正确！");
+      Toast(t("助记词不正确"));
     }
   };
 

@@ -67,7 +67,7 @@ const WalletSafe = (props) => {
                 fontSize: 10,
               }}
             >
-              {t("确保没有人在看您的屏幕。")} 
+              {t("确保没有人在看您的屏幕")} 
             </Text>
           </View>
           <Text
