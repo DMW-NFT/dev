@@ -21,6 +21,7 @@ import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { Spinner } from '@ui-kitten/components';
 import List from "../../Components/List";
+import { useTranslation } from 'react-i18next'
 
 const data = [
   {
@@ -46,6 +47,7 @@ const data = [
 const screenWidth = Dimensions.get("window").width;
 const scale = Dimensions.get("window").scale;
 const Myself = (props) => {
+  const { t, i18n } = useTranslation();
   const [typename, setTypename] = useState("我的藏品");
   const [visible, setVisible] = useState(false);
   const [strText, setStrText] = useState();
