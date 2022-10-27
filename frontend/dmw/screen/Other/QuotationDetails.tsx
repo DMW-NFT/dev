@@ -10,9 +10,9 @@ import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider'
 import { useDmwWallet } from '../../../DmwWallet/DmwWalletProvider'
 import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider'
 import { read } from 'fs/promises'
-
+import { useTranslation } from 'react-i18next'
 const QuotationDetails = (props) => {
-
+    const { t, i18n } = useTranslation();
     const inputRefX = useRef(null);
     const [id, setID] = useState(props.route.params.id)
     const [showoffer, setshowoffer] = useState(false)
@@ -198,7 +198,7 @@ const QuotationDetails = (props) => {
                 return (
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
                         <View>
-                            <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>价格</Text>
+                            <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>{t("价格")}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                             <Text style={{ fontSize: 16, color: '#333333', fontWeight: '700', marginRight: 5 }}>{`${QuotationAmount} ${activeEm.name} X ${BuyNumber}`}</Text>
@@ -215,7 +215,7 @@ const QuotationDetails = (props) => {
             return (
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
                     <View>
-                        <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>价格</Text>
+                        <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>{t("价格")}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                         <Text style={{ fontSize: 16, color: '#333333', fontWeight: '700', marginRight: 5 }}>{`${Price} X ${BuyNumber}`}</Text>
@@ -289,17 +289,17 @@ const QuotationDetails = (props) => {
             <View style={{ marginTop: 40 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
                     <Text></Text>
-                    <Text style={{ fontSize: 10, color: '#897EF8' }}>编辑</Text>
+                    <Text style={{ fontSize: 10, color: '#897EF8' }}>{t("编辑")}</Text>
                 </View>
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
-                    <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>预估GAS费</Text>
-                    <Text style={{ fontSize: 10, }}>0.001Wfca</Text>
+                    <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>{t("预估GAS费")}</Text>
+                    <Text style={{ fontSize: 10, }}>0.001 ETH</Text>
                 </View>
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Text style={{ fontSize: 10, color: '#3FAA85' }}>有可能在30秒内</Text>
-                    <Text style={{ fontSize: 10, color: '#999999' }}>最高收费：0.0002ETH</Text>
+                    <Text style={{ fontSize: 10, color: '#3FAA85' }}>{t("有可能在30秒内")}</Text>
+                    <Text style={{ fontSize: 10, color: '#999999' }}>{t("最高收费")}：0.003ETH</Text>
                 </View></View>
         )
     }
@@ -450,7 +450,7 @@ const QuotationDetails = (props) => {
                                         <Text style={[styles.faxingNumRight]}>{detailsObj['total_num'] ? detailsObj['total_num'] : '--'}</Text>
                                     </View> */}
                             <View style={[styles.faxingNum, styles.flex]}>
-                                <Text style={[styles.faxingNumLeft]}>剩余数量</Text>
+                                <Text style={[styles.faxingNumLeft]}>{t("剩余数量")}</Text>
                                 <Text style={[styles.faxingNumRight]}>{orderList ? orderList.quantity : '--'}</Text>
                             </View>
                         </View>
@@ -473,7 +473,7 @@ const QuotationDetails = (props) => {
                             <TouchableWithoutFeedback onPress={() => { setshowoffer(!showoffer) }}>
                                 <View style={[styles.flexJBC]} >
                                     <Text style={[styles.linechainBoxOrtherName]}>
-                                        报价详情
+                                     {t("报价详情")}
                                     </Text>
                                     <FontAwesomeIcon icon={showoffer ? faAngleDown : faAngleRight} color='#707070' size={20} />
                                 </View>

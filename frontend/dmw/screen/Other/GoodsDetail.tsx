@@ -9,9 +9,9 @@ import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider'
 import { Card, Modal, Datepicker, Icon } from '@ui-kitten/components';
 import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider'
 import { useDmwWallet } from '../../../DmwWallet/DmwWalletProvider'
-
+import { useTranslation } from 'react-i18next'
 const GoodsDetail = (props) => {
-
+    const { t, i18n } = useTranslation();
     const inputRefX = useRef(null);
     const [id, setID] = useState(props.route.params.id)
     const [list, setlist] = useState([{}, {}, {}])
@@ -307,7 +307,7 @@ const GoodsDetail = (props) => {
                                     NftNumber > 0 ?
                                         <View style={[styles.flex, { paddingHorizontal: 20, }]}>
                                             <View style={[styles.faxingNum, styles.flex]}>
-                                                <Text style={[styles.faxingNumLeft]}>剩余数量</Text>
+                                                <Text style={[styles.faxingNumLeft]}>{t("剩余数量")}</Text>
                                                 <Text style={[styles.faxingNumRight]}>{NftNumber}</Text>
                                             </View>
                                             <Text onPress={() => buyClick()} style={[styles.buyBtn, { backgroundColor: buyText ? '#897EF8' : '#CCC' }]}>
@@ -344,7 +344,7 @@ const GoodsDetail = (props) => {
                             <TouchableWithoutFeedback onPress={() => { setshowChain(!showChain) }}>
                                 <View style={[styles.flexJBC]} >
                                     <Text style={[styles.linechainBoxOrtherName]}>
-                                        链上信息
+                                        {t("链上信息")}
                                     </Text>
                                     <FontAwesomeIcon icon={showChain ? faAngleDown : faAngleRight} color='#707070' size={20} />
                                 </View>
@@ -353,7 +353,7 @@ const GoodsDetail = (props) => {
                                 showChain ?
                                     <View>
                                         <View style={[styles.flexJBC, { marginBottom: 15, marginTop: 20 }]}>
-                                            <Text style={[styles.chainLeft]}>合约地址</Text>
+                                            <Text style={[styles.chainLeft]}>{t("合约地址")}</Text>
                                             <Text style={[styles.chainRight, { color: " #897EF8" }]}>{detailsObj.contract_address}</Text>
                                         </View>
                                         <View style={[styles.flexJBC, { marginBottom: 15 }]}>
@@ -361,11 +361,11 @@ const GoodsDetail = (props) => {
                                             <Text style={[styles.chainRight, { color: " #897EF8" }]}>{detailsObj.token_id}</Text>
                                         </View>
                                         <View style={[styles.flexJBC, { marginBottom: 15 }]}>
-                                            <Text style={[styles.chainLeft]}>代币标准</Text>
+                                            <Text style={[styles.chainLeft]}>{t("代币标准")}</Text>
                                             <Text style={[styles.chainRight, { color: " #897EF8" }]}>{detailsObj.contract_type}</Text>
                                         </View>
                                         <View style={[styles.flexJBC, { marginBottom: 20 }]} >
-                                            <Text style={[styles.chainLeft]}>区块链</Text>
+                                            <Text style={[styles.chainLeft]}>{t("区块链")}</Text>
                                             <Text style={[styles.chainRight, { color: " #897EF8" }]}>{detailsObj.network}</Text>
                                         </View>
                                     </View> : <Text></Text>
@@ -376,7 +376,7 @@ const GoodsDetail = (props) => {
                             <TouchableWithoutFeedback onPress={() => { setshowoffer(!showoffer) }}>
                                 <View style={[styles.flexJBC]} >
                                     <Text style={[styles.linechainBoxOrtherName]}>
-                                        挂单列表
+                                        {t("挂单列表")}
                                     </Text>
                                     <FontAwesomeIcon icon={showoffer ? faAngleDown : faAngleRight} color='#707070' size={20} />
                                 </View>
@@ -430,7 +430,7 @@ const GoodsDetail = (props) => {
                             <TouchableWithoutFeedback onPress={() => { setshowhistory(!showhistory) }}>
                                 <View style={[styles.flexJBC]} >
                                     <Text style={[styles.linechainBoxOrtherName]}>
-                                        交易历史
+                                        {t("交易历史")}
                                     </Text>
                                     <FontAwesomeIcon icon={showhistory ? faAngleDown : faAngleRight} color='#707070' size={20} />
                                 </View>
@@ -487,7 +487,7 @@ const GoodsDetail = (props) => {
                                     <TouchableWithoutFeedback onPress={() => { setshowcollection(!showcollection) }}>
                                         <View style={[styles.flexJBC]} >
                                             <Text style={[styles.linechainBoxOrtherName]}>
-                                                Content of this collection
+                                            {t("本合集内容")}
                                             </Text>
                                             <FontAwesomeIcon icon={showcollection ? faAngleDown : faAngleRight} color='#707070' size={20} />
                                         </View>
@@ -506,7 +506,7 @@ const GoodsDetail = (props) => {
                         <View style={[styles.linechainBoxOrther, { borderBottomColor: "#fff" }]}>
                             <View style={[styles.flexJBC]}>
                                 <Text style={[styles.linechainBoxOrtherName, { marginBottom: 20 }]}>
-                                    More from this collection
+                                    {/* {t("本合集内容")} */}
                                 </Text>
                             </View>
                             {
@@ -540,10 +540,10 @@ const GoodsDetail = (props) => {
                 <Card disabled={true} style={styles.CardBox}>
 
                     <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>购买</Text>
+                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{t("购买")}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                        <Text>价格：</Text>
+                        <Text>{t("价格")}：</Text>
                         <TextInput
                             caretHidden={true}
                             secureTextEntry={true}

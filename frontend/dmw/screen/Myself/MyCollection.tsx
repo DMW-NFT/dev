@@ -61,7 +61,7 @@ const MyCollection = (props) => {
                 showsVerticalScrollIndicator={false}
                 refreshing={true}
                 ListEmptyComponent={() => {
-                    return <Text style={{ textAlign: 'center', marginTop: '70%' }}>空空如也</Text>
+                    return <Text style={{ textAlign: 'center', marginTop: '70%' }}>{t("空空如也")}</Text>
                     // 列表为空展示改组件
                 }}
                 // 一屏幕展示几个

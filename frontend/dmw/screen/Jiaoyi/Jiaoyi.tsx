@@ -3,8 +3,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import List from '../../Components/List'
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { Spinner } from '@ui-kitten/components';
-const Jiaoyi = (props) => {
+import { useTranslation } from 'react-i18next'
 
+const Jiaoyi = (props) => {
+  const { t, i18n } = useTranslation();
 
   const [type, setType] = useState(2)//2是寄售 3是拍卖
   const [ConList, setConList] = useState([])//寄售列表
@@ -79,8 +81,8 @@ const Jiaoyi = (props) => {
     <SafeAreaView style={{ backgroundColor: '#fff', flex: 1 }}>
       {/* tab栏 -- start */}
       <View style={[styles.index_box, styles.daohang]}>
-        <Text style={[type === 2 ? styles.daonghang_text_ative : styles.daonghang_text]} onPress={() => changetype(2)}>寄售</Text>
-        <Text style={[type === 3 ? styles.daonghang_text_ative : styles.daonghang_text]} onPress={() => changetype(3)}>拍卖</Text>
+        <Text style={[type === 2 ? styles.daonghang_text_ative : styles.daonghang_text]} onPress={() => changetype(2)}>{t("寄售")}</Text>
+        <Text style={[type === 3 ? styles.daonghang_text_ative : styles.daonghang_text]} onPress={() => changetype(3)}>{t("拍卖")}</Text>
       </View>
       {/* tab栏 -- end */}
 
@@ -92,7 +94,7 @@ const Jiaoyi = (props) => {
               refreshing={refreshing}
               style={{ height: 50, paddingBottom: 20 }}
               ListEmptyComponent={() => {
-                return <Text style={{ textAlign: 'center', marginTop: '50%' }}>空空如也</Text>
+                return <Text style={{ textAlign: 'center', marginTop: '50%' }}>{t("空空如也")}</Text>
                 // 列表为空展示改组件
               }}
               // 一屏幕展示几个
@@ -111,7 +113,7 @@ const Jiaoyi = (props) => {
               // keyExtractor={(item, index) => item.id}
               ListFooterComponent={() => {
                 // 声明尾部组件
-                return (type == 2 && ConList.length == ConListTotal) || (type == 3 && auctionList.length == auctionTotal) ? <Text style={{ textAlign: 'center', marginBottom: 20 }}>没有更多了</Text> : null
+                return (type == 2 && ConList.length == ConListTotal) || (type == 3 && auctionList.length == auctionTotal) ? <Text style={{ textAlign: 'center', marginBottom: 20 }}>{t("没有更多了")}</Text> : null
               }}
               // 下刷新
               onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数

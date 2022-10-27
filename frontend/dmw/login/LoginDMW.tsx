@@ -47,7 +47,7 @@ const LoginDMW = (props) => {
   const [agree, setAgree] = useState(false);
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("温馨提示");
-  const { post, formData,Toast } = useDmwApi();
+  const { post, formData, Toast } = useDmwApi();
   const onChangeText = (e, num) => {
     if (num == 1) {
       setEmail(e);
@@ -78,8 +78,8 @@ const LoginDMW = (props) => {
 
   // 登录按钮
   const loginFn = () => {
-    if(!agree){
-      Toast('请先勾选用户协议')
+    if (!agree) {
+      Toast(t('请先勾选用户协议'))
       return
     }
     let data = {};
@@ -103,7 +103,7 @@ const LoginDMW = (props) => {
           Toast(res.message);
           return;
         }
-        Toast("登陆成功！");
+        Toast(t("登录成功！"));
         console.log(res.data.token);
 
         storage.save({
@@ -117,7 +117,7 @@ const LoginDMW = (props) => {
         });
         setTimeout(() => {
           login();
-        // props.navigation.navigate("FaceLogin") 
+          // props.navigation.navigate("FaceLogin") 
         }, 2000);
       })
       .catch((err) => {
@@ -186,7 +186,7 @@ const LoginDMW = (props) => {
             source={require("../assets/img/login/email.png")}
           ></Image>
           <TextInput
-            placeholder="请输入邮箱"
+            placeholder={t("请输入邮箱")}
             keyboardType="decimal-pad"
             onChangeText={(text) => onChangeText(text, 1)}
             value={email}
@@ -217,7 +217,7 @@ const LoginDMW = (props) => {
             </TouchableWithoutFeedback>
             <TextInput
               onStartShouldSetResponderCapture={(ev) => true}
-              placeholder="请输入电话号码"
+              placeholder={t("请输入电话号码")}
               keyboardType="decimal-pad"
               onChangeText={(text) => onChangeText(text, 3)}
               value={phone}
@@ -279,7 +279,7 @@ const LoginDMW = (props) => {
         </TouchableWithoutFeedback>
         <TextInput
           onStartShouldSetResponderCapture={() => true}
-          placeholder="请输入密码"
+          placeholder={t("请输入密码")}
           keyboardType="decimal-pad"
           secureTextEntry={secureTextEntry}
           onChangeText={(text) => onChangeText(text, 2)}
@@ -292,10 +292,10 @@ const LoginDMW = (props) => {
           props.navigation.navigate("ForgetPassword", { type: type });
         }}
       >
-        忘记密码？
+        {t("忘记密码")}
       </Text>
       <Text onPress={() => loginFn()} style={[styles.loginBtnBox]}>
-        登陆
+        {t("登录")}
       </Text>
       <View style={[styles.agren]}>
         <Text
@@ -307,10 +307,20 @@ const LoginDMW = (props) => {
             setAgree(!agree);
           }}
         ></Text>
-        <Text style={[styles.textinfo]}>我已阅读并同意</Text>
-        <Text style={[styles.text]}>《用户协议》</Text>
-        <Text style={[styles.textinfo]}>及</Text>
-        <Text style={[styles.text]}>《隐私政策》</Text>
+
+
+
+        {local.name == "中文" ? <>
+          <Text style={[styles.textinfo]}>{t("我已阅读并同意")}</Text>
+          <Text style={[styles.text]}>{t("《用户协议》")}</Text>
+          <Text style={[styles.textinfo]}>{t("及")}</Text>
+          <Text style={[styles.text]}>{t("《隐私政策》")}</Text>
+        </> : <>
+          <Text style={[styles.text]}>利用規約とプライバシーポリシーに同意する</Text>
+        </>
+        }
+
+
       </View>
 
       {/* <DialogToast

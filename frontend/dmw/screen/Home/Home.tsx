@@ -17,13 +17,14 @@ import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { Spinner } from '@ui-kitten/components';
 import { Card, Modal } from '@ui-kitten/components';
 import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider';
-
+import { useTranslation } from 'react-i18next'
 
 
 
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
 const Home = (props) => {
+  const { t, i18n } = useTranslation();
   const inputRefX = useRef(null);
   const [Modalvisible, setModalvisible] = useState(false)
   const [typename, setTypename] = useState('nft')
@@ -260,7 +261,7 @@ const Home = (props) => {
               refreshing={refreshing}
               style={{ height: '55%' }}
               ListEmptyComponent={() => {
-                return <Text style={{ textAlign: 'center', marginTop: '50%' }}>空空如也</Text>
+                return <Text style={{ textAlign: 'center', marginTop: '50%' }}>{t("空空如也")}</Text>
                 // 列表为空展示改组件
               }}
               // 一屏幕展示几个
@@ -275,7 +276,7 @@ const Home = (props) => {
               keyExtractor={(item, index) => item.id}
               ListFooterComponent={() => {
                 // 声明尾部组件
-                return NftList.length ? <Text style={{ textAlign: 'center' }}>没有更多了</Text> : null
+                return NftList.length ? <Text style={{ textAlign: 'center' }}>{t("没有更多了")}</Text> : null
               }}
               // 下刷新
               onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
@@ -320,7 +321,7 @@ const Home = (props) => {
 
           </View>
           <View>
-            <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>请输入支付密码</Text>
+            <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{t("请输入支付密码")}</Text>
             <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>Uzumaki Naruto #0001</Text>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
               <Text style={{ color: '#999999', fontSize: 16, fontWeight: '700' }}>价格</Text>

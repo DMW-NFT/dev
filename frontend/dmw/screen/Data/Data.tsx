@@ -8,8 +8,9 @@ import AllTime from '../../Components/AllTime'
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import React, { useState, useEffect } from 'react';
 import { Dimensions } from 'react-native'
-
+import { useTranslation } from 'react-i18next'
 const Data = (props) => {
+  const { t, i18n } = useTranslation();
   const [category, changeVisible0] = useState({ id: 1, name: "All categories1" })
   const [chain, changeVisible1] = useState({ id: 1, name: "All chains" })
   const [time, changeVisible2] = useState({ id: 1, name: "All time" })
@@ -152,7 +153,7 @@ const Data = (props) => {
                 keyExtractor={(item, index) => index}
                 ListFooterComponent={() => {
                   // 声明尾部组件
-                  return <Text style={{ textAlign: 'center', marginTop: 30, }}>没有更多了</Text>
+                  return <Text style={{ textAlign: 'center', marginTop: 30, }}>{t("没有更多了")}</Text>
                 }}
                 // 下刷新
                 onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
