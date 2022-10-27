@@ -2,7 +2,7 @@ const router = [
     {
         name: "Index", //跳转路径
         title: null, //头部展示标题
-        component: require("../login/LoginHome").default, 
+        component: require("../login/loginHome").default, 
     },
     {
         name: "LoginDMW", //跳转路径

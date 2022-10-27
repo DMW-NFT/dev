@@ -16,8 +16,10 @@ import Api from "../Request/http";
 import storage from "../Storage/storage";
 import { useDmwLogin } from "../../loginProvider/constans/DmwLoginProvider";
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
+import { useTranslation } from 'react-i18next'
 const api = new Api();
 const LoginDMW = (props) => {
+  const { t, i18n } = useTranslation();
   const { login } = useDmwLogin();
 
   const [type, setType] = useState(props.route.params["type"]);
@@ -34,7 +36,7 @@ const LoginDMW = (props) => {
   const [showlocal, setShowlocal] = useState(false);
   const [local, setLocal] = useState({ name: "中文", id: "zh" });
   const [localLIst, setLocalLIst] = useState([
-    { name: "中文", id: "zh" },
+    { name: "中文", id: "en" },
     { name: "英文", id: "en" },
     { name: "日文", id: "jp" },
   ]);
@@ -61,6 +63,7 @@ const LoginDMW = (props) => {
 
   const changeCloca = (item) => {
     setLocal(item);
+    i18n.changeLanguage(item.id)
     setShowlocal(false);
   };
   const changeAreaCode = (item) => {
@@ -127,7 +130,7 @@ const LoginDMW = (props) => {
       style={[styles.container, { backgroundColor: "#fff", flex: 1 }]}
     >
       <View style={[styles.TopBox]}>
-        <Text style={[styles.topText]}>欢迎登陆DMW</Text>
+        <Text style={[styles.topText]}>{t("欢迎登录DMW")}</Text>
         <View>
           <TouchableWithoutFeedback
             onPress={() => {
