@@ -49,7 +49,7 @@ const DmwApiProvider = ({ children }) => {
       body: data,
       headers: {
         token: token,
-        'accept-language': 'zh'
+        'accept-language': 'jp'
       },
     })
       .then((res) => res.json())

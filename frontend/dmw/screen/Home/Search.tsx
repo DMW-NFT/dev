@@ -9,8 +9,10 @@ import Model from '../../Components/Model'
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { faChevronRight, faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import { Spinner } from '@ui-kitten/components';
+import { useTranslation } from 'react-i18next'
 const scale = Dimensions.get('window').scale;
 const Searchsc = (props) => {
+    const { t, i18n } = useTranslation();
     const [list, setlist] = useState([])
     const [visible, setvisible] = useState(false)
     const [strText, setStrText] = useState('');
@@ -87,7 +89,7 @@ const Searchsc = (props) => {
                             refreshing={false}
                             style={{ height: '55%', flex: 1, }}
                             ListEmptyComponent={() => {
-                                return <Text style={{ textAlign: 'center', marginTop: '50%' }}>空空如也</Text>
+                                return <Text style={{ textAlign: 'center', marginTop: '50%' }}>{t("空空如也")}</Text>
                                 // 列表为空展示改组件
                             }}
                             // 一屏幕展示几个
@@ -101,7 +103,7 @@ const Searchsc = (props) => {
                             // keyExtractor={(item, index) => item.id}
                             ListFooterComponent={() => {
                                 // 声明尾部组件
-                                return list.length == total ? <Text style={{ textAlign: 'center' }}>没有更多了</Text> : null
+                                return list.length == total ? <Text style={{ textAlign: 'center' }}>{t("没有更多了")}</Text> : null
                             }}
                             // 下刷新
                             onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
@@ -117,7 +119,7 @@ const Searchsc = (props) => {
                 <View style={styles.listBox}>
                     <TouchableWithoutFeedback onPress={() => { setshow(!show) }}>
                         <View style={styles.listTitle}>
-                            <Text style={{ fontSize: 14, fontWeight: '700' }}>状态</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '700' }}>{t("状态")}</Text>
                             <FontAwesomeIcon
                                 icon={!show ? faChevronRight : faAngleDown}
                                 color="#707070"
@@ -127,8 +129,8 @@ const Searchsc = (props) => {
                     </TouchableWithoutFeedback>
                     {
                         show ? <View style={{ flexDirection: 'row', marginTop: 20 }}>
-                            <Text style={{ paddingTop: 7, paddingBottom: 7, paddingLeft: 15, paddingRight: 15, borderColor: '#877EF0', borderWidth: 1, borderRadius: 20 }}>123</Text>
-                            <Text style={{ paddingTop: 7, paddingBottom: 7, paddingLeft: 15, paddingRight: 15, borderColor: '#877EF0', borderWidth: 1, borderRadius: 20, backgroundColor: '#877EF0', color: '#fff', marginLeft: 15 }}>123</Text>
+                            <Text style={{ paddingTop: 7, paddingBottom: 7, paddingLeft: 15, paddingRight: 15, borderColor: '#877EF0', borderWidth: 1, borderRadius: 20 }}>New</Text>
+                            <Text style={{ paddingTop: 7, paddingBottom: 7, paddingLeft: 15, paddingRight: 15, borderColor: '#877EF0', borderWidth: 1, borderRadius: 20, backgroundColor: '#877EF0', color: '#fff', marginLeft: 15 }}>On Sale</Text>
                         </View> : null
                     }
                 </View>
@@ -138,7 +140,7 @@ const Searchsc = (props) => {
                 <View style={styles.listBox}>
                     <TouchableWithoutFeedback onPress={() => { setshow(!show) }}>
                         <View style={styles.listTitle}>
-                            <Text style={{ fontSize: 14, fontWeight: '700' }}>区块链</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '700' }}>{t("区块链")}</Text>
                             <FontAwesomeIcon
                                 icon={!show ? faChevronRight : faAngleDown}
                                 color="#707070"
@@ -170,7 +172,7 @@ const Searchsc = (props) => {
                 </View>
 
 
-                <Text style={styles.modelBtn}>确定</Text>
+                <Text style={styles.modelBtn}>{t("确定")}</Text>
             </Model>
         </SafeAreaView>
     )

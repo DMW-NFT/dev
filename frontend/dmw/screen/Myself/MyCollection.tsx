@@ -2,10 +2,11 @@ import { Text, StyleSheet, View, SafeAreaView, ScrollView, Image, TextInput, Fla
 import React, { useState, useEffect } from 'react'
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider';
-
+import { useTranslation } from 'react-i18next'
 const screenHeight = Dimensions.get("window").height;
 
 const MyCollection = (props) => {
+    const { t, i18n } = useTranslation();
     const [strText, setStrText] = useState('')
     const [list, setList] = useState([])
     const { post, formData } = useDmwApi()
@@ -60,7 +61,7 @@ const MyCollection = (props) => {
                 showsVerticalScrollIndicator={false}
                 refreshing={true}
                 ListEmptyComponent={() => {
-                    return <Text style={{ textAlign: 'center', marginTop: '70%' }}>空空如也</Text>
+                    return <Text style={{ textAlign: 'center', marginTop: '70%' }}>{t("空空如也")}</Text>
                     // 列表为空展示改组件
                 }}
                 // 一屏幕展示几个

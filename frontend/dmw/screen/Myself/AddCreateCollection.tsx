@@ -19,12 +19,14 @@ import { Card, Layout, Modal } from '@ui-kitten/components';
 import { Surface } from 'react-native-paper';
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
+import { useTranslation } from 'react-i18next'
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
 const screenHeight = Dimensions.get('window').height;
 
 
 const AddCreateCollection = (props) => {
+  const { t, i18n } = useTranslation();
   const [address, setaddress] = useState('')
   const [title, setTitle] = useState('')//标题
   const [explain, setExplain] = useState('')//简介
@@ -41,7 +43,7 @@ const AddCreateCollection = (props) => {
   const [upUrlid, setUpUrlid] = useState(null)
   const [upUrl2id, setUpUrl2id] = useState(null)
   const [upUrl3id, setUpUrl3id] = useState(null)
-  const [activeType, setactiveType] = useState({ value: '1', name: '收藏品' })
+  const [activeType, setactiveType] = useState({ value: '1', name: t('收藏品') })
   const [activeEm, setactiveEm] = useState({ value: 'Ethereum', name: 'Ethereum' })
   const [isShowType, setisShowType] = useState(false)//是否展开类型选择框
   const [isShowE, setisShowE] = useState(false)//是否展开区块链选择框
@@ -156,7 +158,7 @@ const AddCreateCollection = (props) => {
           setUpUrlid(res.data.id)
           setUpUrl(res.data.url)
           console.log(res, '标识');
-          Toast('上传成功!')
+          Toast(t('上传成功!'))
           setLoding1(false)
         })
       } else if (type == 2) {
@@ -171,7 +173,7 @@ const AddCreateCollection = (props) => {
           setUpUrl2id(res.data.id)
           setUpUrl2(res.data.url)
           console.log(res.data.url, '标识');
-          Toast('上传成功!')
+          Toast(t('上传成功!'))
           setLoding(false)
         })
       } else if (type == 3) {
@@ -186,7 +188,7 @@ const AddCreateCollection = (props) => {
           setUpUrl3id(res.data.id)
           setUpUrl3(res.data.url)
           console.log(res.data.url, '标识');
-          Toast('上传成功!')
+          Toast(t('上传成功!'))
           setLoding3(false)
         })
       }
@@ -211,13 +213,13 @@ const AddCreateCollection = (props) => {
       {
         Creating ? <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
           <Spinner />
-          <Text style={{ marginTop: 10 }}>正在创建中...</Text>
+          <Text style={{ marginTop: 10 }}>{t("正在创建中")}...</Text>
         </View> :
 
           <ScrollView showsVerticalScrollIndicator={false}>
 
             <Text style={{ fontSize: 16, marginBottom: 17 }}>
-              形象标识
+              {t("形象标识")}
             </Text>
             {
               loading1 ? <View style={styles.up1}><Spinner /></View> : <TouchableWithoutFeedback onPress={() => uuup(1)}>
@@ -232,7 +234,7 @@ const AddCreateCollection = (props) => {
                         <Image
                           style={{ width: 96 / 2, height: 96 / 2 }}
                           source={require('../../assets/img/my/3336.png')}></Image>
-                        <Text>上传图像</Text>
+                        <Text>{t("上传图像")}</Text>
                       </>
                   }
 
@@ -242,7 +244,7 @@ const AddCreateCollection = (props) => {
 
 
             <Text style={{ fontSize: 16, marginBottom: 17 }}>
-              特色图片
+              {t("特色图片")}
             </Text>
             {
               loading ? <View style={styles.up}><Spinner /></View> : <TouchableWithoutFeedback onPress={() => uuup(2)}>
@@ -257,7 +259,7 @@ const AddCreateCollection = (props) => {
                         <Image
                           style={{ width: 96 / 2, height: 96 / 2 }}
                           source={require('../../assets/img/my/3336.png')}></Image>
-                        <Text>上传图像、视频</Text>
+                        <Text>{t("上传图像、视频")}</Text>
                       </>
                   }
 
@@ -266,7 +268,7 @@ const AddCreateCollection = (props) => {
               </TouchableWithoutFeedback>
             }
             <Text style={{ fontSize: 16, marginBottom: 17 }}>
-              横幅banner
+              {t("横幅")}
             </Text>
 
             {
@@ -281,7 +283,7 @@ const AddCreateCollection = (props) => {
                         <Image
                           style={{ width: 96 / 2, height: 96 / 2 }}
                           source={require('../../assets/img/my/3336.png')}></Image>
-                        <Text>上传图像、视频</Text></>
+                        <Text>{t("上传图像、视频")}</Text></>
                   }
 
                 </View>
@@ -290,12 +292,12 @@ const AddCreateCollection = (props) => {
 
             <View style={styles.lis}>
               <Text style={{ fontSize: 16, marginBottom: 17 }}>
-                集合名称
+                {t("集合名称")}
               </Text>
 
               <TextInput
                 maxLength={6}
-                placeholder="请输入藏品名"
+                placeholder={t("请输入藏品名")}
                 keyboardType="decimal-pad"
                 style={[styles.input]}
                 onChangeText={e => setTitle(e)}
@@ -305,13 +307,13 @@ const AddCreateCollection = (props) => {
 
             <View style={[styles.lis, { marginBottom: 20 }]}>
               <Text style={{ fontSize: 16, marginBottom: 17 }}>
-                简介
+                {t("简介")}
               </Text>
               {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
                        
                     </TouchableWithoutFeedback> */}
               <TextInput
-                placeholder="请输入简介"
+                placeholder={t("请输入简介")}
                 keyboardType="decimal-pad"
                 style={[styles.input, { marginBottom: 20, height: 151, }]}
                 onChangeText={e => setExplain(e)}
@@ -324,7 +326,7 @@ const AddCreateCollection = (props) => {
 
             <View style={[styles.lis, { marginBottom: 20 }]}>
               <Text style={{ fontSize: 16, marginBottom: 17 }}>
-                选择合集
+                {t("选择合集")}
               </Text>
 
               <TouchableWithoutFeedback onPress={() => { setisShowType(!isShowType) }}>
@@ -370,7 +372,7 @@ const AddCreateCollection = (props) => {
 
             <View style={[styles.lis, { marginBottom: 20 }]}>
               <Text style={{ fontSize: 16, marginBottom: 17 }}>
-                选择区块链
+                {t("选择区块链")}
               </Text>
 
               <TouchableWithoutFeedback onPress={() => {
@@ -423,7 +425,7 @@ const AddCreateCollection = (props) => {
 
       }
 
-      <Text onPress={() => Sure()} style={styles.btn}>创建</Text>
+      <Text onPress={() => Sure()} style={styles.btn}>{t("创建")}</Text>
 
 
 

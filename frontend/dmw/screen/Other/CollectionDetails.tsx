@@ -4,7 +4,7 @@ import Screen from '../../Components/screen';
 import Search from '../../Components/Searchbox';
 import List from '../../Components/List';
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
-
+import { useTranslation } from 'react-i18next'
 const data = [
     {
         typename: 'Status',
@@ -27,7 +27,7 @@ const data = [
     },
 ];
 const CollectionDetails = (props) => {
-
+    const { t, i18n } = useTranslation();
     const { Toast, post, formData, get } = useDmwApi()
     const [refreshing, setrefreshing] = useState(false)
     const [list, setlist] = useState([])
@@ -135,8 +135,8 @@ const CollectionDetails = (props) => {
                         style={{ marginTop: 20, flex: 1 }}
                         refreshing={refreshing}
                         ListEmptyComponent={() => {
-                            return typename == 'Activity' && !ActivityList.length ? <Text style={{ textAlign: 'center' }}>空空如也</Text> :
-                                typename == 'Items' && list && list.length ? null : <Text style={{ textAlign: 'center' }}>空空如也</Text>
+                            return typename == 'Activity' && !ActivityList.length ? <Text style={{ textAlign: 'center' }}>{t("空空如也")}</Text> :
+                                typename == 'Items' && list && list.length ? null : <Text style={{ textAlign: 'center' }}>{t("空空如也")}</Text>
                             // 列表为空展示改组件
                         }}
                         // 一屏幕展示几个
@@ -156,9 +156,9 @@ const CollectionDetails = (props) => {
                         ListFooterComponent={() => {
                             // 声明尾部组件  
                             return typename == 'Activity' && ActivityList && ActivityList.length && ActivityList.length == ActivityTotal ?
-                                <Text style={{ textAlign: 'center' }}>没有更多了</Text> :
+                                <Text style={{ textAlign: 'center' }}>{t("没有更多了")}</Text> :
                                 typename == 'Items' && list && list.length && list.length == NftTotal ?
-                                    <Text style={{ textAlign: 'center' }}>没有更多了</Text> : null
+                                    <Text style={{ textAlign: 'center' }}>{t("没有更多了")}</Text> : null
                         }}
                         // 下刷新
                         onEndReachedThreshold={0.2} //表示还有10% 的时候加载onRefresh 函数

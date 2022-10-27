@@ -5,8 +5,9 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { Item } from 'react-native-paper/lib/typescript/components/List/List'
 import { useDmwApi } from '../../DmwApiProvider/DmwApiProvider'
 
-
+import { useTranslation } from 'react-i18next'
 const List = (props) => {
+    const { t, i18n } = useTranslation();
     // type 
     // 1是首页进入
     // 2是交易里的寄售  
@@ -38,9 +39,9 @@ const List = (props) => {
                                 <View>
                                     <Text 
                                     onPress={()=>{Copy(`${item.contract_address}/${item.token_id}`)}}
-                                    style={{paddingTop:6,paddingBottom:6,backgroundColor:'#fff',borderRadius:15,textAlign:'center',marginBottom:20}}>复制链接</Text>
+                                    style={{paddingTop:6,paddingBottom:6,backgroundColor:'#fff',borderRadius:15,textAlign:'center',marginBottom:20}}>{t("复制链接")}</Text>
                                     <Text 
-                                    style={{paddingTop:6,paddingBottom:6,backgroundColor:'#fff',borderRadius:15,textAlign:'center',marginBottom:20}}>转移/赠与</Text>
+                                    style={{paddingTop:6,paddingBottom:6,backgroundColor:'#fff',borderRadius:15,textAlign:'center',marginBottom:20}}>{t("转移/赠与")}</Text>
                                 </View>
                             </View></TouchableWithoutFeedback> : null
                 }
@@ -131,14 +132,14 @@ const List = (props) => {
                                 </View> :
                                 type == 3 ?
                                     <View style={[styles.auction]}>
-                                        <Text style={[styles.name]} numberOfLines={1}>起拍价</Text>
+                                        <Text style={[styles.name]} numberOfLines={1}>{t("起拍价")}</Text>
                                         <View style={[styles.priceBox]}>
                                             <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
                                                 <Text style={[styles.price]}>4,218</Text>
                                                 <Text style={[styles.coinType]}>Wfca</Text>
                                             </View>
                                             <Text style={[styles.button, { backgroundColor: '#897EF8' }]}>
-                                                出价
+                                                {t("出价")}
                                             </Text>
                                         </View>
                                     </View> :

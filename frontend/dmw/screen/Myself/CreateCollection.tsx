@@ -22,11 +22,12 @@ import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider';
 import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider';
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
-
+import { useTranslation } from 'react-i18next'
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
 const screenHeight = Dimensions.get('window').height;
 const TransferredIntoCollection = (props) => {
+  const { t, i18n } = useTranslation();
   const [address, setaddress] = useState('')
   const [title, setTitle] = useState('')//标题
   const [explain, setExplain] = useState('')//简介
@@ -45,7 +46,7 @@ const TransferredIntoCollection = (props) => {
   const { currentWallet, mintNftWithSignature, transactionMap, transactionList } = useDmwWeb3()
   const { WalletInUse } = useDmwLogin()
   const { dmwWalletList,dmwMintWithSignature,dmwTransactionList,dmwTransactionMap} = useDmwWallet()
-  const [activeType, setactiveType] = useState({ id: '', name: '请选择合集',logo:'' })
+  const [activeType, setactiveType] = useState({ id: '', name: t('请选择合集'),logo:'' })
   const [activeEm, setactiveEm] = useState({ value: 'Ethereum', name: 'Ethereum',logo:'' })
   const [isShowType, setisShowType] = useState(false)//是否展开类型选择框
   const [isShowE, setisShowE] = useState(false)//是否展开区块链选择框
@@ -89,12 +90,12 @@ const TransferredIntoCollection = (props) => {
       if (dmwTransactionMap[DmwlatestHash].state == "confirmed") {
         console.log("got you !", dmwTransactionMap[DmwlatestHash])
         setDmwLatestHash(null)
-        Toast('创建成功！')
+        Toast(t('创建成功！'))
         setscreenLoding(false)
         props.navigation.navigate('CreatedSuccessfully', { title, imgurlUp1 })
       } else {
         setscreenLoding(true)
-        Toast('等待链上确认！')
+        Toast(t('等待链上确认！'))
       }
     }
   }, [dmwTransactionMap])
@@ -117,12 +118,12 @@ const TransferredIntoCollection = (props) => {
       if (transactionMap[latestHash].state == "comfirmed") {
         console.log("got you !", transactionMap[latestHash])
         setLatestHash(null)
-        Toast('创建成功！')
+        Toast(t('创建成功！'))
         setscreenLoding(false)
         props.navigation.navigate('CreatedSuccessfully', { title, imgurlUp1 })
       } else {
         setscreenLoding(true)
-        Toast('等待链上确认！')
+        Toast(t('等待链上确认！'))
       }
     }
   }, [transactionMap])
@@ -195,7 +196,7 @@ const TransferredIntoCollection = (props) => {
           console.log(err, '上传报错');
         })
     } else if (password.length == 6) {
-      Toast('密码错误或暂未创建DMW钱包')
+      Toast(t('密码错误或暂未创建DMW钱包'))
     }
   }, [password])
 
@@ -254,7 +255,7 @@ const TransferredIntoCollection = (props) => {
         },
       })
         .then((res) => res.json()).then(res => {
-          Toast('上传成功！')
+          Toast(t('上传成功！'))
           setLoding(false)
           console.log(res[0].path, '上传');
           setIpfsImgUrl(res[0].path)
@@ -284,7 +285,7 @@ const TransferredIntoCollection = (props) => {
       {
         screenloading ? <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
           <Spinner />
-          <Text style={{ marginTop: 10 }}>正在上链中...</Text>
+          <Text style={{ marginTop: 10 }}>{t("正在上链中")}...</Text>
         </View> :
           <>
             {/* <Image source={{ uri: imgurlUp1 }} style={{ width: 100, height: 100 }}></Image> */}
@@ -309,7 +310,7 @@ const TransferredIntoCollection = (props) => {
                           <Image
                             style={{ width: 96 / 2, height: 96 / 2 }}
                             source={require('../../assets/img/my/3336.png')}></Image>
-                          <Text>上传图像、视频</Text>
+                          <Text>{t("上传图像、视频")}</Text>
                         </>
                     }
 
@@ -318,16 +319,16 @@ const TransferredIntoCollection = (props) => {
               }
 
               <Text style={{ fontSize: 10, color: '#999999', marginBottom: 27 }}>
-                支持的文件类型：JPG、SVG、png
+                {t("支持的文件类型：")}JPG、SVG、PNG
               </Text>
               <View style={styles.lis}>
-                <Text style={styles.text}>标题</Text>
+                <Text style={styles.text}>{t("标题")}</Text>
                 {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
                        
                     </TouchableWithoutFeedback> */}
                 <TextInput
                   maxLength={6}
-                  placeholder="请输入藏品名"
+                  placeholder={t("请输入藏品名")}
                   keyboardType="decimal-pad"
                   style={[styles.input]}
                   onChangeText={e => setTitle(e)}
@@ -336,12 +337,12 @@ const TransferredIntoCollection = (props) => {
               </View>
 
               <View style={[styles.lis, { marginBottom: 20 }]}>
-                <Text style={styles.text}>简介</Text>
+                <Text style={styles.text}>{t("简介")}</Text>
                 {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
                        
                     </TouchableWithoutFeedback> */}
                 <TextInput
-                  placeholder="请输入简介"
+                  placeholder={t("请输入简介")}
                   keyboardType="decimal-pad"
                   style={[styles.input, { marginBottom: 20, height: 151, }]}
                   onChangeText={e => setExplain(e)}
@@ -353,7 +354,7 @@ const TransferredIntoCollection = (props) => {
               </View>
               <View style={[styles.lis, { marginBottom: 20 }]}>
                 <Text style={{ fontSize: 16, marginBottom: 17 }}>
-                  选择合集
+                  {t("选择合集")}
                 </Text>
 
                 <TouchableWithoutFeedback onPress={() => { setisShowType(!isShowType) }}>
@@ -398,7 +399,7 @@ const TransferredIntoCollection = (props) => {
               </View>
               <View style={[styles.lis, { marginBottom: 20 }]}>
                 <Text style={{ fontSize: 16, marginBottom: 17 }}>
-                  选择区块链
+                  {t("选择区块链")}
                 </Text>
 
                 <TouchableWithoutFeedback onPress={() => {
@@ -451,7 +452,7 @@ const TransferredIntoCollection = (props) => {
                 WalletInUse == 1 ?
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
                     <Text style={{ fontSize: 12, color: '#999999', }}>
-                      上链费：
+                      {t("上链费")}：
                     </Text>
                     <Text style={{ fontSize: 16, color: '#897EF8' }}>0.027ETH</Text>
                   </View>
@@ -461,7 +462,7 @@ const TransferredIntoCollection = (props) => {
 
             </ScrollView>
 
-            <Text onPress={() => Sure()} style={styles.btn}>创建并支付</Text>
+            <Text onPress={() => Sure()} style={styles.btn}>{t("创建并支付")}</Text>
 
 
             <Modal
@@ -492,7 +493,7 @@ const TransferredIntoCollection = (props) => {
 
                 </View>
                 <View>
-                  <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>请输入支付密码</Text>
+                  <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{t("请输入支付密码")}</Text>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
                   </View>
                   <View style={{ height: 48, flexDirection: 'row', justifyContent: 'space-between', }}>
