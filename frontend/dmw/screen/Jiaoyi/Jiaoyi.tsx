@@ -4,6 +4,8 @@ import List from '../../Components/List'
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { Spinner } from '@ui-kitten/components';
 import { useTranslation } from 'react-i18next'
+import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider';
+import { useDmwWallet } from '../../../DmwWallet/DmwWalletProvider';
 
 const Jiaoyi = (props) => {
   const { t, i18n } = useTranslation();
@@ -17,7 +19,8 @@ const Jiaoyi = (props) => {
   const { post, get, formData, Toast } = useDmwApi();
   const [page, setpage] = useState(1)
   const [loading, setLoding] = useState(false)
-
+  const {currentWallet} = useDmwWeb3()
+  const {dmwWalletList} = useDmwWallet()
 
   useEffect(() => {
     setLoding(true)
@@ -106,6 +109,7 @@ const Jiaoyi = (props) => {
                 <List list={item} type={2} 
                 navigatetoDetail=
                 {(id, unique_id, contract_address, token_id, network) => {
+
                   props.navigation.navigate('QuotationDetails', 
                   { id: item.order_no }) }} /> :
                   <List list={item} type={3} navigatetoDetail={navigatetoDetail} />

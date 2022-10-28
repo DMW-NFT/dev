@@ -4,9 +4,9 @@ import { Modal } from 'react-native-paper';
 
 export default class SellOrder extends Component {
     state = {
-        visible:true,
+        visible:false,
         typename: 1,
-        list: [{}, {}, {}, {}, {}, {}, {}]
+        list: []
     }
     paging(val) {
         this.setState({
@@ -23,7 +23,7 @@ export default class SellOrder extends Component {
     render() {
         return (
             <SafeAreaView style={{backgroundColor:'#fff'}}>
-                <ScrollView showsVerticalScrollIndicator={false}>
+                <View showsVerticalScrollIndicator={false}>
                     <View styles={[styles.container, { backgroundColor: "#f5f5f5" }]}>
                         <View style={[styles.index_box, styles.daohang]}>
                             <Text style={[this.state.typename != 1 ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => this.paging(1)}>购买</Text>
@@ -33,7 +33,7 @@ export default class SellOrder extends Component {
                             <FlatList
                                 refreshing={this.state.refreshing}
                                 ListEmptyComponent={() => {
-                                    return <Text>空空如也</Text>
+                                    // return <Text>空空如也</Text>
                                     // 列表为空展示改组件
                                 }}
                                 // 一屏幕展示几个
@@ -93,7 +93,7 @@ export default class SellOrder extends Component {
                             </FlatList>
                         </View>
                     </View>
-                </ScrollView>
+                </View>
                 <Modal visible={this.state.visible} onDismiss={() => { this.setState({visible:false}) }} contentContainerStyle={[styles.footer]}>
                     <Text style={[styles.modelName]}>
                           确认下架藏品

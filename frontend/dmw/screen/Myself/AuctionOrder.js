@@ -4,9 +4,9 @@ import { Modal } from 'react-native-paper';
 
 export default class SellOrder extends Component {
     state = {
-        visible:true,
+        visible:false,
         typename: 1,
-        list:[{},{}]
+        list:[]
     }
     paging(val) {
         this.setState({
@@ -22,8 +22,8 @@ export default class SellOrder extends Component {
     // } 
     render() {
         return (
-            <SafeAreaView style={{backgroundColor:'#fff'}}>
-                <ScrollView showsVerticalScrollIndicator={false}>
+            <SafeAreaView style={{backgroundColor:'#fff',flex:1}}>
+                <View showsVerticalScrollIndicator={false}>
                     <View styles={[styles.container, { backgroundColor: "#f5f5f5" }]}>
                         <View style={[styles.index_box, styles.daohang]}>
                             <Text style={[this.state.typename != 1 ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => this.paging(1)}>购买</Text>
@@ -33,7 +33,9 @@ export default class SellOrder extends Component {
                             <FlatList
                                 refreshing={this.state.refreshing}
                                 ListEmptyComponent={() => {
-                                    return <Text>空空如也</Text>
+                                    return <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
+                                        <Text>空空如也</Text>
+                                    </View>
                                     // 列表为空展示改组件
                                 }}
                                 // 一屏幕展示几个
@@ -94,7 +96,7 @@ export default class SellOrder extends Component {
                                 keyExtractor={(item, index) => index}
                                 ListFooterComponent={() => {
                                     // 声明尾部组件
-                                    return <Text style={{ textAlign: 'center' }}>没有更多了</Text>
+                                    return this.state.list.length ? <Text style={{ textAlign: 'center' }}>没有更多了</Text> : null
                                 }}
                                 //下刷新
                                 onEndReachedThreshold={0.1} //表示还有10% 的时候加载onEndReached 函数
@@ -103,7 +105,7 @@ export default class SellOrder extends Component {
                             </FlatList>
                         </View>
                     </View>
-                </ScrollView>
+                </View>
                 {/* 下架 */}
                 <Modal visible={this.state.visible} onDismiss={() => { this.setState({visible:false}) }} contentContainerStyle={[styles.footer]}>
                     <Text style={[styles.modelName]}>

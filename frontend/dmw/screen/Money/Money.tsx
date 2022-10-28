@@ -20,6 +20,7 @@ import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import CryptoJS from 'crypto-js'
+import { t } from "i18next";
 
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
@@ -36,7 +37,7 @@ const Money = (props) => {
   const { dmwWalletList } = useDmwWallet();
   const [password, setpassword] = useState("");
   const [passwordlist, setpasswordlist] = useState([]);
-  const { WalletInUse, setWalletInUse } = useDmwLogin()
+  const { WalletInUse, setWalletInUse,avatarUrl } = useDmwLogin()
   const { disconnectWallet, connected, currentWallet, lastConnected, connectWallet, getNativeBalance } = useDmwWeb3()
   const { MoneyRouteState, setMoneyRouteState, post, formData, Toast, shortenAddress , Copy } = useDmwApi()
   const [loading, setLoding] = useState(false)
@@ -181,7 +182,7 @@ console.log(123);
     post('/index/login/login_by_wallet', data).then(res => {
       console.log(res,wallet_address,'qianbao denglu');
       if (res.code == 200) {
-        Toast('登录成功！')
+        Toast(t("登录成功"))
         if (type == 1 && dmwWalletList[0]) {
           console.log(1);
           getAddressBalance(dmwWalletList[0])
@@ -261,7 +262,7 @@ console.log(123);
           <View style={styles.USDT} >
             {
               WalletInUse == 1 ?
-                <Text style={styles.active}>当前登录</Text>
+                <Text style={styles.active}>{t("当前登录")}</Text>
                 :
                 <TouchableWithoutFeedback onPress={() =>
                   Switchwallet(1)
@@ -304,7 +305,7 @@ console.log(123);
               <View style={styles.WFCA}>
                 {
                   WalletInUse == 2 ?
-                    <Text style={styles.active}>当前登录</Text>
+                    <Text style={styles.active}>{t("当前登录")}</Text>
                     :
                     <TouchableWithoutFeedback onPress={() => Switchwallet(2)} >
                       <Image
@@ -313,7 +314,7 @@ console.log(123);
                     </TouchableWithoutFeedback>
                 }
 
-                <Text style={[styles.WName, { color: "#897EF8" }]}>外部钱包</Text>
+                <Text style={[styles.WName, { color: "#897EF8" }]}>{t("外部钱包")}</Text>
                 <View
                   style={{ flexDirection: "row", marginTop: 15, marginBottom: 14 }}
                 >
@@ -331,7 +332,7 @@ console.log(123);
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingRight: 20 }}>
                   {/* <Text style={{ color: "#897EF8" }}>$10.000</Text> */}
                   <Text></Text>
-                  <Text style={{ color: "#897EF8" }} onPress={() => { disconnectWallet() }}>断开链接</Text>
+                  <Text style={{ color: "#897EF8" }} onPress={() => { disconnectWallet() }}>{t("断开链接")}</Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Text style={{ color: "#897EF8" }}>{address1}</Text>
@@ -359,7 +360,7 @@ console.log(123);
               style={styles.ListServiceImg}
               source={require("../../assets/img/money/list1.png")}
             ></Image>
-            <Text>接收</Text>
+            <Text>{t("接收")}</Text>
           </View>
         </TouchableWithoutFeedback>
 
@@ -375,7 +376,7 @@ console.log(123);
               style={styles.ListServiceImg}
               source={require("../../assets/img/money/list3.png")}
             ></Image>
-            <Text>兑换</Text>
+            <Text>{t("兑换")}</Text>
           </View>
         </TouchableWithoutFeedback>
 
@@ -392,7 +393,7 @@ console.log(123);
               style={styles.ListServiceImg}
               source={require("../../assets/img/money/list4.png")}
             ></Image>
-            <Text>赠予</Text>
+            <Text>{t("赠予")}</Text>
           </View>
         </TouchableWithoutFeedback>
 
@@ -402,7 +403,7 @@ console.log(123);
               style={styles.ListServiceImg}
               source={require("../../assets/img/money/list2.png")}
             ></Image>
-            <Text>记录</Text>
+            <Text>{t("记录")}</Text>
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -415,7 +416,7 @@ console.log(123);
           ]}
           onPress={() => changetype(2)}
         >
-          代币
+          {t("代币")}
         </Text>
         <Text
           style={[
@@ -423,7 +424,7 @@ console.log(123);
           ]}
           onPress={() => changetype(3)}
         >
-          藏品
+         {t("藏品")} 
         </Text>
       </View>
       {/* tab栏 -- end */}

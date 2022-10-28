@@ -18,6 +18,8 @@ const ViewMnemonics = (props) => {
 
   useEffect(() => {
     loadMnemonicFromStorage(props.route.params.password).then((resp) => {
+      console.log(props.route.params.password);
+      
       console.log(resp,'助记词');
       
       let arr = resp.split(" ");

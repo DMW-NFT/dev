@@ -15,6 +15,7 @@ import DialogToast from "../Components/DialogToast";
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 import { useDmwLogin } from "../../loginProvider/constans/DmwLoginProvider";
 import storage from "../Storage/storage";
+import { t } from "i18next";
 const EmailAndPhoneReginster = (props) => {
   const [type, Settype] = useState(props.route.params["type"]);
   const [phone, Setphone] = useState("");
@@ -126,7 +127,7 @@ const EmailAndPhoneReginster = (props) => {
           if (res.code != 200) {
             DT(res.message);
           } else {
-            DT("登录成功！正在跳转到首页...");
+            DT(t("登录成功"));
             storage.save({
               key: "loginState", // 注意:请不要在key中使用_下划线符号!
               data: {
@@ -161,7 +162,7 @@ const EmailAndPhoneReginster = (props) => {
           if (res.code != 200) {
             DT(res.message);
           } else {
-            DT("登录成功！正在跳转到首页...");
+            DT(t("登录成功"));
             storage.save({
               key: "loginState", // 注意:请不要在key中使用_下划线符号!
               data: {

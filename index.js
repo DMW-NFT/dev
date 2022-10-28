@@ -27,6 +27,7 @@ const { Platform, LogBox } = require('react-native');
 
 if (Platform.OS !== 'web') {
   require('react-native-get-random-values');
+  LogBox.ignoreAllLogs(true)//关闭全部黄色警告
   LogBox.ignoreLogs(
     [
       "Warning: The provided value 'ms-stream' is not a valid 'responseType'.",
@@ -83,6 +84,9 @@ i18n
     // 初始化
     i18n.setLocalLanguage(i18n.language);
   });
+
+ 
+console.disableYellowBox = true; // 关闭全部黄色警告
 
 
 export default i18n;

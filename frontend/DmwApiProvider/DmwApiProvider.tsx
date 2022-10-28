@@ -4,8 +4,8 @@ import DmwApiContext from "./DmwApiContext";
 import { useDmwLogin } from "../loginProvider/constans/DmwLoginProvider";
 import Clipboard from '@react-native-clipboard/clipboard'
 import storage from "../dmw/Storage/storage";
+import { t } from "i18next";
 const DmwApiProvider = ({ children }) => {
-
   const [BaseUrl, setBaseUrl] = useState("http://192.168.1.105");
   const { logOut } = useDmwLogin();
   const [show, setShow] = useState(false);
@@ -22,7 +22,7 @@ const DmwApiProvider = ({ children }) => {
   // 复制
   const Copy = (Text) => {
     Clipboard.setString(Text);
-    Toast('复制成功！')
+    Toast(t("复制成功"))
   };
 
 

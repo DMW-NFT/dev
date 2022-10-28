@@ -103,7 +103,7 @@ const LoginDMW = (props) => {
           Toast(res.message);
           return;
         }
-        Toast(t("登录成功！"));
+        Toast(t("登录成功"));
         console.log(res.data.token);
 
         storage.save({

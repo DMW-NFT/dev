@@ -13,7 +13,7 @@ import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
-
+import { t } from "i18next";
 const scale = Dimensions.get("window").scale;
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -55,7 +55,7 @@ const {WalletInUse} = useDmwLogin()
               marginBottom: 20,
             }}
           >
-            <Image
+            {/* <Image
               style={{
                 width: 50,
                 height: 50,
@@ -63,7 +63,7 @@ const {WalletInUse} = useDmwLogin()
                 marginRight: 10,
               }}
               source={require("../../assets/img/index/any2.jpg")}
-            ></Image>
+            ></Image> */}
             <Text style={{ fontSize: 16, fontWeight: "700" }}>DMW</Text>
           </View>
           <View
@@ -82,7 +82,7 @@ const {WalletInUse} = useDmwLogin()
                 style={styles.Limg}
                 source={require("../../assets/img/money/zhujici.png")}
               ></Image>
-              <Text>助记词</Text>
+              <Text>{t("助记词")}</Text>
             </View>
           </TouchableWithoutFeedback>
 
@@ -93,7 +93,7 @@ const {WalletInUse} = useDmwLogin()
                 style={styles.Limg}
                 source={require("../../assets/img/money/daoru.png")}
               ></Image>
-              <Text>导入助记词</Text>
+              <Text>{t("导入助记词")}</Text>
             </View>
           </TouchableWithoutFeedback>
 
@@ -105,7 +105,7 @@ const {WalletInUse} = useDmwLogin()
                 style={styles.Limg}
                 source={require("../../assets/img/money/xiugai.png")}
               ></Image>
-              <Text>修改支付密码</Text>
+              <Text>{t("修改支付密码")}</Text>
             </View>
           </TouchableWithoutFeedback>
 
@@ -116,7 +116,7 @@ const {WalletInUse} = useDmwLogin()
                 style={styles.Limg}
                 source={require("../../assets/img/money/lainjie.png")}
               ></Image>
-              <Text>连接第三方钱包</Text>
+              <Text>{t("连接第三方钱包")}</Text>
             </View>
           </TouchableWithoutFeedback>
 
@@ -127,7 +127,7 @@ const {WalletInUse} = useDmwLogin()
                 style={styles.Limg}
                 source={require("../../assets/img/money/siyao.png")}
               ></Image>
-              <Text>从私钥导入钱包</Text>
+              <Text>{t("从私钥导入钱包")}</Text>
             </View>
           </TouchableWithoutFeedback>
 
@@ -139,7 +139,7 @@ const {WalletInUse} = useDmwLogin()
                 style={styles.Limg}
                 source={require("../../assets/img/money/fuwutiaokuan.png")}
               ></Image>
-              <Text>服务条款</Text>
+              <Text>{t("服务条款")}</Text>
             </View>
           </TouchableWithoutFeedback>
         </View>
