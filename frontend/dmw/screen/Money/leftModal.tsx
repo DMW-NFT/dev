@@ -13,12 +13,13 @@ import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
-import { t } from "i18next";
+import { useTranslation } from 'react-i18next'
 const scale = Dimensions.get("window").scale;
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const Lmodal = (props) => {
+  const { t, i18n } = useTranslation();
   const { Toast } = useDmwApi()
 const {WalletInUse} = useDmwLogin()
   const { dmwWalletList } = useDmwWallet();

@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next'
 const api = new Api();
 const LoginDMW = (props) => {
   const { t, i18n } = useTranslation();
-  const { login } = useDmwLogin();
+  const { login, setlanguage, language } = useDmwLogin();
 
   const [type, setType] = useState(props.route.params["type"]);
   const [areaCode, setAreaCode] = useState("+86");
@@ -36,8 +36,8 @@ const LoginDMW = (props) => {
   const [showlocal, setShowlocal] = useState(false);
   const [local, setLocal] = useState({ name: "中文", id: "zh" });
   const [localLIst, setLocalLIst] = useState([
-    { name: "中文", id: "zh" },
-    { name: "英文", id: "en" },
+    { name: "中文", id: "en" },
+    // { name: "英文", id: "en" },
     { name: "日文", id: "jp" },
   ]);
   const [email, setEmail] = useState("");
@@ -47,7 +47,7 @@ const LoginDMW = (props) => {
   const [agree, setAgree] = useState(false);
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("温馨提示");
-  const { post, formData, Toast } = useDmwApi();
+  const { post, formData, Toast, setlanguageType } = useDmwApi();
   const onChangeText = (e, num) => {
     if (num == 1) {
       setEmail(e);
@@ -64,6 +64,8 @@ const LoginDMW = (props) => {
   const changeCloca = (item) => {
     setLocal(item);
     i18n.changeLanguage(item.id)
+    setlanguage(item.id)
+    setlanguageType(item.id)
     setShowlocal(false);
   };
   const changeAreaCode = (item) => {
@@ -110,6 +112,7 @@ const LoginDMW = (props) => {
           key: "loginState", // 注意:请不要在key中使用_下划线符号!
           data: {
             token: res.data.token,
+            languageType: local.id
           },
           // 如果不指定过期时间，则会使用defaultExpires参数
           // 如果设为null，则永不过期

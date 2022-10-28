@@ -15,8 +15,9 @@ import DialogToast from "../Components/DialogToast";
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 import { useDmwLogin } from "../../loginProvider/constans/DmwLoginProvider";
 import storage from "../Storage/storage";
-import { t } from "i18next";
+import { useTranslation } from 'react-i18next'
 const EmailAndPhoneReginster = (props) => {
+  const { t, i18n } = useTranslation();
   const [type, Settype] = useState(props.route.params["type"]);
   const [phone, Setphone] = useState("");
   const [email, Setemail] = useState("");

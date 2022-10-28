@@ -4,14 +4,41 @@ import DmwApiContext from "./DmwApiContext";
 import { useDmwLogin } from "../loginProvider/constans/DmwLoginProvider";
 import Clipboard from '@react-native-clipboard/clipboard'
 import storage from "../dmw/Storage/storage";
-import { t } from "i18next";
+import { useTranslation } from 'react-i18next'
 const DmwApiProvider = ({ children }) => {
+  const { t, i18n } = useTranslation();
   const [BaseUrl, setBaseUrl] = useState("http://192.168.1.105");
-  const { logOut } = useDmwLogin();
+  const { logOut,language,setlanguage } = useDmwLogin();
   const [show, setShow] = useState(false);
   const [time, setTime] = useState(2000);
   const [toastVal, setToastVal] = useState("温馨提示");
   const [MoneyRouteState, setMoneyRouteState] = useState('createMoney')
+
+  useEffect(()=>{
+    languageType()
+  },[])
+
+  // 设置语言
+  const setlanguageType = async (type) => {
+    let token = await GetStorage();
+    storage.save({
+      key: "loginState", // 注意:请不要在key中使用_下划线符号!
+      data: {
+        token: token,
+        languageType:type
+      },
+      // 如果不指定过期时间，则会使用defaultExpires参数
+      // 如果设为null，则永不过期
+      expires: null,
+    });
+  }
+
+  // 查询语言
+  const languageType = async () => {
+    let str = await Getlanguage()
+    console.log(str,'语言');
+    setlanguage(str)
+  }
 
   // 地址切割
   const shortenAddress = (address) => {    
@@ -104,6 +131,37 @@ const DmwApiProvider = ({ children }) => {
     });
   };
 
+  const Getlanguage = () => {
+    return new Promise((resolve) => {
+      storage
+        .load({
+          key: "loginState",
+
+          // autoSync(默认为true)意味着在没有找到数据或数据过期时自动调用相应的sync方法
+          autoSync: true, // 设置为false的话，则等待sync方法提供的最新数据(当然会需要更多时间)。
+
+          // syncInBackground(默认为true)意味着如果数据过期，
+          // 在调用sync方法的同时先返回已经过期的数据。
+          syncInBackground: true,
+          // 你还可以给sync方法传递额外的参数
+          syncParams: {
+            extraFetchOptions: {
+              // 各种参数
+            },
+            someFlag: true,
+          },
+        })
+        .then((ret) => {
+          console.log(ret.languageType, "----------------------");
+          resolve(ret.languageType);
+        })
+        .catch((err) => {
+          console.warn(err.message, "---+++");
+          resolve("");
+        });
+    });
+  };
+
   const Toast = (msg) => {
     setShow(true);
     setToastVal(msg);
@@ -120,6 +178,7 @@ const DmwApiProvider = ({ children }) => {
   return (
     <DmwApiContext.Provider
       value={{
+        setlanguageType,
         GetStorage,
         formData,
         post,

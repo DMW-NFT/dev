@@ -11,13 +11,17 @@ import {
   Button,
 } from 'react-native';
 import { useTranslation } from 'react-i18next'
+import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider';
+import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
 const screenHeight = Dimensions.get('window').height;
 
 const SelectLanguage = (porps) => {
-  const [type,setType] = useState('jp')
+  const {setlanguage,language} = useDmwLogin()
+  const {setlanguageType} =useDmwApi()
+  const [type,setType] = useState(language == 'en' ? 'ch' : 'jp')
   const { t, i18n } = useTranslation();
   // constructor(porps) {
   //   super(porps);
@@ -41,6 +45,9 @@ const SelectLanguage = (porps) => {
           <TouchableWithoutFeedback
             onPress={() => {
              setType('ch')
+             i18n.changeLanguage('en')
+             setlanguage('en')
+             setlanguageType('en')
             }}
             >
             {type == 'ch' ? (
@@ -65,7 +72,7 @@ const SelectLanguage = (porps) => {
           </TouchableWithoutFeedback>
 
 
-          <TouchableWithoutFeedback
+          {/* <TouchableWithoutFeedback
             onPress={() => {
               setType('en')
             }}
@@ -89,12 +96,15 @@ const SelectLanguage = (porps) => {
                 <Text>English</Text>
               </View>
             )}
-          </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback> */}
 
 
           <TouchableWithoutFeedback
             onPress={() => {
               setType('jp')
+              i18n.changeLanguage('jp')
+              setlanguage('jp')
+              setlanguageType('jp')
             }}
            >
             {type == 'jp' ? (
@@ -102,7 +112,7 @@ const SelectLanguage = (porps) => {
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <Image
                     style={styles.img}
-                    source={require('../../assets/img/my/Chinese.png')}></Image>
+                    source={require('../../assets/img/my/jpan.jpeg')}></Image>
                   <Text>日本語</Text>
                 </View>
 
@@ -131,6 +141,8 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     marginRight: 12,
+    borderWidth:1,
+    borderRadius:12
   },
   box: {
     width: screenWidth - 40,

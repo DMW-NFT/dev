@@ -20,13 +20,14 @@ import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import CryptoJS from 'crypto-js'
-import { t } from "i18next";
+import { useTranslation } from 'react-i18next'
 
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
 const scale = Dimensions.get("window").scale;
 
 const Money = (props) => {
+  const { t, i18n } = useTranslation();
   // inputRef = React.createRef();
   const inputRefX = useRef(null);
   const [type, setType] = useState(2);

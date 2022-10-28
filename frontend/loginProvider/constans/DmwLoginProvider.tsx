@@ -5,6 +5,7 @@ const DmwLoginProvider = ({ children }) => {
   const [username, setUsername] = useState("用户昵称"); //用户名
   const [avatarUrl, setAvatarUrl] = useState(); //用户名
   const [WalletInUse,setWalletInUse] = useState(1)
+  const [language,setlanguage] = useState('en')
   const login = () => {
     setIsLogin(true);
   };
@@ -33,7 +34,9 @@ const DmwLoginProvider = ({ children }) => {
         avatarUrl,
         setAvatarUrl,
         WalletInUse,
-        setWalletInUse
+        setWalletInUse,
+        setlanguage,
+        language
       }}
     >
       {children}
