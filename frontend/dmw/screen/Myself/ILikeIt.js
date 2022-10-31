@@ -17,7 +17,7 @@ export default class ILikeIt extends Component {
   constructor(porps) {
     super(porps);
     this.state = {
-      type: 'ch',
+      type: 'zh',
     };
   }
   render() {

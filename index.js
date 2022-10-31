@@ -12,14 +12,14 @@ import { initReactI18next } from 'react-i18next';
 // 自編語言包
 
 import jp from './languages/jp.json'
-import en from './languages/zh.json'
+import zh from './languages/zh.json'
 
 const resources = {
   jp: {
     translation: jp
   },
-  en: {
-    translation: en
+  zh: {
+    translation: zh
   }
 }
 
@@ -68,7 +68,7 @@ i18n
   .init({
     compatibilityJSON: 'v3', // 对安卓进行兼容
     resources,
-    fallbackLng: 'en', // 默认语言，也是设置语言时设置了不存在的语言时使用的
+    fallbackLng: 'zh', // 默认语言，也是设置语言时设置了不存在的语言时使用的
     interpolation: {
       escapeValue: false
     }

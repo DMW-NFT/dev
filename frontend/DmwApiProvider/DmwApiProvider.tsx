@@ -7,16 +7,16 @@ import storage from "../dmw/Storage/storage";
 import { useTranslation } from 'react-i18next'
 const DmwApiProvider = ({ children }) => {
   const { t, i18n } = useTranslation();
-  const [BaseUrl, setBaseUrl] = useState("http://192.168.1.105");
-  const { logOut,language,setlanguage } = useDmwLogin();
+  const [BaseUrl, setBaseUrl] = useState("http://192.168.1.109");
+  const { logOut, language, setlanguage } = useDmwLogin();
   const [show, setShow] = useState(false);
   const [time, setTime] = useState(2000);
   const [toastVal, setToastVal] = useState("温馨提示");
   const [MoneyRouteState, setMoneyRouteState] = useState('createMoney')
 
-  useEffect(()=>{
+  useEffect(() => {
     languageType()
-  },[])
+  }, [])
 
   // 设置语言
   const setlanguageType = async (type) => {
@@ -25,7 +25,7 @@ const DmwApiProvider = ({ children }) => {
       key: "loginState", // 注意:请不要在key中使用_下划线符号!
       data: {
         token: token,
-        languageType:type
+        languageType: type
       },
       // 如果不指定过期时间，则会使用defaultExpires参数
       // 如果设为null，则永不过期
@@ -36,13 +36,13 @@ const DmwApiProvider = ({ children }) => {
   // 查询语言
   const languageType = async () => {
     let str = await Getlanguage()
-    console.log(str,'语言');
+    console.log(str, '语言');
     setlanguage(str)
   }
 
   // 地址切割
-  const shortenAddress = (address) => {    
-    let addressNew = address.slice(0,7) + '...' + address.slice(-4)
+  const shortenAddress = (address) => {
+    let addressNew = address.slice(0, 7) + '...' + address.slice(-4)
     return addressNew
   }
 
@@ -55,12 +55,13 @@ const DmwApiProvider = ({ children }) => {
 
   const get = async (url) => {
     let token = await GetStorage();
+console.log(language,'yuya');
 
     return fetch(BaseUrl + url, {
       method: "GET",
       headers: {
         'token': token,
-        'accept-language': 'zh'
+        'accept-language': language
       },
     }).then((res) => res.json());
   };
@@ -68,7 +69,7 @@ const DmwApiProvider = ({ children }) => {
 
   const post = async (url, data) => {
     // console.log(url,'url');
-    
+    console.log(language,'yuya');
     let token = await GetStorage();
     // console.log(token, "----------------");
     return fetch(BaseUrl + url, {
@@ -76,7 +77,7 @@ const DmwApiProvider = ({ children }) => {
       body: data,
       headers: {
         token: token,
-        'accept-language': 'jp'
+        'accept-language': language
       },
     })
       .then((res) => res.json())

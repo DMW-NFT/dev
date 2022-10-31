@@ -36,7 +36,7 @@ const LoginDMW = (props) => {
   const [showlocal, setShowlocal] = useState(false);
   const [local, setLocal] = useState({ name: "中文", id: "zh" });
   const [localLIst, setLocalLIst] = useState([
-    { name: "中文", id: "en" },
+    { name: "中文", id: "zh" },
     // { name: "英文", id: "en" },
     { name: "日文", id: "jp" },
   ]);

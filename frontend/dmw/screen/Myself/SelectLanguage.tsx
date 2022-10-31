@@ -21,12 +21,12 @@ const screenHeight = Dimensions.get('window').height;
 const SelectLanguage = (porps) => {
   const {setlanguage,language} = useDmwLogin()
   const {setlanguageType} =useDmwApi()
-  const [type,setType] = useState(language == 'en' ? 'ch' : 'jp')
+  const [type,setType] = useState(language == 'zh' ? 'zh' : 'jp')
   const { t, i18n } = useTranslation();
   // constructor(porps) {
   //   super(porps);
   //   state = {
-  //     type: 'ch',
+  //     type: 'zh',
   //   };
   // }
   useEffect(()=>{
@@ -44,13 +44,13 @@ const SelectLanguage = (porps) => {
         <View style={{paddingLeft: 20, paddingRight: 20}}>
           <TouchableWithoutFeedback
             onPress={() => {
-             setType('ch')
-             i18n.changeLanguage('en')
-             setlanguage('en')
-             setlanguageType('en')
+             setType('zh')
+             i18n.changeLanguage('zh')
+             setlanguage('zh')
+             setlanguageType('zh')
             }}
             >
-            {type == 'ch' ? (
+            {type == 'zh' ? (
               <View style={[true ? styles.boxActive : styles.box]}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <Image

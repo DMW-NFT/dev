@@ -17,7 +17,7 @@ export default class MessageCenter extends Component {
   constructor(porps) {
     super(porps);
     this.state = {
-      type: 'ch',
+      type: 'zh',
     };
   }
   render() {
@@ -92,7 +92,7 @@ export default class MessageCenter extends Component {
 
           <TouchableWithoutFeedback
             onPress={() => {
-              this.setState({type: 'ch'});
+              this.setState({type: 'zh'});
             }}
             onStartShouldSetResponderCapture={() => true}>
             {
@@ -126,7 +126,7 @@ export default class MessageCenter extends Component {
 
           <TouchableWithoutFeedback
             onPress={() => {
-              this.setState({type: 'ch'});
+              this.setState({type: 'zh'});
             }}
             onStartShouldSetResponderCapture={() => true}>
             {
