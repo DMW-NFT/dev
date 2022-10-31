@@ -18,6 +18,7 @@ import { Spinner } from '@ui-kitten/components';
 import { Card, Modal } from '@ui-kitten/components';
 import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider';
 import { useTranslation } from 'react-i18next'
+import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider';
 
 
 
@@ -32,6 +33,7 @@ const Home = (props) => {
   const [list, setlist] = useState([{}, {}, {}, {}, {}, {}, {}, {}])
   const [refreshing, setrefreshing] = useState(false)
   const { post, get, formData, Toast } = useDmwApi();
+  const {language } = useDmwLogin();
   const [imgList, setImglist] = useState([])
   const [NftList, setNftList] = useState([])
   const [blindlist, setblindlist] = useState([])
@@ -51,6 +53,11 @@ const Home = (props) => {
       setListTtpe(res.data)
     })
   }
+
+  useEffect(()=>{
+    console.log(language,'切换语言');
+    
+  },[language])
 
   useEffect(() => {
     console.log("Home useEffe currentWallet,connected", currentWallet)
@@ -74,7 +81,7 @@ const Home = (props) => {
     })
     geNftList(typename == 'nft' ? 1 : 2, 1)
     getCoType()
-  }, [])
+  }, [language])
 
   useEffect(() => {
     setTimeout(() => {

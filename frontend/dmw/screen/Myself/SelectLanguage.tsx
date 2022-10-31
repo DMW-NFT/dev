@@ -125,7 +125,7 @@ const SelectLanguage = (porps) => {
             <View style={styles.box}>
               <Image
                 style={styles.img}
-                source={require('../../assets/img/my/Chinese.png')}></Image>
+                source={require('../../assets/img/my/jpan.jpeg')}></Image>
               <Text>日本語</Text>
             </View>
           )}

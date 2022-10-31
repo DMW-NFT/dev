@@ -14,9 +14,9 @@ const DmwApiProvider = ({ children }) => {
   const [toastVal, setToastVal] = useState("温馨提示");
   const [MoneyRouteState, setMoneyRouteState] = useState('createMoney')
 
-  useEffect(() => {
-    languageType()
-  }, [])
+  // useEffect(() => {
+  //   languageType()
+  // }, [language])
 
   // 设置语言
   const setlanguageType = async (type) => {
@@ -68,10 +68,8 @@ console.log(language,'yuya');
 
 
   const post = async (url, data) => {
-    // console.log(url,'url');
     console.log(language,'yuya');
     let token = await GetStorage();
-    // console.log(token, "----------------");
     return fetch(BaseUrl + url, {
       method: "POST",
       body: data,
