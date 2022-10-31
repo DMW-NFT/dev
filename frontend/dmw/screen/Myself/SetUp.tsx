@@ -34,7 +34,7 @@ const SetUp = (props) => {
         <TouchableWithoutFeedback onPress={() => { props.navigation.navigate('SelectLanguage') }}>
           <View style={[styles.list, { marginBottom: 31 }]}>
             <Text style={styles.textname} >{t("选择语言")}</Text>
-            <View style={{ flexDirection: 'row' }}><Text style={styles.language}>{language == 'zh' ? "中文" : "日本語"}</Text><FontAwesomeIcon icon={faChevronRight} color='#707070' size={16} /></View>
+            <View style={{ flexDirection: 'row' }}><Text style={styles.language}>{language == 'zh' ? "中文" :language == 'jp' ? "日本語" : 'English' }</Text><FontAwesomeIcon icon={faChevronRight} color='#707070' size={16} /></View>
           </View>
         </TouchableWithoutFeedback>
 

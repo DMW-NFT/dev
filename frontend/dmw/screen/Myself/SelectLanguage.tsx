@@ -1,4 +1,4 @@
-import React, {Component,useState,useEffect} from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -19,9 +19,9 @@ const scale = Dimensions.get('window').scale;
 const screenHeight = Dimensions.get('window').height;
 
 const SelectLanguage = (porps) => {
-  const {setlanguage,language} = useDmwLogin()
-  const {setlanguageType} =useDmwApi()
-  const [type,setType] = useState(language == 'zh' ? 'zh' : 'jp')
+  const { setlanguage, language } = useDmwLogin()
+  const { setlanguageType } = useDmwApi()
+  const [type, setType] = useState(language == 'zh' ? 'zh' : language == 'jp' ? 'jp' : 'en')
   const { t, i18n } = useTranslation();
   // constructor(porps) {
   //   super(porps);
@@ -29,52 +29,55 @@ const SelectLanguage = (porps) => {
   //     type: 'zh',
   //   };
   // }
-  useEffect(()=>{
-    
-  },[])
+  useEffect(() => {
 
-    return (
-      <SafeAreaView
-        style={{
-          paddingTop: 38,
-          position: 'relative',
-          height: Dimensions.get('window').height,
-          backgroundColor:'#fff'
-        }}>
-        <View style={{paddingLeft: 20, paddingRight: 20}}>
-          <TouchableWithoutFeedback
-            onPress={() => {
-             setType('zh')
-             i18n.changeLanguage('zh')
-             setlanguage('zh')
-             setlanguageType('zh')
-            }}
-            >
-            {type == 'zh' ? (
-              <View style={[true ? styles.boxActive : styles.box]}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Image
-                    style={styles.img}
-                    source={require('../../assets/img/my/Chinese.png')}></Image>
-                  <Text>{t("中文")}</Text>
-                </View>
+  }, [])
 
-                <Image style={{width:17,height:11}} source={require('../../assets/img/my/217.png')}></Image>
-              </View>
-            ) : (
-              <View style={styles.box}>
+  return (
+    <SafeAreaView
+      style={{
+        paddingTop: 38,
+        position: 'relative',
+        height: Dimensions.get('window').height,
+        backgroundColor: '#fff'
+      }}>
+      <View style={{ paddingLeft: 20, paddingRight: 20 }}>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            setType('zh')
+            i18n.changeLanguage('zh')
+            setlanguage('zh')
+            setlanguageType('zh')
+          }}
+        >
+          {type == 'zh' ? (
+            <View style={[true ? styles.boxActive : styles.box]}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Image
                   style={styles.img}
                   source={require('../../assets/img/my/Chinese.png')}></Image>
-                <Text>中文</Text>
+                <Text>{t("中文")}</Text>
               </View>
-            )}
-          </TouchableWithoutFeedback>
+
+              <Image style={{ width: 17, height: 11 }} source={require('../../assets/img/my/217.png')}></Image>
+            </View>
+          ) : (
+            <View style={styles.box}>
+              <Image
+                style={styles.img}
+                source={require('../../assets/img/my/Chinese.png')}></Image>
+              <Text>中文</Text>
+            </View>
+          )}
+        </TouchableWithoutFeedback>
 
 
-          {/* <TouchableWithoutFeedback
+        <TouchableWithoutFeedback
             onPress={() => {
               setType('en')
+              i18n.changeLanguage('en')
+            setlanguage('en')
+            setlanguageType('en')
             }}
            >
             {type == 'en' ? (
@@ -96,42 +99,42 @@ const SelectLanguage = (porps) => {
                 <Text>English</Text>
               </View>
             )}
-          </TouchableWithoutFeedback> */}
+          </TouchableWithoutFeedback>
 
 
-          <TouchableWithoutFeedback
-            onPress={() => {
-              setType('jp')
-              i18n.changeLanguage('jp')
-              setlanguage('jp')
-              setlanguageType('jp')
-            }}
-           >
-            {type == 'jp' ? (
-              <View style={[true ? styles.boxActive : styles.box]}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Image
-                    style={styles.img}
-                    source={require('../../assets/img/my/jpan.jpeg')}></Image>
-                  <Text>日本語</Text>
-                </View>
-
-                <Image style={{width:17,height:11}} source={require('../../assets/img/my/217.png')}></Image>
-              </View>
-            ) : (
-              <View style={styles.box}>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            setType('jp')
+            i18n.changeLanguage('jp')
+            setlanguage('jp')
+            setlanguageType('jp')
+          }}
+        >
+          {type == 'jp' ? (
+            <View style={[true ? styles.boxActive : styles.box]}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Image
                   style={styles.img}
-                  source={require('../../assets/img/my/Chinese.png')}></Image>
+                  source={require('../../assets/img/my/jpan.jpeg')}></Image>
                 <Text>日本語</Text>
               </View>
-            )}
-          </TouchableWithoutFeedback>
-    
-        </View>
 
-      </SafeAreaView>
-    );
+              <Image style={{ width: 17, height: 11 }} source={require('../../assets/img/my/217.png')}></Image>
+            </View>
+          ) : (
+            <View style={styles.box}>
+              <Image
+                style={styles.img}
+                source={require('../../assets/img/my/Chinese.png')}></Image>
+              <Text>日本語</Text>
+            </View>
+          )}
+        </TouchableWithoutFeedback>
+
+      </View>
+
+    </SafeAreaView>
+  );
 }
 
 export default SelectLanguage
@@ -141,8 +144,8 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     marginRight: 12,
-    borderWidth:1,
-    borderRadius:12
+    borderWidth: 1,
+    borderRadius: 12
   },
   box: {
     width: screenWidth - 40,
