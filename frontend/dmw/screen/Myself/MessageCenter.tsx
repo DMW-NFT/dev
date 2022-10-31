@@ -16,15 +16,16 @@ const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
 const screenHeight = Dimensions.get('window').height;
 const MessageCenter = (props) => {
-  const {post} = useDmwApi()
+  const { post } = useDmwApi()
   const [type, settype] = useState('zh')
+  const [messageList, setMessageList] = useState({ auction: "暂无新消息", like: "暂无新消息", sell: "暂无新消息", system: "暂无新消息" })
+  useEffect(() => {
+    post('/index/message/get_messages').then(res => {
+      console.log(res, '消息');
+      setMessageList(res.data)
+    })
+  }, [])
 
-    useEffect(()=>{
-      post('/index/message/get_messages').then(res=>{
-        console.log(res,'消息');
-      })
-    },[])
-     
   return (
     <SafeAreaView
       style={{
@@ -36,7 +37,7 @@ const MessageCenter = (props) => {
       <View style={{ paddingLeft: 20, paddingRight: 20 }}>
         <TouchableWithoutFeedback
           onPress={() => {
-            props.navigation.navigate('SystemNotification')
+            props.navigation.navigate('SystemNotification',{type:1})
           }}>
           {
             <View style={styles.box}>
@@ -54,8 +55,8 @@ const MessageCenter = (props) => {
                   <Text style={styles.title}>系统通知</Text>
                   <Text style={styles.time}>15:28</Text>
                 </View>
-                <Text style={styles.test}>
-                  DMW将于2022年7月20日上午8点更新，届时将...
+                <Text style={styles.test} numberOfLines={1}>
+                  {messageList.system}
                 </Text>
               </View>
             </View>
@@ -64,7 +65,7 @@ const MessageCenter = (props) => {
 
         <TouchableWithoutFeedback
           onPress={() => {
-            props.navigation.navigate('ILikeIt')
+            props.navigation.navigate('ILikeIt',{type:2})
           }}
         >
           {
@@ -84,7 +85,8 @@ const MessageCenter = (props) => {
                   <Text style={styles.time}>15:28</Text>
                 </View>
                 <Text style={styles.test}>
-                  <Text style={{ color: '#897EF8' }}>Sdd、122</Text><Text>等3人 收藏</Text>
+                  {messageList.like}
+                  {/* <Text style={{ color: '#897EF8' }}>Sdd、122</Text><Text>等3人 收藏</Text> */}
                 </Text>
               </View>
             </View>
@@ -95,7 +97,7 @@ const MessageCenter = (props) => {
 
         <TouchableWithoutFeedback
           onPress={() => {
-            settype('zh');
+            props.navigation.navigate('SystemNotification',{type:3})
           }}
         >
           {
@@ -115,8 +117,8 @@ const MessageCenter = (props) => {
                   <Text style={styles.time}>15:28</Text>
                 </View>
                 <Text style={styles.test}>
-
-                  藏品《<Text style={{ color: '#897EF8' }}>sdssd</Text>》拍卖结束用户<Text style={{ color: '#897EF8' }}>123</Text>以100USDT的价...
+                    {messageList.auction}
+                  {/* 藏品《<Text style={{ color: '#897EF8' }}>sdssd</Text>》拍卖结束用户<Text style={{ color: '#897EF8' }}>123</Text>以100USDT的价... */}
                 </Text>
               </View>
             </View>
@@ -129,7 +131,7 @@ const MessageCenter = (props) => {
 
         <TouchableWithoutFeedback
           onPress={() => {
-            settype('zh')
+            props.navigation.navigate('SystemNotification',{type:4})
           }}
         >
           {
@@ -149,7 +151,8 @@ const MessageCenter = (props) => {
                   <Text style={styles.time}>15:28</Text>
                 </View>
                 <Text style={styles.test}>
-                  藏品《<Text style={{ color: '#897EF8' }}>sdssd</Text>》售卖给用户<Text style={{ color: '#897EF8' }}>123</Text>，成交价100USDT...
+                {messageList.sell}
+                  {/* 藏品《<Text style={{ color: '#897EF8' }}>sdssd</Text>》售卖给用户<Text style={{ color: '#897EF8' }}>123</Text>，成交价100USDT... */}
                 </Text>
               </View>
             </View>
