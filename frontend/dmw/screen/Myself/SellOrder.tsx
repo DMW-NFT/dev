@@ -3,38 +3,46 @@ import React, { useState, useEffect } from 'react'
 import { Modal } from 'react-native-paper';
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 
-const SellOrder = () => {
-    // state = {
-    //     visible:false,
-    //     typename: 1,
-    //     list:[]
-    // }
+const SellOrder = (props) => {
     const [visible, setvisible] = useState(false)
     const [typename, settypename] = useState(1)
-    const [list, setlist] = useState([])
-    const {post,formData,Toast} = useDmwApi()
-    useEffect(()=>{
+    // const [list, setlist] = useState([])
+    const { post, formData, Toast } = useDmwApi()
+    const [ConList, setConList] = useState([])//寄售列表
+    const [ConListTotal, setConListTotal] = useState(0)//寄售总数量
+    const [auctionList, setAuctionList] = useState([])//拍卖列表
+    const [auctionTotal, setauctionTotal] = useState(0)//拍卖总数量
+    useEffect(() => {
         getListbuy(1)
-    },[])
+    }, [])
 
     
-    const paging = (val) => {
-        settypename(val)
-        if(val == 1){
+    useEffect(()=>{
+        if (typename == 1) {
+            setConList([])
             getListbuy(1)
-        }else{
+        } else {
+            setAuctionList([])
             getListsell(1)
         }
+    },[typename])
+
+    const paging = (val) => {
+        settypename(val)
+        
     }
     const getListbuy = (page) => {
-        post('/index/order/get_my_buy_order',formData({type:0,page:page,limit:4})).then(res=>{
-            console.log(res,'售卖-购买列表');
+        post('/index/order/get_my_buy_order', formData({ type: 0, page: page, limit: 4 })).then(res => {
+            console.log(res, '售卖-购买列表');
         })
     }
 
     const getListsell = (page) => {
-        post('/index/order/get_my_sell_order',formData({type:0,page:page,limit:4})).then(res=>{
-            console.log(res,'售卖-售卖列表');
+        post('/index/order/get_my_sell_order', formData({ type: 0, page: page, limit: 4 })).then(res => {
+            console.log(res.data.data, '售卖-售卖列表');
+            console.log(auctionList);
+            
+            setAuctionList([...auctionList, ...res.data.data])
         })
     }
     return (
@@ -50,17 +58,17 @@ const SellOrder = () => {
             </View>
             <View style={[styles.listBox]}>
                 <FlatList
-                style={{paddingBottom:20,flex:1}}
+                    style={{ paddingBottom: 20, flex: 1 }}
                     refreshing={false}
                     ListEmptyComponent={() => {
-                        return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',}}>
+                        return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
                             <Text>空空如也</Text>
                         </View>
                         // 列表为空展示改组件
                     }}
                     // 一屏幕展示几个
                     number={6}
-                    data={list}
+                    data={typename == 1 ? ConList : auctionList}
                     renderItem={() => {
                         return (
                             <View style={[styles.lis]}>
@@ -107,16 +115,13 @@ const SellOrder = () => {
                                     </View>
 
                                 </View>
-                                <View style={[styles.infoFunctionBox]}>
-                                    <View style={[styles.squire]}></View>
-                                </View>
                             </View>
                         )
                     }}
                     keyExtractor={(item, index) => index}
                     ListFooterComponent={() => {
                         // 声明尾部组件
-                        return list.length ? <Text style={{ textAlign: 'center' }}>没有更多了</Text> : null
+                        return <Text style={{ textAlign: 'center' }}>没有更多了</Text>
                     }}
                     //下刷新
                     onEndReachedThreshold={0.1} //表示还有10% 的时候加载onEndReached 函数
@@ -126,7 +131,7 @@ const SellOrder = () => {
             </View>
 
             {/* 下架 */}
-            <Modal visible={visible} onDismiss={() => { setState({ visible: false }) }} contentContainerStyle={[styles.footer]}>
+            <Modal visible={visible} onDismiss={() => { setvisible(false) }} contentContainerStyle={[styles.footer]}>
                 <Text style={[styles.modelName]}>
                     确认下架藏品
                 </Text>
@@ -285,9 +290,9 @@ const styles = StyleSheet.create({
     listBox: {
         padding: 20,
         backgroundColor: "#f5f5f5",
-        flex:1,
-        paddingBottom:0,
-        justifyContent:'center'
+        flex: 1,
+        paddingBottom: 0,
+        justifyContent: 'center'
     },
     daohang: {
         flexDirection: 'row',
