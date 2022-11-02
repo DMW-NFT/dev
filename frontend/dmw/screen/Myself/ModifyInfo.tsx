@@ -14,20 +14,27 @@ import DocumentPicker from "react-native-document-picker";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
 import DialogToast from "../../Components/DialogToast.js";
 import { useTranslation } from 'react-i18next'
-import {useDmwApi} from "../../../DmwApiProvider/DmwApiProvider"
+import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider"
 
 const screenWidth = Dimensions.get("window").width;
 const scale = Dimensions.get("window").scale;
 const screenHeight = Dimensions.get("window").height;
 
 const ModifyInfo = (props) => {
+
+  useEffect(() => {
+    props.navigation.setOptions({
+      title: t("修改个人信息"),
+    })
+  }, [])
+
   const { t, i18n } = useTranslation();
   const [userInfo, setUserInfo] = useState({});
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("温馨提示");
   const { username, setUsername } = useDmwLogin();
   const { avatarUrl, setAvatarUrl } = useDmwLogin();
-  const {post,formData} = useDmwApi()
+  const { post, formData } = useDmwApi()
 
   const sava = () => {
     let data = { nickname: username };
@@ -50,7 +57,7 @@ const ModifyInfo = (props) => {
       let formData = new FormData();
       formData.append("file", file[0]);
       formData.append("type", "1");
-     post("/index/user/upload_avatar", formData).then((res) => {
+      post("/index/user/upload_avatar", formData).then((res) => {
         console.log(res, "上传");
         if (res.code == 200) {
           getUserInfo();
@@ -82,7 +89,7 @@ const ModifyInfo = (props) => {
     getUserInfo();
 
     console.log(userInfo["avatar_url"], "、、、、、、、");
-    return () => {};
+    return () => { };
   }, []);
 
   return (
@@ -137,7 +144,7 @@ const ModifyInfo = (props) => {
         />
       </View>
       <Text style={styles.btn} onPress={() => sava()}>
-      {t("保存")}
+        {t("保存")}
       </Text>
 
       <DialogToast

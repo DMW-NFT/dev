@@ -4,8 +4,9 @@ import List from '../../Components/List'
 import Screen from '../../Components/screen'
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider'
 import { Spinner } from '@ui-kitten/components';
-
+import { useTranslation } from 'react-i18next'
 const Categray = (props) => {
+  const { t, i18n } = useTranslation();
   const [list, setlist] = useState([])
   const [visible, setvisible] = useState(false)
   const [loading, setLoding] = useState(false)
@@ -87,7 +88,7 @@ const Categray = (props) => {
               refreshing={refreshing}
               style={{ height: 50, paddingBottom: 20 }}
               ListEmptyComponent={() => {
-                return <Text style={{ textAlign: 'center', marginTop: '50%' }}>空空如也</Text>
+                return <Text style={{ textAlign: 'center', marginTop: '50%' }}>{t("空空如也")}</Text>
                 // 列表为空展示改组件
               }}
               // 一屏幕展示几个
@@ -100,7 +101,7 @@ const Categray = (props) => {
               // keyExtractor={(item, index) => item.id}
               ListFooterComponent={() => {
                 // 声明尾部组件
-                return <Text style={{ textAlign: 'center', marginBottom: 20 }}>没有更多了</Text> 
+                return <Text style={{ textAlign: 'center', marginBottom: 20 }}>{t("没有更多了")}</Text> 
               }}
               // 下刷新
               onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数

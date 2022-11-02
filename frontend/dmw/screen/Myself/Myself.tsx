@@ -243,7 +243,7 @@ const Myself = (props) => {
               refreshing={false}
               style={{ height: '55%',zIndex:1 }}
               ListEmptyComponent={() => {
-                return <Text style={{ textAlign: 'center', marginTop: '50%' }}>空空如也</Text>
+                return <Text style={{ textAlign: 'center', marginTop: '50%' }}>{t("空空如也")}</Text>
                 // 列表为空展示改组件
               }}
               // 一屏幕展示几个

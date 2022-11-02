@@ -26,9 +26,11 @@ import AddCreateCollection from '../screen/Myself/AddCreateCollection'  //卖出
 
 import GoodsDetail from '../screen/Other/GoodsDetail'
 import QuotationDetails from '../screen/Other/QuotationDetails'
+
+import { useTranslation } from 'react-i18next'
 const Stack=createStackNavigator()
-export default class Home extends Component {
-  render() {
+const Home = () => {
+  const { t, i18n } = useTranslation();
     return (
       <Stack.Navigator initialRouteName='myself' screenOptions={{headerShadowVisible: false}}>
           <Stack.Screen   
@@ -51,7 +53,7 @@ export default class Home extends Component {
             component={MyCollection}  
             name='myCollection'
             options={{  
-              headerTitle:'合集'
+              headerTitle:t('合集')
             }}
           >
          </Stack.Screen>
@@ -67,7 +69,7 @@ export default class Home extends Component {
             component={SellOrder} 
             name='sellOrder'
             options={{  
-              title:'售卖订单'
+              title:t('售卖订单')
             }}
           >
           </Stack.Screen>
@@ -75,7 +77,7 @@ export default class Home extends Component {
             component={AuctionOrderr} 
             name='auctionOrder'
             options={{   
-              title:'拍卖订单'
+              title:t('拍卖订单')
             }}
           >
           </Stack.Screen>
@@ -83,7 +85,7 @@ export default class Home extends Component {
             component={TradeSuccessfully} 
             name='tradeSuccessfully'
             options={{  
-              title:'交易成功'
+              title:t('交易成功')
             }}
           >
           </Stack.Screen>
@@ -92,7 +94,7 @@ export default class Home extends Component {
             component={SetUp} 
             name='SetUp'
             options={{  
-              title:'设置'  
+              title:t('设置')
              }}
           >  
          </Stack.Screen>
@@ -101,7 +103,7 @@ export default class Home extends Component {
             component={ModifyInfo} 
             name='ModifyInfo'
             options={{  
-              title:'修改个人信息'  
+              title:t('修改个人信息')
              }}
           >  
          </Stack.Screen>
@@ -119,7 +121,7 @@ export default class Home extends Component {
             component={BlockchainQuery} 
             name='BlockchainQuery'
             options={{  
-              title:'区块链信息查询'  
+              title:t('区块链信息查询')
              }}
           >  
          </Stack.Screen>
@@ -128,7 +130,7 @@ export default class Home extends Component {
             component={SelectLanguage} 
             name='SelectLanguage'
             options={{  
-              title:'选择语言'  
+              title:t('选择语言')
              }}
           >  
          </Stack.Screen>
@@ -137,7 +139,7 @@ export default class Home extends Component {
             component={MessageCenter} 
             name='MessageCenter'
             options={{  
-              title:'消息中心'  
+              title:t('消息中心')
              }}
           >  
          </Stack.Screen>
@@ -156,7 +158,7 @@ export default class Home extends Component {
             component={SystemNotification} 
             name='SystemNotification'
             options={{  
-              title:'系统通知'  
+              title:t('系统通知')
              }}
           >  
          </Stack.Screen>
@@ -165,7 +167,7 @@ export default class Home extends Component {
             component={NoticeDetails} 
             name='NoticeDetails'
             options={{  
-              title:'通知详情'  
+              title:t('通知详情')
              }}
           >  
          </Stack.Screen>
@@ -174,7 +176,7 @@ export default class Home extends Component {
             component={ILikeIt} 
             name='ILikeIt'
             options={{  
-              title:'喜欢'  
+              title:t('喜欢')
              }}
           >  
          </Stack.Screen>
@@ -184,7 +186,7 @@ export default class Home extends Component {
             component={TransferredIntoCollection} 
             name='TransferredIntoCollection'
             options={{  
-              title:'转入藏品'  
+              title:t('转入藏品')
              }}
           >  
          </Stack.Screen>
@@ -193,7 +195,7 @@ export default class Home extends Component {
             component={CreateCollection} 
             name='CreateCollection'
             options={{  
-              title:'创建藏品'  
+              title:t('创建藏品')
              }}
           >  
          </Stack.Screen>
@@ -202,7 +204,7 @@ export default class Home extends Component {
             component={AddCreateCollection} 
             name='AddCreateCollection'
             options={{  
-              title:'创建合集'  
+              title:t('创建合集')
              }}
           >  
          </Stack.Screen>
@@ -235,7 +237,8 @@ export default class Home extends Component {
 
       </Stack.Navigator>
     )
-  }
 }
+
+export default Home
 
 const styles = StyleSheet.create({})

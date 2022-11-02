@@ -14,9 +14,10 @@ const DmwApiProvider = ({ children }) => {
   const [toastVal, setToastVal] = useState("温馨提示");
   const [MoneyRouteState, setMoneyRouteState] = useState('createMoney')
 
-  // useEffect(() => {
-  //   languageType()
-  // }, [language])
+  useEffect(() => {
+    languageType()
+    i18n.changeLanguage(language)
+  }, [language])
 
   // 设置语言
   const setlanguageType = async (type) => {
@@ -82,7 +83,7 @@ console.log(language,'yuya');
       .then((res) => {
         if (res.code == 204) {
           setTimeout(() => {
-            Toast('登录失效，重新登录')
+            Toast(t('登录失效，请重新登录'))
             logOut();
           }, 500);
         } else {

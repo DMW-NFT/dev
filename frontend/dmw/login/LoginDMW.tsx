@@ -37,7 +37,7 @@ const LoginDMW = (props) => {
   const [local, setLocal] = useState({ name: "中文", id: "zh" });
   const [localLIst, setLocalLIst] = useState([
     { name: "中文", id: "zh" },
-    // { name: "英文", id: "en" },
+    { name: "英文", id: "en" },
     { name: "日文", id: "jp" },
   ]);
   const [email, setEmail] = useState("");
@@ -81,7 +81,7 @@ const LoginDMW = (props) => {
   // 登录按钮
   const loginFn = () => {
     if (!agree) {
-      Toast(t('请先勾选用户协议'))
+      Toast(t('请勾选用户协议'))
       return
     }
     let data = {};
@@ -134,48 +134,7 @@ const LoginDMW = (props) => {
     >
       <View style={[styles.TopBox]}>
         <Text style={[styles.topText]}>{t("欢迎登录DMW")}</Text>
-        <View>
-          <TouchableWithoutFeedback
-            onPress={() => {
-              setShowlocal(true);
-            }}
-          >
-            <View style={[styles.TopBox, styles.coale]}>
-              <Text>{local.name}</Text>
-              <FontAwesomeIcon
-                icon={faAngleDown}
-                color="#707070"
-                size={20}
-                style={{ marginLeft: 10 }}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-          {showlocal ? (
-            <ScrollView style={[styles.checkColac]}>
-              {localLIst.map((item, index) => {
-                return (
-                  <TouchableWithoutFeedback
-                    key={index}
-                    onPress={() => {
-                      changeCloca(item);
-                    }}
-                  >
-                    <Text
-                      style={[
-                        styles.liscloca,
-                        index == 1 ? styles.lisEnglish : {},
-                      ]}
-                    >
-                      {item.name}
-                    </Text>
-                  </TouchableWithoutFeedback>
-                );
-              })}
-            </ScrollView>
-          ) : (
-            <Text></Text>
-          )}
-        </View>
+    
       </View>
       {/* 邮箱 */}
       {/* {
@@ -314,10 +273,11 @@ const LoginDMW = (props) => {
 
 
         {local.name == "中文" ? <>
-          <Text style={[styles.textinfo]}>{t("我已阅读并同意")}</Text>
+          {/* <Text style={[styles.textinfo]}>{t("我已阅读并同意")}</Text>
           <Text style={[styles.text]}>{t("《用户协议》")}</Text>
           <Text style={[styles.textinfo]}>{t("及")}</Text>
-          <Text style={[styles.text]}>{t("《隐私政策》")}</Text>
+          <Text style={[styles.text]}>{t("《隐私政策》")}</Text> */}
+         <Text> {t("我已阅读并同意《用户协议》及《隐私政策》")}</Text>
         </> : <>
           <Text style={[styles.text]}>利用規約とプライバシーポリシーに同意する</Text>
         </>

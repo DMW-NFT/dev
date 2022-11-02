@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import DmwLoginContext from "./DmwLoginContext";
+import { useTranslation } from 'react-i18next'
 const DmwLoginProvider = ({ children }) => {
+  const { t, i18n } = useTranslation();
   const [isLogin, setIsLogin] = useState(true); //登录状态
-  const [username, setUsername] = useState("用户昵称"); //用户名
+  const [username, setUsername] = useState(t("用户昵称")); //用户名
   const [avatarUrl, setAvatarUrl] = useState(); //用户名
   const [WalletInUse,setWalletInUse] = useState(1)
   const [language,setlanguage] = useState('zh')

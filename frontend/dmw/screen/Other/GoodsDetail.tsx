@@ -284,7 +284,7 @@ const GoodsDetail = (props) => {
                         <View style={[styles.container]}>
                             {
                                 imgShow ? <Image source={{ uri: imgurl }} onError={() => {
-                                    setImgurl('../../assets/img/index/any2.jpg')
+                                    setImgurl('../../assets/img/index/default.png')
                                     setimgShow(false)
                                 }} style={[styles.topImg]}></Image> :
                                     <Image source={require('../../assets/img/index/any3.jpg')} style={[styles.topImg]}></Image>

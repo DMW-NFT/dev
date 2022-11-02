@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react'
 import { Modal } from 'react-native-paper';
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider';
-
+import { useTranslation } from 'react-i18next'
 const SellOrder = (props) => {
+    const { t, i18n } = useTranslation();
     const [visible, setvisible] = useState(false)
     const [typename, settypename] = useState(1)
     // const [list, setlist] = useState([])
@@ -99,8 +100,8 @@ const SellOrder = (props) => {
             <View >
                 <View style={[styles.container, { backgroundColor: "#f5f5f5" }]}>
                     <View style={[styles.index_box, styles.daohang]}>
-                        <Text style={[typename != 1 ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging(1)}>购买</Text>
-                        <Text style={[typename != 2 ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging(2)}>出售</Text>
+                        <Text style={[typename != 1 ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging(1)}>{t("购买")}</Text>
+                        <Text style={[typename != 2 ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging(2)}>{t("售卖")}</Text>
                     </View>
 
                 </View>
@@ -112,7 +113,7 @@ const SellOrder = (props) => {
                     refreshing={false}
                     ListEmptyComponent={() => {
                         return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
-                            <Text>空空如也</Text>
+                            <Text>{t("空空如也")}</Text>
                         </View>
                         // 列表为空展示改组件
                     }}
@@ -142,7 +143,7 @@ const SellOrder = (props) => {
                                         </View>
                                     </View>
                                     <View style={{ alignItems: 'flex-end' }}>
-                                        <Text style={[styles.lisPriceText]}>售卖价</Text>
+                                        <Text style={[styles.lisPriceText]}>{t("售卖价")}</Text>
                                         <Text style={[styles.lisPrice]}>{item.buyout_price_per.number + item.buyout_price_per.currency_name}</Text>
                                     </View>
                                 </View>
@@ -224,7 +225,7 @@ const SellOrder = (props) => {
                     keyExtractor={(item, index) => index}
                     ListFooterComponent={() => {
                         // 声明尾部组件
-                        return (typename == 1 && ConList.length == ConListTotal) || (typename == 2 && auctionList.length == auctionTotal) ? <Text style={{ textAlign: 'center' }}>没有更多了</Text> : null
+                        return (typename == 1 && ConList.length == ConListTotal) || (typename == 2 && auctionList.length == auctionTotal) ? <Text style={{ textAlign: 'center' }}>{t("没有更多了")}</Text> : null
                     }}
                     //下刷新
                     onEndReachedThreshold={0.1} //表示还有10% 的时候加载onEndReached 函数

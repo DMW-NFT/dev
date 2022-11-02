@@ -51,7 +51,7 @@ const List = (props) => {
                             imgs ?
                                 <ImageBackground onError={() => {
                                     console.log(123456);
-                                    setImgurl('../assets/img/index/any2.jpg')
+                                    setImgurl('../assets/img/index/default.png')
                                     setimgs(false)
                                 }} style={[styles.imageBox]} resizeMode='cover' source={{ uri: imgurl }}>
                                     {

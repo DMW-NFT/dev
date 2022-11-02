@@ -152,7 +152,7 @@ const Searchsc = (props) => {
                         show ?
                             <View style={{ marginTop: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Image style={{ width: 30, height: 30, borderRadius: 15 }} source={require('../../assets/img/index/any2.jpg')}></Image>
+                                    <Image style={{ width: 30, height: 30, borderRadius: 15 }} source={require('../../assets/img/index/default.png')}></Image>
                                     <Text style={{ marginLeft: 10 }}>Ethereum</Text>
                                 </View>
                                 <TouchableWithoutFeedback onPress={() => { setimg(!imgshow) }}>

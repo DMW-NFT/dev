@@ -11,11 +11,12 @@ import {
   Button,
 } from 'react-native';
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
-
+import { useTranslation } from 'react-i18next'
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
 const screenHeight = Dimensions.get('window').height;
 const MessageCenter = (props) => {
+  const { t, i18n } = useTranslation();
   const { post } = useDmwApi()
   const [type, settype] = useState('zh')
   const [messageList, setMessageList] = useState({ auction: "暂无新消息", like: "暂无新消息", sell: "暂无新消息", system: "暂无新消息" })
@@ -52,7 +53,7 @@ const MessageCenter = (props) => {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                   }}>
-                  <Text style={styles.title}>系统通知</Text>
+                  <Text style={styles.title}>{t("系统通知")}</Text>
                   <Text style={styles.time}>15:28</Text>
                 </View>
                 <Text style={styles.test} numberOfLines={1}>
@@ -81,7 +82,7 @@ const MessageCenter = (props) => {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                   }}>
-                  <Text style={styles.title}>喜欢</Text>
+                  <Text style={styles.title}>{t("喜欢")}</Text>
                   <Text style={styles.time}>15:28</Text>
                 </View>
                 <Text style={styles.test}>
@@ -113,7 +114,7 @@ const MessageCenter = (props) => {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                   }}>
-                  <Text style={styles.title}>拍卖</Text>
+                  <Text style={styles.title}>{t("拍卖")}</Text>
                   <Text style={styles.time}>15:28</Text>
                 </View>
                 <Text style={styles.test}>
@@ -147,7 +148,7 @@ const MessageCenter = (props) => {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                   }}>
-                  <Text style={styles.title}>售卖</Text>
+                  <Text style={styles.title}>{t("售卖")}</Text>
                   <Text style={styles.time}>15:28</Text>
                 </View>
                 <Text style={styles.test}>

@@ -38,9 +38,9 @@ const Money = (props) => {
   const { dmwWalletList } = useDmwWallet();
   const [password, setpassword] = useState("");
   const [passwordlist, setpasswordlist] = useState([]);
-  const { WalletInUse, setWalletInUse,avatarUrl } = useDmwLogin()
+  const { WalletInUse, setWalletInUse, avatarUrl } = useDmwLogin()
   const { disconnectWallet, connected, currentWallet, lastConnected, connectWallet, getNativeBalance } = useDmwWeb3()
-  const { MoneyRouteState, setMoneyRouteState, post, formData, Toast, shortenAddress , Copy } = useDmwApi()
+  const { MoneyRouteState, setMoneyRouteState, post, formData, Toast, shortenAddress, Copy } = useDmwApi()
   const [loading, setLoding] = useState(false)
   const [address, setaddress] = useState('--')
   const [address1, setaddress1] = useState('--')
@@ -50,10 +50,10 @@ const Money = (props) => {
   const axios = () => {
 
   };
-  useEffect(()=>{
-console.log(123);
+  useEffect(() => {
+    console.log(123);
 
-  },[WalletInUse])
+  }, [WalletInUse])
 
   useEffect(() => {
     if (WalletInUse == 1 && dmwWalletList[0]) {
@@ -63,7 +63,7 @@ console.log(123);
       })
       setWalletInUse(1)
     } else if (currentWallet && WalletInUse == 2) {
-      console.log(currentWallet,'钱包地址');
+      console.log(currentWallet, '钱包地址');
       setWalletInUse(2)
       getAddressBalance(currentWallet)
       getNativeBalance(currentWallet).then(res => {
@@ -92,11 +92,11 @@ console.log(123);
     setpassword('')
   }
   useEffect(() => {
-      // console.log('钱包变化',connected,currentWallet);
-   if (currentWallet) {
-    if(WalletInUse == 2){
-      Switchwallet(2)
-    }
+    // console.log('钱包变化',connected,currentWallet);
+    if (currentWallet) {
+      if (WalletInUse == 2) {
+        Switchwallet(2)
+      }
       getNativeBalance(currentWallet).then(res => {
         setNativeBalance(res)
       })
@@ -109,7 +109,7 @@ console.log(123);
       Switchwallet(1)
       setaddress(shortenAddress(dmwWalletList[0]))
       getNativeBalance(dmwWalletList[0]).then(res => {
-        console.log("native balance navtive token:",res)
+        console.log("native balance navtive token:", res)
         setNativeBalanceBenDi(res)
       })
     }
@@ -135,7 +135,7 @@ console.log(123);
     if (password.length == 6 && dmwWalletList[0]) {
       setModalvisible(false)
       props.navigation.navigate('ViewMnemonics', { password })
-    }else if(password.length == 6 && !dmwWalletList[0]){
+    } else if (password.length == 6 && !dmwWalletList[0]) {
       Toast('密码错误或暂未创建DMW钱包')
     }
   }, [password])
@@ -156,7 +156,7 @@ console.log(123);
   };
   const Switchwallet = (type) => {
     console.log(dmwWalletList[0]);
-    
+
     setWalletInUse(type)
     // var message = JSON.stringify()
     var iv = 'aaaaaaaaaaaaaaaa';//随机生成长度为32的16进制字符串。IV称为初始向量，不同的IV加密后的字符串是不同的，加密和解密需要相同的IV。
@@ -168,20 +168,20 @@ console.log(123);
     // console.log(ciphertext.toString(), 'jiami');
     let wallet_address = ''
     if (type == 1) {
-      if(dmwWalletList[0]){
+      if (dmwWalletList[0]) {
         wallet_address = dmwWalletList[0]
-      }else{
+      } else {
         Toast("请先创建DMW钱包")
         return
       }
-      
+
     } else {
       wallet_address = currentWallet
     }
     let str = JSON.stringify({ wallet_address: wallet_address })
     let data = formData({ iv: iv, param: str })
     post('/index/login/login_by_wallet', data).then(res => {
-      console.log(res,wallet_address,'qianbao denglu');
+      console.log(res, wallet_address, 'qianbao denglu');
       if (res.code == 200) {
         Toast(t("登录成功"))
         if (type == 1 && dmwWalletList[0]) {
@@ -255,50 +255,50 @@ console.log(123);
             marginRight: -20,
             height: 336 / 2,
             marginLeft: -20,
-          },{marginLeft:dmwWalletList && dmwWalletList[0] ? null :20 }]}
+          }, { marginLeft: dmwWalletList && dmwWalletList[0] ? null : 20 }]}
         >
           {
- dmwWalletList && dmwWalletList[0] ?
-        
-          <View style={styles.USDT} >
-            {
-              WalletInUse == 1 ?
-                <Text style={styles.active}>{t("当前登录")}</Text>
-                :
-                <TouchableWithoutFeedback onPress={() =>
-                  Switchwallet(1)
-                } >
-                  <Image
-                    style={{ width: 36, height: 36, position: 'absolute', top: 0, right: 0 }}
-                    source={require('../../assets/img/money/SwitchwalletA.png')}></Image>
-                </TouchableWithoutFeedback>
-            }
-            <Text style={styles.WName}>DMW</Text>
-            <View
-              style={{ flexDirection: "row", marginTop: 15, marginBottom: 14 }}
-            >
-              <ImageBackground
-                source={require("../../assets/img/money/WFCA.png")}
-                style={{ marginRight: 10, justifyContent: "center" }}
-              >
-                <Text style={styles.CurrencyName}>ETH</Text>
-              </ImageBackground>
+            dmwWalletList && dmwWalletList[0] ?
 
-              <Text style={styles.balance}>{NativeBalanceBenDi ? NativeBalanceBenDi : '--'}</Text>
-            </View>
-            {/* <Text style={{ color: "#fff" }}>$10.000</Text> */}
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ color: "#fff" }}>{address}</Text>
-              <TouchableWithoutFeedback onPress={()=>{Copy(dmwWalletList[0])}}>
-              <Image
-                style={{ width: 10, height: 10, marginLeft: 5 }}
-                source={require("../../assets/img/money/copyW.png")}
-              ></Image>
-              </TouchableWithoutFeedback>
-            
-            </View>
-          </View> : null
-            }
+              <View style={styles.USDT} >
+                {
+                  WalletInUse == 1 ?
+                    <Text style={styles.active}>{t("当前登录")}</Text>
+                    :
+                    <TouchableWithoutFeedback onPress={() =>
+                      Switchwallet(1)
+                    } >
+                      <Image
+                        style={{ width: 36, height: 36, position: 'absolute', top: 0, right: 0 }}
+                        source={require('../../assets/img/money/SwitchwalletA.png')}></Image>
+                    </TouchableWithoutFeedback>
+                }
+                <Text style={styles.WName}>DMW</Text>
+                <View
+                  style={{ flexDirection: "row", marginTop: 15, marginBottom: 14 }}
+                >
+                  <ImageBackground
+                    source={require("../../assets/img/money/WFCA.png")}
+                    style={{ marginRight: 10, justifyContent: "center" }}
+                  >
+                    <Text style={styles.CurrencyName}>ETH</Text>
+                  </ImageBackground>
+
+                  <Text style={styles.balance}>{NativeBalanceBenDi ? NativeBalanceBenDi : '--'}</Text>
+                </View>
+                {/* <Text style={{ color: "#fff" }}>$10.000</Text> */}
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text style={{ color: "#fff" }}>{address}</Text>
+                  <TouchableWithoutFeedback onPress={() => { Copy(dmwWalletList[0]) }}>
+                    <Image
+                      style={{ width: 10, height: 10, marginLeft: 5 }}
+                      source={require("../../assets/img/money/copyW.png")}
+                    ></Image>
+                  </TouchableWithoutFeedback>
+
+                </View>
+              </View> : null
+          }
 
           {
             connected ?
@@ -337,12 +337,12 @@ console.log(123);
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Text style={{ color: "#897EF8" }}>{address1}</Text>
-                  <TouchableWithoutFeedback onPress={()=>{Copy(currentWallet)}}>
-                  <Image
-                    style={{ width: 10, height: 10, marginLeft: 5 }}
-                    source={require("../../assets/img/my/copy.png")}
-                  ></Image>
-                </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback onPress={() => { Copy(currentWallet) }}>
+                    <Image
+                      style={{ width: 10, height: 10, marginLeft: 5 }}
+                      source={require("../../assets/img/my/copy.png")}
+                    ></Image>
+                  </TouchableWithoutFeedback>
                 </View>
               </View> : null
 
@@ -397,16 +397,6 @@ console.log(123);
             <Text>{t("赠予")}</Text>
           </View>
         </TouchableWithoutFeedback>
-
-        {/* <TouchableWithoutFeedback>
-          <View style={styles.ListService}>
-            <Image
-              style={styles.ListServiceImg}
-              source={require("../../assets/img/money/list2.png")}
-            ></Image>
-            <Text>{t("记录")}</Text>
-          </View>
-        </TouchableWithoutFeedback> */}
       </View>
 
       {/* tab栏 -- start */}
@@ -425,7 +415,7 @@ console.log(123);
           ]}
           onPress={() => changetype(3)}
         >
-         {t("藏品")} 
+          {t("藏品")}
         </Text>
       </View>
       {/* tab栏 -- end */}

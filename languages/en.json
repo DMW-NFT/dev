@@ -12,7 +12,7 @@
   "欢迎登录DMW": "Welcome come to DMW",
   "请输入电话号码": "Please enter the phone number",
   "请输入密码": "Please enter your password",
-  "忘记密码？": "Forgot your password?",
+  "忘记密码": "Forgot your password?",
   "登录": "Login",
   "我已阅读并同意《用户协议》及《隐私政策》": "I have read and agree to the User Agreement and Privacy Policy.",
   "请输入邮箱": "Please enter email address",
@@ -302,6 +302,12 @@
   "删除成功":"Delet successful",
   "结束拍卖":"Complete",
   "取消拍卖":"Cancel",
-  "记录":"Record"
-  
+  "记录":"Record",
+  "切换语言":"Change language",
+  "登录失效，请重新登录":"Login faild,Please try again",
+  "挂单列表":"Order list",
+  "用户昵称":"User nickname",
+  "请勾选用户协议":"Please tick the User Agreement",
+  "购买":"Buy",
+  "设置":"Settings"
 }
