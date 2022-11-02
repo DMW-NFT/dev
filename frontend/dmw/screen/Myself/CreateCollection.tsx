@@ -23,6 +23,8 @@ import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider';
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from 'react-i18next'
+import Web3 from 'web3';
+
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
 const screenHeight = Dimensions.get('window').height;
@@ -43,7 +45,7 @@ const TransferredIntoCollection = (props) => {
   const { post, formData, Toast } = useDmwApi()
   const [latestHash, setLatestHash] = useState()
   const [DmwlatestHash, setDmwLatestHash] = useState()
-  const { currentWallet, mintNftWithSignature, transactionMap, transactionList } = useDmwWeb3()
+  const { currentWallet, mintNftWithSignature, transactionMap, transactionList,GasMap,currentGasPrice } = useDmwWeb3()
   const { WalletInUse } = useDmwLogin()
   const { dmwWalletList,dmwMintWithSignature,dmwTransactionList,dmwTransactionMap} = useDmwWallet()
   const [activeType, setactiveType] = useState({ id: '', name: t('请选择合集'),logo:'' })
@@ -454,7 +456,7 @@ const TransferredIntoCollection = (props) => {
                     <Text style={{ fontSize: 12, color: '#999999', }}>
                       {t("上链费")}：
                     </Text>
-                    <Text style={{ fontSize: 16, color: '#897EF8' }}>0.027ETH</Text>
+                    {currentGasPrice?<Text style={{ fontSize: 16, color: '#897EF8' }}>{Web3.utils.fromWei(String(Number(GasMap['mintWithSignature'])*Number(currentGasPrice)),'ether').slice(0,8)} ETH</Text>:<Text style={{ fontSize: 16, color: '#897EF8' }}>---</Text>}
                   </View>
                   : null
 
