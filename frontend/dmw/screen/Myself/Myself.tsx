@@ -256,10 +256,10 @@ const Myself = (props) => {
                 navigatetoDetail={(id,unique_id,contract_address,token_id,network) =>
                   { 
                     if(WalletInUse == 1 && !dmwWalletList[0]){
-                      Toast('请先登录钱包')
+                      Toast(t("请先登录钱包"))
                       return
                     }else if(WalletInUse == 2 && !currentWallet){
-                      Toast('请先登录钱包')
+                      Toast(t("请先登录钱包"))
                       return
                     }
                     props.navigation.navigate('goodsDetail', { id: id,unique_id,contract_address,token_id,network }) }}

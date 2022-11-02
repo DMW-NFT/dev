@@ -309,5 +309,6 @@
   "用户昵称":"User nickname",
   "请勾选用户协议":"Please tick the User Agreement",
   "购买":"Buy",
-  "设置":"Settings"
+  "设置":"Settings",
+  "请先登录钱包":"Please log in to the wallet first"
 }
