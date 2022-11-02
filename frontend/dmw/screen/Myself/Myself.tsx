@@ -92,6 +92,7 @@ const Myself = (props) => {
   useEffect(() => {
     setmyNftList([])
     if(typename == '我创建的'){
+      console.log('查看我创建的');
       getMyNft('/index/nft/get_my_create_nft_by_search', { keyword: '', })
     }else if(typename == '事件'){
       getMyNft('/index/nft/get_nft_activity', { keyword: '',})
@@ -253,7 +254,15 @@ const Myself = (props) => {
               renderItem={({ item }) => {
                 return <List list={item} type={4} 
                 navigatetoDetail={(id,unique_id,contract_address,token_id,network) =>
-                  { props.navigation.navigate('goodsDetail', { id: id,unique_id,contract_address,token_id,network }) }}
+                  { 
+                    if(WalletInUse == 1 && !dmwWalletList[0]){
+                      Toast('请先登录钱包')
+                      return
+                    }else if(WalletInUse == 2 && !currentWallet){
+                      Toast('请先登录钱包')
+                      return
+                    }
+                    props.navigation.navigate('goodsDetail', { id: id,unique_id,contract_address,token_id,network }) }}
                 />
               }}
               keyExtractor={(item, index) => item.id}

@@ -44,6 +44,7 @@ const GoodsDetail = (props) => {
     const [passwordlist, setpasswordlist] = useState([]);
     const [DmwlatestHash, setDmwLatestHash] = useState()
     const [createListType, setCreateListType] = useState('DMW')
+    const [Auctionorsale,setAuctionorsale] = useState(0)
     // Context 方法
     const { Toast, post, get, formData, shortenAddress } = useDmwApi()
     const { WalletInUse } = useDmwLogin()
@@ -205,7 +206,8 @@ const GoodsDetail = (props) => {
     }, [isApproved])
 
 
-    const buyClick = () => {
+    const buyClick = (type) => {
+        setAuctionorsale(type)
         if (isApproved) {
             setBuyNowVisible(true)
         } else {
@@ -245,9 +247,19 @@ const GoodsDetail = (props) => {
                 setModalvisible(false)
                 setBuyNowVisible(false)
                 if (currentWallet && WalletInUse == 2) {
-                    createListing(detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, Price, Price, '0')
+                    if(setAuctionorsale == 0){
+                        createListing(detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, Price, Price, '0')
+                    }else{
+                        createListing(detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, '0.001', '0.005', '1')
+                    }
+                  
                 } else if (dmwWalletList[0] && WalletInUse == 1) {
-                    dmwCreateListing(password, detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, Price, Price, '0')
+                    if(Auctionorsale == 0){
+                        dmwCreateListing(password, detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, Price, Price, '0')
+                    }else{
+                        dmwCreateListing(password, detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, Price, Price, '0')
+                    }
+                    
                 }
             } else {
                 if (currentWallet && WalletInUse == 2) {
@@ -305,14 +317,19 @@ const GoodsDetail = (props) => {
                             <>
                                 {
                                     NftNumber > 0 ?
-                                        <View style={[styles.flex, { paddingHorizontal: 20, }]}>
+                                        <View style={[styles.flex, { paddingHorizontal: 20,justifyContent:'space-between' }]}>
                                             <View style={[styles.faxingNum, styles.flex]}>
                                                 <Text style={[styles.faxingNumLeft]}>{t("剩余数量")}</Text>
                                                 <Text style={[styles.faxingNumRight]}>{NftNumber}</Text>
                                             </View>
-                                            <Text onPress={() => buyClick()} style={[styles.buyBtn, { backgroundColor: buyText ? '#897EF8' : '#CCC' }]}>
+                                          <View style={{flexDirection:'row'}}>
+                                          <Text onPress={() =>buyClick(1)} style={[styles.buyBtn,{marginRight:10,marginBottom:40}]}>
+                                                创建拍卖
+                                            </Text>
+                                          <Text onPress={() => buyClick(0)} style={[styles.buyBtn, { backgroundColor: buyText ? '#897EF8' : '#CCC',marginBottom:40 }]}>
                                                 {buyText}
                                             </Text>
+                                          </View>
                                         </View> : null
                                 }
                             </>
@@ -387,6 +404,13 @@ const GoodsDetail = (props) => {
                                         listing.map((item, index) => (
                                             <View key={index}>
                                                 <TouchableWithoutFeedback onPress={() => {
+                                                     if(WalletInUse == 1 && !dmwWalletList[0]){
+                                                        Toast('请先登录钱包')
+                                                        return
+                                                      }else if(WalletInUse == 2 && !currentWallet){
+                                                        Toast('请先登录钱包')
+                                                        return
+                                                      }
                                                     props.navigation.navigate('QuotationDetails', { id: item.order_no, likes: detailsObj.likes, imgUrl: imgurl, userAvatar: userInfo.userAvatar, shortenAddress: userInfo.shortenAddress });
                                                 }}>
                                                     <View style={[styles.offerBox,]}>
@@ -540,7 +564,7 @@ const GoodsDetail = (props) => {
                 <Card disabled={true} style={styles.CardBox}>
 
                     <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{t("购买")}</Text>
+                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{t("售卖")}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                         <Text>{t("价格")}：</Text>
@@ -571,8 +595,6 @@ const GoodsDetail = (props) => {
                                 <Image style={styles.addImg} source={require('../../assets/img/index/no-.png')}></Image>
                         }
 
-
-
                         <TextInput
                             caretHidden={true}
                             secureTextEntry={true}
@@ -593,15 +615,7 @@ const GoodsDetail = (props) => {
                         <TouchableWithoutFeedback onPress={() => { setBuyNumber(String(Number(BuyNumber) + 1)) }}>
                             <Image style={styles.addImg} source={require('../../assets/img/index/+.png')}></Image>
                         </TouchableWithoutFeedback>
-
                     </View>
-
-
-
-
-
-
-
 
                     <View style={{ flexDirection: 'row', marginTop: 30, justifyContent: 'space-between' }}>
                         <Text style={[styles.BuyBtnC, {}]} onPress={() => { setBuyNowVisible(false) }}>取消</Text>
@@ -741,9 +755,9 @@ const styles = StyleSheet.create({
         // paddingRight: 10
     },
     buyBtn: {
-        position: 'absolute', bottom: 0,
-        right: 20,
-        height: 40,
+        // position: 'absolute', bottom: 0,
+        // right: 20,
+        // height: 40,
         backgroundColor: '#897EF8',
         paddingLeft: 20,
         paddingRight: 20,

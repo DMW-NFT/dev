@@ -398,7 +398,7 @@ console.log(123);
           </View>
         </TouchableWithoutFeedback>
 
-        <TouchableWithoutFeedback>
+        {/* <TouchableWithoutFeedback>
           <View style={styles.ListService}>
             <Image
               style={styles.ListServiceImg}
@@ -406,7 +406,7 @@ console.log(123);
             ></Image>
             <Text>{t("记录")}</Text>
           </View>
-        </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback> */}
       </View>
 
       {/* tab栏 -- start */}

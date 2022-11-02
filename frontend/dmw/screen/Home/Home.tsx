@@ -259,16 +259,19 @@ const Home = (props) => {
           <View style={styles.line}></View>
           {/* line -- end */}
         </View>
-        <View style={[styles.listbox]}>
+       
+      </View>
+      <View style={[styles.listbox]}>
           {/* onTouchStart={() => {onEnableScroll(false);}}
                                     onMomentumScrollEnd={() => {onEnableScroll(true);}} */}
 
           {
             !loading ? <FlatList
+            showsVerticalScrollIndicator={false}
               refreshing={refreshing}
-              style={{ height: '55%' }}
+              style={{ flex:1 }}
               ListEmptyComponent={() => {
-                return <Text style={{ textAlign: 'center', marginTop: '50%' }}>{t("空空如也")}</Text>
+                return <Text style={{ textAlign: 'center', flex:1 }}>{t("空空如也")}</Text>
                 // 列表为空展示改组件
               }}
               // 一屏幕展示几个
@@ -297,7 +300,6 @@ const Home = (props) => {
 
 
         </View>
-      </View>
 
 
       {currentWallet && <Modal
@@ -362,9 +364,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   listbox: {
-    marginVertical: 20,
-    marginHorizontal: 20,
-    paddingBottom: 100
+    padding:20,
+    paddingBottom:0,
+    // marginVertical: 20,
+    // marginHorizontal: 20,
+    // paddingBottom: 100,
+    flex:1
   },
   index_box: {
     paddingLeft: 20,

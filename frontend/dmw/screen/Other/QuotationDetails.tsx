@@ -41,7 +41,7 @@ const QuotationDetails = (props) => {
     const [AvailableBalance, setAvailableBalance] = useState(0)//报价金额
     // Context 方法
     const { Toast, post, get, formData, shortenAddress, } = useDmwApi()
-    const { buyNFT, currentWallet, transactionMap, transactionList, connectWallet, getErc20Allowance, erc20Approve, makeOffer } = useDmwWeb3()
+    const { buyNFT, currentWallet, transactionMap, transactionList, connectWallet, getErc20Allowance, erc20Approve, makeOffer,createListing } = useDmwWeb3()
     const { dmwBuyNFT } = useDmwWallet()
     const { WalletInUse, dmwWalletList } = useDmwLogin
 

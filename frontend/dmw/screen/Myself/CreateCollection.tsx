@@ -169,7 +169,7 @@ const TransferredIntoCollection = (props) => {
             network: 'goerli'
           }
 
-          fetch('http://192.168.31.6:6666/getSignature', {
+          fetch('http://13.214.32.151:6666/getSignature', {
             method: "POST",
             body: JSON.stringify({
               metadataUri: res[0].path,
