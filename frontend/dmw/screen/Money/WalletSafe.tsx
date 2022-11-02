@@ -31,7 +31,7 @@ const WalletSafe = (props) => {
         <View>
           <Text style={[styles.topInfo]}>{t("保护您的钱包安全")}</Text>
           <Text style={[styles.topInfo1]}>
-          {t("保护您的钱包安全")}  <Text style={[styles.textcolor]}>{t("助记词")}</Text>
+          {t("保护您的钱包安全")} , 
             {t("保护好您的钱包助记词。下一个界面将显示助记词，助记词是您钱包的唯一密钥。如果您的手机丢失或被盗，它将允许您恢复对您钱包的访问。")}
             
             <Text style={[styles.textcolor]}>{t("它为什么重要？")}</Text>

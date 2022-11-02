@@ -84,7 +84,7 @@ const QuotationDetails = (props) => {
                         dmwBuyNFT(password, String(orderList.listing_id), Number(BuyNumber), orderList.currency, String(UnitPrice.UnitPrice * Number(BuyNumber)))
                     } catch (err) {
                     }
-                } else {
+                } else {                                                                                                                                        
                     // 第三方钱包购买
                     try {
                         new buyNFT(

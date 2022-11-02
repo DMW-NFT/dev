@@ -79,7 +79,7 @@ const DmwWeb3Provider = ({ children }) => {
         if ("USDT" == token) {
             transferERC20(to, amount)
         }
-        if ("nativeToken" == token) {
+        if ("ETH" == token) {
             tranferNative(to, amount)
         }
     }

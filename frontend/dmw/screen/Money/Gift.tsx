@@ -48,6 +48,8 @@ console.log(props.route.params,'传参');
             Toast('请输入数量')
             return
         }
+        console.log(String(TokenType),String(Blockchainval),String(number));
+        
         transferToken(String(TokenType),String(Blockchainval),String(number))
         setTimeout(() => {
             setnumber('') 

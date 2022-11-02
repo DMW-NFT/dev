@@ -62,6 +62,7 @@ const SellOrder = (props) => {
     const getListbuy = (page) => {
         post('/index/order/get_my_buy_order', formData({ type: 0, page: page, limit: 4 })).then(res => {
             console.log(res.data.data, '售卖-购买列表');
+            setConList(res.data.data)
             setConListTotal(res.data.total)
         })
     }

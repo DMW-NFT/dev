@@ -289,5 +289,19 @@
   "断开链接": " Disconnect the link",
   "复制成功": " Copy successfully",
   "登录成功": " Login successful",
-  "连接第三方钱包": " Connect a third-party wallet"
+  "连接第三方钱包": " Connect a third-party wallet",
+  "没有更多了":"No more",
+  "空空如也":"There is nothing",
+  "转入藏品":"Transfer to the collection",
+  "您的ERC721或ERC1155合同在mainnet网络上的地址是什么":"What is your Token Contract address of ERC721 or ERC1155 tokens",
+  "确定":"OK",
+  "删除":"Delet",
+  "交易进行中":"Trading in ",
+  "交易取消":"cancelled",
+  "用户取消":"User cancelled",
+  "删除成功":"Delet successful",
+  "结束拍卖":"Complete",
+  "取消拍卖":"Cancel",
+  "记录":"Record"
+  
 }
