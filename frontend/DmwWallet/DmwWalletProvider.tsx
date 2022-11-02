@@ -427,12 +427,6 @@ const DmwWalletProvider = ({ children }) => {
         dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
     }
 
-    
-
-    useEffect(() => {
-        web3.eth.setProvider(getProvider(dmwChainId));
-        console.log("currenChainId: ", dmwChainId)
-    }, [dmwChainId])
 
     useEffect(() => {
         AsyncStorage.getItem('@dmw_wallet_list_storage').then((WalletList_encoded) => {
@@ -470,7 +464,6 @@ const DmwWalletProvider = ({ children }) => {
 
     useEffect(() => {
         web3.eth.setProvider(getProvider(dmwChainId));
-        web3.eth.getBlockNumber().then((res => console.log(res)))
     }, [dmwChainId, currentDmwWallet])
 
     useEffect(() => {

@@ -6,6 +6,7 @@ import getProvider from '../../frontend/constans/rpcProvicer'
 import NFT1155ABI from '../../frontend/contract/NFT1155.json'
 import NFT721ABI from '../../frontend/contract/NFT721.json'
 import marketplaceABI from '../../frontend/contract/MARKETPLACE.json'
+import txGasMap from '../constans/txGasMap.json'
 import ERC20ABI from '../contract/ERC20.json'
 import { BigNumber } from 'ethers';
 
@@ -21,6 +22,8 @@ const DmwWeb3Provider = ({ children }) => {
     const [lastConnected, setLastConnected] = useState(true)
     const [transactionMap, setTransactionMap] = useState({})
     const [transactionList, setTransactionList] = useState([])
+    const [currentGasPrice,setCurrentGasPrice] = useState('')
+    const GasMap = txGasMap
     const web3 = new Web3()
 
 
@@ -38,6 +41,24 @@ const DmwWeb3Provider = ({ children }) => {
     useEffect(() => {
         (connected && currentChainId) ? web3.eth.setProvider(getProvider(currentChainId)) : null
     }, [currentChainId, connected])
+
+
+    useEffect(() =>{
+        // console.log("getting gas price init")
+        web3.eth.setProvider(getProvider(currentChainId));
+        web3.eth.getGasPrice().then((gasPrice)=>{
+            // console.log(`chain:${currentChainId} current gas price==>${gasPrice}`)
+            setCurrentGasPrice(gasPrice)
+
+        })
+        setInterval(()=>{
+            web3.eth.getGasPrice().then((gasPrice)=>{
+                // console.log(`chain:${currentChainId} current gas price==>${gasPrice}`)
+                setCurrentGasPrice(gasPrice)
+
+            })
+        },15000)
+    },[])
 
 
     // useEffect(() => {
@@ -627,7 +648,7 @@ const DmwWeb3Provider = ({ children }) => {
 
 
     return (
-        <DmwWeb3Context.Provider value={{ makeOffer,transferToken, getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing, getErc20Allowance,erc20Approve,transfer721NFT,transfer1155NFT }}>
+        <DmwWeb3Context.Provider value={{ makeOffer,transferToken, getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing, getErc20Allowance,erc20Approve,transfer721NFT,transfer1155NFT,GasMap,currentGasPrice }}>
             {children}
         </DmwWeb3Context.Provider>
     )

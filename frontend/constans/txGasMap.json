@@ -1,0 +1,15 @@
+{
+    "mintWithSignature":230500,
+    "mintTo":158109,
+    "safeTransferFrom":64933,
+    "createListing":340074,
+    "buy":132302,
+    "offer":202304,
+    "closeAuction":104170,
+    "acceptOffer":207146,
+    "cancelDirectListing":65545,
+    "transferErc20":65476,
+    "transferNative":21000,
+    "setApprovalForAllNFT":51182,
+    "approveErc20":34129
+}
