@@ -112,7 +112,7 @@ const Lmodal = (props) => {
           </View>
           <Text style={styles.title}>{t("更多功能")}</Text>
           <View>
-            <TouchableWithoutFeedback
+            {/* <TouchableWithoutFeedback
               onPress={() => cilck("TransferredIntoCollection")}
             >
               {
@@ -131,7 +131,7 @@ const Lmodal = (props) => {
                   />
                 </View>
               }
-            </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback> */}
 
             <TouchableWithoutFeedback onPress={() => cilck("MessageCenter")}>
               {
