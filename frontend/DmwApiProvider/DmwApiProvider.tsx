@@ -7,7 +7,7 @@ import storage from "../dmw/Storage/storage";
 import { useTranslation } from 'react-i18next'
 const DmwApiProvider = ({ children }) => {
   const { t, i18n } = useTranslation();
-  const [BaseUrl, setBaseUrl] = useState("http://192.168.1.109");
+  const [BaseUrl, setBaseUrl] = useState("http://18.142.150.253");
   const { logOut, language, setlanguage } = useDmwLogin();
   const [show, setShow] = useState(false);
   const [time, setTime] = useState(2000);
