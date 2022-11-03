@@ -272,16 +272,13 @@ const LoginDMW = (props) => {
 
 
 
-        {local.name == "中文" ? <Text>
+         <Text>
           <Text style={[styles.textinfo]}>{t("我已阅读并同意")}</Text>
-          <Text style={[styles.text]}>{t("《用户协议》")}</Text>
+          <Text style={[styles.text]} onPress={()=>{props.navigation.navigate(language == 'en' ? 'yhen' : language == 'zh' ?"yhzh" : 'yhjp')}}>{t("《用户协议》")}</Text>
           <Text style={[styles.textinfo]}>{t("及")}</Text>
-          <Text style={[styles.text]}>{t("《隐私政策》")}</Text>
+          <Text style={[styles.text]} onPress={()=>{props.navigation.navigate(language == 'en' ? 'stren' : language == 'zh' ?"str" : 'strjp')}}>{t("《隐私政策》")}</Text>
          {/* <Text> {t("我已阅读并同意《用户协议》及《隐私政策》")}</Text> */}
-        </Text> : <>
-          <Text style={[styles.text]}>利用規約とプライバシーポリシーに同意する</Text>
-        </>
-        }
+        </Text> 
 
 
       </View>

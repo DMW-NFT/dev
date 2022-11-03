@@ -15,7 +15,7 @@ const TermsOfService = (props) => {
         <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
             <ScrollView>
             <Text style={{padding:20}}>
-                用户协议
+                <Text style={{textAlign:'center'}}>用户协议</Text>
                 上次更新日期：2022年 09月27日
                 导言：欢迎您与“DMW”共同签署《DMW软件许可与用户服务协议》（以下统称“本协议”）并使用 本协议软件（以下统称“本软件”）及服务（以下统称“本服务”）！
 

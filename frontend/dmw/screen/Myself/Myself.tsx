@@ -50,14 +50,15 @@ const Myself = (props) => {
   const { t, i18n } = useTranslation();
   const [typename, setTypename] = useState("我的藏品");
   const [visible, setVisible] = useState(false);
-  const [strText, setStrText] = useState();
+  const [strText, setStrText] = useState('');
   const [lMvisible, setlMvisible] = useState(false);
   const [userInfo, setUserInfo] = useState({});
   const { username, setUsername } = useDmwLogin();
   const { avatarUrl, setAvatarUrl,WalletInUse } = useDmwLogin();
   const [loading, setLoding] = useState(false)
   const [myNftList, setmyNftList] = useState([])
-
+  const [screenData,setScreenData] = useState([])
+  const [determinelist,setdetermine] = useState({})
   // Context方法
   const { logOut } = useDmwLogin();
   const { post, formData , Toast ,Copy} = useDmwApi();
@@ -72,11 +73,17 @@ const Myself = (props) => {
     setlMvisible(false);
     setVisible(false);
   };
+  const Fndetermine = (determine) => {
+    console.log(determine);
+    close()
+    setdetermine(determine)
+    setTypename(typename)
+  }
 
   useEffect(() => {
     post("/index/user/get_user_msg").then((res) => {
       console.log(res, "用户信息");
-      if (res.code == 200) {
+      if (res.code == 200) {  
         setUserInfo(res.data);
         console.log(userInfo, "用户信息打印");
         setUsername(res.data.nickname);
@@ -85,23 +92,26 @@ const Myself = (props) => {
       }
     });
 
-   
-
+    post("/index/common/get_filter",formData({type:"nft"})).then(res=>{
+      console.log(res.data,'筛选');
+      setScreenData(res.data)
+    })
+  
   }, []);
 
   useEffect(() => {
     setmyNftList([])
     if(typename == '我创建的'){
       console.log('查看我创建的');
-      getMyNft('/index/nft/get_my_create_nft_by_search', { keyword: '', })
+      getMyNft('/index/nft/get_my_create_nft_by_search', { keyword: strText,...determinelist })
     }else if(typename == '事件'){
-      getMyNft('/index/nft/get_nft_activity', { keyword: '',})
+      getMyNft('/index/nft/get_nft_activity', { keyword: strText,...determinelist})
     }else if(typename=='我喜欢的'){
-      getMyNft('/index/nft/get_my_likes_nft_by_search', { keyword: '', })
+      getMyNft('/index/nft/get_my_likes_nft_by_search', { keyword: strText,...determinelist })
     }else if(typename=='我的藏品'){
-      getMyNft('/index/nft/get_my_nft', { network: 'Goerli' })
+      getMyNft(determinelist == {}? '/index/nft/get_my_nft_by_search' : '/index/nft/get_my_nft', { keyword: strText,network: 'Goerli',...determinelist })
     }
-  }, [typename])
+  }, [typename,determinelist,strText])
 
 
   useEffect(() => {
@@ -109,6 +119,8 @@ const Myself = (props) => {
   }, [myNftList])
 
   const getMyNft = (posturl:string, data) => {
+    console.log(data,'请求参数');
+    
     let params = {}
     if(data){
       params = formData(data)
@@ -118,9 +130,21 @@ const Myself = (props) => {
     console.log(posturl,'url,yemian');
     
     post(posturl, params).then(res => {
-      console.log(res, '回调----------');
+      console.log(res.data.result[0], '回调----------');
       if(res.code == 200){
-        setmyNftList(res.data.result)
+        let arr = res.data.result
+        let strarr = []
+        arr.map((item,index)=>{
+        if((item.nft_name.indexOf(strText) > -1) && strText){
+          console.log(item.nft_name.indexOf(strText));
+          strarr.push(item)
+        }else if(!strText){
+          strarr = res.data.result
+        }
+        })
+        console.log(strarr);
+        
+        setmyNftList(strarr)
         setLoding(false)
       }else{
         Toast(res.message)
@@ -131,6 +155,8 @@ const Myself = (props) => {
       console.log(err,'----');
     })
   }
+
+
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
@@ -227,7 +253,8 @@ const Myself = (props) => {
           style={[styles.Screen]}
           visible={visible}
           close={() => close()}
-          datalist={data}
+          datalist={screenData}
+          determineFn={(determine) => Fndetermine(determine)}
         ></Screen> : null
         }
 
@@ -251,8 +278,8 @@ const Myself = (props) => {
               //  2列显示
               numColumns={2}
               data={myNftList}
-              renderItem={({ item }) => {
-                return <List list={item} type={4} 
+              renderItem={({item,index }) => {
+                return <List key={index} list={item} type={4} 
                 navigatetoDetail={(id,unique_id,contract_address,token_id,network) =>
                   { 
                     if(WalletInUse == 1 && !dmwWalletList[0]){
@@ -265,7 +292,7 @@ const Myself = (props) => {
                     props.navigation.navigate('goodsDetail', { id: id,unique_id,contract_address,token_id,network }) }}
                 />
               }}
-              keyExtractor={(item, index) => item.id}
+              keyExtractor={(item, index) => index}
               ListFooterComponent={() => {
                 // 声明尾部组件
                 return myNftList && myNftList.length ? <Text style={{ textAlign: 'center' }} >没有更多了</Text> : null
