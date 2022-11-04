@@ -91,7 +91,6 @@ console.log(props.route.params,'传参');
                                 <TextInput
                                     textAlignVertical="top"
                                     placeholder='输入数量'
-                                    keyboardType="decimal"
                                     style={[styles.textarea,{flex:1,marginTop:10}]}
                                     onChangeText={e => { setnumber(Number(e)) }}
                                     value={number}
@@ -113,7 +112,6 @@ console.log(props.route.params,'传参');
                 textAlignVertical="top"
                 numberOfLines={5}
                 placeholder='输入地址'
-                keyboardType="decimal"
                 style={[styles.textarea]}
                 onChangeText={e => {setBlockchainval(e)}}
                 value={Blockchainval}
