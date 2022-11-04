@@ -18,11 +18,20 @@ import Gift from "../screen/Money/Gift"; // 发送
 import ViewMnemonics from "../screen/Money/ViewMnemonics"; // 助记词
 import RedemptionSettings from "../screen/Money/RedemptionSettings"; // 发送
 import TermsOfService from "../screen/Money/TermsOfService"; // 发送
+import Privatekeyimport from "../screen/Money/Privatekeyimport"; // 发送
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
+import { useDmwWallet } from "../../DmwWallet/DmwWalletProvider";
+
 const Stack = createStackNavigator();
 const Home = (props) => {
   const { MoneyRouteState, setMoneyRouteState } = useDmwApi();
-
+  const {dmwWalletList} = useDmwWallet()
+  useEffect(()=>{
+console.log(MoneyRouteState,dmwWalletList,'----------------');
+if(dmwWalletList && dmwWalletList.length){
+  setMoneyRouteState('456')
+}
+  },[MoneyRouteState,dmwWalletList])
   return (
     <Stack.Navigator
       initialRouteName={"createMoney"}
@@ -50,6 +59,16 @@ const Home = (props) => {
           title: "从助记词导入",
         }}
       ></Stack.Screen>
+
+<Stack.Screen
+        component={Privatekeyimport}
+        name="Privatekeyimport"
+        options={{
+          title: "",
+        }}
+      ></Stack.Screen>
+
+
       <Stack.Screen
         component={CreateWord}
         name="createWord"

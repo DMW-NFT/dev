@@ -29,8 +29,6 @@ const CreateMoney = (props) => {
     connectWallet()
   };
   useEffect(()=>{
- 
-
     if(connected){
           setMoneyRouteState("money");
         }else{

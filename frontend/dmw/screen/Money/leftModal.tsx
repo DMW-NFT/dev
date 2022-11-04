@@ -88,7 +88,7 @@ const {WalletInUse} = useDmwLogin()
           </TouchableWithoutFeedback>
 
 
-          <TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => cilck('importWord')}>
             <View style={styles.listBox}>
               <Image
                 style={styles.Limg}
@@ -122,7 +122,7 @@ const {WalletInUse} = useDmwLogin()
           </TouchableWithoutFeedback>
 
 
-          <TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => cilck('Privatekeyimport')}>
             <View style={styles.listBox}>
               <Image
                 style={styles.Limg}

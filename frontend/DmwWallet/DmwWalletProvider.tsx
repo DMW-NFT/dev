@@ -64,7 +64,7 @@ const DmwWalletProvider = ({ children }) => {
 
     }
     // 导入新的助记忆词，需要传入用户的支付密码，助记词将会用AES加密后储存到AsyncStorage的@dmw_mnemonic_storage中。
-    const addMnemonic = async (secretKey, mnemonic,reset = false) => {
+    const addMnemonic = async (secretKey, mnemonic,reset = true) => {
 
         // const wallet = web3.eth.accounts.create()
         // console.log(wallet.privateKey)
@@ -116,9 +116,16 @@ const DmwWalletProvider = ({ children }) => {
 
     // 从助记词中恢复或创建钱包地址，wallet_index 为钱包的序号，每次新增或者向后恢复wallet_index需要自增1
     const loadWalletFromMnemonic = (mnemonic, wallet_index = 0) => {
+        console.log(mnemonic);
+        
         let wallet_hdpath = "m/44'/60'/0'/0/";
-        const hdwallet = ethers.utils.HDNode.fromMnemonic(mnemonic)
-        return hdwallet.derivePath(wallet_hdpath + wallet_index)
+        try{
+            const hdwallet = ethers.utils.HDNode.fromMnemonic(mnemonic)
+            return hdwallet.derivePath(wallet_hdpath + wallet_index)
+        }catch(e){
+            return null
+        }
+       
     }
 
     // 向本地存储中添加新的钱包私钥。
@@ -140,11 +147,11 @@ const DmwWalletProvider = ({ children }) => {
                     secretKey
                 ).toString();
                 currentWalletList.walletDict = ciphertext;
+                setDmwWalletList(currentWalletList.walletIndex)
                 await AsyncStorage.setItem('@dmw_wallet_list_storage', JSON.stringify(currentWalletList)).then(() => {
-                    getWalletListFromAccountStorage(secretKey).then((wallet) => {
-                        setDmwWalletList(wallet.walletIndex)
-                    })
                 })
+
+
 
             } catch (e) {
                 console.log("error on add wallet to storage", e)
