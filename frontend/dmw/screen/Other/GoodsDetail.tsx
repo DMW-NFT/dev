@@ -6,10 +6,12 @@ import List from '../../Components/List'
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider'
 import { Spinner } from '@ui-kitten/components';
 import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider'
-import { Card, Modal, Datepicker, Icon } from '@ui-kitten/components';
+import { Card, Modal, Datepicker, Drawer, DrawerGroup, DrawerItem } from '@ui-kitten/components';
 import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider'
 import { useDmwWallet } from '../../../DmwWallet/DmwWalletProvider'
 import { useTranslation } from 'react-i18next'
+import { ListItem, Avatar, Icon, Overlay, Button } from '@rneui/themed'
+
 const GoodsDetail = (props) => {
     const { t, i18n } = useTranslation();
     const inputRefX = useRef(null);
@@ -44,7 +46,9 @@ const GoodsDetail = (props) => {
     const [passwordlist, setpasswordlist] = useState([]);
     const [DmwlatestHash, setDmwLatestHash] = useState()
     const [createListType, setCreateListType] = useState('DMW')
-    const [Auctionorsale,setAuctionorsale] = useState(0)
+    const [Auctionorsale, setAuctionorsale] = useState(0)
+    const [showOwnerList, setShowOwnerlist] = useState(false)
+
     // Context 方法
     const { Toast, post, get, formData, shortenAddress } = useDmwApi()
     const { WalletInUse } = useDmwLogin()
@@ -217,7 +221,7 @@ const GoodsDetail = (props) => {
     }
 
     const ConfirmSales = () => {
-            openPassWordModal('DMW')
+        openPassWordModal('DMW')
     }
     const empty = () => {
         setpassword('')
@@ -243,23 +247,23 @@ const GoodsDetail = (props) => {
         console.log(password.length);
         if (password.length == 6) {
             if (isApproved) {
-                let sTime = Math.round(new Date().getTime() / 1000 +60).toString()
+                let sTime = Math.round(new Date().getTime() / 1000 + 60).toString()
                 setModalvisible(false)
                 setBuyNowVisible(false)
                 if (currentWallet && WalletInUse == 2) {
-                    if(setAuctionorsale == 0){
+                    if (setAuctionorsale == 0) {
                         createListing(detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, Price, Price, '0')
-                    }else{
+                    } else {
                         createListing(detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, '0.001', '0.005', '1')
                     }
-                  
+
                 } else if (dmwWalletList[0] && WalletInUse == 1) {
-                    if(Auctionorsale == 0){
+                    if (Auctionorsale == 0) {
                         dmwCreateListing(password, detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, Price, Price, '0')
-                    }else{
+                    } else {
                         dmwCreateListing(password, detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, Price, Price, '0')
                     }
-                    
+
                 }
             } else {
                 if (currentWallet && WalletInUse == 2) {
@@ -317,19 +321,19 @@ const GoodsDetail = (props) => {
                             <>
                                 {
                                     NftNumber > 0 ?
-                                        <View style={[styles.flex, { paddingHorizontal: 20,justifyContent:'space-between' }]}>
+                                        <View style={[styles.flex, { paddingHorizontal: 20, justifyContent: 'space-between' }]}>
                                             <View style={[styles.faxingNum, styles.flex]}>
                                                 <Text style={[styles.faxingNumLeft]}>{t("剩余数量")}</Text>
                                                 <Text style={[styles.faxingNumRight]}>{NftNumber}</Text>
                                             </View>
-                                          <View style={{flexDirection:'row'}}>
-                                          <Text onPress={() =>buyClick(1)} style={[styles.buyBtn,{marginRight:10,marginBottom:40}]}>
-                                                创建拍卖
-                                            </Text>
-                                          <Text onPress={() => buyClick(0)} style={[styles.buyBtn, { backgroundColor: buyText ? '#897EF8' : '#CCC',marginBottom:40 }]}>
-                                                {buyText}
-                                            </Text>
-                                          </View>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <Text onPress={() => buyClick(1)} style={[styles.buyBtn, { marginRight: 10, marginBottom: 40 }]}>
+                                                    {t("拍卖")}
+                                                </Text>
+                                                <Text onPress={() => buyClick(0)} style={[styles.buyBtn, { backgroundColor: buyText ? '#897EF8' : '#CCC', marginBottom: 40 }]}>
+                                                    {buyText}
+                                                </Text>
+                                            </View>
                                         </View> : null
                                 }
                             </>
@@ -337,39 +341,53 @@ const GoodsDetail = (props) => {
 
                         }
 
+
+
+
+
+
                         {/* 创建者 拥有者 */}
-                        <View style={[styles.createAndByuer]}>
+
+
+
+                        <View style={[styles.createAndByuer, { paddingBottom: 0 }]}>
                             <View style={[styles.flex]}>
                                 <Image source={{ uri: userInfo.userAvatar }} style={[styles.createAndByuerImage]}></Image>
                                 <Text style={[styles.createAndByuerName]}>{userInfo.shortenAddress}</Text>
                                 <Text style={[styles.FromOrByuer]}>From</Text>
                             </View>
-                            {
-                                ownersArr.map((item, index) => (
-                                    <View key={index} style={[styles.flex, { marginTop: 10 }]}>
-                                        <Image source={{ uri: item.avatar }} style={[styles.createAndByuerImage]}></Image>
-                                        <Text style={[styles.createAndByuerName]}>{item.wallet_address}</Text>
-                                        <Text style={[styles.FromOrByuer]}>Buyer</Text>
-                                    </View>
-                                ))
+                            <View style={[styles.flex, { justifyContent: "space-between", paddingTop: 10, paddingLeft: 30, paddingRight: 0 }]}>
+                                <View style={{ flexDirection: "row" }}>
+                                    <Text style={[styles.createAndByuerName]}>Owners:</Text>
+                                    <Text >{ownersArr.length}</Text>
+                                </View>
+                                <Text style={[styles.FromOrByuer, { paddingHorizontal: 10, paddingVertical: 0 }]} onPress={() => { setShowOwnerlist(true) }}  >All</Text>
 
-                            }
+                            </View>
+
 
                         </View>
-                        {/* 链上信息 */}
-                        <View style={[styles.linechainBoxOrther]}>
-                            <TouchableWithoutFeedback onPress={() => { setshowChain(!showChain) }}>
-                                <View style={[styles.flexJBC]} >
-                                    <Text style={[styles.linechainBoxOrtherName]}>
-                                        {t("链上信息")}
-                                    </Text>
-                                    <FontAwesomeIcon icon={showChain ? faAngleDown : faAngleRight} color='#707070' size={20} />
-                                </View>
-                            </TouchableWithoutFeedback>
-                            {
-                                showChain ?
+
+
+
+
+                        <View>
+                            <ListItem.Accordion
+                                content={
+                                    <>
+                                        <ListItem.Content>
+                                            <ListItem.Title>{t("链上信息")}</ListItem.Title>
+                                        </ListItem.Content>
+                                    </>
+                                }
+                                isExpanded={showChain}
+                                onPress={() => {
+                                    setshowChain(!showChain);
+                                }}
+                            >
+                                <View style={[styles.linechainBoxOrther]} >
                                     <View>
-                                        <View style={[styles.flexJBC, { marginBottom: 15, marginTop: 20 }]}>
+                                        <View style={[styles.flexJBC, { marginBottom: 15, }]}>
                                             <Text style={[styles.chainLeft]}>{t("合约地址")}</Text>
                                             <Text style={[styles.chainRight, { color: " #897EF8" }]}>{detailsObj.contract_address}</Text>
                                         </View>
@@ -385,39 +403,43 @@ const GoodsDetail = (props) => {
                                             <Text style={[styles.chainLeft]}>{t("区块链")}</Text>
                                             <Text style={[styles.chainRight, { color: " #897EF8" }]}>{detailsObj.network}</Text>
                                         </View>
-                                    </View> : <Text></Text>
-                            }
-                        </View>
-
-                        <View style={[styles.linechainBoxOrther,]}>
-                            <TouchableWithoutFeedback onPress={() => { setshowoffer(!showoffer) }}>
-                                <View style={[styles.flexJBC]} >
-                                    <Text style={[styles.linechainBoxOrtherName]}>
-                                        {t("挂单列表")}
-                                    </Text>
-                                    <FontAwesomeIcon icon={showoffer ? faAngleDown : faAngleRight} color='#707070' size={20} />
+                                    </View>
                                 </View>
-                            </TouchableWithoutFeedback>
-                            {
-                                showoffer ?
-                                    (
+                            </ListItem.Accordion>
+
+                            <ListItem.Accordion
+                                content={
+
+                                    <ListItem.Content>
+                                        <ListItem.Title>{t("挂单列表")}</ListItem.Title>
+                                    </ListItem.Content>
+
+                                }
+                                isExpanded={showoffer}
+                                onPress={() => {
+                                    setshowoffer(!showoffer);
+                                }}
+                            >
+                                <View style={[styles.linechainBoxOrther,]} >
+                                    {
+
                                         listing.map((item, index) => (
-                                            <View key={index}>
+                                            <View key={index} style={index != listing.length - 1 ? { borderBottomWidth: 1, borderColor: '#ccc' } : null}>
                                                 <TouchableWithoutFeedback onPress={() => {
-                                                     if(WalletInUse == 1 && !dmwWalletList[0]){
+                                                    if (WalletInUse == 1 && !dmwWalletList[0]) {
                                                         Toast(t("请先登录钱包"))
                                                         return
-                                                      }else if(WalletInUse == 2 && !currentWallet){
+                                                    } else if (WalletInUse == 2 && !currentWallet) {
                                                         Toast(t("请先登录钱包"))
                                                         return
-                                                      }
+                                                    }
                                                     props.navigation.navigate('QuotationDetails', { id: item.order_no, likes: detailsObj.likes, imgUrl: imgurl, userAvatar: userInfo.userAvatar, shortenAddress: userInfo.shortenAddress });
                                                 }}>
                                                     <View style={[styles.offerBox,]}>
-                                                        <View style={[styles.flexJBC]}>
+                                                        <View style={[styles.flexJBC, index != 0 ? { paddingTop: 20 } : null]}>
                                                             <View>
                                                                 <Text style={{ fontSize: 14, color: "#333", fontWeight: 'bold', marginBottom: 9 }}>{item.wallet_address.slice(2, 7)}</Text>
-                                                                <Text style={{ fontSize: 12, color: "#999" }}>-less</Text>
+                                                                {/* <Text style={{ fontSize: 12, color: "#999" }}>-less</Text> */}
                                                             </View>
                                                             <View>
                                                                 <View style={[styles.flex, { marginBottom: 9 }]}>
@@ -444,97 +466,108 @@ const GoodsDetail = (props) => {
                                                     </View>
                                                 </View>
                                             </View>
-                                        ))
-                                    ) : <Text></Text>
-                            }
-                        </View>
-
-                        {/* 交易历史 */}
-                        <View style={[styles.linechainBoxOrther,]}>
-                            <TouchableWithoutFeedback onPress={() => { setshowhistory(!showhistory) }}>
-                                <View style={[styles.flexJBC]} >
-                                    <Text style={[styles.linechainBoxOrtherName]}>
-                                        {t("交易历史")}
-                                    </Text>
-                                    <FontAwesomeIcon icon={showhistory ? faAngleDown : faAngleRight} color='#707070' size={20} />
-                                </View>
-                            </TouchableWithoutFeedback>
-                            {
-                                showhistory ?
-
-                                    (
-                                        history.map((item, index) => (
-
-                                            <View key={index}>
-                                                <View style={[styles.offerBox,]}>
-                                                    <View style={[styles.flexJBC]}>
-                                                        <View>
-                                                            <Text style={{ fontSize: 14, color: "#333", fontWeight: 'bold', marginBottom: 9 }}>Sale</Text>
-                                                            <Text style={{ fontSize: 12, color: "#999" }}>-less</Text>
-                                                        </View>
-                                                        <View>
-                                                            <View style={[styles.flex, { marginBottom: 9 }]}>
-                                                                <Image style={{ width: 15, height: 15 }} source={require('../../assets/img/money/offer.png')}></Image>
-                                                                <Text style={{ fontSize: 14, color: "#333" }}>{item.total_offer_amount.number + item.total_offer_amount}</Text>
-                                                            </View>
-                                                            {/* <Text style={{ fontSize: 12, color: "#999" }}>$455.32</Text> */}
-                                                        </View>
-                                                    </View>
-                                                </View>
-                                                <View style={[styles.offerBox, styles.flexJBC,]}>
-                                                    <View >
-                                                        <Text style={[styles.moreTop]}>Quantity</Text>
-                                                        <Text style={[styles.moreBottom]}>{item.quantity_wanted}</Text>
-                                                    </View>
-                                                    <View >
-                                                        <Text style={[styles.moreTop]}>From</Text>
-                                                        <Text style={[styles.moreBottom]}>{item.address.slice(2, 7)}</Text>
-                                                    </View>
-                                                    <View>
-                                                        <Text style={[styles.moreTop]}>To</Text>
-                                                        <Text style={[styles.moreBottom]}>{item.offeror.slice(2, 7)}</Text>
-                                                    </View>
-                                                </View>
-
-                                            </View>
-
-                                        ))
-
-                                    )
-                                    : <Text></Text>
-                            }
-                        </View>
-                        {/* 合集 */}
-                        {
-                            detailsObj.create_way == 1 ?
-                                <View style={[styles.linechainBoxOrther]}>
-                                    <TouchableWithoutFeedback onPress={() => { setshowcollection(!showcollection) }}>
-                                        <View style={[styles.flexJBC]} >
-                                            <Text style={[styles.linechainBoxOrtherName]}>
-                                            {t("本合集内容")}
-                                            </Text>
-                                            <FontAwesomeIcon icon={showcollection ? faAngleDown : faAngleRight} color='#707070' size={20} />
-                                        </View>
-                                    </TouchableWithoutFeedback>
-                                    {
-                                        showcollection ?
-                                            <View style={[styles.flex, { marginVertical: 20 }]}>
-                                                <Image source={{ uri: detailsObj.collection.logo_url }} style={[styles.collectionImage]}></Image>
-                                                <Text style={[styles.createAndByuerName, { marginLeft: 15 }]}>{detailsObj.collection.name}</Text>
-                                            </View> : <Text></Text>
+                                        )
+                                        )
                                     }
-                                </View> : null
-                        }
+                                </View>
+                            </ListItem.Accordion>
+
+                            <ListItem.Accordion
+                                content={
+
+                                    <ListItem.Content>
+                                        <ListItem.Title>{t("交易历史")}</ListItem.Title>
+                                    </ListItem.Content>
+
+                                }
+                                isExpanded={showhistory}
+                                onPress={() => {
+                                    setshowhistory(!showhistory);
+                                }}
+                            >
+                                {
+                                    showhistory ?
+
+                                        (
+                                            history.map((item, index) => (
+
+                                                <View key={index}>
+                                                    <View style={[styles.offerBox,]}>
+                                                        <View style={[styles.flexJBC]}>
+                                                            <View>
+                                                                <Text style={{ fontSize: 14, color: "#333", fontWeight: 'bold', marginBottom: 9 }}>Sale</Text>
+                                                                <Text style={{ fontSize: 12, color: "#999" }}>-less</Text>
+                                                            </View>
+                                                            <View>
+                                                                <View style={[styles.flex, { marginBottom: 9 }]}>
+                                                                    <Image style={{ width: 15, height: 15 }} source={require('../../assets/img/money/offer.png')}></Image>
+                                                                    <Text style={{ fontSize: 14, color: "#333" }}>{item.total_offer_amount.number + item.total_offer_amount}</Text>
+                                                                </View>
+                                                                {/* <Text style={{ fontSize: 12, color: "#999" }}>$455.32</Text> */}
+                                                            </View>
+                                                        </View>
+                                                    </View>
+                                                    <View style={[styles.offerBox, styles.flexJBC,]}>
+                                                        <View >
+                                                            <Text style={[styles.moreTop]}>Quantity</Text>
+                                                            <Text style={[styles.moreBottom]}>{item.quantity_wanted}</Text>
+                                                        </View>
+                                                        <View >
+                                                            <Text style={[styles.moreTop]}>From</Text>
+                                                            <Text style={[styles.moreBottom]}>{item.address.slice(2, 7)}</Text>
+                                                        </View>
+                                                        <View>
+                                                            <Text style={[styles.moreTop]}>To</Text>
+                                                            <Text style={[styles.moreBottom]}>{item.offeror.slice(2, 7)}</Text>
+                                                        </View>
+                                                    </View>
+
+                                                </View>
+
+                                            ))
+
+                                        )
+                                        : <Text></Text>
+                                }
+                            </ListItem.Accordion>
+                            <ListItem.Accordion
+                                content={
+
+                                    <ListItem.Content>
+                                        <ListItem.Title>{t("本合集内容")}</ListItem.Title>
+                                    </ListItem.Content>
+
+                                }
+                                isExpanded={showcollection}
+                                onPress={() => {
+                                    setshowcollection(!showcollection);
+                                }}
+                            >
+                                {
+                                    (showcollection && detailsObj.collection) ?
+                                        <View style={[styles.flex, { marginVertical: 20 }]}>
+                                            <Image source={{ uri: detailsObj.collection.logo_url }} style={[styles.collectionImage]}></Image>
+                                            <Text style={[styles.createAndByuerName, { marginLeft: 15 }]}>{detailsObj.collection.name}</Text>
+                                        </View> : <Text></Text>
+                                }
+                            </ListItem.Accordion>
+
+                        </View>
+
+
+
 
                         {/*底部列表 */}
-                        <View style={[styles.linechainBoxOrther, { borderBottomColor: "#fff" }]}>
+                        {/* <View style={[styles.linechainBoxOrther, { borderBottomColor: "#fff" }]}>
                             <View style={[styles.flexJBC]}>
                                 <Text style={[styles.linechainBoxOrtherName, { marginBottom: 20 }]}>
-                                    {/* {t("本合集内容")} */}
+
                                 </Text>
                             </View>
                             {
                                 MorenNftList.length ? <ScrollView showsVerticalScrollIndicator={false} style={{ flexWrap: 'nowrap' }}>
+
+
 
                                     {
                                         MorenNftList.map((item, index) => (
@@ -544,13 +577,14 @@ const GoodsDetail = (props) => {
                                         ))
 
                                     }
+
                                 </ScrollView> :
                                     <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: '40%' }}>
                                         <Spinner />
                                     </View>
 
                             }
-                        </View>
+                        </View> */}
 
 
 
@@ -603,7 +637,7 @@ const GoodsDetail = (props) => {
                             style={styles.buyInput}
                             onChangeText={(e) => {
                                 if (Number(e) > NftNumber) {
-                                    Toast('剩余数量不足！')
+                                    Toast(t('剩余数量不足！'))
                                     setBuyNumber(String(NftNumber))
                                 } else {
                                     setBuyNumber(e);
@@ -618,8 +652,8 @@ const GoodsDetail = (props) => {
                     </View>
 
                     <View style={{ flexDirection: 'row', marginTop: 30, justifyContent: 'space-between' }}>
-                        <Text style={[styles.BuyBtnC, {}]} onPress={() => { setBuyNowVisible(false) }}>取消</Text>
-                        <Text style={[styles.BuyBtnQ, {}]} onPress={() => ConfirmSales()}>确定</Text>
+                        <Text style={[styles.BuyBtnC, {}]} onPress={() => { setBuyNowVisible(false) }}>{t("取消")}</Text>
+                        <Text style={[styles.BuyBtnQ, {}]} onPress={() => ConfirmSales()}>{t("确定")}</Text>
                     </View>
                 </Card>
             </Modal>
@@ -654,7 +688,7 @@ const GoodsDetail = (props) => {
 
                     </View>
                     <View>
-                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>请输入支付密码</Text>
+                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{t("请输入支付密码")}</Text>
                         {/* <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{detailsObj ? detailsObj.name : '--'}</Text>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}> */}
                         {/* <Text style={{ color: '#999999', fontSize: 16, fontWeight: '700' }}>价格</Text> */}
@@ -680,7 +714,19 @@ const GoodsDetail = (props) => {
                     </View>
                 </Card>
             </Modal>
+            <Overlay isVisible={showOwnerList} onBackdropPress={() => { setShowOwnerlist(!showOwnerList) }} >
+                <View >
+                    {
+                        ownersArrCopy.map((item, index) => (
+                            <View key={index} style={[styles.flex, { marginTop: 10, justifyContent: "space-around" }]}>
+                                <Image source={{ uri: item.avatar }} style={[styles.createAndByuerImage]}></Image>
+                                <Text style={[styles.createAndByuerName]}>{item.wallet_address}</Text>
+                            </View>
+                        ))
 
+                    }
+                </View>
+            </Overlay>
 
         </SafeAreaView>
     )
@@ -781,9 +827,10 @@ const styles = StyleSheet.create({
         fontSize: 12, color: "#333", marginTop: 9, textAlign: 'center'
     },
     offerBox: {
-        borderBottomColor: '#eee',
-        borderBottomWidth: 1,
-        paddingVertical: 20
+        // borderBottomColor: '#eee',
+        // borderBottomWidth: 1,
+        paddingHorizontal: 20,
+        paddingBottom: 20
     },
     // offer列表 开始
 
@@ -859,7 +906,7 @@ const styles = StyleSheet.create({
     linechainBoxOrther: {
         borderBottomColor: "#ccc",
         borderBottomWidth: 1,
-        padding: 20,
+        paddingHorizontal: 20,
         paddingBottom: 0
     },
 
@@ -887,11 +934,11 @@ const styles = StyleSheet.create({
     createAndByuer: {
         paddingHorizontal: 20,
         width: "100%",
-        borderTopColor: "#ccc",
-        borderTopWidth: 1,
-        borderBottomColor: "#ccc",
-        borderBottomWidth: 1,
-        marginTop: 20,
+        // borderTopColor: "#ccc",
+        // borderTopWidth: 1,
+        // borderBottomColor: "#ccc",
+        // borderBottomWidth: 1,
+        marginTop: 10,
         justifyContent: 'space-around',
         paddingTop: 10,
         paddingBottom: 10

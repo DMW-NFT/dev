@@ -37,7 +37,7 @@ const EmailAndPhoneReginster = (props) => {
   const [showareaCode, SetshowareaCode] = useState(false);
   const [secureTextEntry, SetsecureTextEntry] = useState(false);
   const [visible, Setvisible] = useState(false);
-  const [message, Setmessage] = useState("温馨提示");
+  const [message, Setmessage] = useState(t("温馨提示"));
   const { post, get, formData } = useDmwApi();
   const { login } = useDmwLogin();
 
@@ -189,7 +189,7 @@ const EmailAndPhoneReginster = (props) => {
     <SafeAreaView
       style={[styles.container, { backgroundColor: "#fff", flex: 1 }]}
     >
-      <Text style={[styles.topText]}>注册一个新账号</Text>
+      <Text style={[styles.topText]}>{t('注册一个新账号')}</Text>
       {/* 邮箱/电话号码 */}
       {type == 1 ? (
         <View style={[styles.inputBox]}>
@@ -198,7 +198,7 @@ const EmailAndPhoneReginster = (props) => {
             source={require("../assets/img/login/email.png")}
           ></Image>
           <TextInput
-            placeholder="请输入邮箱"
+            placeholder={t("请输入邮箱")}
             keyboardType="decimal-pad"
             onChangeText={(text) => onChangeText(text, 1)}
             value={email}
@@ -229,7 +229,7 @@ const EmailAndPhoneReginster = (props) => {
             </TouchableWithoutFeedback>
             <TextInput
               onStartShouldSetResponderCapture={(ev) => true}
-              placeholder="请输电话号码"
+              placeholder={t("请输入电话号码")}
               keyboardType="decimal-pad"
               onChangeText={(text) => onChangeText(text, 2)}
               value={phone}
@@ -275,11 +275,11 @@ const EmailAndPhoneReginster = (props) => {
         ></Image>
         <TouchableWithoutFeedback onPress={() => getPhoneCode()}>
           {/* {numend == 60 ? '获取验证码' : numend} */}
-          <Text style={[styles.getsancode]}>获取验证码</Text>
+          <Text style={[styles.getsancode]}>{t('获取验证码')}</Text>
         </TouchableWithoutFeedback>
         <TextInput
           maxLength={6}
-          placeholder="请输入验证码"
+          placeholder={t("请输入验证码  ")}
           keyboardType="decimal-pad"
           onChangeText={(text) => onChangeText(text, 3)}
           value={sancode}
@@ -309,7 +309,7 @@ const EmailAndPhoneReginster = (props) => {
         </TouchableWithoutFeedback>
         <TextInput
           maxLength={6}
-          placeholder="请输入密码"
+          placeholder={t("请输入密码")}
           keyboardType="decimal-pad"
           secureTextEntry={secureTextEntry}
           onChangeText={(text) => onChangeText(text, 4)}
@@ -323,7 +323,7 @@ const EmailAndPhoneReginster = (props) => {
         ></Image>
         <TextInput
           maxLength={6}
-          placeholder="请再次输入密码"
+          placeholder={t("请再次输入密码")}
           keyboardType="decimal-pad"
           secureTextEntry={true}
           numberOfLines={4}
@@ -337,7 +337,7 @@ const EmailAndPhoneReginster = (props) => {
           Settype(type == 1 ? 2 : 1);
         }}
       >
-        {type == 1 ? "手机号注册" : "邮箱注册"}
+        {type == 1 ? t("手机号注册") : t("邮箱注册")}
       </Text>
       <Text onPress={() => registerFn()} style={[styles.loginBtnBox]}>
         注册
@@ -347,7 +347,7 @@ const EmailAndPhoneReginster = (props) => {
         visible={visible}
         isClose={true}
         value={message}
-        title="温馨提示"
+        title={t("温馨提示")}
         Size="18"
         textAlign="left"
         close={() => {

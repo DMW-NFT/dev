@@ -286,7 +286,7 @@ const Home = (props) => {
               keyExtractor={(item, index) => item.id}
               ListFooterComponent={() => {
                 // 声明尾部组件
-                return NftList.length ? <Text style={{ textAlign: 'center' }}>{t("没有更多了")}</Text> : null
+                return NftList.length ? <Text style={{ textAlign: 'center' ,marginVertical:20 }}>{t("没有更多了")}</Text> : null
               }}
               // 下刷新
               onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   listbox: {
-    padding:20,
+    paddingHorizontal:20,
     paddingBottom:0,
     // marginVertical: 20,
     // marginHorizontal: 20,
@@ -399,14 +399,14 @@ const styles = StyleSheet.create({
     borderColor: '#877EF0',
     borderWidth: 1,
     borderRadius: 50,
-    marginRight: 15,
+    marginLeft: 20,
     paddingLeft: 20,
     paddingRight: 20,
     lineHeight: 40,
     color: '#666666',
   },
   shuipin: {
-    marginLeft: 20,
+    marginLeft: 0,
     height: 40,
     marginBottom: 20,
   },

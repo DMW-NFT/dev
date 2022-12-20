@@ -6,71 +6,110 @@ import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { IndexPath, Select, SelectItem } from '@ui-kitten/components';
 import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider';
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
-
+import VerfiySecretModal from '../../Components/VerfiySecretModal'
+import TxProccessingModal from '../../Components/TxProccessingModal'
+import { useTranslation } from 'react-i18next'
+import Web3 from 'web3';
 const scale = Dimensions.get('window').scale;
 const screenWidth = Dimensions.get('window').width;
 
 const Gift = (props) => {
-
-    const [visible, setvisible] = useState(false)
-    const [Blockchainval, setBlockchainval] = useState('0xe403E8011CdB251c12ccF6911F44D160699CCC3c')
-    const [TokenType, setTokenType] = useState('USDT')
+    const { t, i18n } = useTranslation();
+    const [receiptAddress, setReceiptAddress] = useState('')
+    const [TokenType, setTokenType] = useState('ETH')
+    const [selectedToken, setSelectedToken] = useState({})
     const [selectedIndex, setSelectedIndex] = useState(new IndexPath(0));
     const [number, setnumber] = useState(null)
-    const {transferToken} = useDmwWeb3()
-    const {Toast} = useDmwApi()
+    const { transferToken, nativeToken } = useDmwWeb3()
+    const { Toast } = useDmwApi()
+    const [balanceData, setBalanceData] = useState([])
+    const [password, setPassword] = useState('')
+    const [vfModalvisible, setVfModalvisible] = useState(false)
+    const [txModalvisible, setTxModalvisible] = useState(false)
+    useEffect(() => {
+        console.log(props.route.params, '传参');
+        setBalanceData(props.route.params);
 
+    }, [])
 
-     useEffect(()=>{
-console.log(props.route.params,'传参');
-
-     },[])
-    const close = () => {
-        setvisible(false)
-    }
-    const open = () => {
-        setvisible(true)
-    }
     useEffect(() => {
         console.log(selectedIndex, '下拉框')
         setnumber('')
         if (selectedIndex.row == 0) {
-            setTokenType('USDT')
+            setSelectedToken({ symbol: nativeToken, amount: Number(balanceData.NativToken), contractAddress: null })
         } else {
-            setTokenType('ETH')
+            setSelectedToken({ symbol: balanceData.ERC20Token[selectedIndex.row - 1].symbol, amount: Number(balanceData.ERC20Token[selectedIndex.row - 1].balance) / 10 ** Number(balanceData.ERC20Token[selectedIndex.row - 1].decimals), contractAddress: balanceData.ERC20Token[selectedIndex.row - 1].token_address })
         }
-        
+
 
     }, [selectedIndex])
 
     const sendout = () => {
-        if(!number){
-            Toast('请输入数量')
+        if (!number) {
+            Toast(t('请输入数量'))
             return
         }
-        console.log(String(TokenType),String(Blockchainval),String(number));
-        
-        transferToken(String(TokenType),String(Blockchainval),String(number))
+        if (!Web3.utils.isAddress(receiptAddress)) {
+            Toast(t('请输入正确的区块链地址'))
+            return
+        }
+        console.log(String(TokenType), String(receiptAddress), String(number));
+
+        transferToken(String(receiptAddress), String(number), selectedToken.contractAddress)
+
+        setTxModalvisible(true)
         setTimeout(() => {
-            setnumber('') 
+            setnumber('')
         }, 3000);
+
+
+
     }
 
     return (
         <SafeAreaView style={[{ position: 'relative', backgroundColor: '#fff', flex: 1, paddingTop: 30, paddingRight: 20, paddingLeft: 20 }]}>
-            <View style={{}}>
+            <View>
                 <View style={{ paddingLeft: 15, marginBottom: 10 }}>
-                    <Text style={{ fontSize: 12, fontWeight: '700' }}>来自</Text>
+                    <Text style={{ fontSize: 12, fontWeight: '700' }}>Token:</Text>
                 </View>
 
                 <Select
-                    style={styles.userlist}
+                    style={[styles.userlist]}
                     selectedIndex={selectedIndex}
                     onSelect={index => setSelectedIndex(index)}
-                    value={TokenType}
+                    value={(
+                        <View >
+                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                <Text>{selectedToken.symbol}</Text>
+                                <Text>{selectedToken.amount ? Number(selectedToken.amount).toFixed(6) : null}</Text>
+                            </View>
+                        </View>
+                    )}
                 >
-                    <SelectItem title='USDT' />
-                    <SelectItem title='ETH' />
+                    <SelectItem title={(
+                        <View >
+                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                <Text>{nativeToken}</Text>
+                                <Text>{Number(balanceData.NativToken).toFixed(6)}</Text>
+                            </View>
+                        </View>
+                    )} />
+
+                    {balanceData.ERC20Token && balanceData.ERC20Token.map((item) => (
+                        <SelectItem title={(
+                            <View >
+
+                                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                    <Text>{item.symbol}</Text>
+                                    <Text>{(Number(item.balance) / 10 ** Number(item.decimals)).toFixed(6)}</Text>
+                                </View>
+                            </View>
+                        )} />
+                    ))}
+
+
+
+
                 </Select>
 
 
@@ -80,20 +119,21 @@ console.log(props.route.params,'传参');
                         <>
                             <View style={styles.userlist}>
                                 <View style={{ flex: 1, marginLeft: 10 }}>
-                                    {
-                                        TokenType == 'USDT' ? <Text>USDT：{props.route.params.USDT}</Text> : <Text>USDT：{props.route.params.ETH}</Text>
-                                    }
-                                   
-                                    {/* <Text>USDT：999.99 </Text> */}
+                                    <Text>{t("输入数量")}</Text>
                                 </View>
 
 
                                 <TextInput
                                     textAlignVertical="top"
-                                    placeholder='输入数量'
-                                    style={[styles.textarea,{flex:1,marginTop:10}]}
-                                    onChangeText={e => { setnumber(Number(e)) }}
+                                    placeholder={`0 ${selectedToken.symbol}`}
+                                    style={[styles.textarea, { flex: 1, marginTop: 10 }]}
+                                    onChangeText={(text) => {
+                                        const newText = text.replace(/[^\d^\.?]+/g, "").replace(/^0+(\d)/, "$1").replace(/^\./, "0.").match(/^\d*(\.?\d{0,18})/g)[0] || "";
+                                        setnumber(newText);
+                                    }}
                                     value={number}
+                                    keyboardType="numeric"
+                                    textContentType=""
                                 />
                             </View>
 
@@ -111,10 +151,10 @@ console.log(props.route.params,'传参');
                 multiline={true}
                 textAlignVertical="top"
                 numberOfLines={5}
-                placeholder='输入地址'
+                placeholder='输入地址: 0x.....'
                 style={[styles.textarea]}
-                onChangeText={e => {setBlockchainval(e)}}
-                value={Blockchainval}
+                onChangeText={e => { setReceiptAddress(e) }}
+                value={receiptAddress}
             />
 
 
@@ -131,9 +171,10 @@ console.log(props.route.params,'传参');
                     <Text style={{ textAlign: 'center', marginTop: 20 }}>复制地址以接收付款</Text>
                 </Modal> */}
 
-            {
-                !visible ? <Text style={styles.btn} onPress={()=>sendout()}>发送</Text> : null
-            }
+            <Text style={styles.btn} onPress={() => sendout()}>发送</Text>
+
+            <VerfiySecretModal setModalvisible={setVfModalvisible} setPassword={setPassword} />
+            {txModalvisible && <TxProccessingModal setModalvisible={setTxModalvisible} modalvisible={txModalvisible} />}
         </SafeAreaView>
     );
 }

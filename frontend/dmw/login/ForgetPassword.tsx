@@ -15,7 +15,9 @@ import storage from "../Storage/storage";
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 import { useDmwLogin } from "../../loginProvider/constans/DmwLoginProvider";
 import Toast from "../Components/Toast.js"
+import { useTranslation } from 'react-i18next'
 const ForgetPassword = (props) => {
+  const { t, i18n } = useTranslation();
   const [type, Settype] = useState(props.route.params["type"]);
   const [phone, Setphone] = useState("");
   const [email, Setemail] = useState("");
@@ -130,7 +132,7 @@ const loginFn = () =>{
     <SafeAreaView
       style={[styles.container, { backgroundColor: "#fff", flex: 1 }]}
     >
-      <Text style={[styles.topText]}>忘记密码？</Text>
+      <Text style={[styles.topText]}>{t("忘记密码")}</Text>
       {/* 邮箱/电话号码 */}
       {type == 1 ? (
         <View style={[styles.inputBox]}>
@@ -139,7 +141,7 @@ const loginFn = () =>{
             source={require("../assets/img/login/email.png")}
           ></Image>
           <TextInput
-            placeholder="请输入邮箱"
+            placeholder={t("请输入邮箱")}
             keyboardType="decimal-pad"
             onChangeText={(text) => onChangeText(text, 1)}
             value={email}
@@ -171,7 +173,7 @@ const loginFn = () =>{
             </TouchableWithoutFeedback>
             <TextInput
               onStartShouldSetResponderCapture={(ev) => true}
-              placeholder="请输电话号码"
+              placeholder={t("请输入电话号码")}
               keyboardType="decimal-pad"
               onChangeText={(text) => onChangeText(text, 2)}
               value={phone}
@@ -216,11 +218,11 @@ const loginFn = () =>{
           source={require("../assets/img/login/forgetpass.png")}
         ></Image>
         <TouchableWithoutFeedback onPress={() => getsancode()}>
-          <Text style={[styles.getsancode]}>获取验证码</Text>
+          <Text style={[styles.getsancode]}>{t("获取验证码")}</Text>
         </TouchableWithoutFeedback>
         <TextInput
           maxLength={6}
-          placeholder="请输入验证码"
+          placeholder={t("请输入验证码  ")}
           keyboardType="decimal-pad"
           onChangeText={(text) => onChangeText(text, 3)}
           value={sancode}
@@ -250,7 +252,7 @@ const loginFn = () =>{
         </TouchableWithoutFeedback>
         <TextInput
           maxLength={6}
-          placeholder="请输入密码"
+          placeholder={t("请输入密码")}
           keyboardType="decimal-pad"
           secureTextEntry={secureTextEntry}
           onChangeText={(text) => onChangeText(text, 4)}
@@ -264,7 +266,7 @@ const loginFn = () =>{
         ></Image>
         <TextInput
           maxLength={6}
-          placeholder="请再次输入密码"
+          placeholder={t("请再次输入密码")}
           keyboardType="decimal-pad"
           secureTextEntry={true}
           numberOfLines={4}
@@ -272,7 +274,7 @@ const loginFn = () =>{
           value={password1}
         />
       </View>
-      <Text onPress={()=>loginFn()} style={[styles.loginBtnBox]}>登录</Text>
+      <Text onPress={()=>loginFn()} style={[styles.loginBtnBox]}>{t("登录")}</Text>
       {/* <Toast
         visible={visible}
         value={message}>

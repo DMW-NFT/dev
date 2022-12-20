@@ -1,13 +1,15 @@
 import React, { useEffect, useMemo, useState } from "react";
 import DmwLoginContext from "./DmwLoginContext";
 import { useTranslation } from 'react-i18next'
+import { useDmwWeb3 } from '../../DmwWeb3/DmwWeb3Provider'
 const DmwLoginProvider = ({ children }) => {
   const { t, i18n } = useTranslation();
   const [isLogin, setIsLogin] = useState(true); //登录状态
   const [username, setUsername] = useState(t("用户昵称")); //用户名
   const [avatarUrl, setAvatarUrl] = useState(); //用户名
-  const [WalletInUse,setWalletInUse] = useState(1)
-  const [language,setlanguage] = useState('jp')
+  const [WalletInUse, setWalletInUse] = useState(1)
+  const [language, setlanguage] = useState('jp')
+  const { connected } = useDmwWeb3()
   const login = () => {
     setIsLogin(true);
   };
@@ -23,6 +25,23 @@ const DmwLoginProvider = ({ children }) => {
   useEffect(() => {
     console.log("someone call login");
   }, [isLogin]);
+
+  useEffect(() => {
+    connected ? null : setWalletInUse(1)
+
+  }, [])
+
+  useEffect(() => {
+    connected ? null : setWalletInUse(1)
+  }, [connected])
+
+  
+  useEffect(() => {
+    console.log("current wallet in use :",WalletInUse)
+  }, [WalletInUse])
+
+
+
 
   return (
     <DmwLoginContext.Provider

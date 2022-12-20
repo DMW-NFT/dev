@@ -11,6 +11,8 @@ import { useDmwWallet } from '../../../DmwWallet/DmwWalletProvider'
 import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider'
 import { read } from 'fs/promises'
 import { useTranslation } from 'react-i18next'
+import { ListItem, Avatar, Icon, Overlay } from '@rneui/themed'
+
 const QuotationDetails = (props) => {
     const { t, i18n } = useTranslation();
     const inputRefX = useRef(null);
@@ -41,21 +43,21 @@ const QuotationDetails = (props) => {
     const [AvailableBalance, setAvailableBalance] = useState(0)//报价金额
     // Context 方法
     const { Toast, post, get, formData, shortenAddress, } = useDmwApi()
-    const { buyNFT, currentWallet, transactionMap, transactionList, connectWallet, getErc20Allowance, erc20Approve, makeOffer,createListing } = useDmwWeb3()
-    const { dmwBuyNFT } = useDmwWallet()
-    const { WalletInUse, dmwWalletList } = useDmwLogin
+    const { buyNFT, currentWallet, transactionMap, transactionList, connectWallet, getErc20Allowance, erc20Approve, makeOffer, createListing } = useDmwWeb3()
+    const { dmwBuyNFT, dmwWalletList } = useDmwWallet()
+    const { WalletInUse } = useDmwLogin()
 
     const [latestHash, setLatestHash] = useState()
     const empty = () => {
         setpassword('')
     }
 
+
     useEffect(() => {
         transactionList && setLatestHash(transactionList[transactionList.length - 1])
     }, [transactionList])
 
-    useEffect(() => {
-    }, [currentWallet])
+
     useEffect(() => {
         if (transactionMap && transactionMap[latestHash]) {
             if (transactionMap[latestHash].state == "comfirmed") {
@@ -75,7 +77,7 @@ const QuotationDetails = (props) => {
             if (isOffer) {
                 let sTime = Math.round(new Date().getTime() / 1000 + 60)
                 let address = activeEm.name == 'USDT' ? '0x0B99a72bebFE91B14529ea412eb2B1dBEE604c4C' : '0xC07Dd9487D93acD4B06e2fB9A6Fc2643968A6D29'
-                console.log("parma:",String(orderList.listing_id), Number(BuyNumber), address, QuotationAmount, sTime)
+                console.log("parma:", String(orderList.listing_id), Number(BuyNumber), address, QuotationAmount, sTime)
                 makeOffer(orderList.listing_id, Number(BuyNumber), address, QuotationAmount, sTime)
             } else {
                 if (WalletInUse == 1) {
@@ -84,7 +86,7 @@ const QuotationDetails = (props) => {
                         dmwBuyNFT(password, String(orderList.listing_id), Number(BuyNumber), orderList.currency, String(UnitPrice.UnitPrice * Number(BuyNumber)))
                     } catch (err) {
                     }
-                } else {                                                                                                                                        
+                } else {
                     // 第三方钱包购买
                     try {
                         new buyNFT(
@@ -372,7 +374,7 @@ const QuotationDetails = (props) => {
     const modalTitle = () => {//弹窗头部
         return (
             <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-                <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{isOffer ? '报价' : '购买'}</Text>
+                <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{isOffer ? t('报价') : t('购买')}</Text>
                 <Image source={{ uri: imgurl }} style={styles.BuyNowImg}></Image>
                 <View style={styles.nameBox}>
                     <Text style={{ fontSize: 14, fontWeight: '700', textAlign: 'center', marginBottom: 5 }}>{collection ? collection.name : '--'}</Text>
@@ -391,7 +393,7 @@ const QuotationDetails = (props) => {
                     onKeyPress={() => { }}
                     keyboardType="phone-pad"
                     style={[styles.buyInput, { width: '100%', marginLeft: 0, marginBottom: 20, borderRadius: 20, textAlign: 'left', paddingLeft: 20, paddingRight: 20 }]}
-                    placeholder='请输入单价'
+                    placeholder={t('价格')}
                     onChangeText={(e) => {
                         setQuotationAmount(e)
                     }
@@ -469,11 +471,11 @@ const QuotationDetails = (props) => {
 
 
                         {/* 报价详情 */}
-                        <View style={[styles.linechainBoxOrther,]}>
+                        {/* <View style={[styles.linechainBoxOrther,]}>
                             <TouchableWithoutFeedback onPress={() => { setshowoffer(!showoffer) }}>
                                 <View style={[styles.flexJBC]} >
                                     <Text style={[styles.linechainBoxOrtherName]}>
-                                     {t("报价详情")}
+                                        {t("报价详情")}
                                     </Text>
                                     <FontAwesomeIcon icon={showoffer ? faAngleDown : faAngleRight} color='#707070' size={20} />
                                 </View>
@@ -495,7 +497,7 @@ const QuotationDetails = (props) => {
                                                                 <Text style={{ fontSize: 14, color: "#333" }}>{item.total_offer_amount.number + item.total_offer_amount.currency_name}</Text>
                                                                 <Text style={[styles.offercolse]}>取消报价</Text>
                                                             </View>
-                                                            {/* <Text style={{ fontSize: 12, color: "#999" }}>$455.32</Text> */}
+
                                                         </View>
                                                     </View>
                                                 </View>
@@ -522,9 +524,66 @@ const QuotationDetails = (props) => {
 
                                     ) : <Text></Text>
                             }
-                        </View>
+                        </View> */}
 
+                        <ListItem.Accordion
+                            content={
 
+                                <ListItem.Content>
+                                    <ListItem.Title>{t("报价详情")}</ListItem.Title>
+                                </ListItem.Content>
+
+                            }
+                            isExpanded={showoffer}
+                            onPress={() => {
+                                setshowoffer(!showoffer);
+                            }}
+                        >
+                            <View style={[styles.linechainBoxOrther,]} >
+                                {
+
+                                    offersList.map((item, index) => (
+                                        <View>
+                                            <View style={[styles.offerBox,]}>
+                                                <View style={[styles.flexJBC]}>
+                                                    <View>
+                                                        <Text style={{ fontSize: 14, color: "#333", fontWeight: 'bold', marginBottom: 9 }}>{item.address.slice(2, 7)}</Text>
+                                                        <Text style={{ fontSize: 12, color: "#999" }}>-less</Text>
+                                                    </View>
+                                                    <View>
+                                                        <View style={[styles.flex, { marginBottom: 9 }]}>
+                                                            <Image style={{ width: 15, height: 15 }} source={require('../../assets/img/money/offer.png')}></Image>
+                                                            <Text style={{ fontSize: 14, color: "#333" }}>{item.total_offer_amount.number + item.total_offer_amount.currency_name}</Text>
+                                                            <Text style={[styles.offercolse]}>取消报价</Text>
+                                                        </View>
+                                                        {/* <Text style={{ fontSize: 12, color: "#999" }}>$455.32</Text> */}
+                                                    </View>
+                                                </View>
+                                            </View>
+                                            <View style={[styles.offerBox, styles.flexJBC, { borderBottomColor: '#fff' }]}>
+                                                <View>
+                                                    <Text style={[styles.moreTop]}>Floor Diff</Text>
+                                                    <Text style={[styles.moreBottom, { color: "#897EF8" }]}>{item.floor_diff}% below</Text>
+                                                </View>
+                                                <View >
+                                                    <Text style={[styles.moreTop]}>Quantity</Text>
+                                                    <Text style={[styles.moreBottom]}>{item.quantity_wanted}</Text>
+                                                </View>
+                                                <View >
+                                                    <Text style={[styles.moreTop]}>From</Text>
+                                                    <Text style={[styles.moreBottom]}>{item.address.slice(2, 7)}</Text>
+                                                </View>
+                                                <View>
+                                                    <Text style={[styles.moreTop]}>Expires</Text>
+                                                    <Text style={[styles.moreBottom]}>{item.end_time}</Text>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    )
+                                    )
+                                }
+                            </View>
+                        </ListItem.Accordion>
 
 
 
@@ -572,7 +631,7 @@ const QuotationDetails = (props) => {
                         isBuyNFTNumber()
                     }
                     {
-                        importValue()
+                        isOffer && importValue()
                     }
                     {
                         isOffer ?
@@ -807,6 +866,7 @@ const styles = StyleSheet.create({
         color: '#333',
         fontWeight: "700",
         fontSize: 16,
+        paddingHorizontal: 12
     },
     bottomBtn: {
         // width:'70%',

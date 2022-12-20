@@ -33,7 +33,7 @@ const CreateMoney = (props) => {
           setMoneyRouteState("money");
         }else{
           setMoneyRouteState("createMoney");
-          Toast( t("钱包已断开链接"));
+          // Toast( t("钱包已断开链接"));
         }
   },[connected])
 

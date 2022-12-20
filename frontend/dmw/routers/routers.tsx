@@ -1,27 +1,27 @@
 import { Text, StyleSheet, Image, View } from 'react-native'
 import React, { Component, } from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-const Tab = createBottomTabNavigator()
+
 import HomeScreen from './Home'
 import DateScreen from './Data'
-import JiaoyiScreen from './Jiaoyi'  
+import JiaoyiScreen from './Jiaoyi'
 import MyselfScreen from './Myself'
-import MoneyScreen from './Money' 
+import MoneyScreen from './Money'
 import { useTranslation } from 'react-i18next'
 
 
-
-const router = () =>{
+const Tab = createBottomTabNavigator()
+const router = () => {
   const { t, i18n } = useTranslation();
   return (
     <Tab.Navigator
-    tabBarStyle={{height: 0, overflow: 'hidden'}}
       screenOptions={({ route }) => ({
         headerShown: false,  //取消顶部导航
         activeTintColor: "#897EF8",
         inactiveTintColor: "#333",
+        tabBarStyle: {paddingBottom:10,paddingTop:10,height:60},
         tabBarIcon: ({ focused, color, size }) => {
-          let url 
+          let url
           if (route.name == 'Home') {
             url = focused ? require('../assets/img/tabBar/home.png') : require('../assets/img/tabBar/home1.png')
           } else if (route.name == 'Data') {
@@ -36,20 +36,20 @@ const router = () =>{
           return <Image source={url} style={[styles.tabImg]}></Image>
         }
       })}
-    >   
-     
-      <Tab.Screen name="Home" component={HomeScreen} options={{title: t('首页')}} ></Tab.Screen>
-      <Tab.Screen name="Data" component={DateScreen} options={{title: t('数据')}}></Tab.Screen>
-      <Tab.Screen name="Jiaoyi" component={JiaoyiScreen} options={{title: t('交易')}}></Tab.Screen>
-      <Tab.Screen name="Money" component={MoneyScreen} options={{title: t('钱包')}}></Tab.Screen>
-      <Tab.Screen name="Myself" component={MyselfScreen} options={{title: t('我的')}}></Tab.Screen>
-    </Tab.Navigator> 
-    
+    >
+
+      <Tab.Screen name="Home" component={HomeScreen} options={{ title: t('首页') }} ></Tab.Screen>
+      <Tab.Screen name="Data" component={DateScreen} options={{ title: t('数据') }}></Tab.Screen>
+      <Tab.Screen name="Jiaoyi" component={JiaoyiScreen} options={{ title: t('交易') }}></Tab.Screen>
+      <Tab.Screen name="Money" component={MoneyScreen} options={{ title: t('钱包') }}></Tab.Screen>
+      <Tab.Screen name="Myself" component={MyselfScreen} options={{ title: t('我的') }}></Tab.Screen>
+    </Tab.Navigator>
+
   )
 }
 
 // export default class router extends Component {
-  
+
 //   render() {
 //     return (
 //       <Tab.Navigator
@@ -75,14 +75,14 @@ const router = () =>{
 //           }
 //         })}
 //       >   
-       
+
 //         <Tab.Screen name="Home" component={HomeScreen} options={{title: '首页'}} ></Tab.Screen>
 //         <Tab.Screen name="Data" component={DateScreen} options={{title: '数据'}}></Tab.Screen>
 //         <Tab.Screen name="Jiaoyi" component={JiaoyiScreen} options={{title: '交易'}}></Tab.Screen>
 //         <Tab.Screen name="Money" component={MoneyScreen} options={{title: '钱包'}}></Tab.Screen>
 //         <Tab.Screen name="Myself" component={MyselfScreen} options={{title: '我的'}}></Tab.Screen>
 //       </Tab.Navigator> 
-      
+
 //     )
 //   }
 // }

@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     },
     lis: {
         width: "47%",
-        marginBottom: 20,
+        marginTop: 20,
         marginRight: '6%',
     },
     imageBox: {

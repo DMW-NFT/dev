@@ -21,9 +21,11 @@ import TermsOfService from "../screen/Money/TermsOfService"; // 发送
 import Privatekeyimport from "../screen/Money/Privatekeyimport"; // 发送
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 import { useDmwWallet } from "../../DmwWallet/DmwWalletProvider";
+import { useTranslation } from 'react-i18next'
 
 const Stack = createStackNavigator();
 const Home = (props) => {
+  const { t, i18n } = useTranslation();
   const { MoneyRouteState, setMoneyRouteState } = useDmwApi();
   const {dmwWalletList} = useDmwWallet()
   useEffect(()=>{
@@ -56,7 +58,7 @@ if(dmwWalletList && dmwWalletList.length){
         component={ImportWord}
         name="importWord"
         options={{
-          title: "从助记词导入",
+          title: t("从助记词导入"),
         }}
       ></Stack.Screen>
 
@@ -110,7 +112,7 @@ if(dmwWalletList && dmwWalletList.length){
         component={Exchange}
         name="Exchange"
         options={{
-          title: "兑换",
+          title: t("兑换"),
           headerRight: () => {
             return (
               <TouchableWithoutFeedback
@@ -134,7 +136,7 @@ if(dmwWalletList && dmwWalletList.length){
         component={Gift}
         name="Gift"
         options={{
-          title: "发送",
+          title: t("发送"),
         }}
       ></Stack.Screen>
 
@@ -142,7 +144,7 @@ if(dmwWalletList && dmwWalletList.length){
         component={RedemptionSettings}
         name="RedemptionSettings"
         options={{
-          title: "兑换设置",
+          title: t("兑换设置"),
         }}
       ></Stack.Screen>
 
@@ -150,7 +152,7 @@ if(dmwWalletList && dmwWalletList.length){
         component={ViewMnemonics}
         name="ViewMnemonics"
         options={{
-          title: "助记词",
+          title: t("助记词"),
         }}
       ></Stack.Screen>
 
@@ -158,7 +160,7 @@ if(dmwWalletList && dmwWalletList.length){
         component={TermsOfService}
         name="TermsOfService"
         options={{
-          title: "服务条款",
+          title: t("服务条款"),
         }}
       ></Stack.Screen>
 

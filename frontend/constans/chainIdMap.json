@@ -1,0 +1,18 @@
+{
+    "1": {
+        "network": "Ethereum Mainnet",
+        "nativeToken": "ETH"
+    },
+    "5": {
+        "network": "Goerli",
+        "nativeToken": "ETH"
+    },
+    "56": {
+        "network": "Binance Smart Chain Mainnet",
+        "nativeToken": "BNB"
+    },
+    "137": {
+        "network": "Polygon Mainnet",
+        "nativeToken": "MATIC"
+    }
+}

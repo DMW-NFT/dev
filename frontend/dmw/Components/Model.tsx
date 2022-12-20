@@ -1,17 +1,18 @@
 import { StyleSheet, View, Dimensions, Text } from 'react-native'
 import React, { Component, useState } from 'react'
 import { Modal } from 'react-native-paper';
-
+import { useTranslation } from 'react-i18next'
 
 
 const Model = (props) => {
   const [visible, setVisible] = useState(props.visible)
+  const { t, i18n } = useTranslation();
   return (
     <Modal visible={props.visible} onDismiss={() => { props.changeVisible() }} contentContainerStyle={[styles.footer]}>
       <View style={{ flexDirection: 'row', justifyContent: 'center', height: 20, flex: 1, alignItems: 'center', marginTop: 6 }}>
         <Text style={[styles.btnline]}></Text>
       </View>
-      <Text style={{ fontSize: 16, textAlign: 'center', fontWeight: '700', marginBottom: 30, marginTop: 10 }}>筛选</Text>
+      <Text style={{ fontSize: 16, textAlign: 'center', fontWeight: '700', marginBottom: 30, marginTop: 10 }}>{t("筛选")}</Text>
       {props.children}
       <View>
       </View>

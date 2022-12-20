@@ -44,7 +44,7 @@ const MyCollection = (props) => {
                             <TextInput
                                 value={strText}
                                 placeholderTextColor="#ccc"
-                                placeholder="Search items…"
+                                placeholder={t("请输入关键字")}
                                 cursorColor='#897EF8'
                                 style={{ flex: 1, borderRadius: 10, height: 50 }}
                                 onChangeText={(strText) => onChange(strText)}

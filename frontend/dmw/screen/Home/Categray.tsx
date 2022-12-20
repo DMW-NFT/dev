@@ -86,7 +86,7 @@ const Categray = (props) => {
 
             <FlatList
               refreshing={refreshing}
-              style={{ height: 50, paddingBottom: 20 }}
+              style={{ height: 50, paddingTop: 20 }}
               ListEmptyComponent={() => {
                 return <Text style={{ textAlign: 'center', marginTop: '50%' }}>{t("空空如也")}</Text>
                 // 列表为空展示改组件

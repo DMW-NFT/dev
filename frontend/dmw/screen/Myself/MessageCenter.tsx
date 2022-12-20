@@ -19,7 +19,7 @@ const MessageCenter = (props) => {
   const { t, i18n } = useTranslation();
   const { post } = useDmwApi()
   const [type, settype] = useState('zh')
-  const [messageList, setMessageList] = useState({ auction: "暂无新消息", like: "暂无新消息", sell: "暂无新消息", system: "暂无新消息" })
+  const [messageList, setMessageList] = useState({ auction: t("暂无新消息"), like: t("暂无新消息"), sell: t("暂无新消息"), system: t("暂无新消息") })
   useEffect(() => {
     post('/index/message/get_messages').then(res => {
       console.log(res, '消息');
@@ -57,7 +57,7 @@ const MessageCenter = (props) => {
                   <Text style={styles.time}>15:28</Text>
                 </View>
                 <Text style={styles.test} numberOfLines={1}>
-                  {messageList.system}
+                  {t(messageList.system)}
                 </Text>
               </View>
             </View>
@@ -86,7 +86,7 @@ const MessageCenter = (props) => {
                   <Text style={styles.time}>15:28</Text>
                 </View>
                 <Text style={styles.test}>
-                  {messageList.like}
+                  {t(messageList.like)}
                   {/* <Text style={{ color: '#897EF8' }}>Sdd、122</Text><Text>等3人 收藏</Text> */}
                 </Text>
               </View>
@@ -118,7 +118,7 @@ const MessageCenter = (props) => {
                   <Text style={styles.time}>15:28</Text>
                 </View>
                 <Text style={styles.test}>
-                    {messageList.auction}
+                    {t(messageList.auction)}
                   {/* 藏品《<Text style={{ color: '#897EF8' }}>sdssd</Text>》拍卖结束用户<Text style={{ color: '#897EF8' }}>123</Text>以100USDT的价... */}
                 </Text>
               </View>
@@ -152,7 +152,7 @@ const MessageCenter = (props) => {
                   <Text style={styles.time}>15:28</Text>
                 </View>
                 <Text style={styles.test}>
-                {messageList.sell}
+                {t(messageList.sell)}
                   {/* 藏品《<Text style={{ color: '#897EF8' }}>sdssd</Text>》售卖给用户<Text style={{ color: '#897EF8' }}>123</Text>，成交价100USDT... */}
                 </Text>
               </View>

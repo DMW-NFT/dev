@@ -11,7 +11,7 @@ const DmwApiProvider = ({ children }) => {
   const { logOut, language, setlanguage } = useDmwLogin();
   const [show, setShow] = useState(false);
   const [time, setTime] = useState(2000);
-  const [toastVal, setToastVal] = useState("温馨提示");
+  const [toastVal, setToastVal] = useState(t("温馨提示"));
   const [MoneyRouteState, setMoneyRouteState] = useState('createMoney')
 
   useEffect(() => {

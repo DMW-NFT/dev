@@ -9,7 +9,8 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   TextInput,
-  FlatList
+  FlatList,
+  Animated
 } from "react-native";
 import React, { useContext, useState, useEffect, createRef, useRef } from "react";
 import Screen from "./BottomPopUpWindow";
@@ -21,6 +22,7 @@ import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import CryptoJS from 'crypto-js'
 import { useTranslation } from 'react-i18next'
+import { use } from "i18next";
 
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
@@ -30,7 +32,7 @@ const Money = (props) => {
   const { t, i18n } = useTranslation();
   // inputRef = React.createRef();
   const inputRefX = useRef(null);
-  const [type, setType] = useState(2);
+  const [contenType, setContenType] = useState("token");
   const [list, setList] = useState([{}, {}]);
   const [visible, setVisible] = useState(false);
   const [lMvisible, setLMvisible] = useState(false);
@@ -39,84 +41,84 @@ const Money = (props) => {
   const [password, setpassword] = useState("");
   const [passwordlist, setpasswordlist] = useState([]);
   const { WalletInUse, setWalletInUse, avatarUrl } = useDmwLogin()
-  const { disconnectWallet, connected, currentWallet, lastConnected, connectWallet, getNativeBalance } = useDmwWeb3()
+  const { disconnectWallet, connected, currentWallet, lastConnected, connectWallet, getNativeBalance, memConnectStatus } = useDmwWeb3()
   const { MoneyRouteState, setMoneyRouteState, post, formData, Toast, shortenAddress, Copy } = useDmwApi()
-  const [loading, setLoding] = useState(false)
-  const [address, setaddress] = useState('--')
-  const [address1, setaddress1] = useState('--')
-  const [ThirdPartyBalance, setThirdPartyBalance] = useState([])
-  const [NativeBalance, setNativeBalance] = useState('')
-  const [NativeBalanceBenDi, setNativeBalanceBenDi] = useState('')
-  const axios = () => {
 
-  };
-  useEffect(() => {
-    console.log(123);
 
-  }, [WalletInUse])
+  const [lwNativeBalance, setLwNativeBalance] = useState('')
+  const [tpwNativeBalance, setTpwNativeBalance] = useState('')
 
-  useEffect(() => {
-    if (WalletInUse == 1 && dmwWalletList[0]) {
-      getAddressBalance(dmwWalletList[0])
-      getNativeBalance(dmwWalletList[0]).then(res => {
-        setNativeBalanceBenDi(res)
-      })
-      setWalletInUse(1)
-    } else if (currentWallet && WalletInUse == 2) {
-      console.log(currentWallet, '钱包地址');
-      setWalletInUse(2)
-      getAddressBalance(currentWallet)
-      getNativeBalance(currentWallet).then(res => {
-        setNativeBalanceBenDi(res)
-      })
+  const [lwErc20Balance, setLwErc20Balance] = useState([])
+  const [tpwErc20Balance, setTpwErc20Balance] = useState([])
+
+  const scrollX = new Animated.Value(-500)
+  const opacity = new Animated.Value(0)
+
+  useEffect(()=>{
+    if (lMvisible){
+      Animated.timing(opacity,{toValue: 1, duration: 300,useNativeDriver:true}).start();    
+      Animated.timing(scrollX,{toValue: 0, duration: 200,useNativeDriver:true}).start();                        // 开始执行动画
+                    // 开始执行动画
     }
-  }, [])
+  },[lMvisible])
+
+
+  useEffect(() => {
+    if (memConnectStatus.connected){
+      connectWallet()
+    }
+    
+  }, [memConnectStatus])
+
 
   const getAddressBalance = (address) => {
-    fetch(`https://deep-index.moralis.io/api/v2/${address}/erc20?chain=goerli`, {
+    return fetch(`https://deep-index.moralis.io/api/v2/${address}/erc20?chain=goerli`, {
       method: 'GET',
       headers: {
         accept: 'application/json',
         'X-API-Key': 'Lf0hom3miHg82XaKYaQg1Ej3LiyXmfO9kCSAsfws9XpUX1V9sh1isIsOorRf1xYf'
       }
-    }).then((response) => {
-      const res = response.json()
-      res.then(data => {
-        setThirdPartyBalance(data)
-        console.log(data, '钱包余额')
+    }).then(res => {
+
+      return res.json().then(finnalRes => {
+        return finnalRes
       })
-    });
+    })
+
   }
 
   const empty = () => {
     setpassword('')
   }
+
+
+
   useEffect(() => {
     // console.log('钱包变化',connected,currentWallet);
     if (currentWallet) {
-      if (WalletInUse == 2) {
-        Switchwallet(2)
-      }
       getNativeBalance(currentWallet).then(res => {
-        setNativeBalance(res)
+        setTpwNativeBalance(res)
       })
-      getAddressBalance(currentWallet)
-      setaddress1(shortenAddress(currentWallet))
+      getAddressBalance(currentWallet).then(res => {
+        setTpwErc20Balance(res)
+      })
     }
 
 
-    if (dmwWalletList[0] && WalletInUse == 1) {
-      Switchwallet(1)
-      setaddress(shortenAddress(dmwWalletList[0]))
+    if (dmwWalletList) {
+
+
       getNativeBalance(dmwWalletList[0]).then(res => {
-        console.log("native balance navtive token:", res)
-        setNativeBalanceBenDi(res)
+        setLwNativeBalance(res)
+      })
+      getAddressBalance(dmwWalletList[0]).then(res => {
+        setLwErc20Balance(res)
       })
     }
 
 
     setMoneyRouteState(connected || dmwWalletList.length ? '12345' : 'createMoney')
-  }, [connected, dmwWalletList, currentWallet])
+  }, [connected, dmwWalletList, currentWallet, WalletInUse])
 
 
 
@@ -151,23 +153,15 @@ const Money = (props) => {
   const open = () => {
     setVisible(true);
   };
-  const changetype = (val) => {
-    setType(val);
-  };
-  const Switchwallet = (type) => {
+
+  const Switchwallet = (walletType) => {
     console.log(dmwWalletList[0]);
 
-    setWalletInUse(type)
-    // var message = JSON.stringify()
+    setWalletInUse(walletType)
+
     var iv = 'aaaaaaaaaaaaaaaa';//随机生成长度为32的16进制字符串。IV称为初始向量，不同的IV加密后的字符串是不同的，加密和解密需要相同的IV。
-    // console.log(iv, 'iv')
-    // var key = "u38rOBN6lYOKHenn2oYSGmDbbGpp88ao";//秘钥。长度32的16进制字符串。
-    // var cryptkey = CryptoJS.enc.Hex.parse(key);//将16进制字符串转换为 WordArray对象
-    // console.log(cryptkey);
-    // var ciphertext = encrypt(message, key, iv);//加密
-    // console.log(ciphertext.toString(), 'jiami');
     let wallet_address = ''
-    if (type == 1) {
+    if (walletType == 1) {
       if (dmwWalletList[0]) {
         wallet_address = dmwWalletList[0]
       } else {
@@ -184,13 +178,6 @@ const Money = (props) => {
       console.log(res, wallet_address, 'qianbao denglu');
       if (res.code == 200) {
         Toast(t("登录成功"))
-        if (type == 1 && dmwWalletList[0]) {
-          console.log(1);
-          getAddressBalance(dmwWalletList[0])
-        } else if (currentWallet && type == 2) {
-          console.log(2);
-          getAddressBalance(currentWallet)
-        }
       }
     }).catch(err => {
       Toast(err.message)
@@ -226,18 +213,17 @@ const Money = (props) => {
       style={{
         backgroundColor: "#fff",
         flex: 1,
-        paddingLeft: 20,
-        paddingRight: 20,
+        // paddingLeft: 20,
+        // paddingRight: 20,
+        // paddingHorizontal:20,
         position: "relative",
       }}
     >
 
-
-
       <View style={styles.hearder}>
         <View>
-          <Text style={styles.hello}>hello</Text>
-          <Text style={styles.HTitle}>Account 1</Text>
+          {/* <Text style={styles.hello}>hello</Text>
+          <Text style={styles.HTitle}>Account 1</Text> */}
         </View>
         <TouchableWithoutFeedback onPress={() => lMvisibleopen()}>
           <Image
@@ -246,15 +232,14 @@ const Money = (props) => {
           ></Image>
         </TouchableWithoutFeedback>
       </View>
+
       <View>
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
           style={[{
             marginBottom: 20,
-            marginRight: -20,
             height: 336 / 2,
-            marginLeft: -20,
           }, { marginLeft: dmwWalletList && dmwWalletList[0] ? null : 20 }]}
         >
           {
@@ -284,11 +269,11 @@ const Money = (props) => {
                     <Text style={styles.CurrencyName}>ETH</Text>
                   </ImageBackground>
 
-                  <Text style={styles.balance}>{NativeBalanceBenDi ? NativeBalanceBenDi : '--'}</Text>
+                  <Text style={styles.balance}>{lwNativeBalance ? Number(lwNativeBalance).toFixed(4) : '--'}</Text>
                 </View>
                 {/* <Text style={{ color: "#fff" }}>$10.000</Text> */}
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Text style={{ color: "#fff" }}>{address}</Text>
+                  <Text style={{ color: "#fff" }}>{shortenAddress(dmwWalletList[0])}</Text>
                   <TouchableWithoutFeedback onPress={() => { Copy(dmwWalletList[0]) }}>
                     <Image
                       style={{ width: 10, height: 10, marginLeft: 5 }}
@@ -301,7 +286,7 @@ const Money = (props) => {
           }
 
           {
-            connected ?
+            (connected&&currentWallet) ?
 
               <View style={styles.WFCA}>
                 {
@@ -328,7 +313,7 @@ const Money = (props) => {
                     </Text>
                   </ImageBackground>
 
-                  <Text style={[styles.balance, { color: "#897EF8" }]}>{NativeBalance}</Text>
+                  <Text style={[styles.balance, { color: "#897EF8" }]}>{Number(tpwNativeBalance).toFixed(4)}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingRight: 20 }}>
                   {/* <Text style={{ color: "#897EF8" }}>$10.000</Text> */}
@@ -336,7 +321,7 @@ const Money = (props) => {
                   <Text style={{ color: "#897EF8" }} onPress={() => { disconnectWallet() }}>{t("断开链接")}</Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Text style={{ color: "#897EF8" }}>{address1}</Text>
+                  <Text style={{ color: "#897EF8" }}>{shortenAddress(currentWallet)}</Text>
                   <TouchableWithoutFeedback onPress={() => { Copy(currentWallet) }}>
                     <Image
                       style={{ width: 10, height: 10, marginLeft: 5 }}
@@ -369,12 +354,13 @@ const Money = (props) => {
 
         <TouchableWithoutFeedback
           onPress={() => {
-            props.navigation.navigate("Exchange");
+            // props.navigation.navigate("Exchange");
+            Toast("coming soon...")
           }}
         >
-          <View style={styles.ListService}>
+          <View style={[styles.ListService,]}>
             <Image
-              style={styles.ListServiceImg}
+              style={[styles.ListServiceImg,]}
               source={require("../../assets/img/money/list3.png")}
             ></Image>
             <Text>{t("兑换")}</Text>
@@ -384,8 +370,8 @@ const Money = (props) => {
         <TouchableWithoutFeedback
           onPress={() => {
             props.navigation.navigate("Gift", {
-              USDT: ThirdPartyBalance ? Number(ThirdPartyBalance[0].balance) / 10 ** ThirdPartyBalance[0].decimals : 0,
-              ETH: WalletInUse == 1 ? NativeBalanceBenDi : NativeBalance
+              ERC20Token: WalletInUse == 1 ? lwErc20Balance: tpwErc20Balance,
+              NativToken: WalletInUse == 1 ? lwNativeBalance : tpwNativeBalance
             });
           }}
         >
@@ -403,27 +389,28 @@ const Money = (props) => {
       <View style={[styles.daohang]}>
         <Text
           style={[
-            type === 2 ? styles.daonghang_text_ative : styles.daonghang_text,
+            contenType == "token" ? styles.daonghang_text_ative : styles.daonghang_text,
           ]}
-          onPress={() => changetype(2)}
+          onPress={() => setContenType("token")}
         >
           {t("代币")}
         </Text>
         <Text
           style={[
-            type === 3 ? styles.daonghang_text_ative : styles.daonghang_text,
+            contenType == "nft" ? styles.daonghang_text_ative : styles.daonghang_text,
           ]}
-          onPress={() => changetype(3)}
+          onPress={() => setContenType("nft")}
         >
           {t("藏品")}
         </Text>
       </View>
       {/* tab栏 -- end */}
       <ScrollView showsVerticalScrollIndicator={false}>
+
         <View style={[styles.listbox]}>
           {
 
-            ThirdPartyBalance.map((item, index) => (
+            contenType == "token" ? (WalletInUse == 1 ? lwErc20Balance : tpwErc20Balance.map((item, index) => (
               <View style={styles.ListLi} >
                 <Image
                   style={{ width: 40, height: 40 }}
@@ -437,7 +424,7 @@ const Money = (props) => {
                 </View>
               </View>
 
-            ))
+            ))) : null
 
           }
 
@@ -498,21 +485,22 @@ const Money = (props) => {
         </Card>
       </Modal>
 
+      <Animated.View  style={{position:"absolute",translateX:scrollX,opacity:opacity}}>
+        <Lmodal
+          goto={(path) => {
+            props.navigation.navigate(path);
+          }}
+          close={() => close()}
+          visible={lMvisible}
+          openModal={() => {
+            setModalvisible(true); setTimeout(() => {
+              inputRefX.current.focus();
+            }, 500);
+            empty();
+          }}
+        />
+      </Animated.View >
 
-      <Lmodal
-        goto={(path) => {
-          props.navigation.navigate(path);
-        }}
-        style={[styles.Screen]}
-        close={() => close()}
-        visible={lMvisible}
-        openModal={() => {
-          setModalvisible(true); setTimeout(() => {
-            inputRefX.current.focus();
-          }, 500);
-          empty();
-        }}
-      ></Lmodal>
 
     </SafeAreaView>
   );
@@ -574,6 +562,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 30,
+    paddingHorizontal:20
   },
   HTitle: {
     fontSize: 20,
@@ -605,7 +594,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: 15,
     paddingTop: 24,
-    paddingLeft: 20, position: 'relative'
+    paddingLeft: 20, 
+    position: 'relative'
   },
   WName: {
     fontSize: 12,
@@ -632,11 +622,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: "#333333",
+    paddingHorizontal:20
   },
   ListService: {
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal:20,
   },
   ListServiceImg: {
     marginBottom: 5,

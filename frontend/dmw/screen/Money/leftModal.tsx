@@ -21,7 +21,7 @@ const screenHeight = Dimensions.get("window").height;
 const Lmodal = (props) => {
   const { t, i18n } = useTranslation();
   const { Toast } = useDmwApi()
-const {WalletInUse} = useDmwLogin()
+  const { WalletInUse } = useDmwLogin()
   const { dmwWalletList } = useDmwWallet();
   const close = () => {
     props.close();
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   black: {
-    width: screenWidth,
+    width: screenWidth *5,
     height: screenHeight,
     backgroundColor: "rgba(0,0,0,0.5)",
     zIndex: 9,

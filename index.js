@@ -31,11 +31,13 @@ const { Platform, LogBox } = require('react-native');
 
 if (Platform.OS !== 'web') {
   require('react-native-get-random-values');
-  LogBox.ignoreAllLogs(true)//关闭全部黄色警告
+  // LogBox.ignoreAllLogs(true)//关闭全部黄色警告
   LogBox.ignoreLogs(
     [
-      "Warning: The provided value 'ms-stream' is not a valid 'responseType'.",
-      "Warning: The provided value 'moz-chunked-arraybuffer' is not a valid 'responseType'.",
+      "The provided value 'moz-chunked-arraybuffer' is not a valid 'responseType'.",
+      "The provided value 'ms-stream' is not a valid 'responseType'.",
+      "source.uri should not be an empty string",
+      'Warning: Each child in a list should have a unique "key" prop.'
     ],
   );
 }
@@ -90,7 +92,7 @@ i18n
   });
 
  
-console.disableYellowBox = true; // 关闭全部黄色警告
+ // 关闭全部黄色警告
 
 
 export default i18n;
