@@ -89,7 +89,7 @@ const List = (props) => {
 
                                 <ImageBackground onError={() => {
 
-                                }} style={[styles.imageBox]} resizeMode='cover' source={require('../assets/img/index/any2.jpg')}>
+                                }} style={[styles.imageBox]} resizeMode='cover' source={require('../assets/img/index/default.png')}>
 
 
                                     {

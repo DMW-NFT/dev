@@ -15,6 +15,7 @@ import NFT1155ABI from '../../frontend/contract/NFT1155.json'
 import NFT721ABI from '../../frontend/contract/NFT721.json'
 import marketplaceABI from '../../frontend/contract/MARKETPLACE.json'
 import ERC20ABI from '../contract/ERC20.json'
+import { Address } from 'cluster';
 
 const DmwWalletProvider = ({ children }) => {
 
@@ -23,7 +24,7 @@ const DmwWalletProvider = ({ children }) => {
     const [dmwChainId, setDmwChainId] = useState(5)
     const [dmwTransactionMap, setDmwTransactionMap] = useState({})
     const [dmwTransactionList, setDmwTransactionList] = useState([])
-
+    const {globalError,setGlobalError} = useDmwWeb3()
     const web3 = new Web3()
 
     const verifySecretKey = (secretKey: string, verifyKey: string, storageKey: string) => {
@@ -165,7 +166,7 @@ const DmwWalletProvider = ({ children }) => {
             console.log("getting wallet list form storage");
 
             const WalletList_encoded = await AsyncStorage.getItem('@dmw_wallet_list_storage')
-            console.log(WalletList_encoded);
+            // console.log(WalletList_encoded);
             if (WalletList_encoded !== null) {
 
                 const WalletList = JSON.parse(WalletList_encoded)
@@ -206,16 +207,36 @@ const DmwWalletProvider = ({ children }) => {
     }
 
 
-    const dmwTransferNavtie = async (secretKey: string) => {
+    const dmwTransferNavtive = async (secretKey: string,to:string,value:string) => {
         web3.eth.setProvider(getProvider(dmwChainId));
         let tx = {
             from: currentDmwWallet, // Required
-            to: "0x1b56FC073b1f1929A3aB01b4FC26848afAc702Da", // Required (for non contract deployments)
-            value: web3.utils.toWei('0.01', 'ether'), // Optional
+            to: to, // Required (for non contract deployments)
+            value: web3.utils.toWei(value, 'ether'), // Optional
             // gasPrice: "34544552563",
         };
         dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",hash)).catch(error => console.log("!!!",error))
 
+    }
+
+    const dmwTransferERC20 = (secretKey:string,contractAddress: string, to: string, amount: string,decimal:number) => {
+        web3.eth.setProvider(getProvider(dmwChainId));
+        const contract = new web3.eth.Contract(ERC20ABI, contractAddress)
+        const rawdata = contract.methods.transfer(to, (Number(amount) * 10**decimal).toFixed()).encodeABI()
+        const tx = {
+            from: currentDmwWallet, // Required
+            to: contractAddress, // Required (for non contract deployments)
+            data: rawdata, // Required
+            // gasPrice: "0x02540be400", // Optional
+            // gasLimit: "0x9c40", // Optional
+            value: web3.utils.toWei("0", 'ether'), // Optional
+            // nonce: "0x0114", // Optional
+        };
+        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",hash)).catch(error => console.log("!!!",error))
+    }
+
+    const dmwTransferToken = (secretKey:string, contract: string = null,to: string, amount: string,decimal:number=null) => {
+        contract ? dmwTransferERC20(secretKey, contract,to, amount,decimal) : dmwTransferNavtive(secretKey,to, amount)
     }
 
     const dmwMintWithSignature = async (secretKey:string,SignedPayload, Signature) =>{
@@ -258,10 +279,10 @@ const DmwWalletProvider = ({ children }) => {
         dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
     }
 
-    const dmwSendTransaction = async (tx: TransactionConfig, secretKey: string) => {
+    const dmwSendTransaction = async (tx: TransactionConfig, privateKey: string) => {
         web3.eth.setProvider(getProvider(dmwChainId));
-        const walletList = await getWalletListFromAccountStorage(secretKey)
-        const privateKey = walletList.walletDict[currentDmwWallet].privateKey
+        // const walletList = await getWalletListFromAccountStorage(secretKey)
+        // const privateKey = walletList.walletDict[currentDmwWallet].privateKey
         // console.log(privateKey)
         const gas = await web3.eth.estimateGas(tx)
         tx["gas"] = gas
@@ -482,7 +503,7 @@ const DmwWalletProvider = ({ children }) => {
 
     return (
 
-        <DmwWalletContext.Provider value={{dmwBuyNFT,loadWalletFromMnemonic, loadMnemonicFromStorage , newMnemonic , dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtie ,dmwMintWithSignature,dmwTransactionList,dmwTransactionMap,dmwApprovalForAll,dmwCreateListing,dmwMakeOffer,dmwAcceptOffer,cancelDirectListing,dmwErc20Approve,dmwTransfer721NFT,dmwTransfer1155NFT,addMnemonic}}>
+        <DmwWalletContext.Provider value={{dmwBuyNFT,loadWalletFromMnemonic, loadMnemonicFromStorage , newMnemonic , dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtive ,dmwMintWithSignature,dmwTransactionList,dmwTransactionMap,dmwApprovalForAll,dmwCreateListing,dmwMakeOffer,dmwAcceptOffer,cancelDirectListing,dmwErc20Approve,dmwTransfer721NFT,dmwTransfer1155NFT,addMnemonic,dmwTransferToken}}>
             {children}
         </DmwWalletContext.Provider>
 

@@ -414,7 +414,7 @@ const TransferredIntoCollection = (props) => {
                     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
                   }]}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Image source={require('../../assets/img/index/any2.jpg')} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
+                      <Image source={require('../../assets/img/index/default.png')} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
                       <Text style={{ marginLeft: 10 }}>
                         {activeEm.name}
                       </Text></View>

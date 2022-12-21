@@ -34,7 +34,7 @@ export default class ModifyInfo extends Component {
           <View >
             <Image
               style={{width:screenWidth - 40 , height: 200, borderRadius: 20}}
-              source={require('../../assets/img/my/any2.jpg')}></Image>
+              source={require('../../assets/img/index/default.png')}></Image>
           </View>
         </View>
 

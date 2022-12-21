@@ -37,7 +37,7 @@ export default class Sell extends Component {
                     {/* tab栏 -- end */}
                     <View style={[styles.bottomBox]} >
                         <View style={{ alignItems: 'center' }}>
-                            <Image source={require('../../assets/img/index/any2.jpg')} style={[styles.imgBox]}></Image>
+                            <Image source={require('../../assets/img/index/default.png')} style={[styles.imgBox]}></Image>
                         </View>
                         <View style={{ marginTop: 65 / 2 }}>
                             <Text>价格</Text>

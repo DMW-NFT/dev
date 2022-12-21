@@ -16,13 +16,13 @@ import React, { useContext, useState, useEffect, createRef, useRef } from "react
 import Screen from "./BottomPopUpWindow";
 import Lmodal from "./leftModal";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
-import { Button, Card, Layout, Modal } from '@ui-kitten/components';
+import { Button, Card, Layout, Modal, OverflowMenu,MenuItem } from '@ui-kitten/components';
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import CryptoJS from 'crypto-js'
 import { useTranslation } from 'react-i18next'
-import { use } from "i18next";
+
 
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
@@ -35,6 +35,9 @@ const Money = (props) => {
   const [contenType, setContenType] = useState("token");
   const [list, setList] = useState([{}, {}]);
   const [visible, setVisible] = useState(false);
+  const [chainMenuVisible, setChainMenuVisible] = useState(false);
+
+  const [selectedChain,setSelectedChain] = useState('Goerli')
   const [lMvisible, setLMvisible] = useState(false);
   const [Modalvisible, setModalvisible] = useState(false)
   const { dmwWalletList } = useDmwWallet();
@@ -54,20 +57,20 @@ const Money = (props) => {
   const scrollX = new Animated.Value(-500)
   const opacity = new Animated.Value(0)
 
-  useEffect(()=>{
-    if (lMvisible){
-      Animated.timing(opacity,{toValue: 1, duration: 300,useNativeDriver:true}).start();    
-      Animated.timing(scrollX,{toValue: 0, duration: 200,useNativeDriver:true}).start();                        // 开始执行动画
-                    // 开始执行动画
+  useEffect(() => {
+    if (lMvisible) {
+      Animated.timing(opacity, { toValue: 1, duration: 300, useNativeDriver: true }).start();
+      Animated.timing(scrollX, { toValue: 0, duration: 200, useNativeDriver: true }).start();                        // 开始执行动画
+      // 开始执行动画
     }
-  },[lMvisible])
+  }, [lMvisible])
 
 
   useEffect(() => {
-    if (memConnectStatus.connected){
+    if (memConnectStatus.connected) {
       connectWallet()
     }
-    
+
   }, [memConnectStatus])
 
 
@@ -196,6 +199,11 @@ const Money = (props) => {
 
     return encoded;
   }
+  const renderChainMenu = () => (
+    <Button style={{}} onPress={() => setChainMenuVisible(true)}>
+      {selectedChain}
+    </Button>
+  );
 
   const randomString = (len) => {
     len = len || 32;
@@ -221,6 +229,15 @@ const Money = (props) => {
     >
 
       <View style={styles.hearder}>
+        <OverflowMenu
+          anchor={renderChainMenu}
+          visible={chainMenuVisible}
+          placement={'bottom'}
+          onBackdropPress={() => setChainMenuVisible(false)}>
+          <MenuItem title='Users' />
+          <MenuItem title='Orders' />
+          <MenuItem title='Transactions' />
+        </OverflowMenu>
         <View>
           {/* <Text style={styles.hello}>hello</Text>
           <Text style={styles.HTitle}>Account 1</Text> */}
@@ -286,7 +303,7 @@ const Money = (props) => {
           }
 
           {
-            (connected&&currentWallet) ?
+            (connected && currentWallet) ?
 
               <View style={styles.WFCA}>
                 {
@@ -370,7 +387,8 @@ const Money = (props) => {
         <TouchableWithoutFeedback
           onPress={() => {
             props.navigation.navigate("Gift", {
-              ERC20Token: WalletInUse == 1 ? lwErc20Balance: tpwErc20Balance,
+              WalletInuse: WalletInUse,
+              ERC20Token: WalletInUse == 1 ? lwErc20Balance : tpwErc20Balance,
               NativToken: WalletInUse == 1 ? lwNativeBalance : tpwNativeBalance
             });
           }}
@@ -410,7 +428,7 @@ const Money = (props) => {
         <View style={[styles.listbox]}>
           {
 
-            contenType == "token" ? (WalletInUse == 1 ? lwErc20Balance : tpwErc20Balance.map((item, index) => (
+            contenType == "token" ? ((WalletInUse == 1 ? lwErc20Balance : tpwErc20Balance).map((item, index) => (
               <View style={styles.ListLi} >
                 <Image
                   style={{ width: 40, height: 40 }}
@@ -438,7 +456,7 @@ const Money = (props) => {
       <Screen
         style={[styles.Screen]}
         visible={visible}
-        close={() => close()}
+        close={close}
       ></Screen>
 
 
@@ -485,7 +503,7 @@ const Money = (props) => {
         </Card>
       </Modal>
 
-      <Animated.View  style={{position:"absolute",translateX:scrollX,opacity:opacity}}>
+      <Animated.View style={{ position: "absolute", translateX: scrollX, opacity: opacity }}>
         <Lmodal
           goto={(path) => {
             props.navigation.navigate(path);
@@ -562,7 +580,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 30,
-    paddingHorizontal:20
+    paddingHorizontal: 20
   },
   HTitle: {
     fontSize: 20,
@@ -594,7 +612,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: 15,
     paddingTop: 24,
-    paddingLeft: 20, 
+    paddingLeft: 20,
     position: 'relative'
   },
   WName: {
@@ -622,13 +640,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: "#333333",
-    paddingHorizontal:20
+    paddingHorizontal: 20
   },
   ListService: {
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal:20,
+    paddingHorizontal: 20,
   },
   ListServiceImg: {
     marginBottom: 5,

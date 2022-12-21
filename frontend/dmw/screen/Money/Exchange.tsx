@@ -184,7 +184,7 @@ const Exchange = (props) => {
         <View style={[styles.btnline]}></View>
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
           <View style={styles.copy}>
-            <Text style={{ fontSize: 12 }}>0xD652fw…G673C7C4</Text>
+            <Text style={{ fontSize: 12 }}>123456</Text>
             <Text style={styles.CopyBtn}>复制</Text>
           </View>
         </View>

@@ -9,15 +9,15 @@ import { useDmwWallet } from '../../DmwWallet/DmwWalletProvider';
 export default function TxProccessingModal(props) {
     const isTpwTx = props.isTpwTx
     // console.log(props.mo)
-    const { transactionMap, transactionList,globalError } = useDmwWeb3()
+    const { transactionMap, transactionList, globalError } = useDmwWeb3()
     const { dmwTransactionList, dmwTransactionMap } = useDmwWallet()
     const [modalvisible, setModalvisible] = useState(props.modalvisible)
     const { t, i18n } = useTranslation();
     const [dmwlatestHash, setDmwLatestHash] = useState('')
     const [latestHash, setLatestHash] = useState('')
     const [screenLoading, setScreenLoding] = useState(true)
-    const [globalErrorTmep,setGlobalErrorTemp] = useState([...globalError])
-
+    const [globalErrorTmep, setGlobalErrorTemp] = useState([...globalError])
+    const [currentState, setCurrentState] = useState('sending transation')
     useEffect(() => {
         props.setModalvisible(modalvisible)
     }, [modalvisible])
@@ -26,14 +26,14 @@ export default function TxProccessingModal(props) {
         setModalvisible(modalvisible)
     }, [props.modalvisible])
 
-    useEffect(()=>{
+    useEffect(() => {
         setGlobalErrorTemp([...globalError])
-    },[])
+    }, [])
 
-    useEffect(()=>{
-        console.log(globalError,globalErrorTmep);
-        globalErrorTmep&&((globalErrorTmep.length != globalError.length)?setModalvisible(false):null)
-    },[globalError])
+    useEffect(() => {
+        console.log(globalError, globalErrorTmep);
+        globalErrorTmep && ((globalErrorTmep.length != globalError.length) ? setModalvisible(false) : null)
+    }, [globalError])
 
     useEffect(() => {
 
@@ -53,11 +53,26 @@ export default function TxProccessingModal(props) {
                 setDmwLatestHash(null)
                 // Toast(t('创建成功！'))
                 setScreenLoding(false)
+                setCurrentState("confirmed")
+                setTimeout(() => {
+                    setModalvisible(false)
+                }, 5000)
+
+            } else if (dmwTransactionMap[dmwlatestHash].state == "reversed") {
+                console.log("got you !", dmwTransactionMap[dmwlatestHash])
+                setDmwLatestHash(null)
+                // Toast(t('创建成功！'))
+                setScreenLoding(false)
+                setCurrentState("reversed")
+                setTimeout(() => {
+                    setModalvisible(false)
+                }, 5000)
 
             } else {
                 setScreenLoding(true)
-                // Toast(t('等待链上确认！'))
             }
+
+
         }
     }, [dmwTransactionMap])
 
@@ -81,13 +96,21 @@ export default function TxProccessingModal(props) {
                 setLatestHash(null)
                 // Toast(t('创建成功！'))
                 setScreenLoding(false)
-                setTimeout(()=>{
+                setTimeout(() => {
                     setModalvisible(false)
-                },5000)
+                }, 5000)
+                setCurrentState("confirmed")
 
+            } else if (transactionMap[latestHash].state == "reversed") {
+                setScreenLoding(false)
+
+                setCurrentState("reversed")
+
+                setTimeout(() => {
+                    setModalvisible(false)
+                }, 5000)
             } else {
                 setScreenLoding(true)
-                // Toast(t('等待链上确认！'))
             }
         }
     }, [transactionMap])
@@ -110,7 +133,7 @@ export default function TxProccessingModal(props) {
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                         <Text>
-                            {screenLoading ? "Pending..." : "Confirmed"}
+                            {currentState}
                         </Text>
                     </View>
                 </View>

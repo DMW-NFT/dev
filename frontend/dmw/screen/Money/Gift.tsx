@@ -5,7 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { IndexPath, Select, SelectItem } from '@ui-kitten/components';
 import { useDmwWeb3 } from '../../../DmwWeb3/DmwWeb3Provider';
+import { useDmwWallet } from '../../../DmwWallet/DmwWalletProvider';
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
+import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider';
 import VerfiySecretModal from '../../Components/VerfiySecretModal'
 import TxProccessingModal from '../../Components/TxProccessingModal'
 import { useTranslation } from 'react-i18next'
@@ -14,6 +16,7 @@ const scale = Dimensions.get('window').scale;
 const screenWidth = Dimensions.get('window').width;
 
 const Gift = (props) => {
+    const { WalletInUse } = useDmwLogin()
     const { t, i18n } = useTranslation();
     const [receiptAddress, setReceiptAddress] = useState('')
     const [TokenType, setTokenType] = useState('ETH')
@@ -21,7 +24,8 @@ const Gift = (props) => {
     const [selectedIndex, setSelectedIndex] = useState(new IndexPath(0));
     const [number, setnumber] = useState(null)
     const { transferToken, nativeToken } = useDmwWeb3()
-    const { Toast } = useDmwApi()
+    const { getWalletListFromAccountStorage, currentDmwWallet, dmwTransferToken } = useDmwWallet();
+    const { Toast, Copy } = useDmwApi()
     const [balanceData, setBalanceData] = useState([])
     const [password, setPassword] = useState('')
     const [vfModalvisible, setVfModalvisible] = useState(false)
@@ -38,7 +42,7 @@ const Gift = (props) => {
         if (selectedIndex.row == 0) {
             setSelectedToken({ symbol: nativeToken, amount: Number(balanceData.NativToken), contractAddress: null })
         } else {
-            setSelectedToken({ symbol: balanceData.ERC20Token[selectedIndex.row - 1].symbol, amount: Number(balanceData.ERC20Token[selectedIndex.row - 1].balance) / 10 ** Number(balanceData.ERC20Token[selectedIndex.row - 1].decimals), contractAddress: balanceData.ERC20Token[selectedIndex.row - 1].token_address })
+            setSelectedToken({ symbol: balanceData.ERC20Token[selectedIndex.row - 1].symbol, amount: Number(balanceData.ERC20Token[selectedIndex.row - 1].balance) / 10 ** Number(balanceData.ERC20Token[selectedIndex.row - 1].decimals), contractAddress: balanceData.ERC20Token[selectedIndex.row - 1].token_address, decimals: balanceData.ERC20Token[selectedIndex.row - 1].decimals })
         }
 
 
@@ -55,16 +59,36 @@ const Gift = (props) => {
         }
         console.log(String(TokenType), String(receiptAddress), String(number));
 
-        transferToken(String(receiptAddress), String(number), selectedToken.contractAddress)
+        if (WalletInUse == 1) {
+            setVfModalvisible(true)
+        } else {
+            transferToken(String(receiptAddress), String(number), selectedToken.contractAddress, selectedToken.decimals ? selectedToken.decimals : null)
+            setTxModalvisible(true)
+            setTimeout(() => {
+                setnumber('')
+            }, 3000);
 
-        setTxModalvisible(true)
-        setTimeout(() => {
-            setnumber('')
-        }, 3000);
-
-
-
+        }
     }
+
+    useEffect(() => {
+        WalletInUse == 1 && (Array.from(password).length == 6) &&
+            getWalletListFromAccountStorage(password).then(res => {
+                if (res) {
+                    console.log(res.walletDict[currentDmwWallet].privateKey)
+                    // console.log(selectedToken)
+                    setVfModalvisible(false)
+                    setTxModalvisible(true)
+                    setPassword('')
+                    dmwTransferToken(res.walletDict[currentDmwWallet].privateKey, selectedToken.contractAddress, String(receiptAddress), String(number), selectedToken.decimals ? selectedToken.decimals : null)
+
+
+
+                } else {
+                    Toast("密码错误")
+                }
+            })
+    }, [password])
 
     return (
         <SafeAreaView style={[{ position: 'relative', backgroundColor: '#fff', flex: 1, paddingTop: 30, paddingRight: 20, paddingLeft: 20 }]}>
@@ -145,35 +169,24 @@ const Gift = (props) => {
 
 
             <View style={{ paddingLeft: 15, marginBottom: 10 }}>
-                <Text style={{ fontSize: 12, fontWeight: '700' }}>发送到</Text>
+                <Text style={{ fontSize: 12, fontWeight: '700' }}>{t("发送到")}</Text>
             </View>
             <TextInput
                 multiline={true}
                 textAlignVertical="top"
                 numberOfLines={5}
-                placeholder='输入地址: 0x.....'
+                placeholder={`${t('输入地址')}: 0x.....`}
                 style={[styles.textarea]}
                 onChangeText={e => { setReceiptAddress(e) }}
                 value={receiptAddress}
             />
 
 
-            <View style={styles.container}></View>
-            {/* <Modal
-                    visible={visible}
-                    onDismiss={() => close()}
-                    contentContainerStyle={[styles.footer]}>
-                    <View style={[styles.btnline]}></View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'center' }}><View style={styles.copy}>
-                        <Text style={{ fontSize: 12 }}>0xD652fw…G673C7C4</Text>
-                        <Text style={styles.CopyBtn}>复制</Text>
-                    </View></View>
-                    <Text style={{ textAlign: 'center', marginTop: 20 }}>复制地址以接收付款</Text>
-                </Modal> */}
+            {/* <View style={styles.container}></View> */}
 
-            <Text style={styles.btn} onPress={() => sendout()}>发送</Text>
+            <Text style={styles.btn} onPress={() => sendout()}>{t("发送")}</Text>
 
-            <VerfiySecretModal setModalvisible={setVfModalvisible} setPassword={setPassword} />
+            {vfModalvisible && <VerfiySecretModal setModalvisible={setVfModalvisible} modalvisible={vfModalvisible} setPassword={setPassword} />}
             {txModalvisible && <TxProccessingModal setModalvisible={setTxModalvisible} modalvisible={txModalvisible} />}
         </SafeAreaView>
     );

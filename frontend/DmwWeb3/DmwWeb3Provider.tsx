@@ -82,10 +82,11 @@ const DmwWeb3Provider = ({ children }) => {
     }, [currentChainId])
 
     // 转移
-    const transferERC20 = (contractAddress: string, to: string, amount: string) => {
+    const transferERC20 = (contractAddress: string, to: string, amount: string,decimals:number) => {
         web3.eth.setProvider(getProvider(currentChainId));
         const contract = new web3.eth.Contract(ERC20ABI, contractAddress)
-        const rawdata = contract.methods.transferFrom(currentWallet, to, web3.utils.toWei(amount, 'ether')).encodeABI()
+        const rawdata = contract.methods.transfer(to, (Number(amount) * 10**decimals).toFixed()).encodeABI()
+        console.log(currentWallet, to, (Number(amount) * 10**decimals).toFixed())
         const tx = {
             from: currentWallet, // Required
             to: contractAddress, // Required (for non contract deployments)
@@ -110,8 +111,8 @@ const DmwWeb3Provider = ({ children }) => {
             });
     }
 
-    const transferToken = (to: string, amount: string, contract: string = null) => {
-        contract ? transferERC20(to, amount, contract) : tranferNative(to, amount)
+    const transferToken = (to: string, amount: string, contract: string = null,decimals:number) => {
+        contract ? transferERC20(contract,to, amount, decimals) : transferNative(to, amount)
     }
 
 
@@ -180,7 +181,7 @@ const DmwWeb3Provider = ({ children }) => {
         }
     }
 
-    const tranferNative = (to: string, value: string) => {
+    const transferNative = (to: string, value: string) => {
 
         const tx = {
             from: currentWallet, // Required
@@ -673,7 +674,7 @@ const DmwWeb3Provider = ({ children }) => {
 
 
     return (
-        <DmwWeb3Context.Provider value={{ makeOffer, transferToken, getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, tranferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing, getErc20Allowance, erc20Approve, transfer721NFT, transfer1155NFT, GasMap, currentGasPrice, memConnectStatus, nativeToken,globalError }}>
+        <DmwWeb3Context.Provider value={{ makeOffer, transferToken, getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, transferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing, getErc20Allowance, erc20Approve, transfer721NFT, transfer1155NFT, GasMap, currentGasPrice, memConnectStatus, nativeToken,globalError,setGlobalError }}>
             {children}
         </DmwWeb3Context.Provider>
     )

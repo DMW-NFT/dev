@@ -63,7 +63,7 @@ const Lmodal = (props) => {
                 borderRadius: 25,
                 marginRight: 10,
               }}
-              source={require("../../assets/img/index/any2.jpg")}
+              source={require("../../assets/img/index/default.png")}
             ></Image> */}
             <Text style={{ fontSize: 16, fontWeight: "700" }}>DMW</Text>
           </View>

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 export default function VerfiySecretModal(props) {
     const inputRefX = useRef(null);
     const [password, setPassword] = useState('')
-    const [modalvisible, setModalvisible] = useState(false)
+    const [modalvisible, setModalvisible] = useState(props.modalvisible)
     const { t, i18n } = useTranslation();
     const openPassWordModal = () => {
         // Keyboard.dismiss()

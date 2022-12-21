@@ -123,7 +123,7 @@ const GoodsDetail = (props) => {
 
             setLoding(false)
             setDetailsObj(res.data.nft_data)
-            setImgurl(res.data.nft_data.create_way == 1 ? res.data.nft_data.image_attachment_url : res.data.nft_data.image_attachment)
+            setImgurl(res.data.nft_data.image_attachment_url ? res.data.nft_data.image_attachment_url :res.data.nft_data.image_attachment )
             let arr = res.data.nft_data['owners'].msg.avatar
             let arrw = res.data.nft_data['owners'].msg.wallet_address
             let arrO = []
@@ -291,7 +291,7 @@ const GoodsDetail = (props) => {
                                     setImgurl('../../assets/img/index/default.png')
                                     setimgShow(false)
                                 }} style={[styles.topImg]}></Image> :
-                                    <Image source={require('../../assets/img/index/any3.jpg')} style={[styles.topImg]}></Image>
+                                    <Image source={require('../../assets/img/index/default.png')} style={[styles.topImg]}></Image>
                             }
 
                             {/* 喜欢 */}
