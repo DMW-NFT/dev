@@ -22,6 +22,7 @@ import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { Spinner } from '@ui-kitten/components';
 import List from "../../Components/List";
 import { useTranslation } from 'react-i18next'
+import ChainIdMap from '../../../constans/chainIdMap.json'
 
 const data = [
   {
@@ -53,8 +54,8 @@ const Myself = (props) => {
   const [strText, setStrText] = useState('');
   const [lMvisible, setlMvisible] = useState(false);
   const [userInfo, setUserInfo] = useState({});
-  const { username, setUsername } = useDmwLogin();
-  const { avatarUrl, setAvatarUrl,WalletInUse } = useDmwLogin();
+  const { username, setUsername ,WalletInUse} = useDmwLogin();
+  const { avatarUrl, setAvatarUrl} = useDmwLogin();
   const [loading, setLoding] = useState(false)
   const [myNftList, setmyNftList] = useState([])
   const [screenData,setScreenData] = useState([])
@@ -62,7 +63,7 @@ const Myself = (props) => {
   // Context方法
   const { logOut } = useDmwLogin();
   const { post, formData , Toast ,Copy} = useDmwApi();
-  const { currentWallet } = useDmwWeb3()
+  const { currentWallet,currentChainId } = useDmwWeb3()
   const { dmwWalletList } = useDmwWallet()
 
   const visibleFn = () => {
@@ -88,7 +89,7 @@ const Myself = (props) => {
         console.log(userInfo, "用户信息打印");
         setUsername(res.data.nickname);
         setAvatarUrl(res.data.avatar_url);
-        getMyNft('/index/nft/get_my_nft', { network: 'Goerli' })
+        getMyNft('/index/nft/get_my_nft', { network: ChainIdMap[currentChainId].network })
       }
     });
 
@@ -97,10 +98,11 @@ const Myself = (props) => {
       setScreenData(res.data)
     })
   
-  }, []);
+  }, [currentChainId]);
 
   useEffect(() => {
     setmyNftList([])
+    // console.log("myself currentchain id",currentChainId)
     if(typename == '我创建的'){
       console.log('查看我创建的');
       getMyNft('/index/nft/get_my_create_nft_by_search', { keyword: strText,...determinelist })
@@ -109,9 +111,9 @@ const Myself = (props) => {
     }else if(typename=='我喜欢的'){
       getMyNft('/index/nft/get_my_likes_nft_by_search', { keyword: strText,...determinelist })
     }else if(typename=='我的藏品'){
-      getMyNft(determinelist == {}? '/index/nft/get_my_nft_by_search' : '/index/nft/get_my_nft', { keyword: strText,network: 'Goerli',...determinelist })
+      getMyNft(determinelist == {}? '/index/nft/get_my_nft_by_search' : '/index/nft/get_my_nft', { keyword: strText,network: ChainIdMap[currentChainId].network ,...determinelist })
     }
-  }, [typename,determinelist,strText])
+  }, [typename,determinelist,strText,currentChainId,WalletInUse])
 
 
   useEffect(() => {

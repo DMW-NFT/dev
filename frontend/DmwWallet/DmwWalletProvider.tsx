@@ -16,6 +16,7 @@ import NFT721ABI from '../../frontend/contract/NFT721.json'
 import marketplaceABI from '../../frontend/contract/MARKETPLACE.json'
 import ERC20ABI from '../contract/ERC20.json'
 import { Address } from 'cluster';
+import ChainIdMap from '../constans/chainIdMap.json'
 
 const DmwWalletProvider = ({ children }) => {
 
@@ -24,8 +25,9 @@ const DmwWalletProvider = ({ children }) => {
     const [dmwChainId, setDmwChainId] = useState(5)
     const [dmwTransactionMap, setDmwTransactionMap] = useState({})
     const [dmwTransactionList, setDmwTransactionList] = useState([])
-    const {globalError,setGlobalError} = useDmwWeb3()
+    const { globalError, setGlobalError } = useDmwWeb3()
     const web3 = new Web3()
+
 
     const verifySecretKey = (secretKey: string, verifyKey: string, storageKey: string) => {
         var ciphertext = CryptoJS.AES.encrypt(
@@ -65,7 +67,7 @@ const DmwWalletProvider = ({ children }) => {
 
     }
     // 导入新的助记忆词，需要传入用户的支付密码，助记词将会用AES加密后储存到AsyncStorage的@dmw_mnemonic_storage中。
-    const addMnemonic = async (secretKey, mnemonic,reset = true) => {
+    const addMnemonic = async (secretKey, mnemonic, reset = true) => {
 
         // const wallet = web3.eth.accounts.create()
         // console.log(wallet.privateKey)
@@ -109,7 +111,7 @@ const DmwWalletProvider = ({ children }) => {
             }
         } catch (e) {
             console.log(e);
-            
+
             console.log("no mnemonic from local storage!!!")
             // error reading value
         }
@@ -118,15 +120,15 @@ const DmwWalletProvider = ({ children }) => {
     // 从助记词中恢复或创建钱包地址，wallet_index 为钱包的序号，每次新增或者向后恢复wallet_index需要自增1
     const loadWalletFromMnemonic = (mnemonic, wallet_index = 0) => {
         console.log(mnemonic);
-        
+
         let wallet_hdpath = "m/44'/60'/0'/0/";
-        try{
+        try {
             const hdwallet = ethers.utils.HDNode.fromMnemonic(mnemonic)
             return hdwallet.derivePath(wallet_hdpath + wallet_index)
-        }catch(e){
+        } catch (e) {
             return null
         }
-       
+
     }
 
     // 向本地存储中添加新的钱包私钥。
@@ -207,7 +209,7 @@ const DmwWalletProvider = ({ children }) => {
     }
 
 
-    const dmwTransferNavtive = async (secretKey: string,to:string,value:string) => {
+    const dmwTransferNavtive = async (secretKey: string, to: string, value: string) => {
         web3.eth.setProvider(getProvider(dmwChainId));
         let tx = {
             from: currentDmwWallet, // Required
@@ -215,14 +217,14 @@ const DmwWalletProvider = ({ children }) => {
             value: web3.utils.toWei(value, 'ether'), // Optional
             // gasPrice: "34544552563",
         };
-        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",hash)).catch(error => console.log("!!!",error))
+        dmwSendTransaction(tx, secretKey).then((hash) => console.log("hash!!!", hash)).catch(error => console.log("!!!", error))
 
     }
 
-    const dmwTransferERC20 = (secretKey:string,contractAddress: string, to: string, amount: string,decimal:number) => {
+    const dmwTransferERC20 = (secretKey: string, contractAddress: string, to: string, amount: string, decimal: number) => {
         web3.eth.setProvider(getProvider(dmwChainId));
         const contract = new web3.eth.Contract(ERC20ABI, contractAddress)
-        const rawdata = contract.methods.transfer(to, (Number(amount) * 10**decimal).toFixed()).encodeABI()
+        const rawdata = contract.methods.transfer(to, (Number(amount) * 10 ** decimal).toFixed()).encodeABI()
         const tx = {
             from: currentDmwWallet, // Required
             to: contractAddress, // Required (for non contract deployments)
@@ -232,15 +234,15 @@ const DmwWalletProvider = ({ children }) => {
             value: web3.utils.toWei("0", 'ether'), // Optional
             // nonce: "0x0114", // Optional
         };
-        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",hash)).catch(error => console.log("!!!",error))
+        dmwSendTransaction(tx, secretKey).then((hash) => console.log("hash!!!", hash)).catch(error => console.log("!!!", error))
     }
 
-    const dmwTransferToken = (secretKey:string, contract: string = null,to: string, amount: string,decimal:number=null) => {
-        contract ? dmwTransferERC20(secretKey, contract,to, amount,decimal) : dmwTransferNavtive(secretKey,to, amount)
+    const dmwTransferToken = (secretKey: string, contract: string = null, to: string, amount: string, decimal: number = null) => {
+        contract ? dmwTransferERC20(secretKey, contract, to, amount, decimal) : dmwTransferNavtive(secretKey, to, amount)
     }
 
-    const dmwMintWithSignature = async (secretKey:string,SignedPayload, Signature) =>{
-        const contractAddress = "0x0ba15eE8874b930c49c7E65fFdEDf41BE9D0847d"
+    const dmwMintWithSignature = async (secretKey: string, SignedPayload, Signature) => {
+        const contractAddress = ChainIdMap[dmwChainId].nft_contract
 
         const contract = new web3.eth.Contract(NFT1155ABI, contractAddress)
 
@@ -255,13 +257,13 @@ const DmwWalletProvider = ({ children }) => {
             value: web3.utils.toWei('0', 'ether'), // Optional
             // nonce: "0x0114", // Optional
         };
-        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
-        
+        dmwSendTransaction(tx, secretKey).then((hash) => console.log("hash!!!", JSON.stringify(hash))).catch(error => console.log("!!!", error))
+
     }
 
-    const dmwBuyNFT = async (secretKey:string,listingId: number, quantityToBuy: number, currency: string, totalPrice: string) => {
+    const dmwBuyNFT = async (secretKey: string, listingId: number, quantityToBuy: number, currency: string, totalPrice: string) => {
         web3.eth.setProvider(getProvider(dmwChainId));
-        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contractAddress = ChainIdMap[dmwChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
         const rawdata = contract.methods.buy(listingId, currentDmwWallet, quantityToBuy, currency, web3.utils.toWei(totalPrice, 'ether')).encodeABI()
         console.log(rawdata);
@@ -276,7 +278,7 @@ const DmwWalletProvider = ({ children }) => {
         };
         console.log(tx)
         // Send transaction
-        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
+        dmwSendTransaction(tx, secretKey).then((hash) => console.log("hash!!!", JSON.stringify(hash))).catch(error => console.log("!!!", error))
     }
 
     const dmwSendTransaction = async (tx: TransactionConfig, privateKey: string) => {
@@ -305,20 +307,21 @@ const DmwWalletProvider = ({ children }) => {
                 setDmwTransactionMap({ ...dmwTransactionMap, [hash]: { "payload": "", "state": "error", "error": error.message } })
                 return error
             }))
-            .then(receipt=>{
+            .then(receipt => {
 
-                return receipt})
+                return receipt
+            })
         return result
-        
+
 
 
     }
 
-    const dmwApprovalForAll = (secretKey:string,contractAddress: string) => {
+    const dmwApprovalForAll = (secretKey: string, contractAddress: string) => {
         console.log(currentDmwWallet)
         web3.eth.setProvider(getProvider(dmwChainId));
         const contract = new web3.eth.Contract(NFT1155ABI, contractAddress)
-        const rawdata = contract.methods.setApprovalForAll('0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4', true).encodeABI()
+        const rawdata = contract.methods.setApprovalForAll(ChainIdMap[dmwChainId].market_contract, true).encodeABI()
         const tx = {
             from: currentDmwWallet, // Required
             to: contractAddress, // Required (for non contract deployments)
@@ -328,13 +331,13 @@ const DmwWalletProvider = ({ children }) => {
             value: web3.utils.toWei("0", 'ether'), // Optional
             // nonce: "0x0114", // Optional
         };
-        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
+        dmwSendTransaction(tx, secretKey).then((hash) => console.log("hash!!!", JSON.stringify(hash))).catch(error => console.log("!!!", error))
     }
-    
 
-    const dmwCreateListing = (secretKey:string,assetContract: string, tokenId: number, startTime: number, secondsUntilEndTime: number, quantityToList: number, reservePricePerToken: string, buyoutPricePerToken: string, listingType: number) => {
+
+    const dmwCreateListing = (secretKey: string, assetContract: string, tokenId: number, startTime: number, secondsUntilEndTime: number, quantityToList: number, reservePricePerToken: string, buyoutPricePerToken: string, listingType: number) => {
         web3.eth.setProvider(getProvider(dmwChainId));
-        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contractAddress = ChainIdMap[dmwChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
         // console.log(web3.utils.toWei(reservePricePerToken, 'ether'))
         console.log(assetContract, tokenId, startTime, secondsUntilEndTime, quantityToList, reservePricePerToken, buyoutPricePerToken, listingType)
@@ -349,13 +352,13 @@ const DmwWalletProvider = ({ children }) => {
             value: web3.utils.toWei("0", 'ether'), // Optional
             // nonce: "0x0114", // Optional
         };
-        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
+        dmwSendTransaction(tx, secretKey).then((hash) => console.log("hash!!!", JSON.stringify(hash))).catch(error => console.log("!!!", error))
     }
 
 
-    const dmwMakeOffer = async (secretKey:string,listingId: number, quantityWanted: number, currency: string, pricePerToken: string, expirationTimestamp: number) => {
+    const dmwMakeOffer = async (secretKey: string, listingId: number, quantityWanted: number, currency: string, pricePerToken: string, expirationTimestamp: number) => {
         web3.eth.setProvider(getProvider(dmwChainId));
-        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contractAddress = ChainIdMap[dmwChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
         const rawdata = contract.methods.offer(listingId, quantityWanted, currency, web3.utils.toWei(pricePerToken, 'ether'), expirationTimestamp).encodeABI()
         const tx = {
@@ -367,12 +370,12 @@ const DmwWalletProvider = ({ children }) => {
             value: web3.utils.toWei("0", 'ether'), // Optional
             // nonce: "0x0114", // Optional
         };
-        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
+        dmwSendTransaction(tx, secretKey).then((hash) => console.log("hash!!!", JSON.stringify(hash))).catch(error => console.log("!!!", error))
     }
 
-    const dmwAcceptOffer = async (secretKey:string,listingId: number, offeror: string, currency: string, pricePerToken: string) => {
+    const dmwAcceptOffer = async (secretKey: string, listingId: number, offeror: string, currency: string, pricePerToken: string) => {
         web3.eth.setProvider(getProvider(dmwChainId));
-        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contractAddress = ChainIdMap[dmwChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
         const rawdata = contract.methods.acceptOffer(listingId, offeror, currency, web3.utils.toWei(pricePerToken, 'ether')).encodeABI()
         const tx = {
@@ -384,12 +387,12 @@ const DmwWalletProvider = ({ children }) => {
             value: web3.utils.toWei("0", 'ether'), // Optional
             // nonce: "0x0114", // Optional
         };
-        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
+        dmwSendTransaction(tx, secretKey).then((hash) => console.log("hash!!!", JSON.stringify(hash))).catch(error => console.log("!!!", error))
     }
 
-    const cancelDirectListing = async (secretKey:string,listingId: BigNumber) => {
+    const cancelDirectListing = async (secretKey: string, listingId: BigNumber) => {
         web3.eth.setProvider(getProvider(dmwChainId));
-        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contractAddress = ChainIdMap[dmwChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
         const rawdata = contract.methods.cancelDirectListing(listingId).encodeABI()
         const tx = {
@@ -401,12 +404,12 @@ const DmwWalletProvider = ({ children }) => {
             value: web3.utils.toWei("0", 'ether'), // Optional
             // nonce: "0x0114", // Optional
         };
-        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
+        dmwSendTransaction(tx, secretKey).then((hash) => console.log("hash!!!", JSON.stringify(hash))).catch(error => console.log("!!!", error))
     }
 
-    const dmwErc20Approve = (secretKey:string,tokenAddress: string, amount: string) => {
+    const dmwErc20Approve = (secretKey: string, tokenAddress: string, amount: string) => {
         web3.eth.setProvider(getProvider(dmwChainId));
-        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contractAddress = ChainIdMap[dmwChainId].market_contract
         const contract = new web3.eth.Contract(ERC20ABI, tokenAddress)
         const rawdata = contract.methods.approve(contractAddress, web3.utils.toWei(amount, 'ether')).encodeABI()
         const tx = {
@@ -418,13 +421,13 @@ const DmwWalletProvider = ({ children }) => {
             value: web3.utils.toWei("0", 'ether'), // Optional
             // nonce: "0x0114", // Optional
         };
-        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
+        dmwSendTransaction(tx, secretKey).then((hash) => console.log("hash!!!", JSON.stringify(hash))).catch(error => console.log("!!!", error))
     }
 
-    const dmwTransfer721NFT = (secretKey:string,conratctAddress:string,tokenId:Number,to:string) =>{
+    const dmwTransfer721NFT = (secretKey: string, conratctAddress: string, tokenId: Number, to: string) => {
         web3.eth.setProvider(getProvider(dmwChainId));
         const contract = new web3.eth.Contract(NFT721ABI, conratctAddress)
-        const rawdata = contract.methods.transferFrom(currentDmwWallet, to,tokenId).encodeABI()
+        const rawdata = contract.methods.transferFrom(currentDmwWallet, to, tokenId).encodeABI()
         const tx = {
             from: currentDmwWallet, // Required
             to: conratctAddress, // Required (for non contract deployments)
@@ -435,13 +438,13 @@ const DmwWalletProvider = ({ children }) => {
             // nonce: "0x0114", // Optional
         };
 
-        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
+        dmwSendTransaction(tx, secretKey).then((hash) => console.log("hash!!!", JSON.stringify(hash))).catch(error => console.log("!!!", error))
     }
 
-    const dmwTransfer1155NFT = (secretKey:string,conratctAddress:string,tokenId:Number,to:string,amount:number) =>{
+    const dmwTransfer1155NFT = (secretKey: string, conratctAddress: string, tokenId: Number, to: string, amount: number) => {
         web3.eth.setProvider(getProvider(dmwChainId));
         const contract = new web3.eth.Contract(NFT1155ABI, conratctAddress)
-        const rawdata = contract.methods.safeTransferFrom(currentDmwWallet, to,tokenId,amount,[]).encodeABI()
+        const rawdata = contract.methods.safeTransferFrom(currentDmwWallet, to, tokenId, amount, []).encodeABI()
         const tx = {
             from: currentDmwWallet, // Required
             to: conratctAddress, // Required (for non contract deployments)
@@ -452,7 +455,7 @@ const DmwWalletProvider = ({ children }) => {
             // nonce: "0x0114", // Optional
         };
 
-        dmwSendTransaction(tx, secretKey).then((hash)=>console.log("hash!!!",JSON.stringify(hash))).catch(error => console.log("!!!",error))
+        dmwSendTransaction(tx, secretKey).then((hash) => console.log("hash!!!", JSON.stringify(hash))).catch(error => console.log("!!!", error))
     }
 
 
@@ -495,7 +498,7 @@ const DmwWalletProvider = ({ children }) => {
     }, [dmwChainId, currentDmwWallet])
 
     useEffect(() => {
-        console.log("transaction:",dmwTransactionList[dmwTransactionList.length -1], dmwTransactionMap[dmwTransactionList[dmwTransactionList.length -1]])
+        console.log("transaction:", dmwTransactionList[dmwTransactionList.length - 1], dmwTransactionMap[dmwTransactionList[dmwTransactionList.length - 1]])
     }, [dmwTransactionList, dmwTransactionMap])
 
 
@@ -503,7 +506,7 @@ const DmwWalletProvider = ({ children }) => {
 
     return (
 
-        <DmwWalletContext.Provider value={{dmwBuyNFT,loadWalletFromMnemonic, loadMnemonicFromStorage , newMnemonic , dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtive ,dmwMintWithSignature,dmwTransactionList,dmwTransactionMap,dmwApprovalForAll,dmwCreateListing,dmwMakeOffer,dmwAcceptOffer,cancelDirectListing,dmwErc20Approve,dmwTransfer721NFT,dmwTransfer1155NFT,addMnemonic,dmwTransferToken}}>
+        <DmwWalletContext.Provider value={{ dmwBuyNFT, loadWalletFromMnemonic, loadMnemonicFromStorage, newMnemonic, dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtive, dmwMintWithSignature, dmwTransactionList, dmwTransactionMap, dmwApprovalForAll, dmwCreateListing, dmwMakeOffer, dmwAcceptOffer, cancelDirectListing, dmwErc20Approve, dmwTransfer721NFT, dmwTransfer1155NFT, addMnemonic, dmwTransferToken }}>
             {children}
         </DmwWalletContext.Provider>
 

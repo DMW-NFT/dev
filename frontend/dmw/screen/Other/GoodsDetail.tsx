@@ -11,19 +11,19 @@ import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider'
 import { useDmwWallet } from '../../../DmwWallet/DmwWalletProvider'
 import { useTranslation } from 'react-i18next'
 import { ListItem, Avatar, Icon, Overlay, Button } from '@rneui/themed'
+import VerfiySecretModal from '../../Components/VerfiySecretModal'
+import TxProccessingModal from '../../Components/TxProccessingModal'
+
 
 const GoodsDetail = (props) => {
     const { t, i18n } = useTranslation();
     const inputRefX = useRef(null);
-    const [id, setID] = useState(props.route.params.id)
-    const [list, setlist] = useState([{}, {}, {}])
     const [showChain, setshowChain] = useState(true)
     const [showcollection, setshowcollection] = useState(false)
     const [showoffer, setshowoffer] = useState(false)
     const [showhistory, setshowhistory] = useState(false)
     const [loading, setLoding] = useState(true) //loading
     const [detailsObj, setDetailsObj] = useState({})
-    const [typeID, setTypeID] = useState(1) //首页进入 1
     const [imgurl, setImgurl] = useState('')
     const [imgShow, setimgShow] = useState(true)
     const [ownersArr, setOwnersArr] = useState([])
@@ -32,88 +32,118 @@ const GoodsDetail = (props) => {
     const [listing, setlisting] = useState([])
     const [history, sethistory] = useState([])
     const [MorenNftList, setMorenNftList] = useState([])
-    const [isApproved, setisApproved] = useState(false)
+    const [isApproved, setIsApproved] = useState(false)
     const [buyText, setbuyText] = useState('售卖')
-    const [NftNumber, setNftNumber] = useState(0)
-    const [BuyNowVisible, setBuyNowVisible] = useState(false)
-    const [BuyNumber, setBuyNumber] = useState('1')
-    const [latestHash, setLatestHash] = useState()
-    const [Price, setPrice] = useState('1')
-    const [date, setDate] = React.useState(new Date());
-    const [dateEnd, setDateEnd] = React.useState(new Date());
-    const [Modalvisible, setModalvisible] = useState(false)
-    const [password, setpassword] = useState("");
+    const [nftNumber, setNftNumber] = useState(0)
+    const [sellOptionVisible, setSellOptionVisible] = useState(false)
+    const [sellNumber, setSellNumber] = useState('1')
+    const [sellPrice, setSellPrice] = useState('1')
+    const [ModalVisible, setModalVisible] = useState(false)
     const [passwordlist, setpasswordlist] = useState([]);
-    const [DmwlatestHash, setDmwLatestHash] = useState()
-    const [createListType, setCreateListType] = useState('DMW')
     const [Auctionorsale, setAuctionorsale] = useState(0)
     const [showOwnerList, setShowOwnerlist] = useState(false)
+    const [approvalVisible, setApprovalVsity] = useState(false)
+    const [sellBtnVisible, setSellBtnVsity] = useState(false)
+    const [auctionBtnVisible, setAuctionBtnVsity] = useState(false)
+
+    const [password, setPassword] = useState('')
+    const [vfModalVisible, setVfModalVisible] = useState(false)
+    const [txModalVisible, setTxModalVisible] = useState(false)
+
 
     // Context 方法
     const { Toast, post, get, formData, shortenAddress } = useDmwApi()
     const { WalletInUse } = useDmwLogin()
-    const { dmwWalletList, dmwApprovalForAll, dmwCreateListing, dmwTransactionList, dmwTransactionMap } = useDmwWallet()
-    const { getBalanceOf1155, currentWallet, checkIsApproveForAll, ApprovalForAll, transactionMap, transactionList, setTransactionList, createListing } = useDmwWeb3()
-
-
-    useEffect(() => {
-
-        console.log("asdasasd", dmwTransactionList)
-        if (dmwTransactionList && dmwTransactionList.length) {
-            console.log("get latest hash1")
-            setDmwLatestHash(dmwTransactionList[dmwTransactionList.length - 1])
-            console.log("get latest hash!", dmwTransactionList[dmwTransactionList.length - 1])
-        }
-    }, [dmwTransactionList])
-
-    useEffect(() => {
-        if (dmwTransactionMap && dmwTransactionMap[DmwlatestHash]) {
-            console.log(dmwTransactionMap[DmwlatestHash], 'latest hash!')
-            if (dmwTransactionMap[DmwlatestHash].state == "confirmed") {
-                if (!isApproved) {
-                    Toast('Aprover 成功')
-                    setisApproved(true)
-                } else {
-                    Toast('挂单成功')
-                }
-            }
-        }
-    }, [dmwTransactionMap])
-
-
-    useEffect(() => {
-        if (transactionMap && transactionMap[latestHash]) {
-            console.log(transactionMap[latestHash], 'latest hash!')
-            if (transactionMap[latestHash].state == "comfirmed") {
-                // console.log("got you !", transactionMap[latestHash])
-                setLatestHash(null)
-                if (!isApproved) {
-                    Toast('Aprover 成功')
-                    setisApproved(true)
-                } else {
-                    Toast('挂单成功')
-                }
-            }
-        }
-    }, [transactionMap])
-
-    useEffect(() => {
-
-        if (transactionList && transactionList.length) {
-            setLatestHash(transactionList[transactionList.length - 1])
-        }
-    }, [transactionList])
-
-
+    const { dmwWalletList, dmwApprovalForAll, dmwCreateListing, dmwTransactionList, dmwTransactionMap, getWalletListFromAccountStorage, currentDmwWallet } = useDmwWallet()
+    const { getBalanceOf1155, currentWallet, checkIsApproveForAll, ApprovalForAll, transactionMap, transactionList, setTransactionList, createListing, nativeToken } = useDmwWeb3()
 
     useEffect(() => {
         let params = props.route.params;
         let data = { ...params }
 
-        data.network = 'goerli'
+        // data.network = 'goerli'
         console.log(data, '我的页面nft 传参');
         getList(data)
     }, [])
+
+
+    const approvalNFT = () => {
+        if (WalletInUse == 1) {
+            setVfModalVisible(true)
+
+        }
+    }
+    const sellNFT = () => {
+        if (WalletInUse == 1) {
+            setVfModalVisible(true)
+        }
+    }
+
+    useEffect(() => {
+        (detailsObj && detailsObj.contract_address) && getBalanceOf1155(detailsObj.contract_address, WalletInUse == 1 ? dmwWalletList[0] : currentWallet, detailsObj.token_id).then(res => {
+            console.log(res, 'shulaing');
+            if (res > 0) {
+                checkIsApproveForAll(detailsObj.contract_address, WalletInUse == 1 ? dmwWalletList[0] : currentWallet,).then(isApproved => {
+                    // console.log("isApproved:", isApproved)
+                    if (isApproved) {
+                        setApprovalVsity(false)
+                        setSellBtnVsity(true)
+                    } else {
+                        setApprovalVsity(true)
+                    }
+                    setNftNumber(res)
+                    setIsApproved(isApproved)
+                })
+            } else {
+            }
+        })
+    }, [WalletInUse, detailsObj])
+
+    useEffect(() => {
+        nftNumber > 0 ? checkIsApproveForAll(detailsObj.contract_address, WalletInUse == 1 ? dmwWalletList[0] : currentWallet,).then(isApproved => {
+            // console.log("isApproved:", isApproved)
+            if (isApproved) {
+                setApprovalVsity(false)
+                setIsApproved(isApproved)
+            } else {
+                setApprovalVsity(true)
+            }
+
+
+        }) : () => {
+            setApprovalVsity(false);
+            setIsApproved(false)
+        }
+
+
+    }, [nftNumber, txModalVisible])
+
+    useEffect(() => {
+        WalletInUse == 1 && (Array.from(password).length == 6) &&
+            getWalletListFromAccountStorage(password).then(res => {
+                if (res) {
+                    console.log(res.walletDict[currentDmwWallet].privateKey)
+                    // console.log(selectedToken)
+                    setVfModalVisible(false)
+                    setTxModalVisible(true)
+                    setPassword('')
+
+                    if (!isApproved) {
+                        dmwApprovalForAll(res.walletDict[currentDmwWallet].privateKey, detailsObj.contract_address, detailsObj.token_id)
+                        setTxModalVisible(true)
+                    } else {
+                        let sTime = Math.round(new Date().getTime() / 1000 + 60).toString()
+                        dmwCreateListing(res.walletDict[currentDmwWallet].privateKey, detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', sellNumber, sellPrice, sellPrice, '0')
+                    }
+
+
+
+                } else {
+                    Toast("密码错误")
+                }
+            })
+    }, [password])
+
     const getList = (data) => {
         setLoding(true)
         let formdata = formData(data)
@@ -123,7 +153,7 @@ const GoodsDetail = (props) => {
 
             setLoding(false)
             setDetailsObj(res.data.nft_data)
-            setImgurl(res.data.nft_data.image_attachment_url ? res.data.nft_data.image_attachment_url :res.data.nft_data.image_attachment )
+            setImgurl(res.data.nft_data.image_attachment_url ? res.data.nft_data.image_attachment_url : res.data.nft_data.image_attachment)
             let arr = res.data.nft_data['owners'].msg.avatar
             let arrw = res.data.nft_data['owners'].msg.wallet_address
             let arrO = []
@@ -146,48 +176,6 @@ const GoodsDetail = (props) => {
         })
     }
 
-    useEffect(() => {
-        let newBuyNumber = null;
-        if (Number(BuyNumber) > NftNumber && NftNumber != 0) {
-            Toast('剩余数量不足！')
-            newBuyNumber = String(NftNumber)
-        } else if (Number(BuyNumber) < 0) {
-            newBuyNumber = String(1)
-        } else if (BuyNumber == 'NaN') {
-            newBuyNumber = String(1)
-        }
-        setBuyNumber(newBuyNumber ? newBuyNumber : String(Number(BuyNumber)))
-    }, [BuyNumber])
-
-
-    useEffect(() => {
-        if ((currentWallet && WalletInUse == 2) || (dmwWalletList[0] && WalletInUse == 1)) {
-            if (detailsObj && detailsObj.contract_address) {
-                GetMorenNft(detailsObj.collection ? detailsObj.collection.id : null)
-                // console.log(detailsObj.contract_address, currentWallet, detailsObj.token_id, 'goodsdetail get balance')
-            }
-
-            (detailsObj && detailsObj.contract_address) && getBalanceOf1155(detailsObj.contract_address, WalletInUse == 1 ? dmwWalletList[0] : currentWallet, detailsObj.token_id).then(res => {
-                // console.log(res, 'shulaing');
-                if (res > 0) {
-                    checkIsApproveForAll(detailsObj.contract_address, WalletInUse == 1 ? dmwWalletList[0] : currentWallet,).then(isApproved => {
-                        // console.log("isApproved:", isApproved)
-                        if (isApproved) {
-                            setbuyText('售卖')
-                        } else {
-                            setbuyText('Approve to sell')
-                        }
-                        setNftNumber(res)
-                        setisApproved(isApproved)
-                    })
-                } else {
-                    setbuyText('已售罄')
-                }
-            })
-        }
-
-
-    }, [detailsObj, currentWallet])
 
     const GetMorenNft = (id) => {
         if (detailsObj.create_way == 1) {
@@ -203,77 +191,8 @@ const GoodsDetail = (props) => {
         }
 
     }
-    useEffect(() => {
-        if (isApproved && buyText != '已售罄') {
-            setbuyText('售卖')
-        }
-    }, [isApproved])
 
 
-    const buyClick = (type) => {
-        setAuctionorsale(type)
-        if (isApproved) {
-            setBuyNowVisible(true)
-        } else {
-            openPassWordModal('123')
-        }
-
-    }
-
-    const ConfirmSales = () => {
-        openPassWordModal('DMW')
-    }
-    const empty = () => {
-        setpassword('')
-    }
-
-    const openPassWordModal = (type) => {
-        setModalvisible(true); setTimeout(() => {
-            inputRefX.current.focus();
-        }, 500);
-        empty();
-    }
-
-    useEffect(() => {
-        let blackPointArry = [null, null, null, null, null, null]
-        let arr = password.split('');
-        arr.map((item, index) => {
-            blackPointArry[index] = item;
-        })
-        console.log(blackPointArry, '----');
-        console.log(arr, 'shuzu ');
-        console.log(password);
-        setpasswordlist(blackPointArry)
-        console.log(password.length);
-        if (password.length == 6) {
-            if (isApproved) {
-                let sTime = Math.round(new Date().getTime() / 1000 + 60).toString()
-                setModalvisible(false)
-                setBuyNowVisible(false)
-                if (currentWallet && WalletInUse == 2) {
-                    if (setAuctionorsale == 0) {
-                        createListing(detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, Price, Price, '0')
-                    } else {
-                        createListing(detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, '0.001', '0.005', '1')
-                    }
-
-                } else if (dmwWalletList[0] && WalletInUse == 1) {
-                    if (Auctionorsale == 0) {
-                        dmwCreateListing(password, detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, Price, Price, '0')
-                    } else {
-                        dmwCreateListing(password, detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', BuyNumber, Price, Price, '0')
-                    }
-
-                }
-            } else {
-                if (currentWallet && WalletInUse == 2) {
-                    ApprovalForAll(detailsObj.contract_address, detailsObj.token_id)
-                } else if (dmwWalletList[0] && WalletInUse == 1) {
-                    dmwApprovalForAll(password, detailsObj.contract_address, detailsObj.token_id)
-                }
-            }
-        }
-    }, [password])
 
 
 
@@ -316,30 +235,35 @@ const GoodsDetail = (props) => {
                         </View>
 
                         {/* 发行数量 */}
-                        {
-
-                            <>
-                                {
-                                    NftNumber > 0 ?
-                                        <View style={[styles.flex, { paddingHorizontal: 20, justifyContent: 'space-between' }]}>
-                                            <View style={[styles.faxingNum, styles.flex]}>
-                                                <Text style={[styles.faxingNumLeft]}>{t("剩余数量")}</Text>
-                                                <Text style={[styles.faxingNumRight]}>{NftNumber}</Text>
-                                            </View>
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <Text onPress={() => buyClick(1)} style={[styles.buyBtn, { marginRight: 10, marginBottom: 40 }]}>
-                                                    {t("拍卖")}
-                                                </Text>
-                                                <Text onPress={() => buyClick(0)} style={[styles.buyBtn, { backgroundColor: buyText ? '#897EF8' : '#CCC', marginBottom: 40 }]}>
-                                                    {buyText}
-                                                </Text>
-                                            </View>
-                                        </View> : null
-                                }
-                            </>
 
 
-                        }
+
+
+                        <View style={[styles.flex, { paddingHorizontal: 20, justifyContent: 'space-between' }]}>
+                            <View style={[styles.faxingNum, styles.flex]}>
+                                <Text style={[styles.faxingNumLeft]}>{t("剩余数量")}</Text>
+                                <Text style={[styles.faxingNumRight]}>{nftNumber}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+
+                                {auctionBtnVisible && <Text style={[styles.buyBtn, { marginRight: 10, marginBottom: 40 }]}>
+                                    {t("拍卖")}
+                                </Text>}
+
+                                {sellBtnVisible && <Text onPress={() => { setSellOptionVisible(true) }} style={[styles.buyBtn, { marginRight: 10, marginBottom: 40 }]}>
+                                    {t("出售")}
+                                </Text>}
+
+                                {approvalVisible && <Text onPress={() => { approvalNFT() }} style={[styles.buyBtn, { backgroundColor: '#897EF8', marginBottom: 40 }]}>
+                                    {t("Approval")}
+                                </Text>}
+
+                            </View>
+                        </View>
+
+
+
+
 
 
 
@@ -592,9 +516,9 @@ const GoodsDetail = (props) => {
             }
 
             <Modal
-                visible={BuyNowVisible}
+                visible={sellOptionVisible}
                 backdropStyle={{ "backgroundColor": 'rgba(0, 0, 0, 0.5)' }}
-                onBackdropPress={() => { setBuyNowVisible(false) }}>
+                onBackdropPress={() => { setSellOptionVisible(false) }}>
                 <Card disabled={true} style={styles.CardBox}>
 
                     <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
@@ -608,20 +532,21 @@ const GoodsDetail = (props) => {
                             onKeyPress={() => { }}
                             keyboardType="phone-pad"
                             style={styles.buyInput}
-                            onChangeText={(e) => {
-                                setPrice(e);
+                            onChangeText={(text) => {
+                                const newText = text.replace(/[^\d^\.?]+/g, "").replace(/^0+(\d)/, "$1").replace(/^\./, "0.").match(/^\d*(\.?\d{0,18})/g)[0] || "";
+                                setSellPrice(newText);
                             }
                             }
-                            value={Price}
+                            value={sellPrice}
                         />
-                        <Text>ETH</Text>
+                        <Text>{nativeToken}</Text>
                     </View>
 
                     {/* 购买数量 */}
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
                         {
-                            Number(BuyNumber) != 1 ?
-                                <TouchableWithoutFeedback onPress={() => { setBuyNumber(String(Number(BuyNumber) - 1)) }}>
+                            Number(sellNumber) != 1 ?
+                                <TouchableWithoutFeedback onPress={() => { setSellNumber(String(Number(sellNumber) - 1)) }}>
                                     <Image style={styles.addImg} source={require('../../assets/img/index/-.png')}></Image>
                                 </TouchableWithoutFeedback>
 
@@ -636,84 +561,32 @@ const GoodsDetail = (props) => {
                             keyboardType="phone-pad"
                             style={styles.buyInput}
                             onChangeText={(e) => {
-                                if (Number(e) > NftNumber) {
+                                if (Number(e) > nftNumber) {
                                     Toast(t('剩余数量不足！'))
-                                    setBuyNumber(String(NftNumber))
+                                    setSellNumber(nftNumber)
                                 } else {
-                                    setBuyNumber(e);
+  
+                                    const newText = e.replace(/[^\d]/g,'');
+                                    setSellNumber(newText);
                                 }
                             }
                             }
-                            value={BuyNumber}
+                            value={sellNumber}
                         />
-                        <TouchableWithoutFeedback onPress={() => { setBuyNumber(String(Number(BuyNumber) + 1)) }}>
+                        <TouchableWithoutFeedback onPress={() => { setSellNumber(String(Number(sellNumber) + 1)) }}>
                             <Image style={styles.addImg} source={require('../../assets/img/index/+.png')}></Image>
                         </TouchableWithoutFeedback>
                     </View>
 
                     <View style={{ flexDirection: 'row', marginTop: 30, justifyContent: 'space-between' }}>
-                        <Text style={[styles.BuyBtnC, {}]} onPress={() => { setBuyNowVisible(false) }}>{t("取消")}</Text>
+                        <Text style={[styles.BuyBtnC, {}]} onPress={() => { setSellOptionVisible(false) }}>{t("取消")}</Text>
                         <Text style={[styles.BuyBtnQ, {}]} onPress={() => ConfirmSales()}>{t("确定")}</Text>
                     </View>
                 </Card>
             </Modal>
 
 
-            {/* 支付弹窗 */}
-            <Modal
-                visible={Modalvisible}
-                backdropStyle={{ "backgroundColor": 'rgba(0, 0, 0, 0.5)' }}
-                onBackdropPress={() => { setModalvisible(false) }}>
-                <Card disabled={true} style={styles.CardBox}>
 
-                    <TextInput
-                        ref={inputRefX}
-                        maxLength={6}
-                        caretHidden={true}
-                        secureTextEntry={true}
-                        onKeyPress={() => { }}
-                        placeholder='123456'
-                        keyboardType="numeric"
-                        style={{ position: 'absolute', zIndex: 1, top: -40 }}
-                        onChangeText={(e) => {
-                            setpassword(e);
-                        }
-                        }
-                        value={password}
-                    />
-                    <View style={{ justifyContent: 'flex-end', flexDirection: 'row', position: 'absolute', top: 10, right: 20, width: 22, height: 22 }}>
-                        <TouchableWithoutFeedback onPress={() => { setModalvisible(false) }}>
-                            <Image style={styles.colose} source={require('../../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png')}></Image>
-                        </TouchableWithoutFeedback>
-
-                    </View>
-                    <View>
-                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{t("请输入支付密码")}</Text>
-                        {/* <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{detailsObj ? detailsObj.name : '--'}</Text>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}> */}
-                        {/* <Text style={{ color: '#999999', fontSize: 16, fontWeight: '700' }}>价格</Text> */}
-                        {/* <Text style={{ flexDirection: 'row' }}>
-                                <Text style={{ fontSize: 16, fontWeight: '700' }}>{UnitPrice.UnitPrice * Number(BuyNumber)}</Text>
-                                <Text>&nbsp;</Text>
-                                <Text style={{ fontSize: 10 }}>{UnitPrice.Company ? UnitPrice.Company : 'USDT'}</Text>
-                            </Text> */}
-                        {/* </View> */}
-
-
-
-                        <View style={{ height: 48, flexDirection: 'row', justifyContent: 'space-between', }}>
-                            {
-                                passwordlist.map((item, index) => (
-                                    <Text style={[index == 0 ? styles.passinputfirst : styles.passinput]}>{item ? "●" : ''}</Text>
-                                ))
-                            }
-                        </View>
-
-
-
-                    </View>
-                </Card>
-            </Modal>
             <Overlay isVisible={showOwnerList} onBackdropPress={() => { setShowOwnerlist(!showOwnerList) }} >
                 <View >
                     {
@@ -727,7 +600,8 @@ const GoodsDetail = (props) => {
                     }
                 </View>
             </Overlay>
-
+            {vfModalVisible && <VerfiySecretModal setModalVisible={setVfModalVisible} modalVisible={vfModalVisible} setPassword={setPassword} />}
+            {txModalVisible && <TxProccessingModal setModalVisible={setTxModalVisible} modalVisible={txModalVisible} />}
         </SafeAreaView>
     )
 }

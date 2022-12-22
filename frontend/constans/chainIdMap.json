@@ -1,18 +1,32 @@
 {
     "1": {
-        "network": "Ethereum Mainnet",
+        "network": "Ethereum",
         "nativeToken": "ETH"
     },
     "5": {
         "network": "Goerli",
-        "nativeToken": "ETH"
+        "nativeToken": "ETH",
+        "nft_contract":"0x0ba15eE8874b930c49c7E65fFdEDf41BE9D0847d",
+        "market_contract":"0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
     },
     "56": {
-        "network": "Binance Smart Chain Mainnet",
+        "network": "BSC",
         "nativeToken": "BNB"
     },
     "137": {
-        "network": "Polygon Mainnet",
+        "network": "Polygon",
         "nativeToken": "MATIC"
+    },
+    "97": {
+        "network": "BSC Testnet",
+        "nativeToken": "BNB",
+        "nft_contract":"0x2c54Df408feE834C3612fC197DD380fe0BAf6608",
+        "market_contract":"0xdF2E4Bbb6F8d4Cc10C910367db810b5Be9eF5D3B"
+    },
+    "80001": {
+        "network": "Mumbai",
+        "nativeToken": "MATIC",
+        "nft_contract":"0x1f810c54E1B797001f3148E06C5A40a1e13DffBA",
+        "market_contract":"0x15dcEf0FC576BB853790f61CFe2b230208Af63A3"
     }
 }

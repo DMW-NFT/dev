@@ -13,7 +13,7 @@ import { BigNumber } from 'ethers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Address } from 'cluster';
 import { stringify } from 'querystring';
-
+import ChainIdMap from '../constans/chainIdMap.json'
 
 const DmwWeb3Provider = ({ children }) => {
 
@@ -117,6 +117,7 @@ const DmwWeb3Provider = ({ children }) => {
 
 
     const getNativeBalance = (address) => {
+        console.log(getProvider(currentChainId))
         web3.eth.setProvider(getProvider(currentChainId))
         const balance = web3.eth.getBalance(address).then((res) => {
             return web3.utils.fromWei(res, 'ether')
@@ -206,7 +207,7 @@ const DmwWeb3Provider = ({ children }) => {
     }
 
     const mintNft = () => {
-        const contractAddress = "0x15Ca27efa25886b830269f614ad2Af473905d09c"
+        const contractAddress = ChainIdMap[currentChainId].nft_contract
 
         const contract = new web3.eth.Contract(NFT1155ABI, contractAddress)
 
@@ -236,7 +237,7 @@ const DmwWeb3Provider = ({ children }) => {
             });
     }
     const mintNftWithSignature = (SignedPayload, Signature) => {
-        const contractAddress = "0x0ba15eE8874b930c49c7E65fFdEDf41BE9D0847d"
+        const contractAddress = ChainIdMap[currentChainId].nft_contract
 
         const contract = new web3.eth.Contract(NFT1155ABI, contractAddress)
 
@@ -295,14 +296,14 @@ const DmwWeb3Provider = ({ children }) => {
     // 检测地址：account是否向某地址：operator授权所有NFT地址nftContractAddress，返回bool，true为已授权，false反之
     const checkIsApproveForAll = (nftContractAddress: string, account: string, operator: string, contractType: string): boolean => {
 
-        web3.eth.setProvider(getProvider('5'));
+        web3.eth.setProvider(getProvider(currentChainId));
         const contract = new web3.eth.Contract((contractType == "1155") ? NFT1155ABI : NFT721ABI, nftContractAddress)
-        const isApprovedForAll = contract.methods.isApprovedForAll(account, '0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4').call()
+        const isApprovedForAll = contract.methods.isApprovedForAll(account, ChainIdMap[currentChainId].market_contract).call()
         return isApprovedForAll
     }
     const getBalanceOf1155 = (nftContractAddress: string, account: string, tokenId: number): number => {
 
-        web3.eth.setProvider(getProvider('5'));
+        web3.eth.setProvider(getProvider(currentChainId));
         const contract = new web3.eth.Contract(NFT1155ABI, nftContractAddress)
         const isApprovedForAll = contract.methods.balanceOf(account, tokenId).call()
         return isApprovedForAll
@@ -310,7 +311,7 @@ const DmwWeb3Provider = ({ children }) => {
 
 
     const syncTransactionSatus = async (txHash: string) => {
-        web3.eth.setProvider(getProvider('5'));
+        web3.eth.setProvider(getProvider(currentChainId));
         setTransactionList([...transactionList, txHash])
         setTransactionMap({ ...transactionMap, [txHash]: { "payload": null, "state": "pending" } })
 
@@ -378,7 +379,7 @@ const DmwWeb3Provider = ({ children }) => {
     */
     const makeOffer = async (listingId: number, quantityWanted: number, currency: string, pricePerToken: string, expirationTimestamp: number) => {
         web3.eth.setProvider(getProvider(currentChainId));
-        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contractAddress = ChainIdMap[currentChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
         const rawdata = contract.methods.offer(listingId, quantityWanted, currency, web3.utils.toWei(pricePerToken, 'ether'), expirationTimestamp).encodeABI()
         const tx = {
@@ -413,7 +414,7 @@ const DmwWeb3Provider = ({ children }) => {
     */
     const acceptOffer = async (listingId: number, offeror: string, currency: string, pricePerToken: string) => {
         web3.eth.setProvider(getProvider(currentChainId));
-        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contractAddress = ChainIdMap[currentChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
         const rawdata = contract.methods.acceptOffer(listingId, offeror, currency, web3.utils.toWei(pricePerToken, 'ether')).encodeABI()
         const tx = {
@@ -444,7 +445,7 @@ const DmwWeb3Provider = ({ children }) => {
     */
     const cancelDirectListing = async (listingId: BigNumber) => {
         web3.eth.setProvider(getProvider(currentChainId));
-        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contractAddress = ChainIdMap[currentChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
         const rawdata = contract.methods.cancelDirectListing(listingId).encodeABI()
         const tx = {
@@ -484,7 +485,7 @@ const DmwWeb3Provider = ({ children }) => {
 
     const createListing = (assetContract: string, tokenId: number, startTime: number, secondsUntilEndTime: number, quantityToList: number, reservePricePerToken: string, buyoutPricePerToken: string, listingType: number) => {
         web3.eth.setProvider(getProvider(currentChainId));
-        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contractAddress = ChainIdMap[currentChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
         // console.log(web3.utils.toWei(reservePricePerToken, 'ether'))
         console.log(assetContract, tokenId, startTime, secondsUntilEndTime, quantityToList, reservePricePerToken, buyoutPricePerToken, listingType)
@@ -521,7 +522,7 @@ const DmwWeb3Provider = ({ children }) => {
         web3.eth.setProvider(getProvider(currentChainId));
 
         const contract = new web3.eth.Contract(NFT1155ABI, contractAddress)
-        const rawdata = contract.methods.setApprovalForAll('0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4', true).encodeABI()
+        const rawdata = contract.methods.setApprovalForAll(ChainIdMap[currentChainId].market_contract, true).encodeABI()
         const tx = {
             from: currentWallet, // Required
             to: contractAddress, // Required (for non contract deployments)
@@ -553,7 +554,7 @@ const DmwWeb3Provider = ({ children }) => {
     */
     const closeAuction = (listingId: string, closeFor: string) => {
         web3.eth.setProvider(getProvider(currentChainId));
-        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contractAddress = ChainIdMap[currentChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
         const rawdata = contract.methods.closeAuction(listingId, closeFor).encodeABI()
         const tx = {
@@ -579,7 +580,7 @@ const DmwWeb3Provider = ({ children }) => {
 
     const getErc20Allowance = (tokenAddress: string, account: string) => {
         web3.eth.setProvider(getProvider(currentChainId));
-        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contractAddress = ChainIdMap[currentChainId].market_contract
         const contract = new web3.eth.Contract(ERC20ABI, tokenAddress)
         const allowance = contract.methods.allowance(account, contractAddress).call()
         return allowance
@@ -587,7 +588,7 @@ const DmwWeb3Provider = ({ children }) => {
 
     const erc20Approve = (tokenAddress: string, amount: string) => {
         web3.eth.setProvider(getProvider(currentChainId));
-        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contractAddress = ChainIdMap[currentChainId].market_contract
         const contract = new web3.eth.Contract(ERC20ABI, tokenAddress)
         const rawdata = contract.methods.approve(contractAddress, web3.utils.toWei(amount, 'ether')).encodeABI()
         const tx = {
@@ -674,7 +675,7 @@ const DmwWeb3Provider = ({ children }) => {
 
 
     return (
-        <DmwWeb3Context.Provider value={{ makeOffer, transferToken, getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, transferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing, getErc20Allowance, erc20Approve, transfer721NFT, transfer1155NFT, GasMap, currentGasPrice, memConnectStatus, nativeToken,globalError,setGlobalError }}>
+        <DmwWeb3Context.Provider value={{ makeOffer, transferToken, getNativeBalance, setTransactionList, transactionList, transactionMap, currentWallet, lastConnected, connector, connected, setConnected, connectWallet, disconnectWallet, web3, transferNative, mintNft, mintNftWithSignature, getWalletNfts, checkIsApproveForAll, buyNFT, getBalanceOf1155, ApprovalForAll, createListing, getErc20Allowance, erc20Approve, transfer721NFT, transfer1155NFT, GasMap, currentGasPrice, memConnectStatus, nativeToken,globalError,setGlobalError,setCurrenChainId,currentChainId }}>
             {children}
         </DmwWeb3Context.Provider>
     )

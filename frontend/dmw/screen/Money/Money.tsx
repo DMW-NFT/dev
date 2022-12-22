@@ -16,7 +16,7 @@ import React, { useContext, useState, useEffect, createRef, useRef } from "react
 import Screen from "./BottomPopUpWindow";
 import Lmodal from "./leftModal";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
-import { Button, Card, Layout, Modal, OverflowMenu,MenuItem } from '@ui-kitten/components';
+import { Button, Card, Layout, Modal, OverflowMenu, MenuItem } from '@ui-kitten/components';
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
@@ -37,14 +37,14 @@ const Money = (props) => {
   const [visible, setVisible] = useState(false);
   const [chainMenuVisible, setChainMenuVisible] = useState(false);
 
-  const [selectedChain,setSelectedChain] = useState('Goerli')
+  const [selectedChain, setSelectedChain] = useState('goerli')
   const [lMvisible, setLMvisible] = useState(false);
   const [Modalvisible, setModalvisible] = useState(false)
-  const { dmwWalletList } = useDmwWallet();
+  const { dmwWalletList,setDmwChainId } = useDmwWallet();
   const [password, setpassword] = useState("");
   const [passwordlist, setpasswordlist] = useState([]);
   const { WalletInUse, setWalletInUse, avatarUrl } = useDmwLogin()
-  const { disconnectWallet, connected, currentWallet, lastConnected, connectWallet, getNativeBalance, memConnectStatus } = useDmwWeb3()
+  const { disconnectWallet, connected, currentWallet, lastConnected, connectWallet, getNativeBalance, memConnectStatus, setCurrenChainId, nativeToken ,currentChainId} = useDmwWeb3()
   const { MoneyRouteState, setMoneyRouteState, post, formData, Toast, shortenAddress, Copy } = useDmwApi()
 
 
@@ -75,7 +75,7 @@ const Money = (props) => {
 
 
   const getAddressBalance = (address) => {
-    return fetch(`https://deep-index.moralis.io/api/v2/${address}/erc20?chain=goerli`, {
+    return fetch(`https://deep-index.moralis.io/api/v2/${address}/erc20?chain=${selectedChain == 'bsc testnet' ? 'bsc%20testnet' : selectedChain}`, {
       method: 'GET',
       headers: {
         accept: 'application/json',
@@ -93,8 +93,6 @@ const Money = (props) => {
   const empty = () => {
     setpassword('')
   }
-
-
 
   useEffect(() => {
     // console.log('钱包变化',connected,currentWallet);
@@ -121,7 +119,7 @@ const Money = (props) => {
 
 
     setMoneyRouteState(connected || dmwWalletList.length ? '12345' : 'createMoney')
-  }, [connected, dmwWalletList, currentWallet, WalletInUse])
+  }, [connected, dmwWalletList, currentWallet, WalletInUse, selectedChain])
 
 
 
@@ -200,9 +198,12 @@ const Money = (props) => {
     return encoded;
   }
   const renderChainMenu = () => (
-    <Button style={{}} onPress={() => setChainMenuVisible(true)}>
-      {selectedChain}
-    </Button>
+    <TouchableWithoutFeedback onPress={() => setChainMenuVisible(true)}>
+      <View style={{ width: 100, height: 35, backgroundColor: '#F0EFFE', justifyContent: "center", borderRadius: 10 }}>
+        <Text style={{ color: '#897EF8', alignSelf: 'center' }}>{selectedChain}</Text>
+      </View>
+    </TouchableWithoutFeedback>
+
   );
 
   const randomString = (len) => {
@@ -221,9 +222,6 @@ const Money = (props) => {
       style={{
         backgroundColor: "#fff",
         flex: 1,
-        // paddingLeft: 20,
-        // paddingRight: 20,
-        // paddingHorizontal:20,
         position: "relative",
       }}
     >
@@ -234,14 +232,11 @@ const Money = (props) => {
           visible={chainMenuVisible}
           placement={'bottom'}
           onBackdropPress={() => setChainMenuVisible(false)}>
-          <MenuItem title='Users' />
-          <MenuItem title='Orders' />
-          <MenuItem title='Transactions' />
+          <MenuItem onPress={() => { setSelectedChain('goerli'); setCurrenChainId('5'); setDmwChainId('5') }} title='goerli' />
+          <MenuItem onPress={() => { setSelectedChain('bsc testnet'); setCurrenChainId('97'),setDmwChainId('97') }} title='bsc testnet' />
+          <MenuItem onPress={() => { setSelectedChain('mumbai'); setCurrenChainId('80001'),setDmwChainId('80001') }} title='mumbai' />
         </OverflowMenu>
-        <View>
-          {/* <Text style={styles.hello}>hello</Text>
-          <Text style={styles.HTitle}>Account 1</Text> */}
-        </View>
+
         <TouchableWithoutFeedback onPress={() => lMvisibleopen()}>
           <Image
             style={styles.top_img}
@@ -283,7 +278,7 @@ const Money = (props) => {
                     source={require("../../assets/img/money/WFCA.png")}
                     style={{ marginRight: 10, justifyContent: "center" }}
                   >
-                    <Text style={styles.CurrencyName}>ETH</Text>
+                    <Text style={styles.CurrencyName}>{nativeToken}</Text>
                   </ImageBackground>
 
                   <Text style={styles.balance}>{lwNativeBalance ? Number(lwNativeBalance).toFixed(4) : '--'}</Text>
@@ -326,7 +321,7 @@ const Money = (props) => {
                     style={{ marginRight: 10, justifyContent: "center" }}
                   >
                     <Text style={[styles.CurrencyName, { color: "#897EF8" }]}>
-                      ETH
+                      {nativeToken}
                     </Text>
                   </ImageBackground>
 
