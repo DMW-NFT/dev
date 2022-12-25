@@ -11,7 +11,7 @@ export default function TxProccessingModal(props) {
     // console.log(props.mo)
     const { transactionMap, transactionList, globalError } = useDmwWeb3()
     const { dmwTransactionList, dmwTransactionMap } = useDmwWallet()
-    const [modalvisible, setModalvisible] = useState(props.modalvisible)
+    const [modalVisible, setModalVisible] = useState(props.modalVisible)
     const { t, i18n } = useTranslation();
     const [dmwlatestHash, setDmwLatestHash] = useState('')
     const [latestHash, setLatestHash] = useState('')
@@ -19,12 +19,12 @@ export default function TxProccessingModal(props) {
     const [globalErrorTmep, setGlobalErrorTemp] = useState([...globalError])
     const [currentState, setCurrentState] = useState('sending transation')
     useEffect(() => {
-        props.setModalvisible(modalvisible)
-    }, [modalvisible])
+        props.setModalVisible(modalVisible)
+    }, [modalVisible])
 
     useEffect(() => {
-        setModalvisible(modalvisible)
-    }, [props.modalvisible])
+        setModalVisible(modalVisible)
+    }, [props.modalVisible])
 
     useEffect(() => {
         setGlobalErrorTemp([...globalError])
@@ -32,7 +32,7 @@ export default function TxProccessingModal(props) {
 
     useEffect(() => {
         console.log(globalError, globalErrorTmep);
-        globalErrorTmep && ((globalErrorTmep.length != globalError.length) ? setModalvisible(false) : null)
+        globalErrorTmep && ((globalErrorTmep.length != globalError.length) ? setModalVisible(false) : null)
     }, [globalError])
 
     useEffect(() => {
@@ -55,7 +55,7 @@ export default function TxProccessingModal(props) {
                 setScreenLoding(false)
                 setCurrentState("confirmed")
                 setTimeout(() => {
-                    setModalvisible(false)
+                    setModalVisible(false)
                 }, 5000)
 
             } else if (dmwTransactionMap[dmwlatestHash].state == "reversed") {
@@ -65,7 +65,7 @@ export default function TxProccessingModal(props) {
                 setScreenLoding(false)
                 setCurrentState("reversed")
                 setTimeout(() => {
-                    setModalvisible(false)
+                    setModalVisible(false)
                 }, 5000)
 
             } else {
@@ -97,7 +97,7 @@ export default function TxProccessingModal(props) {
                 // Toast(t('创建成功！'))
                 setScreenLoding(false)
                 setTimeout(() => {
-                    setModalvisible(false)
+                    setModalVisible(false)
                 }, 5000)
                 setCurrentState("confirmed")
 
@@ -107,7 +107,7 @@ export default function TxProccessingModal(props) {
                 setCurrentState("reversed")
 
                 setTimeout(() => {
-                    setModalvisible(false)
+                    setModalVisible(false)
                 }, 5000)
             } else {
                 setScreenLoding(true)
@@ -118,12 +118,12 @@ export default function TxProccessingModal(props) {
 
     return (
         <Modal
-            visible={modalvisible}
+            visible={modalVisible}
             backdropStyle={{ "backgroundColor": 'rgba(0, 0, 0, 0.5)' }}
-            onBackdropPress={() => { setModalvisible(false) }}>
+            onBackdropPress={() => { setModalVisible(false) }}>
 
             <Card disabled={true} style={[styles.CardBox]}>
-                <TouchableWithoutFeedback onPress={() => { setModalvisible(false) }}>
+                <TouchableWithoutFeedback onPress={() => { setModalVisible(false) }}>
                     <Image style={styles.colose} source={require('../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png')}></Image>
                 </TouchableWithoutFeedback>
 

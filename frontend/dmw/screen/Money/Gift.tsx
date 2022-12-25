@@ -28,8 +28,8 @@ const Gift = (props) => {
     const { Toast, Copy } = useDmwApi()
     const [balanceData, setBalanceData] = useState([])
     const [password, setPassword] = useState('')
-    const [vfModalvisible, setVfModalvisible] = useState(false)
-    const [txModalvisible, setTxModalvisible] = useState(false)
+    const [vfModalVisible, setVfModalVisible] = useState(false)
+    const [txModalVisible, setTxModalVisible] = useState(false)
     useEffect(() => {
         console.log(props.route.params, '传参');
         setBalanceData(props.route.params);
@@ -60,10 +60,10 @@ const Gift = (props) => {
         console.log(String(TokenType), String(receiptAddress), String(number));
 
         if (WalletInUse == 1) {
-            setVfModalvisible(true)
+            setVfModalVisible(true)
         } else {
             transferToken(String(receiptAddress), String(number), selectedToken.contractAddress, selectedToken.decimals ? selectedToken.decimals : null)
-            setTxModalvisible(true)
+            setTxModalVisible(true)
             setTimeout(() => {
                 setnumber('')
             }, 3000);
@@ -77,8 +77,8 @@ const Gift = (props) => {
                 if (res) {
                     console.log(res.walletDict[currentDmwWallet].privateKey)
                     // console.log(selectedToken)
-                    setVfModalvisible(false)
-                    setTxModalvisible(true)
+                    setVfModalVisible(false)
+                    setTxModalVisible(true)
                     setPassword('')
                     dmwTransferToken(res.walletDict[currentDmwWallet].privateKey, selectedToken.contractAddress, String(receiptAddress), String(number), selectedToken.decimals ? selectedToken.decimals : null)
 
@@ -186,8 +186,8 @@ const Gift = (props) => {
 
             <Text style={styles.btn} onPress={() => sendout()}>{t("发送")}</Text>
 
-            {vfModalvisible && <VerfiySecretModal setModalvisible={setVfModalvisible} modalvisible={vfModalvisible} setPassword={setPassword} />}
-            {txModalvisible && <TxProccessingModal setModalvisible={setTxModalvisible} modalvisible={txModalvisible} />}
+            {vfModalVisible && <VerfiySecretModal setModalVisible={setVfModalVisible} modalVisible={vfModalVisible} setPassword={setPassword} />}
+            {txModalVisible && <TxProccessingModal setModalVisible={setTxModalVisible} modalVisible={txModalVisible} />}
         </SafeAreaView>
     );
 }

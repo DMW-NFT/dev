@@ -26,6 +26,7 @@ const QuotationDetails = (props) => {
     const [userInfo, setUserInfo] = useState({ userAvatar: '', shortenAddress: '' })
     const [orderList, setOrderList] = useState({ quantity: 1 })
     const [Price, setPrice] = useState(null)
+    const [orderCurrency, setrderCurrency] = useState(null)
     const [UnitPrice, setUnitPrice] = useState({ UnitPrice: null, Company: '' })
     const [NftInfo, setNftInfo] = useState(null)
     const [collection, setcollection] = useState(null)
@@ -103,7 +104,7 @@ const QuotationDetails = (props) => {
     useEffect(() => {
         let newBuyNumber = null;
         if (Number(BuyNumber) > orderList.quantity && orderList) {
-            Toast('剩余数量不足！')
+            Toast(t('剩余数量不足！'))
             newBuyNumber = String(orderList.quantity)
         } else if (Number(BuyNumber) < 0) {
             newBuyNumber = String(1)
@@ -135,7 +136,8 @@ const QuotationDetails = (props) => {
             setlikes(res.data.nft.likes)
             setImgurl(res.data.nft.image_attachment_url)
             setNftInfo(res.data.nft)
-            setPrice(`${res.data.reserve_price_per.number} ${res.data.reserve_price_per.currency_name}`)
+            setPrice(res.data.reserve_price_per.number)
+            setrderCurrency(res.data.reserve_price_per.currency_name)
             setUnitPrice({ UnitPrice: res.data.reserve_price_per.number, Company: res.data.reserve_price_per.currency_name })
             setcollection(res.data.nft.collection)
             setOffersList(res.data.offers)
@@ -215,15 +217,28 @@ const QuotationDetails = (props) => {
 
         } else {
             return (
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                    <View>
-                        <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>{t("价格")}</Text>
+                <>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                        <View>
+                            <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>{t("价格")}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Text style={{ fontSize: 16, color: '#333333', fontWeight: '700', marginRight: 5 }}>{`${Price}  ${orderCurrency} `}</Text>
+                            {/* <Text style={{ fontSize: 10, lineHeight: 22 }}>Wfca</Text> */}
+                        </View>
                     </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Text style={{ fontSize: 16, color: '#333333', fontWeight: '700', marginRight: 5 }}>{`${Price} X ${BuyNumber}`}</Text>
-                        {/* <Text style={{ fontSize: 10, lineHeight: 22 }}>Wfca</Text> */}
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                        <View>
+                            <Text style={{ fontSize: 16, color: '#999999', fontWeight: '700' }}>{t("总价")}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Text style={{ fontSize: 16, color: '#333333', fontWeight: '700', marginRight: 5 }}>{`${Price * BuyNumber}  ${orderCurrency} `}</Text>
+                            {/* <Text style={{ fontSize: 10, lineHeight: 22 }}>Wfca</Text> */}
+                        </View>
                     </View>
-                </View>
+
+                </>
+
             )
         }
 
@@ -556,7 +571,7 @@ const QuotationDetails = (props) => {
                                                             <Text style={{ fontSize: 14, color: "#333" }}>{item.total_offer_amount.number + item.total_offer_amount.currency_name}</Text>
                                                             <Text style={[styles.offercolse]}>取消报价</Text>
                                                         </View>
-                                                        {/* <Text style={{ fontSize: 12, color: "#999" }}>$455.32</Text> */}
+
                                                     </View>
                                                 </View>
                                             </View>
@@ -590,7 +605,7 @@ const QuotationDetails = (props) => {
                         {/* 底部按钮 */}
                         <View style={[styles.bottombtnBox,]}>
                             <View style={[styles.flex, { alignItems: "flex-end" }]}>
-                                <Text style={[styles.bottomPrice]}> {Price}</Text>
+                                <Text style={[styles.bottomPrice]}> {Price} {orderCurrency}</Text>
                                 {/* <Text style={[styles.bottomcoinType]}> Wfca</Text> */}
                             </View>
                             <View style={{ flexDirection: 'row', backgroundColor: 'pink', borderRadius: 25, flex: 1, marginLeft: 25, height: 50, alignItems: 'center' }}>
@@ -600,7 +615,7 @@ const QuotationDetails = (props) => {
                                     { flex: 1, borderTopLeftRadius: 25, borderBottomLeftRadius: 25 }]}
                                 >Buy now </Text>
                                 <Text
-                                    onPress={() => OfferFn()}
+                                    onPress={() => Toast('comming soon')}
                                     style={[styles.bottomBtn,
                                     { flex: 1, backgroundColor: '#fff', color: '#333', borderColor: '#897EF8', borderWidth: 1, borderTopRightRadius: 25, borderBottomRightRadius: 25 }]}
                                 >Offer </Text>

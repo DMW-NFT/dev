@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 export default function VerfiySecretModal(props) {
     const inputRefX = useRef(null);
     const [password, setPassword] = useState('')
-    const [modalvisible, setModalvisible] = useState(props.modalvisible)
+    const [modalVisible, setModalVisible] = useState(props.modalVisible)
     const { t, i18n } = useTranslation();
     const openPassWordModal = () => {
         // Keyboard.dismiss()
@@ -26,18 +26,18 @@ export default function VerfiySecretModal(props) {
 
     useEffect(() => {
         props.setPassword(password)
-        props.setModalvisible(modalvisible)
-    }, [password, modalvisible])
+        props.setModalVisible(modalVisible)
+    }, [password, modalVisible])
 
     useEffect(() => {
-        modalvisible && openPassWordModal()
-    }, [modalvisible])
+        modalVisible && openPassWordModal()
+    }, [modalVisible])
 
     return (
         <Modal
-            visible={modalvisible}
+            visible={modalVisible}
             backdropStyle={{ "backgroundColor": 'rgba(0, 0, 0, 0.5)' }}
-            onBackdropPress={() => { setModalvisible(false) }}>
+            onBackdropPress={() => { setModalVisible(false) }}>
             <Card disabled={true} style={styles.CardBox}>
 
                 <TextInput
@@ -56,7 +56,7 @@ export default function VerfiySecretModal(props) {
                     value={password}
                 />
                 <View style={{ justifyContent: 'flex-end', flexDirection: 'row', position: 'absolute', top: 10, right: 20, width: 22, height: 22 }}>
-                    <TouchableWithoutFeedback onPress={() => { setModalvisible(false) }}>
+                    <TouchableWithoutFeedback onPress={() => { setModalVisible(false) }}>
                         <Image style={styles.colose} source={require('../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png')}></Image>
                     </TouchableWithoutFeedback>
 
