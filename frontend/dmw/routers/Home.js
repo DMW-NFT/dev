@@ -7,6 +7,9 @@ import CategrayScreen from '../screen/Home/Categray'
 import GoodsDetail from '../screen/Other/GoodsDetail'
 import QuotationDetails from '../screen/Other/QuotationDetails'
 import { useTranslation } from 'react-i18next'
+import MessageCenter from '../screen/Myself/MessageCenter'
+import SystemNotification from '../screen/Myself/SystemNotification'
+import ILikeIt from '../screen/Myself/ILikeIt'
 const Stack = createStackNavigator()
 
 
@@ -44,6 +47,15 @@ const Home = () =>{
       >
       </Stack.Screen>
 
+      <Stack.Screen  
+            component={MessageCenter} 
+            name='MessageCenter'
+            options={{  
+              title:t('消息中心')
+             }}
+          >  
+         </Stack.Screen>
+
       <Stack.Screen
         component={SearchScreen}
         name='searchScreen'
@@ -66,6 +78,23 @@ const Home = () =>{
         }}
       >
       </Stack.Screen>
+
+      <Stack.Screen  
+            component={SystemNotification} 
+            name='SystemNotification'
+            options={{  
+              title:t('系统通知')
+             }}
+          >  
+         </Stack.Screen>
+         <Stack.Screen  
+            component={ILikeIt} 
+            name='ILikeIt'
+            options={{  
+              title:t('喜欢')
+             }}
+          >  
+         </Stack.Screen>
     </Stack.Navigator>
   )
 }

@@ -106,8 +106,8 @@ const Money = (props) => {
     }
 
 
-    if (dmwWalletList) {
-
+    if (dmwWalletList && dmwWalletList[0] ) {
+      
 
       getNativeBalance(dmwWalletList[0]).then(res => {
         setLwNativeBalance(res)

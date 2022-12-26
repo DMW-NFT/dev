@@ -39,6 +39,8 @@ const Categray = (props) => {
 
 
   const componentDidMount = () => {
+    console.log(props.route.params,'动态修改标题');
+    
     // 动态修改标题
     props.navigation.setOptions({
       title: props.route.params.categray,
@@ -118,7 +120,7 @@ const Categray = (props) => {
         style={{ width: '100%', position: 'absolute', }}
         visible={visible}
         close={() => { setvisible(false) }}
-        datalist={data}>
+        datalist={list}>
       </Screen>
     </SafeAreaView>
   )

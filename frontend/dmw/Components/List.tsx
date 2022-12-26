@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { Item } from 'react-native-paper/lib/typescript/components/List/List'
 import { useDmwApi } from '../../DmwApiProvider/DmwApiProvider'
-
+import chainNameMap from '../../constans/chainNameMap.json'
 import { useTranslation } from 'react-i18next'
 const List = (props) => {
     const { t, i18n } = useTranslation();
@@ -19,7 +19,7 @@ const List = (props) => {
     const item = props.list
     const [imgurl, setImgurl] = useState(item.image_attachment_url)
     const [show, setshow] = useState(false)
-    const {Copy} = useDmwApi()
+    const { Copy } = useDmwApi()
     return (
         <TouchableWithoutFeedback onPress={() => {
 
@@ -34,14 +34,16 @@ const List = (props) => {
                             setshow(false)
                         }}>
                             <View
-                                style={{ backgroundColor: 'rgba(0,0,0,0.3)', width: '100%', height: '100%', position: 'absolute', top: 0, zIndex: 100, borderRadius: 10,
-                                paddingTop:60, paddingLeft:12,paddingRight:12}}>
+                                style={{
+                                    backgroundColor: 'rgba(0,0,0,0.3)', width: '100%', height: '100%', position: 'absolute', top: 0, zIndex: 100, borderRadius: 10,
+                                    paddingTop: 60, paddingLeft: 12, paddingRight: 12
+                                }}>
                                 <View>
-                                    <Text 
-                                    onPress={()=>{Copy(`${item.contract_address}/${item.token_id}`)}}
-                                    style={{paddingTop:6,paddingBottom:6,backgroundColor:'#fff',borderRadius:15,textAlign:'center',marginBottom:20}}>{t("复制链接")}</Text>
-                                    <Text 
-                                    style={{paddingTop:6,paddingBottom:6,backgroundColor:'#fff',borderRadius:15,textAlign:'center',marginBottom:20}}>{t("转移/赠与")}</Text>
+                                    <Text
+                                        onPress={() => { Copy(`${item.contract_address}/${item.token_id}`) }}
+                                        style={{ paddingTop: 6, paddingBottom: 6, backgroundColor: '#fff', borderRadius: 15, textAlign: 'center', marginBottom: 20 }}>{t("复制链接")}</Text>
+                                    <Text
+                                        style={{ paddingTop: 6, paddingBottom: 6, backgroundColor: '#fff', borderRadius: 15, textAlign: 'center', marginBottom: 20 }}>{t("转移/赠与")}</Text>
                                 </View>
                             </View></TouchableWithoutFeedback> : null
                 }
@@ -54,6 +56,12 @@ const List = (props) => {
                                     setImgurl('../assets/img/index/default.png')
                                     setimgs(false)
                                 }} style={[styles.imageBox]} resizeMode='cover' source={{ uri: imgurl }}>
+                                    {
+                                        type != 4 ?
+                                            <Text numberOfLines={2} style={[styles.network]}>
+                                                {item.network || ''}
+                                            </Text> : null
+                                    }
                                     {
                                         type == 3 ?
                                             <Text style={[styles.time, styles.timeBox]} >4h 16m 27s</Text> : <Text></Text>
@@ -109,7 +117,9 @@ const List = (props) => {
                                 <Text style={[styles.name]} numberOfLines={1}>{item.collection_name || '--'}</Text>
                                 <Text numberOfLines={2} style={[styles.collName]}>
                                     {item.nft_name || ''}
-                                </Text></> :
+                                </Text>
+
+                            </> :
                             <>
                                 <Text style={[styles.name]} numberOfLines={1}>{item.collection_name || '--'}</Text>
                                 <Text numberOfLines={2} style={[styles.collName]}>
@@ -123,7 +133,7 @@ const List = (props) => {
                                 <View style={[styles.priceBox]}>
                                     <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
                                         <Text style={[styles.price]}>{item.reserve_price_per ? item.reserve_price_per.number : '--'}</Text>
-                                        <Text style={[styles.coinType]}>{item.reserve_price_per ? item.reserve_price_per.currency_name : ''}</Text>
+                                        <Text style={[styles.coinType]}>{item.reserve_price_per ? item.reserve_price_per.currency_name == 'ETH' ? chainNameMap[item.network].nativeToken  :  item.reserve_price_per.currency_name : ''}</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                         <FontAwesomeIcon icon={faHeart} color='red' size={11} />
@@ -162,6 +172,17 @@ const List = (props) => {
 
 export default List
 const styles = StyleSheet.create({
+    network:{
+        color:'#fff',
+        position:'absolute',
+        left:10,
+        top:10,
+        backgroundColor: '#ACA4FA',
+        paddingHorizontal:10,
+        paddingVertical:5,
+        borderRadius:40,
+        lineHeight:15
+    },
     button: {
         fontSize: 12,
         color: '#fff',
@@ -228,6 +249,8 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 12,
         // marginVertical: 10,
+        // flexDirection:'column',
+        // justifyContent:"space-between",
     },
     priceBox: {
         flexDirection: 'row',
@@ -242,6 +265,7 @@ const styles = StyleSheet.create({
     coinType: {
         fontWeight: null,
         fontSize: 10,
+        marginLeft:5
     },
     like: {
         color: '#ccc',

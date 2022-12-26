@@ -21,13 +21,16 @@ const BottomPopUpWindow = (props) => {
     const { currentDmwWallet } = useDmwWallet();
     const { Copy } = useDmwApi()
     useEffect(() => {
-        const typeNumber = 4;
-        const errorCorrectionLevel = 'Q';
-        const qr = QRCode(typeNumber, errorCorrectionLevel,);
-        qr.addData(WalletInUse == 1 ? currentDmwWallet : currentWallet);
-        qr.make();
-        setBase64Img(qr.createDataURL());
-        console.log(base64Img)
+        if ((WalletInUse == 1 && currentDmwWallet) || (WalletInUse == 2 && currentWallet)) {
+            const typeNumber = 4;
+            const errorCorrectionLevel = 'Q';
+            const qr = QRCode(typeNumber, errorCorrectionLevel,);
+            qr.addData(WalletInUse == 1 ? currentDmwWallet : currentWallet);
+            qr.make();
+            setBase64Img(qr.createDataURL());
+            console.log(base64Img)
+        }
+
     }, [WalletInUse, currentWallet, currentDmwWallet]);
     return (<View style={[props.style, { position: 'absolute' }]}>
         <View style={styles.container}></View>
@@ -49,7 +52,7 @@ const BottomPopUpWindow = (props) => {
                     <Text style={styles.CopyBtn} onPress={() => { Copy(WalletInUse == 1 ? currentDmwWallet : currentWallet) }}>{t("复制")}</Text>
                 </View>
             </View>
-            <Text style={{ textAlign: 'center', marginTop: 20,paddingBottom:20 }}>{t("复制地址以接收付款")}</Text>
+            <Text style={{ textAlign: 'center', marginTop: 20, paddingBottom: 20 }}>{t("复制地址以接收付款")}</Text>
         </Modal >
     </View >)
 }

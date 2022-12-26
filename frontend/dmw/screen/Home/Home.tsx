@@ -33,7 +33,7 @@ const Home = (props) => {
   const [list, setlist] = useState([{}, {}, {}, {}, {}, {}, {}, {}])
   const [refreshing, setrefreshing] = useState(false)
   const { post, get, formData, Toast } = useDmwApi();
-  const {language } = useDmwLogin();
+  const { language } = useDmwLogin();
   const [imgList, setImglist] = useState([])
   const [NftList, setNftList] = useState([])
   const [blindlist, setblindlist] = useState([])
@@ -54,10 +54,13 @@ const Home = (props) => {
     })
   }
 
-  useEffect(()=>{
-    console.log(language,'切换语言');
-    
-  },[language])
+  useEffect(() => {
+    console.log(language, '切换语言');
+
+  }, [language])
+  useEffect(() => {
+    geNftList(typename == 'nft' ? 1 : 2, page)
+  }, [page])
 
   useEffect(() => {
     console.log("Home useEffe currentWallet,connected", currentWallet)
@@ -95,26 +98,29 @@ const Home = (props) => {
 
     let nftDataObj = formData(params)
     post('/index/nft/get_home_nft_by_search', nftDataObj).then(res => {
+      console.log(res.data);
+
       if (type == 1) {
         if (page == 1) {
           setNftList([...res.data.data])
         } else {
           setNftList([...NftList, ...res.data.data])
         }
-        setlast_page(res.data.last_page)
       } else {
         if (page == 1) {
           setblindlist([...res.data.data])
         } else {
           setblindlist([...blindlist, ...res.data.data])
         }
-        setlastbpage(res.data.last_page)
       }
+      setlast_page(res.data.last_page)
+      console.log(last_page, 'last_page');
     })
   }
 
 
   const paging = (typename) => {
+    setpage(1)
     setTypename(typename)
     if (typename == 'nft' && !NftList.length) {
       setNftList([])
@@ -130,22 +136,14 @@ const Home = (props) => {
 
     let pageNumber
     if (last_page) {
-      if (typename == 'nft') {
-        pageNumber = page + 1
-      } else {
-        pageNumber = bpage + 1
-      }
-
+      pageNumber = page + 1
+      console.log(last_page);
 
       if (pageNumber > last_page) {
       } else {
-        geNftList(typename == 'nft' ? 1 : 2, pageNumber)
-      }
-      if (typename == 'nft') {
         setpage(page + 1)
-      } else {
-        setbpage(bpage + 1)
       }
+
     }
 
   }
@@ -186,9 +184,11 @@ const Home = (props) => {
                     style={styles.top_img}
                     source={require('../../assets/img/allIconAndlImage/3571.png')}></Image>
                 </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => { props.navigation.navigate('MessageCenter') }}>
                 <Image
                   style={[styles.top_img, { marginLeft: 30 }]}
                   source={require('../../assets/img/allIconAndlImage/3572.png')}></Image>
+                  </TouchableWithoutFeedback> 
               </View>
             </View>
             {/* title -- end */}
@@ -200,7 +200,7 @@ const Home = (props) => {
             showsHorizontalScrollIndicator={false}>
             {
               listType.map((item, index) => (
-                <Text style={styles.slidebutton} onPress={() => { props.navigation.navigate('categrayScreen', { categray: item.name,id:item.id }) }}>{item.name}</Text>
+                <Text style={styles.slidebutton} onPress={() => { props.navigation.navigate('categrayScreen', { categray: item.name, id: item.id }) }}>{item.name}</Text>
               ))
 
             }
@@ -259,47 +259,47 @@ const Home = (props) => {
           <View style={styles.line}></View>
           {/* line -- end */}
         </View>
-       
+
       </View>
       <View style={[styles.listbox]}>
-          {/* onTouchStart={() => {onEnableScroll(false);}}
+        {/* onTouchStart={() => {onEnableScroll(false);}}
                                     onMomentumScrollEnd={() => {onEnableScroll(true);}} */}
 
-          {
-            !loading ? <FlatList
+        {
+          !loading ? <FlatList
             showsVerticalScrollIndicator={false}
-              refreshing={refreshing}
-              style={{ flex:1 }}
-              ListEmptyComponent={() => {
-                return <Text style={{ textAlign: 'center', flex:1 }}>{t("空空如也")}</Text>
-                // 列表为空展示改组件
-              }}
-              // 一屏幕展示几个
-              number={4}
-              //  2列显示
-              numColumns={2}
-              data={typename == 'nft' ? NftList : blindlist}
-              renderItem={({ item }) => {
-                return <List list={item} type={1} navigatetoDetail={(id, unique_id, contract_address, token_id, network) => { props.navigation.navigate('goodsDetail', { id: id, unique_id, contract_address, token_id, network }) }}
-                />
-              }}
-              keyExtractor={(item, index) => item.id}
-              ListFooterComponent={() => {
-                // 声明尾部组件
-                return NftList.length ? <Text style={{ textAlign: 'center' ,marginVertical:20 }}>{t("没有更多了")}</Text> : null
-              }}
-              // 下刷新
-              onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
-              onEndReached={getList}
-            >
-            </FlatList> : <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: '40%' }}>
-              <Spinner />
-            </View>
+            refreshing={refreshing}
+            style={{ flex: 1 }}
+            ListEmptyComponent={() => {
+              return <Text style={{ textAlign: 'center', flex: 1 }}>{t("空空如也")}</Text>
+              // 列表为空展示改组件
+            }}
+            // 一屏幕展示几个
+            number={4}
+            //  2列显示
+            numColumns={2}
+            data={typename == 'nft' ? NftList : blindlist}
+            renderItem={({ item }) => {
+              return <List list={item} type={1} navigatetoDetail={(id, unique_id, contract_address, token_id, network) => { props.navigation.navigate('goodsDetail', { id: id, unique_id, contract_address, token_id, network }) }}
+              />
+            }}
+            keyExtractor={(item, index) => item.id}
+            ListFooterComponent={() => {
+              // 声明尾部组件
+              return NftList.length ? <Text style={{ textAlign: 'center', marginVertical: 20 }}>{t("没有更多了")}</Text> : null
+            }}
+            // 下刷新
+            onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
+            onEndReached={getList}
+          >
+          </FlatList> : <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: '40%' }}>
+            <Spinner />
+          </View>
 
-          }
+        }
 
 
-        </View>
+      </View>
 
 
       {currentWallet && <Modal
@@ -364,12 +364,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   listbox: {
-    paddingHorizontal:20,
-    paddingBottom:0,
+    paddingHorizontal: 20,
+    paddingBottom: 0,
     // marginVertical: 20,
     // marginHorizontal: 20,
     // paddingBottom: 100,
-    flex:1
+    flex: 1
   },
   index_box: {
     paddingLeft: 20,
