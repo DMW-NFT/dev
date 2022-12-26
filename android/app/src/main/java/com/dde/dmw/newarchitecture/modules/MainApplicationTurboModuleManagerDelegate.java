@@ -1,4 +1,4 @@
-package com.anonymous.myreactdapp.newarchitecture.modules;
+package com.dde.dmw.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;

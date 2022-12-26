@@ -24,152 +24,83 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from 'react-i18next'
 import Web3 from 'web3';
+import chainIdmap from '../../../constans/chainIdMap.json'
+import VerfiySecretModal from '../../Components/VerfiySecretModal'
+import TxProccessingModal from '../../Components/TxProccessingModal'
+
 
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
 const screenHeight = Dimensions.get('window').height;
 const TransferredIntoCollection = (props) => {
   const { t, i18n } = useTranslation();
-  const [address, setaddress] = useState('')
+
   const [title, setTitle] = useState('')//标题
   const [explain, setExplain] = useState('')//简介
-  const [password, setpassword] = useState("");
-  const [passwordlist, setpasswordlist] = useState([]);
-  const [Modalvisible, setModalvisible] = useState(false)
-  const inputRefX = useRef(null);
+  const [password, setPassword] = useState("");
   const [loading, setLoding] = useState(false)
   const [screenloading, setscreenLoding] = useState(false)
   const [imgurlUp1, setimgurlUp1] = useState('')
   const [ipfsImgUrl, setIpfsImgUrl] = useState('')
-  const [IpfsPath, setIpfsPath] = useState('')
   const { post, formData, Toast } = useDmwApi()
-  const [latestHash, setLatestHash] = useState()
-  const [DmwlatestHash, setDmwLatestHash] = useState()
-  const { currentWallet, mintNftWithSignature, transactionMap, transactionList,GasMap,currentGasPrice } = useDmwWeb3()
+  const { currentWallet, currentChainId, mintNftWithSignature, transactionMap, transactionList, GasMap, currentGasPrice } = useDmwWeb3()
   const { WalletInUse } = useDmwLogin()
-  const { dmwWalletList,dmwMintWithSignature,dmwTransactionList,dmwTransactionMap} = useDmwWallet()
-  const [activeType, setactiveType] = useState({ id: '', name: t('请选择合集'),logo:'' })
-  const [activeEm, setactiveEm] = useState({ value: 'Ethereum', name: 'Ethereum',logo:'' })
+  const { dmwWalletList, currentDmwWallet, dmwMintWithSignature, dmwTransactionList, dmwTransactionMap, getWalletListFromAccountStorage } = useDmwWallet()
+  const [activeType, setactiveType] = useState({ id: '', name: t('请选择合集'), logo: '' })
   const [isShowType, setisShowType] = useState(false)//是否展开类型选择框
-  const [isShowE, setisShowE] = useState(false)//是否展开区块链选择框
   const [listType, setListTtpe] = useState([])
-  const [listE, setlistE] = useState([])
+  const [vfModalVisible, setVfModalVisible] = useState(false)
+  const [txModalVisible, setTxModalVisible] = useState(false)
 
-  useEffect(()=>{
-    getBlockchain()
+  useEffect(() => {
+    // getBlockchain()
     getCoType()
-  },[])
+  }, [])
 
   // 获取区块链
-  const getBlockchain = () => {
-    post('/index/common/get_network').then(res => {
-      // console.log(res, '区块链类型');
-      setlistE(res.data)
-    })
-  }
+  // const getBlockchain = () => {
+  //   post('/index/common/get_network').then(res => {
+  //     setlistE(res.data)
+  //   })
+  // }
+
+
   // 获取type类型
   const getCoType = () => {
     post('/index/collection/get_user_collection').then(res => {
       console.log(res.data.data, '合集类型');
-      setactiveType({id:res.data.data[0].id,name:res.data.data[0].name,logo:res.data.data[0].logo_url})
+      setactiveType({ id: res.data.data[0].id, name: res.data.data[0].name, logo: res.data.data[0].logo_url })
       setListTtpe(res.data.data)
     })
   }
 
-  useEffect(() => {
+  const confirmToMint = () => {
 
-    console.log("asdasasd", dmwTransactionList)
-    if (dmwTransactionList && dmwTransactionList.length) {
-      console.log("get latest hash1")
-      setDmwLatestHash(dmwTransactionList[dmwTransactionList.length - 1])
-      console.log("get latest hash!", dmwTransactionList[dmwTransactionList.length - 1])
+    if (!checkNftDataFilled()) {
+      Toast(t('未上传图片或NFT信息未填写完整'))
+      return null
     }
-  }, [dmwTransactionList])
 
-  useEffect(() => {
-    if (dmwTransactionMap && dmwTransactionMap[DmwlatestHash]) {
-      console.log(dmwTransactionMap[DmwlatestHash], 'latest hash!')
-      if (dmwTransactionMap[DmwlatestHash].state == "confirmed") {
-        console.log("got you !", dmwTransactionMap[DmwlatestHash])
-        setDmwLatestHash(null)
-        Toast(t('创建成功！'))
-        setscreenLoding(false)
-        props.navigation.navigate('CreatedSuccessfully', { title, imgurlUp1 })
-      } else {
-        setscreenLoding(true)
-        Toast(t('等待链上确认！'))
-      }
-    }
-  }, [dmwTransactionMap])
-
-
-
-  useEffect(() => {
-
-    console.log("asdasasd", transactionList)
-    if (transactionList && transactionList.length) {
-      console.log("get latest hash1")
-      setLatestHash(transactionList[transactionList.length - 1])
-      console.log("get latest hash!", transactionList[transactionList.length - 1])
-    }
-  }, [transactionList])
-
-  useEffect(() => {
-    if (transactionMap && transactionMap[latestHash]) {
-      console.log(transactionMap[latestHash], 'latest hash!')
-      if (transactionMap[latestHash].state == "comfirmed") {
-        console.log("got you !", transactionMap[latestHash])
-        setLatestHash(null)
-        Toast(t('创建成功！'))
-        setscreenLoding(false)
-        props.navigation.navigate('CreatedSuccessfully', { title, imgurlUp1 })
-      } else {
-        setscreenLoding(true)
-        Toast(t('等待链上确认！'))
-      }
-    }
-  }, [transactionMap])
-
-
-
-  useEffect(() => {
-    // console.log(123);
-
-  }, [loading])
-  useEffect(() => {
-    let blackPointArry = [null, null, null, null, null, null]
-
-    let arr = password.split('');
-    arr.map((item, index) => {
-      blackPointArry[index] = item;
-    })
-    setpasswordlist(blackPointArry)
-    if (password.length == 6) {
-      setModalvisible(false)
-
+    if (WalletInUse == 1) {
+      setVfModalVisible(true)
+    } else {
       let data = {
         description: explain,
         image: ipfsImgUrl,
         name: title
       }
+
       fetch('https://deep-index.moralis.io/api/v2/ipfs/uploadFolder', {
         method: "POST",
         body: JSON.stringify([{ content: data, path: `${title}.json` }]),
         headers: {
           accept: 'application/json',
           'content-type': 'application/json',
-          'X-API-Key': 'Lf0hom3miHg82XaKYaQg1Ej3LiyXmfO9kCSAsfws9XpUX1V9sh1isIsOorRf1xYf'
+          'X-API-Key': 'XRjc1mIurthZ3xNGZtAp9Mk2Rv7f991jvqfMwdZBAJPETdwks4afavF6gfkP8515'
         },
       })
         .then((res) => res.json()).then(res => {
           console.log(res[0].path, '上传');
-          setIpfsPath(res[0].path)
-          let meta = {
-            metadataUri: res[0].path,
-            mintTo: WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
-            mintAmount: 1,
-            network: 'goerli'
-          }
 
           fetch('http://13.214.32.151:6666/getSignature', {
             method: "POST",
@@ -177,7 +108,7 @@ const TransferredIntoCollection = (props) => {
               metadataUri: res[0].path,
               mintTo: WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
               mintAmount: 1,
-              network: 'goerli'
+              network: chainIdmap[currentChainId].network.toLowerCase()
             }),
             headers: {
               accept: 'application/json',
@@ -186,10 +117,9 @@ const TransferredIntoCollection = (props) => {
           })
             .then((res) => res.json()).then(resp => {
               console.log(resp, 'zoubianjiekou');
-              if(WalletInUse == 1){
-                dmwMintWithSignature(password,resp.result.SignedPayload[0],resp.result.SignedPayload[resp.result.SignedPayload.length - 1])
-              }else{
+              if (WalletInUse == 2) {
                 mintNftWithSignature(resp.result.SignedPayload[0], resp.result.SignedPayload[resp.result.SignedPayload.length - 1])
+                setTxModalVisible(true)
               }
             }).catch(err => {
               console.log(err, '左边报错');
@@ -197,20 +127,137 @@ const TransferredIntoCollection = (props) => {
         }).catch(err => {
           console.log(err, '上传报错');
         })
-    } else if (password.length == 6) {
-      Toast(t('密码错误或暂未创建DMW钱包'))
     }
+  }
+  const checkNftDataFilled = () => {
+    return explain && ipfsImgUrl && title
+  }
+
+  useEffect(() => {
+
+
+
+    WalletInUse == 1 && (Array.from(password).length == 6) &&
+      getWalletListFromAccountStorage(password).then(walletRes => {
+        if (walletRes) {
+          console.log(walletRes.walletDict[currentDmwWallet].privateKey)
+          setVfModalVisible(false)
+
+          setPassword('')
+
+          let data = {
+            description: explain,
+            image: ipfsImgUrl,
+            name: title
+          }
+
+          fetch('https://deep-index.moralis.io/api/v2/ipfs/uploadFolder', {
+            method: "POST",
+            body: JSON.stringify([{ content: data, path: `${title}.json` }]),
+            headers: {
+              accept: 'application/json',
+              'content-type': 'application/json',
+              'X-API-Key': 'XRjc1mIurthZ3xNGZtAp9Mk2Rv7f991jvqfMwdZBAJPETdwks4afavF6gfkP8515'
+            },
+          })
+            .then((res) => res.json()).then(res => {
+              console.log(res[0].path, '上传');
+
+              fetch('http://13.214.32.151:6666/getSignature', {
+                method: "POST",
+                body: JSON.stringify({
+                  metadataUri: res[0].path,
+                  mintTo: WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
+                  mintAmount: 1,
+                  network: chainIdmap[currentChainId].network.toLowerCase()
+                }),
+                headers: {
+                  accept: 'application/json',
+                  'content-type': 'application/json',
+                },
+              })
+                .then((res) => res.json()).then(resp => {
+                  console.log(resp, 'zoubianjiekou');
+                  if (WalletInUse == 1) {
+                    dmwMintWithSignature(walletRes.walletDict[currentDmwWallet].privateKey, resp.result.SignedPayload[0], resp.result.SignedPayload[resp.result.SignedPayload.length - 1])
+                    setTxModalVisible(true)
+                  }
+                  //  else {
+                  //   mintNftWithSignature(resp.result.SignedPayload[0], resp.result.SignedPayload[resp.result.SignedPayload.length - 1])
+                  // }
+                }).catch(err => {
+                  console.log(err, '左边报错');
+                })
+            }).catch(err => {
+              console.log(err, '上传报错');
+            })
+
+
+        } else {
+          Toast("密码错误")
+        }
+      })
   }, [password])
 
-  const empty = () => {
-    setpassword('')
-  }
-  const Sure = () => {
-    empty()
-    setModalvisible(true); setTimeout(() => {
-      inputRefX.current.focus();
-    }, 500);
-  }
+  // useEffect(() => {
+  //   let blackPointArry = [null, null, null, null, null, null]
+
+  //   let arr = password.split('');
+  //   arr.map((item, index) => {
+  //     blackPointArry[index] = item;
+  //   })
+  //   setPasswordlist(blackPointArry)
+  //   if (password.length == 6) {
+  //     setModalvisible(false)
+
+  //     let data = {
+  //       description: explain,
+  //       image: ipfsImgUrl,
+  //       name: title
+  //     }
+  //     fetch('https://deep-index.moralis.io/api/v2/ipfs/uploadFolder', {
+  //       method: "POST",
+  //       body: JSON.stringify([{ content: data, path: `${title}.json` }]),
+  //       headers: {
+  //         accept: 'application/json',
+  //         'content-type': 'application/json',
+  //         'X-API-Key': 'XRjc1mIurthZ3xNGZtAp9Mk2Rv7f991jvqfMwdZBAJPETdwks4afavF6gfkP8515'
+  //       },
+  //     })
+  //       .then((res) => res.json()).then(res => {
+  //         console.log(res[0].path, '上传');
+
+  //         fetch('http://13.214.32.151:6666/getSignature', {
+  //           method: "POST",
+  //           body: JSON.stringify({
+  //             metadataUri: res[0].path,
+  //             mintTo: WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
+  //             mintAmount: 1,
+  //             network: chainIdmap[currentChainId].network.toLowerCase()
+  //           }),
+  //           headers: {
+  //             accept: 'application/json',
+  //             'content-type': 'application/json',
+  //           },
+  //         })
+  //           .then((res) => res.json()).then(resp => {
+  //             console.log(resp, 'zoubianjiekou');
+  //             if (WalletInUse == 1) {
+  //               dmwMintWithSignature(password, resp.result.SignedPayload[0], resp.result.SignedPayload[resp.result.SignedPayload.length - 1])
+  //             } else {
+  //               mintNftWithSignature(resp.result.SignedPayload[0], resp.result.SignedPayload[resp.result.SignedPayload.length - 1])
+  //             }
+  //           }).catch(err => {
+  //             console.log(err, '左边报错');
+  //           })
+  //       }).catch(err => {
+  //         console.log(err, '上传报错');
+  //       })
+  //   } else if (password.length == 6) {
+  //     Toast(t('密码错误或暂未创建DMW钱包'))
+  //   }
+  // }, [password])
+
 
 
 
@@ -267,10 +314,6 @@ const TransferredIntoCollection = (props) => {
     }))
   }
 
-
-  useEffect(() => {
-
-  }, [imgurlUp1])
 
 
   return (
@@ -364,7 +407,7 @@ const TransferredIntoCollection = (props) => {
                     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
                   }]}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Image source={{uri:activeType.logo}} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
+                      <Image source={{ uri: activeType.logo }} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
                       <Text style={{ marginLeft: 10 }}>
                         {activeType.name}
                       </Text></View>
@@ -384,7 +427,7 @@ const TransferredIntoCollection = (props) => {
                       {
                         listType && listType.length ?
                           listType.map((item, index) => (
-                            <Text onPress={() => { setactiveType({ id: item.value, name: item.name ,logo:item.logo_url}); setisShowType(false) }}
+                            <Text onPress={() => { setactiveType({ id: item.value, name: item.name, logo: item.logo_url }); setisShowType(false) }}
                               style={{
                                 color: activeType.id == item.id ? 'blue' : '#333',
                                 paddingTop: 10, paddingBottom: 10,
@@ -401,10 +444,10 @@ const TransferredIntoCollection = (props) => {
               </View>
               <View style={[styles.lis, { marginBottom: 20 }]}>
                 <Text style={{ fontSize: 16, marginBottom: 17 }}>
-                  {t("选择区块链")}
+                  {t("区块链")}:{chainIdmap[currentChainId].network}
                 </Text>
 
-                <TouchableWithoutFeedback onPress={() => {
+                {/* <TouchableWithoutFeedback onPress={() => {
                   if (!listE) {
                     Toast('未加载到其他')
                     return
@@ -447,7 +490,7 @@ const TransferredIntoCollection = (props) => {
 
 
                     </View> : null
-                }
+                } */}
 
               </View>
               {
@@ -456,7 +499,7 @@ const TransferredIntoCollection = (props) => {
                     <Text style={{ fontSize: 12, color: '#999999', }}>
                       {t("上链费")}：
                     </Text>
-                    {currentGasPrice?<Text style={{ fontSize: 16, color: '#897EF8' }}>{Web3.utils.fromWei(String(Number(GasMap['mintWithSignature'])*Number(currentGasPrice)),'ether').slice(0,8)} ETH</Text>:<Text style={{ fontSize: 16, color: '#897EF8' }}>---</Text>}
+                    {currentGasPrice ? <Text style={{ fontSize: 16, color: '#897EF8' }}>{Web3.utils.fromWei(String(Number(GasMap['mintWithSignature']) * Number(currentGasPrice)), 'ether').slice(0, 8)} {chainIdmap[currentChainId].nativeToken}</Text> : <Text style={{ fontSize: 16, color: '#897EF8' }}>---</Text>}
                   </View>
                   : null
 
@@ -464,10 +507,10 @@ const TransferredIntoCollection = (props) => {
 
             </ScrollView>
 
-            <Text onPress={() => Sure()} style={styles.btn}>{t("创建并支付")}</Text>
+            <Text onPress={() => confirmToMint()} style={styles.btn}>{t("创建并支付")}</Text>
 
 
-            <Modal
+            {/* <Modal
               visible={Modalvisible}
               backdropStyle={{ "backgroundColor": 'rgba(0, 0, 0, 0.5)' }}
               onBackdropPress={() => { setModalvisible(false) }}>
@@ -483,7 +526,7 @@ const TransferredIntoCollection = (props) => {
                   keyboardType="numeric"
                   style={{ position: 'absolute', zIndex: 1, top: -40 }}
                   onChangeText={(e) => {
-                    setpassword(e);
+                    setPassword(e);
                   }
                   }
                   value={password}
@@ -507,9 +550,11 @@ const TransferredIntoCollection = (props) => {
                   </View>
                 </View>
               </Card>
-            </Modal>
+            </Modal> */}
           </>
       }
+      {vfModalVisible && <VerfiySecretModal setModalVisible={setVfModalVisible} modalVisible={vfModalVisible} setPassword={setPassword} />}
+      {txModalVisible && <TxProccessingModal setModalVisible={setTxModalVisible} modalVisible={txModalVisible} />}
     </SafeAreaView>
   );
 }

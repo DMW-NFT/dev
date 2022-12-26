@@ -431,7 +431,7 @@ const QuotationDetails = (props) => {
                         {/* 底部按钮 */}
                         <View style={[styles.bottombtnBox,]}>
                             <View style={[styles.flex, { alignItems: "flex-end" }]}>
-                                <Text style={[styles.bottomPrice]}> {Price} {chainNameMap[NftInfo.network].nativeToken}</Text>
+                                <Text style={[styles.bottomPrice]}> {Price} {NftInfo&&chainNameMap[NftInfo.network].nativeToken}</Text>
                                 {/* <Text style={[styles.bottomcoinType]}> Wfca</Text> */}
                             </View>
                             <View style={{ flexDirection: 'row', backgroundColor: 'pink', borderRadius: 25, flex: 1, marginLeft: 25, height: 50, alignItems: 'center' }}>

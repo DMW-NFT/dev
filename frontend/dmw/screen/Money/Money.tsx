@@ -22,7 +22,7 @@ import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import CryptoJS from 'crypto-js'
 import { useTranslation } from 'react-i18next'
-
+import chainIdMap from '../../../constans/chainIdMap.json'
 
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
@@ -72,6 +72,11 @@ const Money = (props) => {
     }
 
   }, [memConnectStatus])
+
+  useEffect(()=>{
+    setDmwChainId(currentChainId)
+    setSelectedChain(chainIdMap[currentChainId].network.toLowerCase())
+  },[currentChainId])
 
 
   const getAddressBalance = (address) => {

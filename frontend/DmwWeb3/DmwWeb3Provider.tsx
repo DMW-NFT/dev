@@ -67,14 +67,14 @@ const DmwWeb3Provider = ({ children }) => {
             setCurrentGasPrice(gasPrice)
 
         })
-        setInterval(() => {
-            web3.eth.getGasPrice().then((gasPrice) => {
-                // console.log(`chain:${currentChainId} current gas price==>${gasPrice}`)
-                setCurrentGasPrice(gasPrice)
+        // setInterval(() => {
+        //     web3.eth.getGasPrice().then((gasPrice) => {
+        //         // console.log(`chain:${currentChainId} current gas price==>${gasPrice}`)
+        //         setCurrentGasPrice(gasPrice)
 
-            })
-        }, 15000)
-    }, [])
+        //     })
+        // }, 15000)
+    }, [currentChainId])
 
     useEffect(() => {
         console.log(currentChainId, "current chain id !!!");

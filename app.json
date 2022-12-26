@@ -2,7 +2,7 @@
   "expo": {
     "name": "DMW",
     "slug": "DMW",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "sdkVersion": "46.0.0",
     "platforms": [
       "ios",
@@ -10,7 +10,7 @@
       "web"
     ],
     "android": {
-      "package": "com.anonymous.myreactdapp"
+      "package": "dde.dmw.kh"
     }
   }
 }

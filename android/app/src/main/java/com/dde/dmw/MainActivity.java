@@ -1,4 +1,4 @@
-package com.anonymous.myreactdapp;
+package com.dde.dmw;
 
 import android.os.Build;
 import android.os.Bundle;

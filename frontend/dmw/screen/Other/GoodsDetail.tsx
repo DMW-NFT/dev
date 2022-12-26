@@ -159,7 +159,7 @@ const GoodsDetail = (props) => {
         post('/index/nft/get_nft_details', formdata).then(res => {
             console.log('调用详情接口');
             console.log(res);
-
+            
             setLoding(false)
             setDetailsObj(res.data.nft_data)
             setImgurl(res.data.nft_data.image_attachment_url ? res.data.nft_data.image_attachment_url : res.data.nft_data.image_attachment)
@@ -260,7 +260,7 @@ const GoodsDetail = (props) => {
                                 </Text>}
 
                                 {sellBtnVisible && <Text onPress={() => { setSellOptionVisible(true) }} style={[styles.buyBtn, { marginRight: 10, marginBottom: 40 }]}>
-                                    {t("出售")}
+                                    {t("定价出售")}
                                 </Text>}
 
                                 {approvalVisible && <Text onPress={() => { approvalNFT() }} style={[styles.buyBtn, { backgroundColor: '#897EF8', marginBottom: 40 }]}>
@@ -377,7 +377,7 @@ const GoodsDetail = (props) => {
                                                             <View>
                                                                 <View style={[styles.flex, { marginBottom: 9 }]}>
                                                                     <Image style={{ width: 15, height: 15 }} source={require('../../assets/img/money/offer.png')}></Image>
-                                                                    {detailsObj.network&&<Text style={{ fontSize: 14, color: "#333" }}>{item.buyout_price_per.number +' '+ chainNameMap[detailsObj.network].nativeToken}</Text>}
+                                                                    {detailsObj.network&&<Text style={{ fontSize: 14, color: "#333" }}>{item.buyout_price_per.number +' '+ chainNameMap[detailsObj.network.toLowerCase()].nativeToken}</Text>}
                                                                 </View>
                                                                 {/* <Text style={{ fontSize: 12, color: "#999" }}>$455.32</Text> */}
                                                             </View>
@@ -434,7 +434,7 @@ const GoodsDetail = (props) => {
                                                             <View>
                                                                 <View style={[styles.flex, { marginBottom: 9 }]}>
                                                                     <Image style={{ width: 15, height: 15 }} source={require('../../assets/img/money/offer.png')}></Image>
-                                                                    <Text style={{ fontSize: 14, color: "#333" }}>{item.total_offer_amount.number + item.total_offer_amount}</Text>
+                                                                    <Text style={{ fontSize: 14, color: "#333" }}>{item.total_offer_amount.number + ' '+chainNameMap[detailsObj.network.toLowerCase()].nativeToken}</Text>
                                                                 </View>
                                                                 {/* <Text style={{ fontSize: 12, color: "#999" }}>$455.32</Text> */}
                                                             </View>
@@ -548,7 +548,7 @@ const GoodsDetail = (props) => {
                             }
                             value={sellPrice}
                         />
-                        {detailsObj.network&&<Text>{chainNameMap[detailsObj.network].nativeToken}</Text>}
+                        {detailsObj.network&&<Text>{chainNameMap[detailsObj.network.toLowerCase()].nativeToken}</Text>}
                     </View>
 
                     {/* 购买数量 */}
