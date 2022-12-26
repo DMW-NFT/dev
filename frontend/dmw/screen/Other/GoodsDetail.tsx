@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { ListItem, Avatar, Icon, Overlay, Button } from '@rneui/themed'
 import VerfiySecretModal from '../../Components/VerfiySecretModal'
 import TxProccessingModal from '../../Components/TxProccessingModal'
-
+import chainNameMap from '../../../constans/chainNameMap.json'
 
 const GoodsDetail = (props) => {
     const { t, i18n } = useTranslation();
@@ -47,8 +47,8 @@ const GoodsDetail = (props) => {
     const [auctionBtnVisible, setAuctionBtnVsity] = useState(false)
 
     const [password, setPassword] = useState('')
-    const [vfModalVisible, setvfModalVisible] = useState(false)
-    const [txModalVisible, settxModalVisible] = useState(false)
+    const [vfModalVisible, setVfModalVisible] = useState(false)
+    const [txModalVisible, setTxModalVisible] = useState(false)
 
 
     // Context 方法
@@ -70,20 +70,20 @@ const GoodsDetail = (props) => {
     const approvalNFT = () => {
         if (WalletInUse == 1) {
             console.log("dmw approval nft")
-            setvfModalVisible(true)
+            setVfModalVisible(true)
 
         } else {
             ApprovalForAll(detailsObj.contract_address, detailsObj.token_id)
-            settxModalVisible(true)
+            setTxModalVisible(true)
         }
     }
     const sellNFT = () => {
         if (WalletInUse == 1) {
-            setvfModalVisible(true)
+            setVfModalVisible(true)
         } else {
             let sTime = Math.round(new Date().getTime() / 1000 + 60).toString()
             createListing(detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', sellNumber, sellPrice, sellPrice, '0')
-            settxModalVisible(true)
+            setTxModalVisible(true)
             setSellOptionVisible(false)
         }
     }
@@ -133,13 +133,13 @@ const GoodsDetail = (props) => {
                 if (res) {
                     console.log(res.walletDict[currentDmwWallet].privateKey)
                     // console.log(selectedToken)
-                    setvfModalVisible(false)
-                    settxModalVisible(true)
+                    setVfModalVisible(false)
+                    setTxModalVisible(true)
                     setPassword('')
 
                     if (!isApproved) {
                         dmwApprovalForAll(res.walletDict[currentDmwWallet].privateKey, detailsObj.contract_address, detailsObj.token_id)
-                        settxModalVisible(true)
+                        setTxModalVisible(true)
                     } else {
                         let sTime = Math.round(new Date().getTime() / 1000 + 60).toString()
                         dmwCreateListing(res.walletDict[currentDmwWallet].privateKey, detailsObj.contract_address, detailsObj.token_id, sTime, '3153600000', sellNumber, sellPrice, sellPrice, '0')
@@ -377,7 +377,7 @@ const GoodsDetail = (props) => {
                                                             <View>
                                                                 <View style={[styles.flex, { marginBottom: 9 }]}>
                                                                     <Image style={{ width: 15, height: 15 }} source={require('../../assets/img/money/offer.png')}></Image>
-                                                                    <Text style={{ fontSize: 14, color: "#333" }}>{item.buyout_price_per.number + item.buyout_price_per.currency_name}</Text>
+                                                                    {detailsObj.network&&<Text style={{ fontSize: 14, color: "#333" }}>{item.buyout_price_per.number +' '+ chainNameMap[detailsObj.network].nativeToken}</Text>}
                                                                 </View>
                                                                 {/* <Text style={{ fontSize: 12, color: "#999" }}>$455.32</Text> */}
                                                             </View>
@@ -548,7 +548,7 @@ const GoodsDetail = (props) => {
                             }
                             value={sellPrice}
                         />
-                        <Text>{nativeToken}</Text>
+                        {detailsObj.network&&<Text>{chainNameMap[detailsObj.network].nativeToken}</Text>}
                     </View>
 
                     {/* 购买数量 */}
@@ -609,8 +609,8 @@ const GoodsDetail = (props) => {
                     }
                 </View>
             </Overlay>
-            {vfModalVisible && <VerfiySecretModal setModalVisible={setvfModalVisible} modalVisible={vfModalVisible} setPassword={setPassword} />}
-            {txModalVisible && <TxProccessingModal setModalVisible={settxModalVisible} modalVisible={txModalVisible} />}
+            {vfModalVisible && <VerfiySecretModal setModalVisible={setVfModalVisible} modalVisible={vfModalVisible} setPassword={setPassword} />}
+            {txModalVisible && <TxProccessingModal setModalVisible={setTxModalVisible} modalVisible={txModalVisible} />}
         </SafeAreaView>
     )
 }

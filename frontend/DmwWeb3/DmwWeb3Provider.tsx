@@ -340,7 +340,7 @@ const DmwWeb3Provider = ({ children }) => {
     const buyNFT = async (listingId: number, quantityToBuy: number, currency: string, totalPrice: string) => {
         web3.eth.setProvider(getProvider(currentChainId));
         console.log("buy with currency", currency, totalPrice)
-        const contractAddress = "0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4"
+        const contractAddress = ChainIdMap[currentChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
         const rawdata = contract.methods.buy(listingId, currentWallet, quantityToBuy, currency, web3.utils.toWei(totalPrice, 'ether')).encodeABI()
         console.log(rawdata);

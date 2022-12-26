@@ -273,7 +273,7 @@ const DmwWalletProvider = ({ children }) => {
             data: rawdata, // Required
             // gasPrice: "0x02540be400", // Optional
             // gasLimit: "0x9c40", // Optional
-            value: (currency == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") ? web3.utils.toWei(totalPrice, 'ether') : web3.utils.toWei("0", 'ether'), // Optional
+            value: (currency.toLowerCase() == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") ? web3.utils.toWei(totalPrice, 'ether') : web3.utils.toWei("0", 'ether'), // Optional
             // nonce: "0x0114", // Optional
         };
         console.log(tx)
