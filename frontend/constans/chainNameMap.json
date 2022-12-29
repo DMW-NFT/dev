@@ -10,7 +10,7 @@
         "nativeToken": "ETH",
         "nft_contract":"0x0ba15eE8874b930c49c7E65fFdEDf41BE9D0847d",
         "market_contract":"0x94bA21689AccF38EAcE5Ef53e1f64F63fB38C3a4",
-        "chainId":1
+        "chainId":5
     },
     "bsc": {
         "network": "BSC",

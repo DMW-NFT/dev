@@ -98,7 +98,7 @@ const Home = (props) => {
 
     let nftDataObj = formData(params)
     post('/index/nft/get_home_nft_by_search', nftDataObj).then(res => {
-      console.log(res.data);
+      // console.log(res.data);
 
       if (type == 1) {
         if (page == 1) {
@@ -114,7 +114,7 @@ const Home = (props) => {
         }
       }
       setlast_page(res.data.last_page)
-      console.log(last_page, 'last_page');
+      // console.log(last_page, 'last_page');
     })
   }
 

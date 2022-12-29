@@ -121,7 +121,7 @@ console.log(language,'yuya');
           },
         })
         .then((ret) => {
-          console.log(ret.token, "----------------------");
+          // console.log(ret.token, "----------------------");
           resolve(ret.token);
         })
         .catch((err) => {
@@ -152,7 +152,7 @@ console.log(language,'yuya');
           },
         })
         .then((ret) => {
-          console.log(ret.languageType, "----------------------");
+          // console.log(ret.languageType, "----------------------");
           resolve(ret.languageType);
         })
         .catch((err) => {

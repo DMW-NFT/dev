@@ -8,7 +8,7 @@ import CryptoJS from 'crypto-js'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { promises } from 'dns';
 import { clear, time } from 'console';
-import getProvider from '../../frontend/constans/rpcProvicer'
+import getProvider from '../../frontend/constans/rpcProvider'
 import { TransactionConfig } from 'web3-eth';
 import { on } from 'stream';
 import NFT1155ABI from '../../frontend/contract/NFT1155.json'

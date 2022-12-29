@@ -106,7 +106,8 @@ const SellOrder = (props) => {
                         return (
                             <View style={[styles.lis]}>
                                 <View style={[styles.flexJBC]}>
-                                    <Text style={styles.listTopLeft}>DMW（官方）</Text>
+                                    <View></View>
+                                    {/* <Text style={styles.listTopLeft}>DMW（官方）</Text> */}
                                     <View>
                                         {
                                             typename != 1 ?
@@ -124,14 +125,14 @@ const SellOrder = (props) => {
                                             <Text style={[styles.lisImgLeftColl]}>{item.collection_name ? item.collection_name : "--"}</Text>
                                         </View>
                                     </View>
-                                    <View style={{ alignItems: 'flex-end' }}>
+                                    {/* <View style={{ alignItems: 'flex-end' }}>
                                         <Text style={[styles.lisPriceText]}>{t("售卖价")}</Text>
                                         <Text style={[styles.lisPrice]}>{item.buyout_price_per.number + item.buyout_price_per.currency_name}</Text>
-                                    </View>
+                                    </View> */}
                                 </View>
                                 <View style={[styles.lisBottomBox, styles.flexJBC]}>
                                     <View>
-                                        <Text style={[styles.lisBottomleft]}>...</Text>
+                                        {/* <Text style={[styles.lisBottomleft]}>...</Text> */}
                                     </View>
                                     {/* <View style={{ alignItems: "center" }}>
                                         <Text style={[styles.sellPriceText]}>售卖价</Text>
@@ -141,7 +142,7 @@ const SellOrder = (props) => {
                                         {
                                             typename != 1 ?
                                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                                    <Text style={[styles.lisBottomLookBtn]} onPress={() => {  }}>更多功能</Text>
+                                                    <Text style={[styles.lisBottomLookBtn]} onPress={() => {  }}>{t('更多功能')}</Text>
                                                     {/* <Text style={[styles.lisBottomLookBtn]} onPress={() => { props.navigation.navigate('tradeSuccessfully') }}>查看</Text> */}
                                                 </View>
                                                 :
@@ -162,7 +163,7 @@ const SellOrder = (props) => {
                                             item.offers.map((items, index) => (
                                                 <View key={index}>
                                                     <TouchableWithoutFeedback onPress={() => {
-                                                        console.log(items, '垃圾啊你');
+                                                        // console.log(items, '垃圾啊你');
 
                                                         // props.navigation.navigate('QuotationDetails', { id: item.order_no, likes: detailsObj.likes, imgUrl: imgurl, userAvatar: userInfo.userAvatar, shortenAddress: userInfo.shortenAddress });
                                                     }}>
@@ -189,7 +190,7 @@ const SellOrder = (props) => {
                                                                     <Text style={[styles.moreBottom]}>{items.quantity_wanted}</Text>
                                                                 </View>
                                                               
-                                                                <Text style={[styles.lisBottomLookBtn]} onPress={() => { props.navigation.navigate('tradeSuccessfully',{id:items.offer_id}) }}>查看</Text>
+                                                                <Text style={[styles.lisBottomLookBtn]} onPress={() => { props.navigation.navigate('tradeSuccessfully',{id:items.offer_id}) }}>{t('查看')}</Text>
                                                             </View>
                                                         </View>
                                                     </TouchableWithoutFeedback>

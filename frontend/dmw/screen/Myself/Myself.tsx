@@ -132,19 +132,19 @@ const Myself = (props) => {
     console.log(posturl,'url,yemian');
     
     post(posturl, params).then(res => {
-      console.log(res.data.result[0], '回调----------');
+      // console.log(res.data, '回调----------');
       if(res.code == 200){
-        let arr = res.data.result
+        let arr = res.data.result?res.data.result:res.data.data
         let strarr = []
         arr.map((item,index)=>{
         if((item.nft_name.indexOf(strText) > -1) && strText){
-          console.log(item.nft_name.indexOf(strText));
+          // console.log(item.nft_name.indexOf(strText));
           strarr.push(item)
         }else if(!strText){
-          strarr = res.data.result
+          strarr = res.data.result?res.data.result:res.data.data
         }
         })
-        console.log(strarr);
+        // console.log(strarr);
         
         setmyNftList(strarr)
         setLoding(false)

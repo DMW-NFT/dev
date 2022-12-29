@@ -21,19 +21,19 @@ import TermsOfService from "../screen/Money/TermsOfService"; // 发送
 import Privatekeyimport from "../screen/Money/Privatekeyimport"; // 发送
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 import { useDmwWallet } from "../../DmwWallet/DmwWalletProvider";
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from "react-i18next";
 
 const Stack = createStackNavigator();
 const Home = (props) => {
   const { t, i18n } = useTranslation();
   const { MoneyRouteState, setMoneyRouteState } = useDmwApi();
-  const {dmwWalletList} = useDmwWallet()
-  useEffect(()=>{
-console.log(MoneyRouteState,dmwWalletList,'----------------');
-if(dmwWalletList && dmwWalletList.length){
-  setMoneyRouteState('456')
-}
-  },[MoneyRouteState,dmwWalletList])
+  const { dmwWalletList } = useDmwWallet();
+  useEffect(() => {
+    console.log(MoneyRouteState, dmwWalletList, "----------------");
+    if (dmwWalletList && dmwWalletList.length) {
+      setMoneyRouteState("456");
+    }
+  }, [MoneyRouteState, dmwWalletList]);
   return (
     <Stack.Navigator
       initialRouteName={"createMoney"}
@@ -62,14 +62,13 @@ if(dmwWalletList && dmwWalletList.length){
         }}
       ></Stack.Screen>
 
-<Stack.Screen
+      <Stack.Screen
         component={Privatekeyimport}
         name="Privatekeyimport"
         options={{
           title: "",
         }}
       ></Stack.Screen>
-
 
       <Stack.Screen
         component={CreateWord}
@@ -148,7 +147,7 @@ if(dmwWalletList && dmwWalletList.length){
         }}
       ></Stack.Screen>
 
-<Stack.Screen
+      <Stack.Screen
         component={ViewMnemonics}
         name="ViewMnemonics"
         options={{
@@ -156,14 +155,13 @@ if(dmwWalletList && dmwWalletList.length){
         }}
       ></Stack.Screen>
 
-<Stack.Screen
+      <Stack.Screen
         component={TermsOfService}
         name="TermsOfService"
         options={{
           title: t("服务条款"),
         }}
       ></Stack.Screen>
-
     </Stack.Navigator>
   );
 };

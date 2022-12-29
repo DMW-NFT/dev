@@ -70,7 +70,7 @@ const Api = () => {
           // 而不能在then以外处理
           // 也没有办法“变成”同步返回
           // 你也可以使用“看似”同步的async/await语法
-          console.log(ret.token, "----------------------");
+          // console.log(ret.token, "----------------------");
           resolve(ret.token);
         })
         .catch((err) => {

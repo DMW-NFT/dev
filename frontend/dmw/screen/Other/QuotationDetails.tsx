@@ -486,61 +486,7 @@ const QuotationDetails = (props) => {
                 </Card>
             </Modal>
 
-            {/* 支付弹窗 */}
-            {/* <Modal
-                visible={Modalvisible}
-                backdropStyle={{ "backgroundColor": 'rgba(0, 0, 0, 0.5)' }}
-                onBackdropPress={() => { setModalvisible(false) }}>
-                <Card disabled={true} style={styles.CardBox}>
 
-                    <TextInput
-                        ref={inputRefX}
-                        maxLength={6}
-                        caretHidden={true}
-                        secureTextEntry={true}
-                        onKeyPress={() => { }}
-                        placeholder='123456'
-                        keyboardType="numeric"
-                        style={{ position: 'absolute', zIndex: 1, top: -40 }}
-                        onChangeText={(e) => {
-                            setpassword(e);
-                        }
-                        }
-                        value={password}
-                    />
-                    <View style={{ justifyContent: 'flex-end', flexDirection: 'row', position: 'absolute', top: 10, right: 20, width: 22, height: 22 }}>
-                        <TouchableWithoutFeedback onPress={() => { setModalvisible(false) }}>
-                            <Image style={styles.colose} source={require('../../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png')}></Image>
-                        </TouchableWithoutFeedback>
-
-                    </View>
-                    <View>
-                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>请输入支付密码</Text>
-                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{NftInfo ? NftInfo.name : '--'}</Text>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
-                            <Text style={{ color: '#999999', fontSize: 16, fontWeight: '700' }}>价格</Text>
-                            <Text style={{ flexDirection: 'row' }}>
-                                <Text style={{ fontSize: 16, fontWeight: '700' }}>{UnitPrice.UnitPrice * Number(BuyNumber)}</Text>
-                                <Text>&nbsp;</Text>
-                                <Text style={{ fontSize: 10 }}>{UnitPrice.Company ? UnitPrice.Company : 'USDT'}</Text>
-                            </Text>
-                        </View>
-
-
-
-                        <View style={{ height: 48, flexDirection: 'row', justifyContent: 'space-between', }}>
-                            {
-                                passwordlist.map((item, index) => (
-                                    <Text style={[index == 0 ? styles.passinputfirst : styles.passinput]}>{item ? "●" : ''}</Text>
-                                ))
-                            }
-                        </View>
-
-
-
-                    </View>
-                </Card>
-            </Modal> */}
             {vfModalVisible && <VerfiySecretModal setModalVisible={setVfModalVisible} modalVisible={vfModalVisible} setPassword={setPassword} />}
             {txModalVisible && <TxProccessingModal setModalVisible={setTxModalVisible} modalVisible={txModalVisible} />}
 
