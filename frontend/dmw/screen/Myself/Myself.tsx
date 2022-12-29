@@ -83,10 +83,10 @@ const Myself = (props) => {
 
   useEffect(() => {
     post("/index/user/get_user_msg").then((res) => {
-      console.log(res, "用户信息");
+      // console.log(res, "用户信息");
       if (res.code == 200) {  
         setUserInfo(res.data);
-        console.log(userInfo, "用户信息打印");
+        // console.log(userInfo, "用户信息打印");
         setUsername(res.data.nickname);
         setAvatarUrl(res.data.avatar_url);
         getMyNft('/index/nft/get_my_nft', { network: ChainIdMap[currentChainId].network })
@@ -94,7 +94,7 @@ const Myself = (props) => {
     });
 
     post("/index/common/get_filter",formData({type:"nft"})).then(res=>{
-      console.log(res.data,'筛选');
+      // console.log(res.data,'筛选');
       setScreenData(res.data)
     })
   
@@ -121,7 +121,7 @@ const Myself = (props) => {
   }, [myNftList])
 
   const getMyNft = (posturl:string, data) => {
-    console.log(data,'请求参数');
+    // console.log(data,'请求参数');
     
     let params = {}
     if(data){
@@ -129,7 +129,7 @@ const Myself = (props) => {
     }
     
     setLoding(true)
-    console.log(posturl,'url,yemian');
+    // console.log(posturl,'url,yemian');
     
     post(posturl, params).then(res => {
       // console.log(res.data, '回调----------');

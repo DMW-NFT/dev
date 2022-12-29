@@ -11,14 +11,12 @@ import txGasMap from "../constans/txGasMap.json";
 import ERC20ABI from "../contract/ERC20.json";
 import { BigNumber } from "ethers";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Address } from "cluster";
-import { stringify } from "querystring";
 import ChainIdMap from "../constans/chainIdMap.json";
 
 const DmwWeb3Provider = ({ children }) => {
   const connector = useWalletConnect();
   const [currentWallet, setCurrentWallet] = useState("");
-  const [currentChainId, setCurrenChainId] = useState("5");
+  const [currentChainId, setCurrenChainId] = useState("");
   const [connected, setConnected] = useState(false);
   const [lastConnected, setLastConnected] = useState(true);
   const [transactionMap, setTransactionMap] = useState({});
@@ -38,7 +36,6 @@ const DmwWeb3Provider = ({ children }) => {
       console.log("is connected!---,-,-", currentWallet, connector.accounts[0]);
     } else {
       checkConnectSatus().then((res) => {
-        // console.log(res, 'a++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
         if (res.connected) {
           setMemConnectStatus(res);
           setCurrentWallet(res.account);
@@ -48,16 +45,28 @@ const DmwWeb3Provider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    web3.eth.setProvider(getProvider(currentChainId));
-    web3.eth.getGasPrice().then((gasPrice) => {
-      // console.log(`chain:${currentChainId} current gas price==>${gasPrice}`)
-      setCurrentGasPrice(gasPrice);
-    });
+    currentChainId && setNativeToken(chainIdMap[currentChainId].nativeToken);
+
+    const interval = setInterval(() => {
+      try {
+        updateGasPrice();
+      } catch (error) {
+        clearInterval(interval);
+      }
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+    };
   }, [currentChainId]);
 
-  useEffect(() => {
-    currentChainId && setNativeToken(chainIdMap[currentChainId].nativeToken);
-  }, [currentChainId]);
+  const updateGasPrice = () => {
+    web3.eth.setProvider(getProvider(currentChainId));
+    web3.eth.getGasPrice().then((gasPrice) => {
+      console.log(`chain:${currentChainId} current gas price==>${gasPrice}`);
+      setCurrentGasPrice(gasPrice);
+    });
+  };
 
   // 转移
   const transferERC20 = (

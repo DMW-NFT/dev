@@ -56,7 +56,7 @@ const DmwApiProvider = ({ children }) => {
 
   const get = async (url) => {
     let token = await GetStorage();
-console.log(language,'yuya');
+// console.log(language,'yuya');
 
     return fetch(BaseUrl + url, {
       method: "GET",
@@ -69,7 +69,7 @@ console.log(language,'yuya');
 
 
   const post = async (url, data) => {
-    console.log(language,'yuya');
+    // console.log(language,'yuya');
     let token = await GetStorage();
     return fetch(BaseUrl + url, {
       method: "POST",

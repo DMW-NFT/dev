@@ -64,7 +64,7 @@ const Jiaoyi = (props) => {
 
     post("/index/order/get_listings", nftDataObj).then((res) => {
       if (res.code == 200) {
-        console.log(res.data, '寄售拍卖数据')
+        // console.log(res.data, '寄售拍卖数据')
         if (type == 2) {
           setConList([...ConList, ...res.data.data])
           setConListTotal(res.data.total)
