@@ -19,7 +19,15 @@ import {
 
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { Spinner } from "@ui-kitten/components";
-import { Button, Card, Layout, Modal } from "@ui-kitten/components";
+import {
+  Button,
+  Card,
+  Layout,
+  Modal,
+  IndexPath,
+  Select,
+  SelectItem,
+} from "@ui-kitten/components";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
@@ -28,6 +36,8 @@ import { ListItem, Avatar, Icon, Overlay } from "@rneui/themed";
 import VerfiySecretModal from "../../Components/VerfiySecretModal";
 import TxProccessingModal from "../../Components/TxProccessingModal";
 import chainNameMap from "../../../constans/chainNameMap.json";
+import supportErc20Token from "../../../constans/supportErc20Token.json";
+
 const QuotationDetails = (props) => {
   const { t, i18n } = useTranslation();
   const [showoffer, setshowoffer] = useState(false);
@@ -48,16 +58,21 @@ const QuotationDetails = (props) => {
   const [collection, setcollection] = useState(null);
   const [offersList, setOffersList] = useState([]);
   const [password, setPassword] = useState("");
-  const [BuyNowVisible, setBuyNowVisible] = useState(false);
+  const [buyNowVisible, setBuyNowVisible] = useState(false);
+  const [offerNowVisible, setOfferNowVisible] = useState(false);
   const [BuyNumber, setBuyNumber] = useState("1");
 
   const [isOffer, setIsOffer] = useState(false);
   const [QuotationAmount, setQuotationAmount] = useState(""); //报价金额
-  const [AvailableBalance, setAvailableBalance] = useState(0); //报价金额
+  const [selectedTokenIndex, setSelectTokenIndex] = useState(new IndexPath(0));
+  const [AvailableBalance, setAvailableBalance] = useState(0);
+  const [allowanceAmount, setAllowanceAmount] = useState(0);
   const [isLister, setIsLister] = useState(false);
-
+  const [offerState, setOfferState] = useState(0);
   const [vfModalVisible, setVfModalVisible] = useState(false);
   const [txModalVisible, setTxModalVisible] = useState(false);
+  const [erc20TokenList, setErc20TokenList] = useState(null);
+  const [needApprovalAmount, setNeedApprovalAmount] = useState(null);
   // Context 方法
   const { Toast, post, get, formData, shortenAddress } = useDmwApi();
   const {
@@ -73,6 +88,7 @@ const QuotationDetails = (props) => {
     nativeToken,
     connector,
     cancelDirectListing,
+    getErc20Balance,
   } = useDmwWeb3();
   const {
     dmwBuyNFT,
@@ -99,6 +115,77 @@ const QuotationDetails = (props) => {
   useEffect(() => {
     getList();
   }, []);
+
+  //检查offer的代币是否approve足够数额
+  useEffect(() => {
+    isOffer &&
+      selectedTokenIndex &&
+      getErc20Balance(
+        Object.keys(erc20TokenList)[selectedTokenIndex.row],
+        WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
+        chainNameMap[NftInfo.network].chainId
+      ).then((res) => {
+        setAvailableBalance(res);
+        console.log("erc20 token available:", res);
+      });
+    isOffer &&
+      selectedTokenIndex &&
+      getErc20Allowance(
+        Object.keys(erc20TokenList)[selectedTokenIndex.row],
+        WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
+        chainNameMap[NftInfo.network].chainId
+      ).then((res) => {
+        setAllowanceAmount(res);
+        console.log("erc20 token allowance:", res);
+      });
+  }, [isOffer, QuotationAmount, BuyNumber, selectedTokenIndex, WalletInUse]);
+
+  useEffect(() => {
+    isOffer &&
+      QuotationAmount &&
+      BuyNumber &&
+      AvailableBalance &&
+      setNeedApprovalAmount(
+        Number(BuyNumber) *
+          Number(QuotationAmount) *
+          10 **
+            erc20TokenList[Object.keys(erc20TokenList)[selectedTokenIndex.row]]
+              .decimals -
+          allowanceAmount
+      );
+  }, [QuotationAmount, BuyNumber, AvailableBalance, QuotationAmount]);
+
+  useEffect(() => {
+    if (needApprovalAmount) {
+      if (
+        needApprovalAmount <= 0 &&
+        AvailableBalance >=
+          Number(BuyNumber) *
+            Number(QuotationAmount) *
+            10 **
+              erc20TokenList[
+                Object.keys(erc20TokenList)[selectedTokenIndex.row]
+              ].decimals
+      ) {
+        setOfferState(2);
+      }
+
+      if (
+        needApprovalAmount > 0 &&
+        AvailableBalance >
+          Number(BuyNumber) *
+            Number(QuotationAmount) *
+            10 **
+              erc20TokenList[
+                Object.keys(erc20TokenList)[selectedTokenIndex.row]
+              ].decimals
+      ) {
+        setOfferState(1);
+      }
+    } else {
+      setOfferState(0);
+    }
+  }, [needApprovalAmount]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -149,6 +236,7 @@ const QuotationDetails = (props) => {
       });
       setcollection(res.data.nft.collection);
       setOffersList(res.data.offers);
+      setErc20TokenList(supportErc20Token[res.data.nft.network.toLowerCase()]);
     });
   };
 
@@ -209,6 +297,22 @@ const QuotationDetails = (props) => {
 
     setBuyNowVisible(true);
     setIsOffer(false);
+    setBuyNumber("1");
+  };
+  const openOfferNowModal = () => {
+    if (WalletInUse == 2) {
+      if (
+        connector.chainId != chainNameMap[NftInfo.network.toLowerCase()].chainId
+      ) {
+        Toast(
+          "该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！"
+        );
+        return null;
+      }
+    }
+
+    setOfferNowVisible(true);
+    setIsOffer(true);
     setBuyNumber("1");
   };
   // 确认购买
@@ -327,6 +431,101 @@ const QuotationDetails = (props) => {
       </View>
     );
   };
+  const offerPriceInput = () => {
+    //购买数量
+    return (
+      <View style={{ flexDirection: "column", marginBottom: 20 }}>
+        <Text>{t("价格/NFT")}</Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            // marginBottom: 20,
+          }}
+        >
+          <TextInput
+            caretHidden={true}
+            onKeyPress={() => {}}
+            keyboardType="decimal-pad"
+            style={[styles.buyInput, { marginRight: 10, marginLeft: 0 }]}
+            value={String(QuotationAmount)}
+            onChangeText={(input) => {
+              const newValue =
+                input
+                  .replace(/[^\d^\.?]+/g, "")
+                  .replace(/^0+(\d)/, "$1")
+                  .replace(/^\./, "0.")
+                  .match(/^\d*(\.?\d{0,18})/g)[0] || "";
+              setQuotationAmount(newValue);
+            }}
+          />
+          {erc20TokenList && (
+            <Select
+              style={{ width: 125 }}
+              placeholder={
+                erc20TokenList[Object.keys(erc20TokenList)[0]].symbol
+              }
+              value={
+                erc20TokenList[
+                  Object.keys(erc20TokenList)[selectedTokenIndex.row]
+                ].symbol
+              }
+              selectedIndex={selectedTokenIndex}
+              onSelect={(index) => {
+                setSelectTokenIndex(index);
+                console.log("selected", index);
+                setAllowanceAmount(0);
+                setAvailableBalance(0);
+                setNeedApprovalAmount(null);
+              }}
+            >
+              {Object.keys(erc20TokenList).map((key) => (
+                <SelectItem title={erc20TokenList[key].symbol} />
+              ))}
+            </Select>
+          )}
+        </View>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View style={{ flexDirection: "column" }}>
+            <Text>余额:</Text>
+            <Text>
+              {erc20TokenList &&
+                AvailableBalance /
+                  10 **
+                    erc20TokenList[
+                      Object.keys(erc20TokenList)[selectedTokenIndex.row]
+                    ].decimals}{" "}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "column" }}>
+            <Text>已批准额度:</Text>
+            <Text>
+              {erc20TokenList &&
+                allowanceAmount /
+                  10 **
+                    erc20TokenList[
+                      Object.keys(erc20TokenList)[selectedTokenIndex.row]
+                    ].decimals}{" "}
+
+            </Text>
+          </View>
+        </View>
+        <View>
+          {needApprovalAmount > 0 && (
+            <Text>
+              仍需批准额度:
+              {needApprovalAmount /
+                10 **
+                  erc20TokenList[
+                    Object.keys(erc20TokenList)[selectedTokenIndex.row]
+                  ].decimals}{" "}
+
+            </Text>
+          )}
+        </View>
+      </View>
+    );
+  };
 
   const OKCancel = () => {
     //弹窗确定取消按钮
@@ -347,6 +546,7 @@ const QuotationDetails = (props) => {
         >
           取消
         </Text>
+
         <Text style={[styles.BuyBtnQ, {}]} onPress={() => confirmPurchase()}>
           确定
         </Text>
@@ -375,55 +575,29 @@ const QuotationDetails = (props) => {
         >
           {isOffer ? t("报价") : t("购买")}
         </Text>
-        <Image source={{ uri: imgurl }} style={styles.BuyNowImg}></Image>
-        <View style={styles.nameBox}>
-          <Text
-            style={{
-              fontSize: 14,
-              fontWeight: "700",
-              textAlign: "center",
-              marginBottom: 5,
-            }}
-          >
-            {collection ? collection.name : "--"}
-          </Text>
-          <Text
-            style={{ fontSize: 12, textAlign: "center", fontWeight: "500" }}
-          >
-            {NftInfo ? NftInfo.name : "--"}
-          </Text>
-        </View>
+        {!isOffer && (
+          <>
+            <Image source={{ uri: imgurl }} style={styles.BuyNowImg}></Image>
+            <View style={styles.nameBox}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: "700",
+                  textAlign: "center",
+                  marginBottom: 5,
+                }}
+              >
+                {collection ? collection.name : "--"}
+              </Text>
+              <Text
+                style={{ fontSize: 12, textAlign: "center", fontWeight: "500" }}
+              >
+                {NftInfo ? NftInfo.name : "--"}
+              </Text>
+            </View>
+          </>
+        )}
       </View>
-    );
-  };
-
-  const importValue = () => {
-    //输入金额
-    return (
-      <>
-        <TextInput
-          secureTextEntry={true}
-          onKeyPress={() => {}}
-          keyboardType="phone-pad"
-          style={[
-            styles.buyInput,
-            {
-              width: "100%",
-              marginLeft: 0,
-              marginBottom: 20,
-              borderRadius: 20,
-              textAlign: "left",
-              paddingLeft: 20,
-              paddingRight: 20,
-            },
-          ]}
-          placeholder={t("价格")}
-          onChangeText={(e) => {
-            setQuotationAmount(e);
-          }}
-          value={QuotationAmount}
-        />
-      </>
     );
   };
 
@@ -699,7 +873,7 @@ const QuotationDetails = (props) => {
                   Buy now
                 </Text>
                 <Text
-                  onPress={() => Toast("comming soon")}
+                  onPress={() => openOfferNowModal()}
                   style={[
                     styles.bottomBtn,
                     {
@@ -746,9 +920,9 @@ const QuotationDetails = (props) => {
         </ScrollView>
       )}
 
-      {/* Buy now 弹窗 */}
+      {/* buy now 弹窗 */}
       <Modal
-        visible={BuyNowVisible}
+        visible={buyNowVisible}
         backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         onBackdropPress={() => {
           setBuyNowVisible(false);
@@ -787,6 +961,82 @@ const QuotationDetails = (props) => {
                             LocalPurchase() : null
                     } */}
           {OKCancel()}
+        </Card>
+      </Modal>
+
+      {/* offer 弹窗 */}
+      <Modal
+        visible={offerNowVisible}
+        backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        onBackdropPress={() => {
+          setOfferNowVisible(false);
+          setIsOffer(false);
+          setAllowanceAmount(0);
+          setAvailableBalance(0);
+          setNeedApprovalAmount(null);
+        }}
+      >
+        <Card disabled={true} style={styles.CardBox}>
+          <View
+            style={{
+              justifyContent: "flex-end",
+              flexDirection: "row",
+              position: "absolute",
+              top: 10,
+              right: 20,
+              width: 22,
+              height: 22,
+            }}
+          >
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setOfferNowVisible(false);
+                setAllowanceAmount(0);
+                setAvailableBalance(0);
+                setNeedApprovalAmount(null);
+              }}
+            >
+              <Image
+                style={styles.colose}
+                source={require("../../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png")}
+              ></Image>
+            </TouchableWithoutFeedback>
+          </View>
+          {modalTitle()}
+
+          {/* 购买数量 */}
+          {isBuyNFTNumber()}
+          {offerPriceInput()}
+          <View
+            style={{
+              flexDirection: "row",
+              marginTop: 30,
+              justifyContent: "space-between",
+            }}
+          >
+            <Text
+              style={[styles.BuyBtnC, {}]}
+              onPress={() => {
+                setBuyNowVisible(false);
+              }}
+            >
+              取消
+            </Text>
+            {offerState == 2 && (
+              <Text
+                style={[styles.BuyBtnQ, {}]}
+                onPress={() => confirmPurchase()}
+              >
+                确定
+              </Text>
+            )}
+            {offerState == 0 && (
+              <Text style={[styles.BuyBtnQ, { backgroundColor: "gray" }]}>
+                确定
+              </Text>
+            )}
+            {offerState == 1 && <Text style={[styles.BuyBtnQ]}>批准额度</Text>}
+          </View>
         </Card>
       </Modal>
 

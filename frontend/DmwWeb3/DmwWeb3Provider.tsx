@@ -338,10 +338,10 @@ const DmwWeb3Provider = ({ children }) => {
   ): number => {
     web3.eth.setProvider(getProvider(currentChainId));
     const contract = new web3.eth.Contract(NFT1155ABI, nftContractAddress);
-    const isApprovedForAll = contract.methods
+    const balance = contract.methods
       .balanceOf(account, tokenId)
       .call();
-    return isApprovedForAll;
+    return balance;
   };
 
   const syncTransactionSatus = async (txHash: string) => {
@@ -694,8 +694,9 @@ const DmwWeb3Provider = ({ children }) => {
       });
   };
 
-  const getErc20Allowance = (tokenAddress: string, account: string) => {
-    web3.eth.setProvider(getProvider(currentChainId));
+  const getErc20Allowance = (tokenAddress: string, account: string,chainId:string) => {
+    web3.eth.setProvider(getProvider(chainId));
+    // web3.eth.setProvider(getProvider(currentChainId));
     const contractAddress = ChainIdMap[currentChainId].market_contract;
     const contract = new web3.eth.Contract(ERC20ABI, tokenAddress);
     const allowance = contract.methods
@@ -703,9 +704,17 @@ const DmwWeb3Provider = ({ children }) => {
       .call();
     return allowance;
   };
+  const getErc20Balance = (tokenAddress: string, account: string,chainId:string) => {
+    web3.eth.setProvider(getProvider(chainId));
+    // web3.eth.setProvider(getProvider(currentChainId));
+    const contract = new web3.eth.Contract(ERC20ABI, tokenAddress);
+    const balance = contract.methods
+      .balanceOf(account)
+      .call();
+    return balance;
+  };
 
   const erc20Approve = (tokenAddress: string, amount: string) => {
-    web3.eth.setProvider(getProvider(currentChainId));
     const contractAddress = ChainIdMap[currentChainId].market_contract;
     const contract = new web3.eth.Contract(ERC20ABI, tokenAddress);
     const rawdata = contract.methods
@@ -843,6 +852,7 @@ const DmwWeb3Provider = ({ children }) => {
         setGlobalError,
         setCurrenChainId,
         currentChainId,
+        getErc20Balance
       }}
     >
       {children}

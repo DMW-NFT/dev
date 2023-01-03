@@ -366,21 +366,22 @@ const Money = (props) => {
                 </Text>
               </View>
               {/* <Text style={{ color: "#fff" }}>$10.000</Text> */}
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text style={{ color: "#fff" }}>
-                  {shortenAddress(dmwWalletList[0])}
-                </Text>
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    Copy(dmwWalletList[0]);
-                  }}
-                >
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  Copy(dmwWalletList[0]);
+                }}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text style={{ color: "#fff" }}>
+                    {shortenAddress(dmwWalletList[0])}
+                  </Text>
+
                   <Image
                     style={{ width: 10, height: 10, marginLeft: 5 }}
                     source={require("../../assets/img/money/copyW.png")}
                   ></Image>
-                </TouchableWithoutFeedback>
-              </View>
+                </View>
+              </TouchableWithoutFeedback>
             </View>
           ) : null}
 
@@ -444,21 +445,22 @@ const Money = (props) => {
                   {t("断开链接")}
                 </Text>
               </View>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text style={{ color: "#897EF8" }}>
-                  {shortenAddress(currentWallet)}
-                </Text>
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    Copy(currentWallet);
-                  }}
-                >
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  Copy(currentWallet);
+                }}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text style={{ color: "#897EF8" }}>
+                    {shortenAddress(currentWallet)}
+                  </Text>
+
                   <Image
                     style={{ width: 10, height: 10, marginLeft: 5 }}
                     source={require("../../assets/img/my/copy.png")}
                   ></Image>
-                </TouchableWithoutFeedback>
-              </View>
+                </View>
+              </TouchableWithoutFeedback>
             </View>
           ) : null}
         </ScrollView>

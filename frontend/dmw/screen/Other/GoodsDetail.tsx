@@ -59,14 +59,12 @@ const GoodsDetail = (props) => {
   const [history, sethistory] = useState([]);
   const [MorenNftList, setMorenNftList] = useState([]);
   const [isApproved, setIsApproved] = useState(false);
-  const [buyText, setbuyText] = useState("售卖");
+
   const [nftNumber, setNftNumber] = useState(0);
   const [sellOptionVisible, setSellOptionVisible] = useState(false);
   const [sellNumber, setSellNumber] = useState("1");
   const [sellPrice, setSellPrice] = useState("1");
-  const [ModalVisible, setModalVisible] = useState(false);
-  const [passwordlist, setpasswordlist] = useState([]);
-  const [Auctionorsale, setAuctionorsale] = useState(0);
+
   const [showOwnerList, setShowOwnerlist] = useState(false);
   const [approvalVisible, setApprovalVsity] = useState(false);
   const [sellBtnVisible, setSellBtnVsity] = useState(false);
@@ -101,6 +99,22 @@ const GoodsDetail = (props) => {
     connector,
   } = useDmwWeb3();
 
+  // 获取nft详细数据
+  useEffect(() => {
+    let params = props.route.params;
+    let data = { ...params };
+
+    // data.network = 'goerli'
+    console.log(data, "我的页面nft 传参");
+    getList(data);
+  }, []);
+
+  // 出售数量限制
+  useEffect(() => {
+    Number(sellNumber) > nftNumber && setSellNumber(String(nftNumber));
+  }, [sellNumber, nftNumber]);
+
+  // 外部网络检测
   useEffect(() => {
     if (WalletInUse == 2 && detailsObj.network) {
       if (
@@ -113,15 +127,6 @@ const GoodsDetail = (props) => {
       }
     }
   }, [detailsObj, WalletInUse]);
-
-  useEffect(() => {
-    let params = props.route.params;
-    let data = { ...params };
-
-    // data.network = 'goerli'
-    console.log(data, "我的页面nft 传参");
-    getList(data);
-  }, []);
 
   const approvalNFT = () => {
     if (WalletInUse == 1) {
@@ -264,7 +269,7 @@ const GoodsDetail = (props) => {
             );
           }
         } else {
-          Toast("密码错误");
+          Toast(t("密码错误"));
         }
       });
   }, [password]);

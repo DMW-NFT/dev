@@ -1,5 +1,5 @@
 {
-  "Ethereume": {
+  "ethereume": {
     "0xdac17f958d2ee523a2206206994597c13d831ec7": {
       "symbol": "USDT",
       "decimals": 6
@@ -13,7 +13,7 @@
       "decimals": 18
     }
   },
-  "Polygon": {
+  "polygon": {
     "0xc2132d05d31c914a87c6611c10748aeb04b58e8f": {
       "symbol": "USDT",
       "decimals": 6
@@ -31,7 +31,7 @@
       "decimals": 18
     }
   },
-  "BSC mainnet": {
+  "bsc mainnet": {
     "0x55d398326f99059fF775485246999027B3197955": {
       "symbol": "USDT",
       "decimals": 18
@@ -45,19 +45,31 @@
       "decimals": 18
     }
   },
-  "Goerli": {
+  "goerli": {
     "0x55d398326f99059fF775485246999027B3197955": {
       "symbol": "WFCA",
       "decimals": 18
     }
   },
-  "Mumbai": {
+  "mumbai": {
     "0xf670D8659f639fF908c20E5831778e562c97ca7E": {
       "symbol": "WFCA",
       "decimals": 18
+    },
+    "0x55d398326f99059fF775485246999027B3197955": {
+      "symbol": "USDT",
+      "decimals": 18
+    },
+    "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d": {
+      "symbol": "USDC",
+      "decimals": 6
+    },
+    "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c": {
+      "symbol": "WBNB",
+      "decimals": 18
     }
   },
-  "BSC testnet": {
+  "bsc testnet": {
     "0xF5c4Aa6e5EEF606Bbd85Ada7BEeBcfB51CE8B7D7": {
       "symbol": "WFCA",
       "decimals": 18
