@@ -390,7 +390,7 @@ const DmwWalletProvider = ({ children }) => {
         dmwSendTransaction(tx, secretKey).then((hash) => console.log("hash!!!", JSON.stringify(hash))).catch(error => console.log("!!!", error))
     }
 
-    const cancelDirectListing = async (secretKey: string, listingId: BigNumber) => {
+    const dmwCancelDirectListing = async (secretKey: string, listingId: BigNumber) => {
         web3.eth.setProvider(getProvider(dmwChainId));
         const contractAddress = ChainIdMap[dmwChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
@@ -506,7 +506,7 @@ const DmwWalletProvider = ({ children }) => {
 
     return (
 
-        <DmwWalletContext.Provider value={{ dmwBuyNFT, loadWalletFromMnemonic, loadMnemonicFromStorage, newMnemonic, dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtive, dmwMintWithSignature, dmwTransactionList, dmwTransactionMap, dmwApprovalForAll, dmwCreateListing, dmwMakeOffer, dmwAcceptOffer, cancelDirectListing, dmwErc20Approve, dmwTransfer721NFT, dmwTransfer1155NFT, addMnemonic, dmwTransferToken }}>
+        <DmwWalletContext.Provider value={{ dmwBuyNFT, loadWalletFromMnemonic, loadMnemonicFromStorage, newMnemonic, dmwChainId, setDmwChainId, addWalletToAccountStorage, getWalletListFromAccountStorage, dmwWalletList, currentDmwWallet, setcurrentDmwWallet, dmwTransferNavtive, dmwMintWithSignature, dmwTransactionList, dmwTransactionMap, dmwApprovalForAll, dmwCreateListing, dmwMakeOffer, dmwAcceptOffer, dmwCancelDirectListing, dmwErc20Approve, dmwTransfer721NFT, dmwTransfer1155NFT, addMnemonic, dmwTransferToken }}>
             {children}
         </DmwWalletContext.Provider>
 

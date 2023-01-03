@@ -71,8 +71,7 @@ const SellOrder = (props) => {
 
     const getListsell = (page) => {
         post('/index/order/get_my_sell_order', formData({ type: 0, page: page, limit: 4 })).then(res => {
-            console.log(res.data.data, '售卖-售卖列表');
-            // console.log(auctionList);
+            console.log(res, '售卖-售卖列表');
             setauctionTotal(res.data.total)
             setAuctionList([...auctionList, ...res.data.data])
         })

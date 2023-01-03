@@ -16,7 +16,7 @@ import ChainIdMap from "../constans/chainIdMap.json";
 const DmwWeb3Provider = ({ children }) => {
   const connector = useWalletConnect();
   const [currentWallet, setCurrentWallet] = useState("");
-  const [currentChainId, setCurrenChainId] = useState("");
+  const [currentChainId, setCurrenChainId] = useState("5");
   const [connected, setConnected] = useState(false);
   const [lastConnected, setLastConnected] = useState(true);
   const [transactionMap, setTransactionMap] = useState({});
@@ -39,6 +39,7 @@ const DmwWeb3Provider = ({ children }) => {
         if (res.connected) {
           setMemConnectStatus(res);
           setCurrentWallet(res.account);
+          setConnected(true);
         }
       });
     }
@@ -146,7 +147,7 @@ const DmwWeb3Provider = ({ children }) => {
 
   const checkConnectSatus = async () => {
     const strData = await AsyncStorage.getItem("@dmw_wallet_connect_storage");
-    // console.log(strData,'strdata')
+    console.log(strData,'strdata')
     const status = strData ? JSON.parse(strData) : null;
     return status;
   };
@@ -824,6 +825,7 @@ const DmwWeb3Provider = ({ children }) => {
         mintNft,
         mintNftWithSignature,
         getWalletNfts,
+        cancelDirectListing,
         checkIsApproveForAll,
         buyNFT,
         getBalanceOf1155,
