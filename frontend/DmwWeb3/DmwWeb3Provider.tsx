@@ -449,7 +449,7 @@ const DmwWeb3Provider = ({ children }) => {
         listingId,
         quantityWanted,
         currency,
-        web3.utils.toWei(pricePerToken, "ether"),
+        web3.utils.toBN(pricePerToken),
         expirationTimestamp
       )
       .encodeABI();
@@ -718,7 +718,7 @@ const DmwWeb3Provider = ({ children }) => {
     const contractAddress = ChainIdMap[currentChainId].market_contract;
     const contract = new web3.eth.Contract(ERC20ABI, tokenAddress);
     const rawdata = contract.methods
-      .approve(contractAddress, web3.utils.toWei(amount, "ether"))
+      .approve(contractAddress,amount)
       .encodeABI();
     const tx = {
       from: currentWallet, // Required

@@ -37,6 +37,7 @@ import VerfiySecretModal from "../../Components/VerfiySecretModal";
 import TxProccessingModal from "../../Components/TxProccessingModal";
 import chainNameMap from "../../../constans/chainNameMap.json";
 import supportErc20Token from "../../../constans/supportErc20Token.json";
+import { State } from "react-native-gesture-handler";
 
 const QuotationDetails = (props) => {
   const { t, i18n } = useTranslation();
@@ -73,6 +74,8 @@ const QuotationDetails = (props) => {
   const [txModalVisible, setTxModalVisible] = useState(false);
   const [erc20TokenList, setErc20TokenList] = useState(null);
   const [needApprovalAmount, setNeedApprovalAmount] = useState(null);
+  const [readyToApprove, setReadyToApprove] = useState(false);
+  const clearAllowance = false;
   // Context 方法
   const { Toast, post, get, formData, shortenAddress } = useDmwApi();
   const {
@@ -96,114 +99,12 @@ const QuotationDetails = (props) => {
     getWalletListFromAccountStorage,
     currentDmwWallet,
     dmwCancelDirectListing,
+    dmwErc20Approve,
+    dmwMakeOffer,
   } = useDmwWallet();
   const { WalletInUse } = useDmwLogin();
 
-  useEffect(() => {
-    let newBuyNumber = null;
-    if (Number(BuyNumber) > orderList.quantity && orderList) {
-      Toast(t("剩余数量不足！"));
-      newBuyNumber = String(orderList.quantity);
-    } else if (Number(BuyNumber) < 0) {
-      newBuyNumber = String(1);
-    } else if (BuyNumber == "NaN") {
-      newBuyNumber = String(1);
-    }
-    setBuyNumber(newBuyNumber ? newBuyNumber : String(Number(BuyNumber)));
-  }, [BuyNumber]);
-
-  useEffect(() => {
-    getList();
-  }, []);
-
-  //检查offer的代币是否approve足够数额
-  useEffect(() => {
-    isOffer &&
-      selectedTokenIndex &&
-      getErc20Balance(
-        Object.keys(erc20TokenList)[selectedTokenIndex.row],
-        WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
-        chainNameMap[NftInfo.network].chainId
-      ).then((res) => {
-        setAvailableBalance(res);
-        console.log("erc20 token available:", res);
-      });
-    isOffer &&
-      selectedTokenIndex &&
-      getErc20Allowance(
-        Object.keys(erc20TokenList)[selectedTokenIndex.row],
-        WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
-        chainNameMap[NftInfo.network].chainId
-      ).then((res) => {
-        setAllowanceAmount(res);
-        console.log("erc20 token allowance:", res);
-      });
-  }, [isOffer, QuotationAmount, BuyNumber, selectedTokenIndex, WalletInUse]);
-
-  useEffect(() => {
-    isOffer &&
-      QuotationAmount &&
-      BuyNumber &&
-      AvailableBalance &&
-      setNeedApprovalAmount(
-        Number(BuyNumber) *
-          Number(QuotationAmount) *
-          10 **
-            erc20TokenList[Object.keys(erc20TokenList)[selectedTokenIndex.row]]
-              .decimals -
-          allowanceAmount
-      );
-  }, [QuotationAmount, BuyNumber, AvailableBalance, QuotationAmount]);
-
-  useEffect(() => {
-    if (needApprovalAmount) {
-      if (
-        needApprovalAmount <= 0 &&
-        AvailableBalance >=
-          Number(BuyNumber) *
-            Number(QuotationAmount) *
-            10 **
-              erc20TokenList[
-                Object.keys(erc20TokenList)[selectedTokenIndex.row]
-              ].decimals
-      ) {
-        setOfferState(2);
-      }
-
-      if (
-        needApprovalAmount > 0 &&
-        AvailableBalance >
-          Number(BuyNumber) *
-            Number(QuotationAmount) *
-            10 **
-              erc20TokenList[
-                Object.keys(erc20TokenList)[selectedTokenIndex.row]
-              ].decimals
-      ) {
-        setOfferState(1);
-      }
-    } else {
-      setOfferState(0);
-    }
-  }, [needApprovalAmount]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLoding(false);
-    }, 1000);
-  }, [offersList]);
-
-  useEffect(() => {
-    if (orderList) {
-      if (
-        orderList.wallet_address ==
-        (WalletInUse == 1 ? dmwWalletList[0] : currentWallet)
-      ) {
-        setIsLister(true);
-      }
-    }
-  }, [orderList, WalletInUse]);
-
+  //取消挂单
   const cancelListing = () => {
     if (WalletInUse == 1) {
       setVfModalVisible(true);
@@ -213,12 +114,13 @@ const QuotationDetails = (props) => {
     }
   };
 
+  //获取订单详情
   const getList = () => {
     setLoding(true);
     let data = { order_no: props.route.params.id };
     let formdata = formData(data);
     post("/index/order/get_order_details", formdata).then((res) => {
-      console.log(res, "订单详情");
+      // console.log(res, "订单详情");
 
       setOrderList(res.data);
       setUserInfo({
@@ -239,7 +141,7 @@ const QuotationDetails = (props) => {
       setErc20TokenList(supportErc20Token[res.data.nft.network.toLowerCase()]);
     });
   };
-
+  // 确认购买
   const confirmPurchase = () => {
     if (WalletInUse == 1) {
       setVfModalVisible(true);
@@ -254,33 +156,42 @@ const QuotationDetails = (props) => {
     }
   };
 
-  useEffect(() => {
-    WalletInUse == 1 &&
-      Array.from(password).length == 6 &&
-      getWalletListFromAccountStorage(password).then((res) => {
-        if (res) {
-          console.log(res.walletDict[currentDmwWallet].privateKey);
+  // 批准额度
+  const approveAllowance = () => {
+    if (WalletInUse == 2) {
+      const tokenAddress = Object.keys(erc20TokenList)[selectedTokenIndex.row];
+      erc20Approve(
+        tokenAddress,
+        String(Number(allowanceAmount) + Number(needApprovalAmount))
+      );
+      setTxModalVisible(true);
+    } else {
+      setReadyToApprove(true);
+      setVfModalVisible(true);
+    }
+  };
 
-          setVfModalVisible(false);
-          setTxModalVisible(true);
-          setPassword("");
-          !isLister
-            ? dmwBuyNFT(
-                res.walletDict[currentDmwWallet].privateKey,
-                String(orderList.listing_id),
-                Number(BuyNumber),
-                orderList.currency,
-                String(UnitPrice.UnitPrice * Number(BuyNumber))
-              )
-            : dmwCancelDirectListing(
-                res.walletDict[currentDmwWallet].privateKey,
-                orderList.listing_id
-              );
-        } else {
-          Toast("密码错误");
-        }
-      });
-  }, [password]);
+  // make offer
+  const confrimMakerOffer = () => {
+    if (WalletInUse == 2) {
+      const tokenAddress = Object.keys(erc20TokenList)[selectedTokenIndex.row];
+      const pricePerToken =
+        Number(QuotationAmount) *
+        10 **
+          erc20TokenList[Object.keys(erc20TokenList)[selectedTokenIndex.row]]
+            .decimals;
+      makeOffer(
+        orderList.listing_id,
+        BuyNumber,
+        tokenAddress,
+        pricePerToken,
+        "3153600000"
+      );
+      setTxModalVisible(true);
+    } else {
+      setVfModalVisible(true);
+    }
+  };
 
   // 打开直接购买弹窗
   const openBuyNowModal = () => {
@@ -299,6 +210,7 @@ const QuotationDetails = (props) => {
     setIsOffer(false);
     setBuyNumber("1");
   };
+  // 打开报价弹窗
   const openOfferNowModal = () => {
     if (WalletInUse == 2) {
       if (
@@ -315,12 +227,8 @@ const QuotationDetails = (props) => {
     setIsOffer(true);
     setBuyNumber("1");
   };
-  // 确认购买
-
-  // return页面方法
-  const buynowPries = () => {
-    //返回直接购买价格页面
-
+  //返回直接购买价格页面
+  const buyNowPrice = () => {
     return (
       <>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -379,6 +287,7 @@ const QuotationDetails = (props) => {
     );
   };
 
+  // 购买nft的组件
   const isBuyNFTNumber = () => {
     //购买数量
     return (
@@ -431,6 +340,8 @@ const QuotationDetails = (props) => {
       </View>
     );
   };
+
+  // 报价弹窗的组件
   const offerPriceInput = () => {
     //购买数量
     return (
@@ -506,7 +417,6 @@ const QuotationDetails = (props) => {
                     erc20TokenList[
                       Object.keys(erc20TokenList)[selectedTokenIndex.row]
                     ].decimals}{" "}
-
             </Text>
           </View>
         </View>
@@ -519,7 +429,6 @@ const QuotationDetails = (props) => {
                   erc20TokenList[
                     Object.keys(erc20TokenList)[selectedTokenIndex.row]
                   ].decimals}{" "}
-
             </Text>
           )}
         </View>
@@ -527,6 +436,7 @@ const QuotationDetails = (props) => {
     );
   };
 
+  // 弹窗界面的确定和取消，搞不懂为啥要单独拆出来
   const OKCancel = () => {
     //弹窗确定取消按钮
 
@@ -554,8 +464,8 @@ const QuotationDetails = (props) => {
     );
   };
 
+  //弹窗头部
   const modalTitle = () => {
-    //弹窗头部
     return (
       <View
         style={{
@@ -600,6 +510,211 @@ const QuotationDetails = (props) => {
       </View>
     );
   };
+
+  //购买或报价的nft数量检查
+  useEffect(() => {
+    let newBuyNumber = null;
+    if (Number(BuyNumber) > orderList.quantity && orderList) {
+      Toast(t("剩余数量不足！"));
+      newBuyNumber = String(orderList.quantity);
+    } else if (Number(BuyNumber) < 0) {
+      newBuyNumber = String(1);
+    } else if (BuyNumber == "NaN") {
+      newBuyNumber = String(1);
+    }
+    setBuyNumber(newBuyNumber ? newBuyNumber : String(Number(BuyNumber)));
+  }, [BuyNumber]);
+
+  //获取订单详情
+  useEffect(() => {
+    getList();
+  }, []);
+
+  //检查offer的代币是否approve足够数额
+  useEffect(() => {
+    isOffer &&
+      selectedTokenIndex &&
+      getErc20Balance(
+        Object.keys(erc20TokenList)[selectedTokenIndex.row],
+        WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
+        chainNameMap[NftInfo.network].chainId
+      ).then((res) => {
+        setAvailableBalance(res);
+        console.log("erc20 token available:", res);
+      });
+    isOffer &&
+      selectedTokenIndex &&
+      getErc20Allowance(
+        Object.keys(erc20TokenList)[selectedTokenIndex.row],
+        WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
+        chainNameMap[NftInfo.network].chainId
+      ).then((res) => {
+        setAllowanceAmount(res);
+        console.log("erc20 token allowance:", res);
+      });
+  }, [isOffer, QuotationAmount, BuyNumber, selectedTokenIndex, WalletInUse]);
+
+  //计算待批准额度
+  useEffect(() => {
+    isOffer &&
+      QuotationAmount &&
+      BuyNumber &&
+      AvailableBalance &&
+      setNeedApprovalAmount(
+        Number(BuyNumber) *
+          Number(QuotationAmount) *
+          10 **
+            erc20TokenList[Object.keys(erc20TokenList)[selectedTokenIndex.row]]
+              .decimals -
+          allowanceAmount
+      );
+  }, [
+    QuotationAmount,
+    BuyNumber,
+    AvailableBalance,
+    QuotationAmount,
+    allowanceAmount,
+  ]);
+
+  //根据余额和批准额度修改offer操作状态
+  useEffect(() => {
+    console.log("need approve allowance: ", needApprovalAmount);
+    if (needApprovalAmount != null) {
+      if (
+        needApprovalAmount <= 0 &&
+        AvailableBalance >=
+          Number(BuyNumber) *
+            Number(QuotationAmount) *
+            10 **
+              erc20TokenList[
+                Object.keys(erc20TokenList)[selectedTokenIndex.row]
+              ].decimals
+      ) {
+        setOfferState(2);
+      }
+
+      if (
+        needApprovalAmount > 0 &&
+        AvailableBalance >
+          Number(BuyNumber) *
+            Number(QuotationAmount) *
+            10 **
+              erc20TokenList[
+                Object.keys(erc20TokenList)[selectedTokenIndex.row]
+              ].decimals
+      ) {
+        setOfferState(1);
+      }
+    } else {
+      setOfferState(0);
+    }
+  }, [needApprovalAmount, allowanceAmount]);
+
+  //页面加载动画控制
+  useEffect(() => {
+    orderList &&
+      setTimeout(() => {
+        setLoding(false);
+      }, 500);
+  }, [orderList]);
+
+  //判断当前用户是否为订单卖家
+  useEffect(() => {
+    if (orderList) {
+      if (
+        orderList.wallet_address ==
+        (WalletInUse == 1 ? dmwWalletList[0] : currentWallet)
+      ) {
+        setIsLister(true);
+      }
+    }
+  }, [orderList, WalletInUse]);
+
+  //输入密码后的逻辑，撤销订单，购买，报价
+  useEffect(() => {
+    WalletInUse == 1 &&
+      Array.from(password).length == 6 &&
+      getWalletListFromAccountStorage(password).then((res) => {
+        if (res) {
+          console.log(res.walletDict[currentDmwWallet].privateKey);
+
+          setVfModalVisible(false);
+          setTxModalVisible(true);
+          setPassword("");
+          if (!isLister) {
+            if (readyToApprove) {
+              const tokenAddress = Object.keys(erc20TokenList)[
+                selectedTokenIndex.row
+              ];
+
+              setReadyToApprove(false);
+              console.log(
+                "approving -allowanced:",
+                allowanceAmount,
+                " needapprove:",
+                needApprovalAmount
+              );
+              dmwErc20Approve(
+                res.walletDict[currentDmwWallet].privateKey,
+                tokenAddress,
+                !clearAllowance
+                  ? String(Number(allowanceAmount) + Number(needApprovalAmount))
+                  : 0
+              ).then(
+                (res) =>
+                  res &&
+                  getErc20Allowance(
+                    Object.keys(erc20TokenList)[selectedTokenIndex.row],
+                    WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
+                    chainNameMap[NftInfo.network].chainId
+                  ).then((allowance) => {
+                    setAllowanceAmount(allowance);
+                    console.log("erc20 token allowance:", res);
+                  })
+              );
+            } else {
+              if (offerState == 2) {
+                const tokenAddress = Object.keys(erc20TokenList)[
+                  selectedTokenIndex.row
+                ];
+
+                const pricePerToken =
+                  Number(QuotationAmount) *
+                  10 **
+                    erc20TokenList[
+                      Object.keys(erc20TokenList)[selectedTokenIndex.row]
+                    ].decimals;
+
+                dmwMakeOffer(
+                  res.walletDict[currentDmwWallet].privateKey,
+                  orderList.listing_id,
+                  BuyNumber,
+                  tokenAddress,
+                  pricePerToken,
+                  "3153600000"
+                );
+                setOfferState(0);
+              } else {
+                dmwBuyNFT(
+                  res.walletDict[currentDmwWallet].privateKey,
+                  String(orderList.listing_id),
+                  Number(BuyNumber),
+                  orderList.currency,
+                  String(UnitPrice.UnitPrice * Number(BuyNumber))
+                );
+              }
+            }
+          } else {
+            dmwCancelDirectListing(
+              res.walletDict[currentDmwWallet].privateKey,
+              orderList.listing_id
+            );
+          }
+        } else {
+          Toast("密码错误");
+        }
+      });
+  }, [password]);
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
@@ -702,60 +817,6 @@ const QuotationDetails = (props) => {
           </View>
 
           {/* 报价详情 */}
-          {/* <View style={[styles.linechainBoxOrther,]}>
-                            <TouchableWithoutFeedback onPress={() => { setshowoffer(!showoffer) }}>
-                                <View style={[styles.flexJBC]} >
-                                    <Text style={[styles.linechainBoxOrtherName]}>
-                                        {t("报价详情")}
-                                    </Text>
-                                    <FontAwesomeIcon icon={showoffer ? faAngleDown : faAngleRight} color='#707070' size={20} />
-                                </View>
-                            </TouchableWithoutFeedback>
-                            {
-                                showoffer ?
-                                    (
-                                        offersList.map((item, index) => (
-                                            <View>
-                                                <View style={[styles.offerBox,]}>
-                                                    <View style={[styles.flexJBC]}>
-                                                        <View>
-                                                            <Text style={{ fontSize: 14, color: "#333", fontWeight: 'bold', marginBottom: 9 }}>{item.address.slice(2, 7)}</Text>
-                                                            <Text style={{ fontSize: 12, color: "#999" }}>-less</Text>
-                                                        </View>
-                                                        <View>
-                                                            <View style={[styles.flex, { marginBottom: 9 }]}>
-                                                                <Image style={{ width: 15, height: 15 }} source={require('../../assets/img/money/offer.png')}></Image>
-                                                                <Text style={{ fontSize: 14, color: "#333" }}>{item.total_offer_amount.number + item.total_offer_amount.currency_name}</Text>
-                                                                <Text style={[styles.offercolse]}>取消报价</Text>
-                                                            </View>
-
-                                                        </View>
-                                                    </View>
-                                                </View>
-                                                <View style={[styles.offerBox, styles.flexJBC, { borderBottomColor: '#fff' }]}>
-                                                    <View>
-                                                        <Text style={[styles.moreTop]}>Floor Diff</Text>
-                                                        <Text style={[styles.moreBottom, { color: "#897EF8" }]}>{item.floor_diff}% below</Text>
-                                                    </View>
-                                                    <View >
-                                                        <Text style={[styles.moreTop]}>Quantity</Text>
-                                                        <Text style={[styles.moreBottom]}>{item.quantity_wanted}</Text>
-                                                    </View>
-                                                    <View >
-                                                        <Text style={[styles.moreTop]}>From</Text>
-                                                        <Text style={[styles.moreBottom]}>{item.address.slice(2, 7)}</Text>
-                                                    </View>
-                                                    <View>
-                                                        <Text style={[styles.moreTop]}>Expires</Text>
-                                                        <Text style={[styles.moreBottom]}>{item.end_time}</Text>
-                                                    </View>
-                                                </View>
-                                            </View>
-                                        ))
-
-                                    ) : <Text></Text>
-                            }
-                        </View> */}
 
           <ListItem.Accordion
             content={
@@ -799,6 +860,7 @@ const QuotationDetails = (props) => {
                               item.total_offer_amount.currency_name}
                           </Text>
                           <Text style={[styles.offercolse]}>取消报价</Text>
+                          <Text style={[styles.offercolse]}>接受报价</Text>
                         </View>
                       </View>
                     </View>
@@ -955,7 +1017,7 @@ const QuotationDetails = (props) => {
 
           {/* 购买数量 */}
           {isBuyNFTNumber()}
-          {buynowPries()}
+          {buyNowPrice()}
           {/* {
                         false ?
                             LocalPurchase() : null
@@ -1025,7 +1087,7 @@ const QuotationDetails = (props) => {
             {offerState == 2 && (
               <Text
                 style={[styles.BuyBtnQ, {}]}
-                onPress={() => confirmPurchase()}
+                onPress={() => confrimMakerOffer()}
               >
                 确定
               </Text>
@@ -1035,7 +1097,16 @@ const QuotationDetails = (props) => {
                 确定
               </Text>
             )}
-            {offerState == 1 && <Text style={[styles.BuyBtnQ]}>批准额度</Text>}
+            {offerState == 1 && (
+              <Text
+                onPress={() => {
+                  approveAllowance();
+                }}
+                style={[styles.BuyBtnQ]}
+              >
+                批准额度
+              </Text>
+            )}
           </View>
         </Card>
       </Modal>

@@ -54,7 +54,7 @@ const Myself = (props) => {
   const [strText, setStrText] = useState('');
   const [lMvisible, setlMvisible] = useState(false);
   const [userInfo, setUserInfo] = useState({});
-  const { username, setUsername ,WalletInUse} = useDmwLogin();
+  const { username, setUsername ,WalletInUse,language} = useDmwLogin();
   const { avatarUrl, setAvatarUrl} = useDmwLogin();
   const [loading, setLoding] = useState(false)
   const [myNftList, setmyNftList] = useState([])
@@ -98,7 +98,7 @@ const Myself = (props) => {
       setScreenData(res.data)
     })
   
-  }, [currentChainId]);
+  }, [currentChainId,language]);
 
   useEffect(() => {
     setmyNftList([])

@@ -60,21 +60,20 @@ const Privatekeyimport = (props) => {
           style={styles.daoruimg}
           source={require("../../assets/img/money/daorusiyao.png")}
         ></Image>
-        <Text style={styles.title}>导入账户</Text>
+        <Text style={styles.title}>{t("导入账户")}</Text>
         <Text style={styles.text}>
-          导入的账户可在您的钱包中查看，但无法通过DMW助记词找回。
+          {t("导入的钱包可在【钱包】中查看，但无法通过DMW助记词找回")}
         </Text>
       </View>
       <View style={styles.twoBox}>
-        <Text style={styles.Ttitle}>黏贴您的私钥字符串</Text>
+        <Text style={styles.Ttitle}>{t("粘贴您的私钥字符串")}</Text>
         <TextInput
           multiline={true}
           textAlignVertical="top"
           numberOfLines={5}
           maxLength={100}
           secureTextEntry={secureTextEntry}
-          placeholder="例如：
-                    4d56sd46sd445d6s4d6544d56s4d656d4s65465"
+          placeholder={t("例如")+t("4d56sd46sd445d6s4d6544d56s4d656d4s65465")}
           keyboardType="decimal-pad"
           style={{
             borderStyle: "dotted", // 虚线 效果

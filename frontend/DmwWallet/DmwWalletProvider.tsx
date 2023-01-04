@@ -305,7 +305,7 @@ const DmwWalletProvider = ({ children }) => {
             }))
             .on("error", ((error) => {
                 setDmwTransactionMap({ ...dmwTransactionMap, [hash]: { "payload": "", "state": "error", "error": error.message } })
-                return error
+                throw error
             }))
             .then(receipt => {
 
@@ -358,9 +358,10 @@ const DmwWalletProvider = ({ children }) => {
 
     const dmwMakeOffer = async (secretKey: string, listingId: number, quantityWanted: number, currency: string, pricePerToken: string, expirationTimestamp: number) => {
         web3.eth.setProvider(getProvider(dmwChainId));
+        console.log('making offer..')
         const contractAddress = ChainIdMap[dmwChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
-        const rawdata = contract.methods.offer(listingId, quantityWanted, currency, web3.utils.toWei(pricePerToken, 'ether'), expirationTimestamp).encodeABI()
+        const rawdata = contract.methods.offer(listingId, quantityWanted, currency, web3.utils.toBN(pricePerToken), expirationTimestamp).encodeABI()
         const tx = {
             from: currentDmwWallet, // Required
             to: contractAddress, // Required (for non contract deployments)
@@ -377,7 +378,7 @@ const DmwWalletProvider = ({ children }) => {
         web3.eth.setProvider(getProvider(dmwChainId));
         const contractAddress = ChainIdMap[dmwChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
-        const rawdata = contract.methods.acceptOffer(listingId, offeror, currency, web3.utils.toWei(pricePerToken, 'ether')).encodeABI()
+        const rawdata = contract.methods.acceptOffer(listingId, offeror, currency, pricePerToken).encodeABI()
         const tx = {
             from: currentDmwWallet, // Required
             to: contractAddress, // Required (for non contract deployments)
@@ -411,7 +412,7 @@ const DmwWalletProvider = ({ children }) => {
         web3.eth.setProvider(getProvider(dmwChainId));
         const contractAddress = ChainIdMap[dmwChainId].market_contract
         const contract = new web3.eth.Contract(ERC20ABI, tokenAddress)
-        const rawdata = contract.methods.approve(contractAddress, web3.utils.toWei(amount, 'ether')).encodeABI()
+        const rawdata = contract.methods.approve(contractAddress, amount).encodeABI()
         const tx = {
             from: currentDmwWallet, // Required
             to: tokenAddress, // Required (for non contract deployments)
@@ -421,7 +422,7 @@ const DmwWalletProvider = ({ children }) => {
             value: web3.utils.toWei("0", 'ether'), // Optional
             // nonce: "0x0114", // Optional
         };
-        dmwSendTransaction(tx, secretKey).then((hash) => console.log("hash!!!", JSON.stringify(hash))).catch(error => console.log("!!!", error))
+        return dmwSendTransaction(tx, secretKey).then((hash) => {return hash}).catch(error => console.log("!!!", error))
     }
 
     const dmwTransfer721NFT = (secretKey: string, conratctAddress: string, tokenId: Number, to: string) => {
