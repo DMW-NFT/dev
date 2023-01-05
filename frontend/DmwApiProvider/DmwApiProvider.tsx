@@ -85,6 +85,7 @@ const DmwApiProvider = ({ children }) => {
     })
       .then((res) => res.json())
       .then((res) => {
+        console.log(res)
         if (res.code == 204) {
           setTimeout(() => {
             Toast(t("登录失效，请重新登录"));

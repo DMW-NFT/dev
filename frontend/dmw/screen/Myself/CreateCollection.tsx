@@ -420,9 +420,9 @@ const TransferredIntoCollection = (props) => {
                        
                     </TouchableWithoutFeedback> */}
               <TextInput
-                maxLength={6}
+                maxLength={20}
                 placeholder={t("请输入藏品名")}
-                keyboardType="decimal-pad"
+                keyboardType="default"
                 style={[styles.input]}
                 onChangeText={(e) => setTitle(e)}
                 value={title}
@@ -436,7 +436,7 @@ const TransferredIntoCollection = (props) => {
                     </TouchableWithoutFeedback> */}
               <TextInput
                 placeholder={t("请输入简介")}
-                keyboardType="decimal-pad"
+                keyboardType="default"
                 style={[styles.input, { marginBottom: 20, height: 151 }]}
                 onChangeText={(e) => setExplain(e)}
                 value={explain}

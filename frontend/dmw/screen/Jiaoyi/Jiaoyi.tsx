@@ -30,6 +30,13 @@ const Jiaoyi = (props) => {
     setAuctionList([])
     getNftList(1)
   }, [type])
+  const reload = ()=>{
+    setLoding(true)
+    setConList([])
+    setAuctionList([])
+    getNftList(1)
+  }
+
 
   const getList = () => {
     if (type == 2) {
@@ -86,8 +93,8 @@ const Jiaoyi = (props) => {
     <SafeAreaView style={{ backgroundColor: '#fff', flex: 1 }}>
       {/* tab栏 -- start */}
       <View style={[styles.index_box, styles.daohang]}>
-        <Text style={[type === 2 ? styles.daonghang_text_ative : styles.daonghang_text]} onPress={() => changetype(2)}>{t("寄售")}</Text>
-        <Text style={[type === 3 ? styles.daonghang_text_ative : styles.daonghang_text]} onPress={() => changetype(3)}>{t("拍卖")}</Text>
+        <Text style={[type === 2 ? styles.daonghang_text_ative : styles.daonghang_text]} onPress={() => {type!=2?changetype(2):reload()}}>{t("寄售")}</Text>
+        {/* <Text style={[type === 3 ? styles.daonghang_text_ative : styles.daonghang_text]} onPress={() => changetype(3)}>{t("拍卖")}</Text> */}
       </View>
       {/* tab栏 -- end */}
 

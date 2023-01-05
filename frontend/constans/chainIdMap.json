@@ -15,7 +15,9 @@
     },
     "137": {
         "network": "Polygon",
-        "nativeToken": "MATIC"
+        "nativeToken": "MATIC",
+        "nft_contract":"0xB95e37725025e6585Ff357000360a5e2839296f9",
+        "market_contract":"0x611165A113A93840d881B5bEB5b18DE897b5aD1E"
     },
     "97": {
         "network": "BSC Testnet",

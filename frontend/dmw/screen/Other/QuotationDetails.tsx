@@ -75,6 +75,8 @@ const QuotationDetails = (props) => {
   const [erc20TokenList, setErc20TokenList] = useState(null);
   const [needApprovalAmount, setNeedApprovalAmount] = useState(null);
   const [readyToApprove, setReadyToApprove] = useState(false);
+  const [readyToTakeOffer, setReadyToTakeOffer] = useState(false);
+  const [offerToTake,setOfferToTake]=useState(null)
   const clearAllowance = false;
   // Context 方法
   const { Toast, post, get, formData, shortenAddress } = useDmwApi();
@@ -92,6 +94,7 @@ const QuotationDetails = (props) => {
     connector,
     cancelDirectListing,
     getErc20Balance,
+    acceptOffer
   } = useDmwWeb3();
   const {
     dmwBuyNFT,
@@ -101,6 +104,7 @@ const QuotationDetails = (props) => {
     dmwCancelDirectListing,
     dmwErc20Approve,
     dmwMakeOffer,
+    dmwAcceptOffer,
   } = useDmwWallet();
   const { WalletInUse } = useDmwLogin();
 
@@ -175,16 +179,15 @@ const QuotationDetails = (props) => {
   const confrimMakerOffer = () => {
     if (WalletInUse == 2) {
       const tokenAddress = Object.keys(erc20TokenList)[selectedTokenIndex.row];
-      const pricePerToken =
-        Number(QuotationAmount) *
-        10 **
-          erc20TokenList[Object.keys(erc20TokenList)[selectedTokenIndex.row]]
-            .decimals;
+      const decimals =
+        erc20TokenList[Object.keys(erc20TokenList)[selectedTokenIndex.row]]
+          .decimals;
       makeOffer(
         orderList.listing_id,
         BuyNumber,
         tokenAddress,
-        pricePerToken,
+        decimals,
+        QuotationAmount,
         "3153600000"
       );
       setTxModalVisible(true);
@@ -192,6 +195,21 @@ const QuotationDetails = (props) => {
       setVfModalVisible(true);
     }
   };
+
+  //take offer
+  const confirmTakeOffer=(offeror:string, currency: string, pricePerToken: string)=>{
+    setOfferToTake(
+      {"listingId":orderList.listing_id,"offeror":offeror,"currency":currency,"pricePerToken":pricePerToken}
+    )
+    setReadyToTakeOffer(true)
+    if (WalletInUse == 2) {
+      // setTxModalVisible(true);
+      acceptOffer(orderList.listing_id,offeror,currency,pricePerToken)
+      setTxModalVisible(true)
+    } else {
+      setVfModalVisible(true);
+    }
+  }
 
   // 打开直接购买弹窗
   const openBuyNowModal = () => {
@@ -677,20 +695,18 @@ const QuotationDetails = (props) => {
                 const tokenAddress = Object.keys(erc20TokenList)[
                   selectedTokenIndex.row
                 ];
-
-                const pricePerToken =
-                  Number(QuotationAmount) *
-                  10 **
-                    erc20TokenList[
-                      Object.keys(erc20TokenList)[selectedTokenIndex.row]
-                    ].decimals;
+                const decimals =
+                  erc20TokenList[
+                    Object.keys(erc20TokenList)[selectedTokenIndex.row]
+                  ].decimals;
 
                 dmwMakeOffer(
                   res.walletDict[currentDmwWallet].privateKey,
                   orderList.listing_id,
                   BuyNumber,
                   tokenAddress,
-                  pricePerToken,
+                  decimals,
+                  QuotationAmount,
                   "3153600000"
                 );
                 setOfferState(0);
@@ -705,13 +721,22 @@ const QuotationDetails = (props) => {
               }
             }
           } else {
-            dmwCancelDirectListing(
-              res.walletDict[currentDmwWallet].privateKey,
-              orderList.listing_id
-            );
+
+            if (readyToTakeOffer){
+              console.log("take Offer: ",offerToTake)
+              dmwAcceptOffer(res.walletDict[currentDmwWallet].privateKey,offerToTake.listingId,offerToTake.offeror,offerToTake.currency,offerToTake.pricePerToken)
+              setReadyToTakeOffer(false)
+              setOfferToTake(null)
+            }else{
+              dmwCancelDirectListing(
+                res.walletDict[currentDmwWallet].privateKey,
+                orderList.listing_id
+              );
+            }
+
           }
         } else {
-          Toast("密码错误");
+          Toast(t("密码错误"));
         }
       });
   }, [password]);
@@ -859,8 +884,8 @@ const QuotationDetails = (props) => {
                             {item.total_offer_amount.number +
                               item.total_offer_amount.currency_name}
                           </Text>
-                          <Text style={[styles.offercolse]}>取消报价</Text>
-                          <Text style={[styles.offercolse]}>接受报价</Text>
+                          {/* <Text style={[styles.offercolse]}>取消报价</Text> */}
+                          {isLister&&<Text style={[styles.offercolse]} onPress={()=>{confirmTakeOffer(item.offeror,item.currency,item.price_per_token)}}>{t("接受报价")}</Text>}
                         </View>
                       </View>
                     </View>
@@ -887,7 +912,7 @@ const QuotationDetails = (props) => {
                     <View>
                       <Text style={[styles.moreTop]}>From</Text>
                       <Text style={[styles.moreBottom]}>
-                        {item.address.slice(2, 7)}
+                        {item.offeror.slice(2, 7)}
                       </Text>
                     </View>
                     <View>

@@ -121,6 +121,10 @@ const GoodsDetail = (props) => {
         connector.chainId !=
         chainNameMap[detailsObj.network.toLowerCase()].chainId
       ) {
+        console.log(
+          connector.chainId,
+          chainNameMap[detailsObj.network.toLowerCase()].chainId
+        );
         Toast(
           "该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！"
         );
@@ -315,6 +319,7 @@ const GoodsDetail = (props) => {
         setUserInfo(userAvatarArr);
         setlisting(res.data.listing);
         sethistory(res.data.history);
+        console.log(res.data.history)
       })
       .catch((err) => {
         Toast(err.message);
@@ -674,10 +679,11 @@ const GoodsDetail = (props) => {
                               source={require("../../assets/img/money/offer.png")}
                             ></Image>
                             <Text style={{ fontSize: 14, color: "#333" }}>
-                              {item.total_offer_amount.number +
-                                " " +
-                                chainNameMap[detailsObj.network.toLowerCase()]
-                                  .nativeToken}
+                              {item.total_offer_amount.number + " "}
+                              {item.total_offer_amount.currency_name == "ETH"
+                                ? chainNameMap[detailsObj.network.toLowerCase()]
+                                    .nativeToken
+                                : item.total_offer_amount.currency_name}
                             </Text>
                           </View>
                           {/* <Text style={{ fontSize: 12, color: "#999" }}>$455.32</Text> */}
@@ -694,7 +700,7 @@ const GoodsDetail = (props) => {
                       <View>
                         <Text style={[styles.moreTop]}>From</Text>
                         <Text style={[styles.moreBottom]}>
-                          {item.address.slice(2, 7)}
+                          {item.wallet_address.slice(2, 7)}
                         </Text>
                       </View>
                       <View>

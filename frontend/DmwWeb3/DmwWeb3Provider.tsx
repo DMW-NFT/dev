@@ -12,7 +12,7 @@ import ERC20ABI from "../contract/ERC20.json";
 import { BigNumber } from "ethers";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ChainIdMap from "../constans/chainIdMap.json";
-
+import { ethers } from "ethers";
 const DmwWeb3Provider = ({ children }) => {
   const connector = useWalletConnect();
   const [currentWallet, setCurrentWallet] = useState("");
@@ -79,7 +79,7 @@ const DmwWeb3Provider = ({ children }) => {
     web3.eth.setProvider(getProvider(currentChainId));
     const contract = new web3.eth.Contract(ERC20ABI, contractAddress);
     const rawdata = contract.methods
-      .transfer(to, (Number(amount) * 10 ** decimals).toFixed())
+      .transfer(to, ethers.utils.parseUnits(amount, decimal))
       .encodeABI();
     console.log(currentWallet, to, (Number(amount) * 10 ** decimals).toFixed());
     const tx = {
@@ -147,7 +147,7 @@ const DmwWeb3Provider = ({ children }) => {
 
   const checkConnectSatus = async () => {
     const strData = await AsyncStorage.getItem("@dmw_wallet_connect_storage");
-    console.log(strData,'strdata')
+    console.log(strData, "strdata");
     const status = strData ? JSON.parse(strData) : null;
     return status;
   };
@@ -251,6 +251,7 @@ const DmwWeb3Provider = ({ children }) => {
       .catch((error) => {
         // Error returned when rejected
         console.error(error);
+        setGlobalError([...globalError, String(error)]);
       });
   };
   const mintNftWithSignature = (SignedPayload, Signature) => {
@@ -284,6 +285,7 @@ const DmwWeb3Provider = ({ children }) => {
       .catch((error) => {
         // Error returned when rejected
         console.error(error);
+        setGlobalError([...globalError, String(error)]);
       });
   };
 
@@ -311,6 +313,7 @@ const DmwWeb3Provider = ({ children }) => {
       })
       .catch((error) => {
         console.error(error);
+        setGlobalError([...globalError, String(error)]);
       });
   };
 
@@ -338,9 +341,7 @@ const DmwWeb3Provider = ({ children }) => {
   ): number => {
     web3.eth.setProvider(getProvider(currentChainId));
     const contract = new web3.eth.Contract(NFT1155ABI, nftContractAddress);
-    const balance = contract.methods
-      .balanceOf(account, tokenId)
-      .call();
+    const balance = contract.methods.balanceOf(account, tokenId).call();
     return balance;
   };
 
@@ -423,7 +424,8 @@ const DmwWeb3Provider = ({ children }) => {
       .catch((error) => {
         // Error returned when rejected
         // console.error(error);
-        throw error;
+        setGlobalError([...globalError, String(error)]);
+        // throw error;
       });
   };
 
@@ -438,6 +440,7 @@ const DmwWeb3Provider = ({ children }) => {
     listingId: number,
     quantityWanted: number,
     currency: string,
+    decimals: number,
     pricePerToken: string,
     expirationTimestamp: number
   ) => {
@@ -449,7 +452,9 @@ const DmwWeb3Provider = ({ children }) => {
         listingId,
         quantityWanted,
         currency,
-        web3.utils.toBN(pricePerToken),
+        pricePerToken != "0"
+          ? ethers.utils.parseUnits(pricePerToken, decimals)
+          : "0",
         expirationTimestamp
       )
       .encodeABI();
@@ -473,6 +478,7 @@ const DmwWeb3Provider = ({ children }) => {
       .catch((error) => {
         // Error returned when rejected
         console.error(error);
+        setGlobalError([...globalError, String(error)]);
       });
   };
 
@@ -493,12 +499,7 @@ const DmwWeb3Provider = ({ children }) => {
     const contractAddress = ChainIdMap[currentChainId].market_contract;
     const contract = new web3.eth.Contract(marketplaceABI, contractAddress);
     const rawdata = contract.methods
-      .acceptOffer(
-        listingId,
-        offeror,
-        currency,
-        web3.utils.toWei(pricePerToken, "ether")
-      )
+      .acceptOffer(listingId, offeror, currency, pricePerToken)
       .encodeABI();
     const tx = {
       from: currentWallet, // Required
@@ -520,6 +521,7 @@ const DmwWeb3Provider = ({ children }) => {
       .catch((error) => {
         // Error returned when rejected
         console.error(error);
+        setGlobalError([...globalError, String(error)]);
       });
   };
   /* 
@@ -551,6 +553,7 @@ const DmwWeb3Provider = ({ children }) => {
       .catch((error) => {
         // Error returned when rejected
         console.error(error);
+        setGlobalError([...globalError, String(error)]);
       });
   };
 
@@ -625,6 +628,7 @@ const DmwWeb3Provider = ({ children }) => {
       .catch((error) => {
         // Error returned when rejected
         console.error(error);
+        setGlobalError([...globalError, String(error)]);
       });
   };
   /*
@@ -659,6 +663,7 @@ const DmwWeb3Provider = ({ children }) => {
       .catch((error) => {
         // Error returned when rejected
         console.error(error);
+        setGlobalError([...globalError, String(error)]);
       });
   };
 
@@ -691,10 +696,15 @@ const DmwWeb3Provider = ({ children }) => {
       .catch((error) => {
         // Error returned when rejected
         console.error(error);
+        setGlobalError([...globalError, String(error)]);
       });
   };
 
-  const getErc20Allowance = (tokenAddress: string, account: string,chainId:string) => {
+  const getErc20Allowance = (
+    tokenAddress: string,
+    account: string,
+    chainId: string
+  ) => {
     web3.eth.setProvider(getProvider(chainId));
     // web3.eth.setProvider(getProvider(currentChainId));
     const contractAddress = ChainIdMap[currentChainId].market_contract;
@@ -704,13 +714,15 @@ const DmwWeb3Provider = ({ children }) => {
       .call();
     return allowance;
   };
-  const getErc20Balance = (tokenAddress: string, account: string,chainId:string) => {
+  const getErc20Balance = (
+    tokenAddress: string,
+    account: string,
+    chainId: string
+  ) => {
     web3.eth.setProvider(getProvider(chainId));
     // web3.eth.setProvider(getProvider(currentChainId));
     const contract = new web3.eth.Contract(ERC20ABI, tokenAddress);
-    const balance = contract.methods
-      .balanceOf(account)
-      .call();
+    const balance = contract.methods.balanceOf(account).call();
     return balance;
   };
 
@@ -718,7 +730,7 @@ const DmwWeb3Provider = ({ children }) => {
     const contractAddress = ChainIdMap[currentChainId].market_contract;
     const contract = new web3.eth.Contract(ERC20ABI, tokenAddress);
     const rawdata = contract.methods
-      .approve(contractAddress,amount)
+      .approve(contractAddress, amount)
       .encodeABI();
     const tx = {
       from: currentWallet, // Required
@@ -740,7 +752,9 @@ const DmwWeb3Provider = ({ children }) => {
       })
       .catch((error) => {
         // Error returned when rejected
+
         console.error(error);
+        setGlobalError([...globalError, String(error)]);
       });
   };
 
@@ -775,6 +789,7 @@ const DmwWeb3Provider = ({ children }) => {
       .catch((error) => {
         // Error returned when rejected
         console.error(error);
+        setGlobalError([...globalError, String(error)]);
       });
   };
 
@@ -810,6 +825,7 @@ const DmwWeb3Provider = ({ children }) => {
       .catch((error) => {
         // Error returned when rejected
         console.error(error);
+        setGlobalError([...globalError, String(error)]);
       });
   };
 
@@ -852,7 +868,8 @@ const DmwWeb3Provider = ({ children }) => {
         setGlobalError,
         setCurrenChainId,
         currentChainId,
-        getErc20Balance
+        getErc20Balance,
+        acceptOffer,
       }}
     >
       {children}

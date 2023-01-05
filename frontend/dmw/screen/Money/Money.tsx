@@ -50,7 +50,7 @@ const Money = (props) => {
   const [visible, setVisible] = useState(false);
   const [chainMenuVisible, setChainMenuVisible] = useState(false);
 
-  const [selectedChain, setSelectedChain] = useState("goerli");
+  const [selectedChain, setSelectedChain] = useState("polygon");
   const [lMvisible, setLMvisible] = useState(false);
   const [Modalvisible, setModalvisible] = useState(false);
   const { dmwWalletList, setDmwChainId } = useDmwWallet();
@@ -284,7 +284,7 @@ const Money = (props) => {
           placement={"bottom"}
           onBackdropPress={() => setChainMenuVisible(false)}
         >
-          <MenuItem
+          {/* <MenuItem
             onPress={() => {
               setSelectedChain("goerli");
               setCurrenChainId("5");
@@ -298,6 +298,13 @@ const Money = (props) => {
               setCurrenChainId("97"), setDmwChainId("97");
             }}
             title="bsc testnet"
+          /> */}
+          <MenuItem
+            onPress={() => {
+              setSelectedChain("polygon");
+              setCurrenChainId("137"), setDmwChainId("137");
+            }}
+            title="polygon"
           />
           <MenuItem
             onPress={() => {

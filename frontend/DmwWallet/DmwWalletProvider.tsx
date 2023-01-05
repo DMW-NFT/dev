@@ -224,7 +224,7 @@ const DmwWalletProvider = ({ children }) => {
     const dmwTransferERC20 = (secretKey: string, contractAddress: string, to: string, amount: string, decimal: number) => {
         web3.eth.setProvider(getProvider(dmwChainId));
         const contract = new web3.eth.Contract(ERC20ABI, contractAddress)
-        const rawdata = contract.methods.transfer(to, (Number(amount) * 10 ** decimal).toFixed()).encodeABI()
+        const rawdata = contract.methods.transfer(to, ethers.utils.parseUnits(amount,decimal)).encodeABI()
         const tx = {
             from: currentDmwWallet, // Required
             to: contractAddress, // Required (for non contract deployments)
@@ -356,12 +356,12 @@ const DmwWalletProvider = ({ children }) => {
     }
 
 
-    const dmwMakeOffer = async (secretKey: string, listingId: number, quantityWanted: number, currency: string, pricePerToken: string, expirationTimestamp: number) => {
+    const dmwMakeOffer = async (secretKey: string, listingId: number, quantityWanted: number, currency: string,     decimals:number,pricePerToken: string, expirationTimestamp: number) => {
         web3.eth.setProvider(getProvider(dmwChainId));
         console.log('making offer..')
         const contractAddress = ChainIdMap[dmwChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
-        const rawdata = contract.methods.offer(listingId, quantityWanted, currency, web3.utils.toBN(pricePerToken), expirationTimestamp).encodeABI()
+        const rawdata = contract.methods.offer(listingId, quantityWanted, currency,pricePerToken!='0'?ethers.utils.parseUnits(pricePerToken,decimals):"0", expirationTimestamp).encodeABI()
         const tx = {
             from: currentDmwWallet, // Required
             to: contractAddress, // Required (for non contract deployments)
@@ -375,6 +375,7 @@ const DmwWalletProvider = ({ children }) => {
     }
 
     const dmwAcceptOffer = async (secretKey: string, listingId: number, offeror: string, currency: string, pricePerToken: string) => {
+        console.log("try to take offer: ",secretKey,listingId,offeror,currency,pricePerToken)
         web3.eth.setProvider(getProvider(dmwChainId));
         const contractAddress = ChainIdMap[dmwChainId].market_contract
         const contract = new web3.eth.Contract(marketplaceABI, contractAddress)
