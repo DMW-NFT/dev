@@ -219,6 +219,10 @@ const DmwApiProvider = ({ children }) => {
     if (!currentWallet&&dmwWalletList[0]){
       Switchwallet(1)
     }
+
+    if (currentWallet&&dmwWalletList[0]){
+      Switchwallet(1)
+    }
   },[currentWallet,dmwWalletList,connected])
 
   return (

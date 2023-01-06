@@ -142,8 +142,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     loginImg: {
-        width: 412 / 2,
-        height: 355 / 2,
+        width: 512 / 2,
+        height: 512 / 2,
     },
     loginBtnBox: {
         width: "100%",
