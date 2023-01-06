@@ -212,14 +212,14 @@ const DmwApiProvider = ({ children }) => {
 
   //自动登录钱包
   useEffect(()=>{
-    if(currentWallet&&!dmwWalletList){
+    if(currentWallet&&!dmwWalletList[0]){
       Switchwallet(2)
     }
 
-    if (!currentWallet&&dmwWalletList){
+    if (!currentWallet&&dmwWalletList[0]){
       Switchwallet(1)
     }
-  },[currentWallet,dmwWalletList])
+  },[currentWallet,dmwWalletList,connected])
 
   return (
     <DmwApiContext.Provider
