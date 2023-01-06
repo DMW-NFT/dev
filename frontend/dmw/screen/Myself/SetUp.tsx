@@ -38,10 +38,10 @@ const SetUp = (props) => {
           </View>
         </TouchableWithoutFeedback>
 
-        <View style={styles.list}>
+        {/* <View style={styles.list}>
           <Text style={styles.textname}>{t("面容登陆")}</Text>
           <Switch color='#897EF8' value={Switchshow} onValueChange={() => { setSwitchshow(!Switchshow) }} />
-        </View>
+        </View> */}
       </View>
 
 

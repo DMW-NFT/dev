@@ -155,13 +155,13 @@ const Home = (props) => {
         }}
       ></Stack.Screen>
 
-      <Stack.Screen
+      {/* <Stack.Screen
         component={TermsOfService}
         name="TermsOfService"
         options={{
           title: t("服务条款"),
         }}
-      ></Stack.Screen>
+      ></Stack.Screen> */}
     </Stack.Navigator>
   );
 };

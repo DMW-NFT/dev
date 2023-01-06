@@ -57,7 +57,7 @@ const Lmodal = (props) => {
               marginBottom: 44,
             }}
           >
-            <TouchableWithoutFeedback
+            {/* <TouchableWithoutFeedback
               onPress={() => {
                 props.goto("auctionOrder");
               }}
@@ -69,7 +69,7 @@ const Lmodal = (props) => {
                 ></Image>
                 <Text style={styles.img_bottom_text}>{t("拍卖订单")}</Text>
               </View>
-            </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback> */}
             <TouchableWithoutFeedback
               onPress={() => {
                 props.goto("sellOrder");
@@ -152,7 +152,7 @@ const Lmodal = (props) => {
               }
             </TouchableWithoutFeedback>
 
-            <View style={styles.more}>
+            {/* <View style={styles.more}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Image
                   style={styles.moreimg}
@@ -165,7 +165,7 @@ const Lmodal = (props) => {
                 color="#707070"
                 size={16}
               />
-            </View>
+            </View> */}
 
             <View style={styles.more}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>

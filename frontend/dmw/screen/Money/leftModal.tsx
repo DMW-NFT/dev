@@ -134,7 +134,7 @@ const Lmodal = (props) => {
 
 
 
-          <TouchableWithoutFeedback onPress={() => cilck('TermsOfService')}>
+          {/* <TouchableWithoutFeedback onPress={() => cilck('TermsOfService')}>
             <View style={styles.listBox}>
               <Image
                 style={styles.Limg}
@@ -142,7 +142,7 @@ const Lmodal = (props) => {
               ></Image>
               <Text>{t("服务条款")}</Text>
             </View>
-          </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback> */}
         </View>
       ) : null}
     </View>

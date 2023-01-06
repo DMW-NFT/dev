@@ -128,9 +128,9 @@ const SellOrder = (props) => {
                                     <View>
                                         {
                                             typename != 1 ?
-                                                <Text style={[styles.finshingText]}>{item.status == 1 ? '交易进行中' : item.status == 2 ? '交易取消' : item.status == 3 ? '交易完成' : '用户取消'}</Text> :
+                                                <Text style={[styles.finshingText]}>{item.status == 1 ? t('交易进行中') : item.status == 2 ? t('交易取消') : item.status == 3 ? t('交易完成') : t('用户取消')}</Text> :
                                                 // <Text style={[styles.finshingText, { color: "#F26377" }]}>4h 16m 27s后结束</Text>
-                                                <Text style={[styles.finshingText, { color: "#3FAA85" }]}>{item.end_time + ' 结束'}</Text>
+                                                <Text style={[styles.finshingText, { color: "#3FAA85" }]}>{item.end_time + t('结束')}</Text>
                                         }
                                     </View>
                                 </View>

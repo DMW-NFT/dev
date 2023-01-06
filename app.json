@@ -10,7 +10,8 @@
       "web"
     ],
     "android": {
-      "package": "dde.dmw.kh"
+      "package": "dde.dmw.kh",
+      "versionCode":2
     }
   }
 }

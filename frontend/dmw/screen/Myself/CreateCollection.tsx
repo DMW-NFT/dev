@@ -42,6 +42,7 @@ const TransferredIntoCollection = (props) => {
   const [imgurlUp1, setimgurlUp1] = useState("");
   const [ipfsImgUrl, setIpfsImgUrl] = useState("");
   const { post, formData, Toast } = useDmwApi();
+  const [uploadLoading,setUploadLoading] = useState(false)
   const {
     currentWallet,
     currentChainId,
@@ -62,7 +63,7 @@ const TransferredIntoCollection = (props) => {
   } = useDmwWallet();
   const [activeType, setactiveType] = useState({
     id: "",
-    name: t("请选择合集"),
+    name: t("选择合集"),
     logo: "",
   });
   const [isShowType, setisShowType] = useState(false); //是否展开类型选择框
@@ -100,7 +101,7 @@ const TransferredIntoCollection = (props) => {
       Toast(t("未上传图片或NFT信息未填写完整"));
       return null;
     }
-
+    
     if (WalletInUse == 1) {
       setVfModalVisible(true);
     } else {
@@ -109,7 +110,7 @@ const TransferredIntoCollection = (props) => {
         image: ipfsImgUrl,
         name: title,
       };
-
+      setUploadLoading(true)
       fetch("https://deep-index.moralis.io/api/v2/ipfs/uploadFolder", {
         method: "POST",
         body: JSON.stringify([{ content: data, path: `${title}.json` }]),
@@ -139,6 +140,7 @@ const TransferredIntoCollection = (props) => {
           })
             .then((res) => res.json())
             .then((resp) => {
+              setUploadLoading(false)
               console.log(resp, "zoubianjiekou");
               if (WalletInUse == 2) {
                 mintNftWithSignature(
@@ -178,7 +180,7 @@ const TransferredIntoCollection = (props) => {
             image: ipfsImgUrl,
             name: title,
           };
-
+          setUploadLoading(true)
           fetch("https://deep-index.moralis.io/api/v2/ipfs/uploadFolder", {
             method: "POST",
             body: JSON.stringify([{ content: data, path: `${title}.json` }]),
@@ -209,6 +211,7 @@ const TransferredIntoCollection = (props) => {
                 .then((res) => res.json())
                 .then((resp) => {
                   console.log(resp, "zoubianjiekou");
+                  setUploadLoading(false)
                   if (WalletInUse == 1) {
                     dmwMintWithSignature(
                       walletRes.walletDict[currentDmwWallet].privateKey,
@@ -344,7 +347,7 @@ const TransferredIntoCollection = (props) => {
       })
         .then((res) => res.json())
         .then((res) => {
-          Toast(t("上传成功！"));
+          Toast(t("上传成功"));
           setLoding(false);
           console.log(res[0].path, "上传");
           setIpfsImgUrl(res[0].path);
@@ -602,9 +605,11 @@ const TransferredIntoCollection = (props) => {
             ) : null}
           </ScrollView>
 
-          <Text onPress={() => confirmToMint()} style={styles.btn}>
+          {!uploadLoading?<Text onPress={() => confirmToMint()} style={styles.btn}>
             {t("创建并支付")}
-          </Text>
+          </Text>:<Text  style={styles.btn}>
+            {t("上传中")}...
+          </Text>}
 
           {/* <Modal
               visible={Modalvisible}

@@ -22,7 +22,7 @@ const DmwWalletProvider = ({ children }) => {
 
     const [dmwWalletList, setDmwWalletList] = useState([])
     const [currentDmwWallet, setcurrentDmwWallet] = useState('')
-    const [dmwChainId, setDmwChainId] = useState(5)
+    const [dmwChainId, setDmwChainId] = useState(137)
     const [dmwTransactionMap, setDmwTransactionMap] = useState({})
     const [dmwTransactionList, setDmwTransactionList] = useState([])
     const { globalError, setGlobalError } = useDmwWeb3()

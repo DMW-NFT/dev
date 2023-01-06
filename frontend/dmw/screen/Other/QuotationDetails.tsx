@@ -76,7 +76,7 @@ const QuotationDetails = (props) => {
   const [needApprovalAmount, setNeedApprovalAmount] = useState(null);
   const [readyToApprove, setReadyToApprove] = useState(false);
   const [readyToTakeOffer, setReadyToTakeOffer] = useState(false);
-  const [offerToTake,setOfferToTake]=useState(null)
+  const [offerToTake, setOfferToTake] = useState(null);
   const clearAllowance = false;
   // Context 方法
   const { Toast, post, get, formData, shortenAddress } = useDmwApi();
@@ -94,7 +94,7 @@ const QuotationDetails = (props) => {
     connector,
     cancelDirectListing,
     getErc20Balance,
-    acceptOffer
+    acceptOffer,
   } = useDmwWeb3();
   const {
     dmwBuyNFT,
@@ -197,19 +197,26 @@ const QuotationDetails = (props) => {
   };
 
   //take offer
-  const confirmTakeOffer=(offeror:string, currency: string, pricePerToken: string)=>{
-    setOfferToTake(
-      {"listingId":orderList.listing_id,"offeror":offeror,"currency":currency,"pricePerToken":pricePerToken}
-    )
-    setReadyToTakeOffer(true)
+  const confirmTakeOffer = (
+    offeror: string,
+    currency: string,
+    pricePerToken: string
+  ) => {
+    setOfferToTake({
+      listingId: orderList.listing_id,
+      offeror: offeror,
+      currency: currency,
+      pricePerToken: pricePerToken,
+    });
+    setReadyToTakeOffer(true);
     if (WalletInUse == 2) {
       // setTxModalVisible(true);
-      acceptOffer(orderList.listing_id,offeror,currency,pricePerToken)
-      setTxModalVisible(true)
+      acceptOffer(orderList.listing_id, offeror, currency, pricePerToken);
+      setTxModalVisible(true);
     } else {
       setVfModalVisible(true);
     }
-  }
+  };
 
   // 打开直接购买弹窗
   const openBuyNowModal = () => {
@@ -218,7 +225,9 @@ const QuotationDetails = (props) => {
         connector.chainId != chainNameMap[NftInfo.network.toLowerCase()].chainId
       ) {
         Toast(
-          "该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！"
+          t(
+            "该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！"
+          )
         );
         return null;
       }
@@ -235,7 +244,9 @@ const QuotationDetails = (props) => {
         connector.chainId != chainNameMap[NftInfo.network.toLowerCase()].chainId
       ) {
         Toast(
-          "该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！"
+          t(
+            "该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！"
+          )
         );
         return null;
       }
@@ -416,7 +427,7 @@ const QuotationDetails = (props) => {
         </View>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <View style={{ flexDirection: "column" }}>
-            <Text>余额:</Text>
+            <Text>{t("余额")}:</Text>
             <Text>
               {erc20TokenList &&
                 AvailableBalance /
@@ -427,7 +438,7 @@ const QuotationDetails = (props) => {
             </Text>
           </View>
           <View style={{ flexDirection: "column" }}>
-            <Text>已批准额度:</Text>
+            <Text>{t("已批准额度")}:</Text>
             <Text>
               {erc20TokenList &&
                 allowanceAmount /
@@ -441,7 +452,7 @@ const QuotationDetails = (props) => {
         <View>
           {needApprovalAmount > 0 && (
             <Text>
-              仍需批准额度:
+              {t("仍需批准额度")}:
               {needApprovalAmount /
                 10 **
                   erc20TokenList[
@@ -472,11 +483,11 @@ const QuotationDetails = (props) => {
             setBuyNowVisible(false);
           }}
         >
-          取消
+          {t("取消")}
         </Text>
 
         <Text style={[styles.BuyBtnQ, {}]} onPress={() => confirmPurchase()}>
-          确定
+          {t("确定")}
         </Text>
       </View>
     );
@@ -721,19 +732,23 @@ const QuotationDetails = (props) => {
               }
             }
           } else {
-
-            if (readyToTakeOffer){
-              console.log("take Offer: ",offerToTake)
-              dmwAcceptOffer(res.walletDict[currentDmwWallet].privateKey,offerToTake.listingId,offerToTake.offeror,offerToTake.currency,offerToTake.pricePerToken)
-              setReadyToTakeOffer(false)
-              setOfferToTake(null)
-            }else{
+            if (readyToTakeOffer) {
+              console.log("take Offer: ", offerToTake);
+              dmwAcceptOffer(
+                res.walletDict[currentDmwWallet].privateKey,
+                offerToTake.listingId,
+                offerToTake.offeror,
+                offerToTake.currency,
+                offerToTake.pricePerToken
+              );
+              setReadyToTakeOffer(false);
+              setOfferToTake(null);
+            } else {
               dmwCancelDirectListing(
                 res.walletDict[currentDmwWallet].privateKey,
                 orderList.listing_id
               );
             }
-
           }
         } else {
           Toast(t("密码错误"));
@@ -885,7 +900,20 @@ const QuotationDetails = (props) => {
                               item.total_offer_amount.currency_name}
                           </Text>
                           {/* <Text style={[styles.offercolse]}>取消报价</Text> */}
-                          {isLister&&<Text style={[styles.offercolse]} onPress={()=>{confirmTakeOffer(item.offeror,item.currency,item.price_per_token)}}>{t("接受报价")}</Text>}
+                          {isLister && (
+                            <Text
+                              style={[styles.offercolse]}
+                              onPress={() => {
+                                confirmTakeOffer(
+                                  item.offeror,
+                                  item.currency,
+                                  item.price_per_token
+                                );
+                              }}
+                            >
+                              {t("接受报价")}
+                            </Text>
+                          )}
                         </View>
                       </View>
                     </View>
@@ -1107,19 +1135,19 @@ const QuotationDetails = (props) => {
                 setBuyNowVisible(false);
               }}
             >
-              取消
+              {t("取消")}
             </Text>
             {offerState == 2 && (
               <Text
                 style={[styles.BuyBtnQ, {}]}
                 onPress={() => confrimMakerOffer()}
               >
-                确定
+                {t("确定")}
               </Text>
             )}
             {offerState == 0 && (
               <Text style={[styles.BuyBtnQ, { backgroundColor: "gray" }]}>
-                确定
+                {t("确定")}
               </Text>
             )}
             {offerState == 1 && (
@@ -1129,7 +1157,7 @@ const QuotationDetails = (props) => {
                 }}
                 style={[styles.BuyBtnQ]}
               >
-                批准额度
+                {t("批准额度")}
               </Text>
             )}
           </View>

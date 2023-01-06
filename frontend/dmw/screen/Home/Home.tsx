@@ -420,6 +420,7 @@ const styles = StyleSheet.create({
     width: screenWidth - 40,
     height: 140,
     resizeMode: 'stretch',
+    borderRadius:10
   },
   line: {
     borderColor: '#CCCCCC',

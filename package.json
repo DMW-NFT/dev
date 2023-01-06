@@ -102,7 +102,7 @@
     "test": "npx hardhat test && jest",
     "web:deploy": "expo build:web && gh-pages -d web-build"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "name": "DMW",
   "homepage": "https://cawfree.github.io/create-react-native-dapp",

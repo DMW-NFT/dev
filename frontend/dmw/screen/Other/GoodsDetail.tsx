@@ -126,7 +126,7 @@ const GoodsDetail = (props) => {
           chainNameMap[detailsObj.network.toLowerCase()].chainId
         );
         Toast(
-          "该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！"
+         t("该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！")
         );
       }
     }

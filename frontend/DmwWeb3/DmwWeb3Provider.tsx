@@ -16,7 +16,7 @@ import { ethers } from "ethers";
 const DmwWeb3Provider = ({ children }) => {
   const connector = useWalletConnect();
   const [currentWallet, setCurrentWallet] = useState("");
-  const [currentChainId, setCurrenChainId] = useState("5");
+  const [currentChainId, setCurrenChainId] = useState("137");
   const [connected, setConnected] = useState(false);
   const [lastConnected, setLastConnected] = useState(true);
   const [transactionMap, setTransactionMap] = useState({});
