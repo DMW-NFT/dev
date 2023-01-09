@@ -281,7 +281,7 @@ const QuotationDetails = (props) => {
                 marginRight: 5,
               }}
             >{`${Price}  ${
-              NftInfo && chainNameMap[NftInfo.network].nativeToken
+              NftInfo && chainNameMap[NftInfo.network.toLowerCase()].nativeToken
             } `}</Text>
             {/* <Text style={{ fontSize: 10, lineHeight: 22 }}>Wfca</Text> */}
           </View>
@@ -307,7 +307,7 @@ const QuotationDetails = (props) => {
                 marginRight: 5,
               }}
             >{`${Price * BuyNumber}  ${
-              NftInfo && chainNameMap[NftInfo.network].nativeToken
+              NftInfo && chainNameMap[NftInfo.network.toLowerCase()].nativeToken
             } `}</Text>
             {/* <Text style={{ fontSize: 10, lineHeight: 22 }}>Wfca</Text> */}
           </View>
@@ -566,7 +566,7 @@ const QuotationDetails = (props) => {
       getErc20Balance(
         Object.keys(erc20TokenList)[selectedTokenIndex.row],
         WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
-        chainNameMap[NftInfo.network].chainId
+        chainNameMap[NftInfo.network.toLowerCase()].chainId
       ).then((res) => {
         setAvailableBalance(res);
         console.log("erc20 token available:", res);
@@ -576,7 +576,7 @@ const QuotationDetails = (props) => {
       getErc20Allowance(
         Object.keys(erc20TokenList)[selectedTokenIndex.row],
         WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
-        chainNameMap[NftInfo.network].chainId
+        chainNameMap[NftInfo.network.toLowerCase()].chainId
       ).then((res) => {
         setAllowanceAmount(res);
         console.log("erc20 token allowance:", res);
@@ -695,7 +695,7 @@ const QuotationDetails = (props) => {
                   getErc20Allowance(
                     Object.keys(erc20TokenList)[selectedTokenIndex.row],
                     WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
-                    chainNameMap[NftInfo.network].chainId
+                    chainNameMap[NftInfo.network.toLowerCase()].chainId
                   ).then((allowance) => {
                     setAllowanceAmount(allowance);
                     console.log("erc20 token allowance:", res);
@@ -816,7 +816,7 @@ const QuotationDetails = (props) => {
                   ></Image>
                   <Text style={{ fontSize: 14, color: "#333" }}>
                     {Price}{" "}
-                    {NftInfo && chainNameMap[NftInfo.network].nativeToken}
+                    {NftInfo && chainNameMap[NftInfo.network.toLowerCase()].nativeToken}
                   </Text>
                 </View>
               </View>
@@ -958,7 +958,7 @@ const QuotationDetails = (props) => {
             <View style={[styles.flex, { alignItems: "flex-end" }]}>
               <Text style={[styles.bottomPrice]}>
                 {" "}
-                {Price} {NftInfo && chainNameMap[NftInfo.network].nativeToken}
+                {Price} {NftInfo && chainNameMap[NftInfo.network.toLowerCase()].nativeToken}
               </Text>
               {/* <Text style={[styles.bottomcoinType]}> Wfca</Text> */}
             </View>

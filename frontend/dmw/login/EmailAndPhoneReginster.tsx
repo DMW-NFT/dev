@@ -35,7 +35,7 @@ const EmailAndPhoneReginster = (props) => {
     "1",
   ]);
   const [showareaCode, SetshowareaCode] = useState(false);
-  const [secureTextEntry, SetsecureTextEntry] = useState(false);
+  const [secureTextEntry, SetsecureTextEntry] = useState(true);
   const [visible, Setvisible] = useState(false);
   const [message, Setmessage] = useState(t("温馨提示"));
   const { post, get, formData } = useDmwApi();
@@ -310,7 +310,7 @@ const EmailAndPhoneReginster = (props) => {
         <TextInput
           maxLength={6}
           placeholder={t("请输入密码")}
-          keyboardType="decimal-pad"
+          keyboardType="default"
           secureTextEntry={secureTextEntry}
           onChangeText={(text) => onChangeText(text, 4)}
           value={password}
@@ -324,7 +324,7 @@ const EmailAndPhoneReginster = (props) => {
         <TextInput
           maxLength={6}
           placeholder={t("请再次输入密码")}
-          keyboardType="decimal-pad"
+          keyboardType="default"
           secureTextEntry={true}
           numberOfLines={4}
           onChangeText={(text) => onChangeText(text, 5)}

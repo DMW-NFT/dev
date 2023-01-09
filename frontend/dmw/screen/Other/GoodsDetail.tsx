@@ -126,7 +126,9 @@ const GoodsDetail = (props) => {
           chainNameMap[detailsObj.network.toLowerCase()].chainId
         );
         Toast(
-         t("该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！")
+          t(
+            "该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！"
+          )
         );
       }
     }
@@ -162,20 +164,19 @@ const GoodsDetail = (props) => {
   };
 
   useEffect(() => {
-    if (detailsObj && detailsObj.contract_address) {
-      if (WalletInUse == 1 && dmwWalletList[0]) {
-        getBalanceOf1155(
-          detailsObj.contract_address,
-          dmwWalletList[0],
-          detailsObj.token_id
-        ).then((res) => {
-          console.log(res, "shulaing");
+    const walletAddress = WalletInUse == 1 ? dmwWalletList[0] : currentWallet;
 
-          if (res > 0) {
-            checkIsApproveForAll(
-              detailsObj.contract_address,
-              dmwWalletList[0]
-            ).then((isApproved) => {
+    if (detailsObj && detailsObj.contract_address &&detailsObj.contract_type=="ERC1155") {
+      getBalanceOf1155(
+        detailsObj.contract_address,
+        walletAddress,
+        detailsObj.token_id
+      ).then((res) => {
+        console.log(res, "shulaing");
+
+        if (res > 0) {
+          checkIsApproveForAll(detailsObj.contract_address, walletAddress).then(
+            (isApproved) => {
               // console.log("isApproved:", isApproved)
               if (isApproved) {
                 setApprovalVsity(false);
@@ -185,39 +186,28 @@ const GoodsDetail = (props) => {
               }
               setNftNumber(res);
               setIsApproved(isApproved);
-            });
-          } else {
-          }
-        });
-      }
-      if (WalletInUse == 2 && currentWallet) {
-        getBalanceOf1155(
-          detailsObj.contract_address,
-          currentWallet,
-          detailsObj.token_id
-        ).then((res) => {
-          console.log(res, "shulaing");
-
-          if (res > 0) {
-            checkIsApproveForAll(
-              detailsObj.contract_address,
-              currentWallet
-            ).then((isApproved) => {
-              // console.log("isApproved:", isApproved)
-              if (isApproved) {
-                setApprovalVsity(false);
-                setSellBtnVsity(true);
-              } else {
-                setApprovalVsity(true);
-              }
-              setNftNumber(res);
-              setIsApproved(isApproved);
-            });
-          } else {
-          }
-        });
-      }
+            }
+          );
+        }
+      });
     }
+
+    if (detailsObj && detailsObj.contract_address &&detailsObj.contract_type=="ERC721"){
+      checkIsApproveForAll(detailsObj.contract_address, walletAddress).then(
+        (isApproved) => {
+          // console.log("isApproved:", isApproved)
+          if (isApproved) {
+            setApprovalVsity(false);
+            setSellBtnVsity(true);
+          } else {
+            setApprovalVsity(true);
+          }
+          setNftNumber(1);
+          setIsApproved(isApproved);
+        }
+      );
+    }
+
   }, [WalletInUse, detailsObj]);
 
   useEffect(() => {
@@ -319,7 +309,7 @@ const GoodsDetail = (props) => {
         setUserInfo(userAvatarArr);
         setlisting(res.data.listing);
         sethistory(res.data.history);
-        console.log(res.data.history)
+        console.log(res.data.history);
       })
       .catch((err) => {
         Toast(err.message);

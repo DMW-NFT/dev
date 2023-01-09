@@ -35,7 +35,7 @@ const ForgetPassword = (props) => {
     "1",
   ]);
   const [showareaCode, SetshowareaCode] = useState(false);
-  const [secureTextEntry, SetsecureTextEntry] = useState(false);
+  const [secureTextEntry, SetsecureTextEntry] = useState(true);
   const [visible, Setvisible] = useState(false);
   const [message, Setmessage] = useState("温馨提示");
   const { post, get, formData,Toast } = useDmwApi();
@@ -118,6 +118,7 @@ const loginFn = () =>{
                 // 如果设为null，则永不过期
                 expires: null,
               });
+              Toast(t('修改成功'))
             login()
         }
     })
@@ -142,7 +143,7 @@ const loginFn = () =>{
           ></Image>
           <TextInput
             placeholder={t("请输入邮箱")}
-            keyboardType="decimal-pad"
+            keyboardType="email-address"
             onChangeText={(text) => onChangeText(text, 1)}
             value={email}
           />
@@ -223,7 +224,7 @@ const loginFn = () =>{
         <TextInput
           maxLength={6}
           placeholder={t("请输入验证码  ")}
-          keyboardType="decimal-pad"
+          keyboardType="number-pad"
           onChangeText={(text) => onChangeText(text, 3)}
           value={sancode}
         />
@@ -251,10 +252,10 @@ const loginFn = () =>{
           )}
         </TouchableWithoutFeedback>
         <TextInput
-          maxLength={6}
-          placeholder={t("请输入密码")}
-          keyboardType="decimal-pad"
+          maxLength={20}
           secureTextEntry={secureTextEntry}
+          placeholder={t("请输入密码")}
+          keyboardType="ascii-capable"
           onChangeText={(text) => onChangeText(text, 4)}
           value={password}
         />
@@ -265,10 +266,10 @@ const loginFn = () =>{
           source={require("../assets/img/login/password.png")}
         ></Image>
         <TextInput
-          maxLength={6}
+          maxLength={20}
+          secureTextEntry={secureTextEntry}
           placeholder={t("请再次输入密码")}
-          keyboardType="decimal-pad"
-          secureTextEntry={true}
+          keyboardType="ascii-capable"
           numberOfLines={4}
           onChangeText={(text) => onChangeText(text, 5)}
           value={password1}

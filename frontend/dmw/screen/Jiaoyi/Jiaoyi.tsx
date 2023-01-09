@@ -39,9 +39,10 @@ const Jiaoyi = (props) => {
   }, [type]);
 
   const reload = () => {
+
     setLoding(true);
-    setConList([]);
-    setAuctionList([]);
+    setConList(null);
+    setAuctionList(null)
     getNftList(2);
   };
 

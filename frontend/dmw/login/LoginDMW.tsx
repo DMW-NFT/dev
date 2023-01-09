@@ -43,7 +43,7 @@ const LoginDMW = (props) => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [secureTextEntry, setSecureTextEntry] = useState(false);
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [agree, setAgree] = useState(false);
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("温馨提示");
@@ -242,7 +242,7 @@ const LoginDMW = (props) => {
         <TextInput
           onStartShouldSetResponderCapture={() => true}
           placeholder={t("请输入密码")}
-          keyboardType="decimal-pad"
+          keyboardType="default"
           secureTextEntry={secureTextEntry}
           onChangeText={(text) => onChangeText(text, 2)}
           value={password}

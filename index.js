@@ -37,7 +37,9 @@ if (Platform.OS !== 'web') {
       "The provided value 'moz-chunked-arraybuffer' is not a valid 'responseType'.",
       "The provided value 'ms-stream' is not a valid 'responseType'.",
       "source.uri should not be an empty string",
-      'Warning: Each child in a list should have a unique "key" prop.'
+      'Warning: Each child in a list should have a unique "key" prop.',
+      "Got a component with the name 'str' for the screen"
+
     ],
   );
 }

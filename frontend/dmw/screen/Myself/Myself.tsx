@@ -8,7 +8,7 @@ import {
   SafeAreaView,
   Pressable,
   FlatList,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
 } from "react-native";
 import React, { Component, useEffect, useState, Context } from "react";
 import Tabcolumn from "./Tabcolumn";
@@ -19,11 +19,11 @@ import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
-import { Spinner } from '@ui-kitten/components';
+import { Spinner } from "@ui-kitten/components";
 import List from "../../Components/List";
-import { useTranslation } from 'react-i18next'
-import ChainIdMap from '../../../constans/chainIdMap.json'
-
+import { useTranslation } from "react-i18next";
+import ChainIdMap from "../../../constans/chainIdMap.json";
+import TransferNftModal from "../../Components/TransferNftModal";
 const data = [
   {
     typename: "Status",
@@ -51,20 +51,23 @@ const Myself = (props) => {
   const { t, i18n } = useTranslation();
   const [typename, setTypename] = useState("我的藏品");
   const [visible, setVisible] = useState(false);
-  const [strText, setStrText] = useState('');
+  const [strText, setStrText] = useState("");
   const [lMvisible, setlMvisible] = useState(false);
   const [userInfo, setUserInfo] = useState({});
-  const { username, setUsername ,WalletInUse,language} = useDmwLogin();
-  const { avatarUrl, setAvatarUrl} = useDmwLogin();
-  const [loading, setLoding] = useState(false)
-  const [myNftList, setmyNftList] = useState([])
-  const [screenData,setScreenData] = useState([])
-  const [determinelist,setdetermine] = useState({})
+  const { username, setUsername, WalletInUse, language } = useDmwLogin();
+  const { avatarUrl, setAvatarUrl } = useDmwLogin();
+  const [loading, setLoding] = useState(false);
+  const [myNftList, setmyNftList] = useState([]);
+  const [screenData, setScreenData] = useState([]);
+  const [determinelist, setdetermine] = useState({});
+  const [nftToTransfer, setNftToTransfer] = useState(null);
+  const [txNftModalVisible, setTxNftModalVisible] = useState(false);
+  const [txNftParams, setTxNftPramas] = useState({});
   // Context方法
   const { logOut } = useDmwLogin();
-  const { post, formData , Toast ,Copy} = useDmwApi();
-  const { currentWallet,currentChainId } = useDmwWeb3()
-  const { dmwWalletList } = useDmwWallet()
+  const { post, formData, Toast, Copy } = useDmwApi();
+  const { currentWallet, currentChainId } = useDmwWeb3();
+  const { dmwWalletList } = useDmwWallet();
 
   const visibleFn = () => {
     setVisible(true);
@@ -76,89 +79,111 @@ const Myself = (props) => {
   };
   const Fndetermine = (determine) => {
     console.log(determine);
-    close()
-    setdetermine(determine)
-    setTypename(typename)
-  }
+    close();
+    setdetermine(determine);
+    setTypename(typename);
+  };
 
   useEffect(() => {
     post("/index/user/get_user_msg").then((res) => {
       // console.log(res, "用户信息");
-      if (res.code == 200) {  
+      if (res.code == 200) {
         setUserInfo(res.data);
         // console.log(userInfo, "用户信息打印");
         setUsername(res.data.nickname);
         setAvatarUrl(res.data.avatar_url);
-        getMyNft('/index/nft/get_my_nft', { network: ChainIdMap[currentChainId].network })
+        getMyNft("/index/nft/get_my_nft", {
+          network: ChainIdMap[currentChainId].network,
+        });
       }
     });
 
-    post("/index/common/get_filter",formData({type:"nft"})).then(res=>{
+    post("/index/common/get_filter", formData({ type: "nft" })).then((res) => {
       // console.log(res.data,'筛选');
-      setScreenData(res.data)
-    })
-  
-  }, [currentChainId,language]);
+      setScreenData(res.data);
+    });
+  }, [currentChainId, language]);
 
   useEffect(() => {
-    setmyNftList([])
+    setmyNftList([]);
     // console.log("myself currentchain id",currentChainId)
-    if(typename == '我创建的'){
-      console.log('查看我创建的');
-      getMyNft('/index/nft/get_my_create_nft_by_search', { keyword: strText,...determinelist })
-    }else if(typename == '事件'){
-      getMyNft('/index/nft/get_nft_activity', { keyword: strText,...determinelist})
-    }else if(typename=='我喜欢的'){
-      getMyNft('/index/nft/get_my_likes_nft_by_search', { keyword: strText,...determinelist })
-    }else if(typename=='我的藏品'){
-      getMyNft(determinelist == {}? '/index/nft/get_my_nft_by_search' : '/index/nft/get_my_nft', { keyword: strText,network: ChainIdMap[currentChainId].network ,...determinelist })
+    if (typename == "我创建的") {
+      console.log("查看我创建的");
+      getMyNft("/index/nft/get_my_create_nft_by_search", {
+        keyword: strText,
+        ...determinelist,
+      });
+    } else if (typename == "事件") {
+      getMyNft("/index/nft/get_nft_activity", {
+        keyword: strText,
+        ...determinelist,
+      });
+    } else if (typename == "我喜欢的") {
+      getMyNft("/index/nft/get_my_likes_nft_by_search", {
+        keyword: strText,
+        ...determinelist,
+      });
+    } else if (typename == "我的藏品") {
+      getMyNft(
+        determinelist == {}
+          ? "/index/nft/get_my_nft_by_search"
+          : "/index/nft/get_my_nft",
+        {
+          keyword: strText,
+          network: ChainIdMap[currentChainId].network,
+          ...determinelist,
+        }
+      );
     }
-  }, [typename,determinelist,strText,currentChainId,WalletInUse])
-
+  }, [typename, determinelist, strText, currentChainId, WalletInUse]);
 
   useEffect(() => {
     // setLoding(false)
-  }, [myNftList])
+  }, [myNftList]);
 
-  const getMyNft = (posturl:string, data) => {
+  const getMyNft = (posturl: string, data) => {
     // console.log(data,'请求参数');
-    
-    let params = {}
-    if(data){
-      params = formData(data)
+
+    let params = {};
+    if (data) {
+      params = formData(data);
     }
-    
-    setLoding(true)
+
+    setLoding(true);
     // console.log(posturl,'url,yemian');
-    
-    post(posturl, params).then(res => {
-      // console.log(res.data, '回调----------');
-      if(res.code == 200){
-        let arr = res.data.result?res.data.result:res.data.data
-        let strarr = []
-        arr.map((item,index)=>{
-        if((item.nft_name.indexOf(strText) > -1) && strText){
-          // console.log(item.nft_name.indexOf(strText));
-          strarr.push(item)
-        }else if(!strText){
-          strarr = res.data.result?res.data.result:res.data.data
+
+    post(posturl, params)
+      .then((res) => {
+        // console.log(res.data, '回调----------');
+        if (res.code == 200) {
+          let arr = res.data.result ? res.data.result : res.data.data;
+          let strarr = [];
+          arr.map((item, index) => {
+            if (item.nft_name.indexOf(strText) > -1 && strText) {
+              // console.log(item.nft_name.indexOf(strText));
+              strarr.push(item);
+            } else if (!strText) {
+              strarr = res.data.result ? res.data.result : res.data.data;
+            }
+          });
+          // console.log(strarr);
+
+          setmyNftList(strarr);
+          // console.log(strarr)
+          setLoding(false);
+        } else {
+          Toast(res.message);
+          setLoding(false);
         }
-        })
-        // console.log(strarr);
-        
-        setmyNftList(strarr)
-        setLoding(false)
-      }else{
-        Toast(res.message)
-        setLoding(false)
-      }
-     
-    }).catch(err=>{
-      console.log(err,'----');
-    })
-  }
+      })
+      .catch((err) => {
+        console.log(err, "----");
+      });
+  };
 
-
+  useEffect(() => {
+    nftToTransfer && console.log("get nft to transfer");
+  }, [nftToTransfer]);
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
@@ -210,17 +235,19 @@ const Myself = (props) => {
             ></Image>
           </View>
           <Text style={styles.nickname}>{username}</Text>
-          <TouchableWithoutFeedback onPress={()=>{Copy(WalletInUse == 1 ? dmwWalletList[0] : currentWallet)}}>
-          <Text style={styles.identification}>
-            {/* 此处勿忘加空格 */}
-            {WalletInUse == 1 ? dmwWalletList[0] : currentWallet}{" "}
-           
-            <Image
-              style={{ width: 12, height: 12 }}
-              source={require("../../assets/img/my/copy.png")}
-            ></Image>
-           
-          </Text>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              Copy(WalletInUse == 1 ? dmwWalletList[0] : currentWallet);
+            }}
+          >
+            <Text style={styles.identification}>
+              {/* 此处勿忘加空格 */}
+              {WalletInUse == 1 ? dmwWalletList[0] : currentWallet}{" "}
+              <Image
+                style={{ width: 12, height: 12 }}
+                source={require("../../assets/img/my/copy.png")}
+              ></Image>
+            </Text>
           </TouchableWithoutFeedback>
           {/* 头像 -- end */}
         </View>
@@ -248,31 +275,38 @@ const Myself = (props) => {
         </View>
         {/* <Text onPress={() => this.visible()}>123</Text> */}
 
-        {
-          visible ? 
+        {visible ? (
           <Screen
-          title="select filter"
-          style={[styles.Screen]}
-          visible={visible}
-          close={() => close()}
-          datalist={screenData}
-          determineFn={(determine) => Fndetermine(determine)}
-        ></Screen> : null
-        }
+            title="select filter"
+            style={[styles.Screen]}
+            visible={visible}
+            close={() => close()}
+            datalist={screenData}
+            determineFn={(determine) => Fndetermine(determine)}
+          ></Screen>
+        ) : null}
 
-
-
-
-        <View style={{paddingRight:20,paddingLeft:20,paddingTop:20,zIndex:1}}>
+        <View
+          style={{
+            paddingRight: 20,
+            paddingLeft: 20,
+            paddingTop: 20,
+            zIndex: 1,
+          }}
+        >
           {/*  navigatetoDetail={(id, unique_id, contract_address, token_id, network)
                    =>
                   { props.navigation.navigate('goodsDetail', { id: id, unique_id, contract_address, token_id, network }) }} */}
-          {
-            !loading ? <FlatList
+          {!loading ? (
+            <FlatList
               refreshing={false}
-              style={{ height: '55%',zIndex:1 }}
+              style={{ height: "55%", zIndex: 1 }}
               ListEmptyComponent={() => {
-                return <Text style={{ textAlign: 'center', marginTop: '50%' }}>{t("空空如也")}</Text>
+                return (
+                  <Text style={{ textAlign: "center", marginTop: "50%" }}>
+                    {t("空空如也")}
+                  </Text>
+                );
                 // 列表为空展示改组件
               }}
               // 一屏幕展示几个
@@ -280,35 +314,61 @@ const Myself = (props) => {
               //  2列显示
               numColumns={2}
               data={myNftList}
-              renderItem={({item,index }) => {
-                return <List key={index} list={item} type={4} 
-                navigatetoDetail={(id,unique_id,contract_address,token_id,network) =>
-                  { 
-                    if(WalletInUse == 1 && !dmwWalletList[0]){
-                      Toast(t("请先登录钱包"))
-                      return
-                    }else if(WalletInUse == 2 && !currentWallet){
-                      Toast(t("请先登录钱包"))
-                      return
-                    }
-                    props.navigation.navigate('goodsDetail', { id: id,unique_id,contract_address,token_id,network }) }}
-                />
+              renderItem={({ item, index }) => {
+                return (
+                  <List
+                    key={index}
+                    list={item}
+                    type={4}
+                    setNftToTransfer={setNftToTransfer}
+                    setTxNftModalVisible={setTxNftModalVisible}
+                    navigatetoDetail={(
+                      id,
+                      unique_id,
+                      contract_address,
+                      token_id,
+                      network
+                    ) => {
+                      if (WalletInUse == 1 && !dmwWalletList[0]) {
+                        Toast(t("请先登录钱包"));
+                        return;
+                      } else if (WalletInUse == 2 && !currentWallet) {
+                        Toast(t("请先登录钱包"));
+                        return;
+                      }
+                      props.navigation.navigate("goodsDetail", {
+                        id: id,
+                        unique_id,
+                        contract_address,
+                        token_id,
+                        network,
+                      });
+                    }}
+                  />
+                );
               }}
               keyExtractor={(item, index) => index}
               ListFooterComponent={() => {
                 // 声明尾部组件
-                return myNftList && myNftList.length ? <Text style={{ textAlign: 'center' }} >没有更多了</Text> : null
+                return myNftList && myNftList.length ? (
+                  <Text style={{ textAlign: "center" }}>没有更多了</Text>
+                ) : null;
               }}
               // 下刷新
               onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
-
+            ></FlatList>
+          ) : (
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                marginTop: "40%",
+              }}
             >
-            </FlatList> : <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: '40%' }}>
               <Spinner />
             </View>
-          }
+          )}
         </View>
-
       </View>
       <Lmodal
         goto={(path) => {
@@ -318,6 +378,11 @@ const Myself = (props) => {
         close={() => close()}
         visible={lMvisible}
       ></Lmodal>
+      <TransferNftModal
+        nftToTransfer={nftToTransfer}
+        modalVisible={txNftModalVisible}
+        setModalVisible={setTxNftModalVisible}
+      />
     </SafeAreaView>
   );
 };
@@ -328,7 +393,7 @@ const styles = StyleSheet.create({
   Screen: {
     width: screenWidth,
     position: "absolute",
-    zIndex:100
+    zIndex: 100,
   },
   index_box: {
     paddingLeft: 20,
