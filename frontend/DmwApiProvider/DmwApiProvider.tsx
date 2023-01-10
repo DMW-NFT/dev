@@ -225,7 +225,7 @@ const DmwApiProvider = ({ children }) => {
       Switchwallet(1)
     }
 
-  },[currentWallet,dmwWalletList,connected,WalletInUse,isLogin])
+  },[currentWallet,dmwWalletList,connected,isLogin])
 
   return (
     <DmwApiContext.Provider
