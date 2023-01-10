@@ -220,6 +220,7 @@
   "粘贴您的私钥字符串": "Paste your private key string",
   "例如": "For example:",
   "余额": "Balance",
+  "余额不足": "Insufficient balance",
   "最大值": "Maximum",
   "预期获得": "Expected to get",
   "兑换率影响": "Effect of exchange rate",

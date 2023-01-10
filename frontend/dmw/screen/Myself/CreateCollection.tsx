@@ -42,7 +42,8 @@ const TransferredIntoCollection = (props) => {
   const [imgurlUp1, setimgurlUp1] = useState("");
   const [ipfsImgUrl, setIpfsImgUrl] = useState("");
   const { post, formData, Toast } = useDmwApi();
-  const [uploadLoading,setUploadLoading] = useState(false)
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [nativeBalance, setNativeBalance] = useState(0);
   const {
     currentWallet,
     currentChainId,
@@ -51,6 +52,7 @@ const TransferredIntoCollection = (props) => {
     transactionList,
     GasMap,
     currentGasPrice,
+    getNativeBalance,
   } = useDmwWeb3();
   const { WalletInUse } = useDmwLogin();
   const {
@@ -75,6 +77,23 @@ const TransferredIntoCollection = (props) => {
     // getBlockchain()
     getCoType();
   }, []);
+
+  useEffect(() => {
+    if (!dmwWalletList[0] && !currentWallet) {
+      Toast(t("请先登录钱包"));
+      setTimeout(() => {
+        props.navigation.goBack();
+      }, 1500);
+    } else {
+      const walletAddress = WalletInUse == 1 ? dmwWalletList[0] : currentWallet;
+      console.log("curren wallet address:", walletAddress);
+      walletAddress &&
+        getNativeBalance(walletAddress).then((res) => {
+          console.log("native balance:", res);
+          setNativeBalance(res);
+        });
+    }
+  }, [WalletInUse, dmwWalletList, currentWallet]);
 
   // 获取区块链
   // const getBlockchain = () => {
@@ -101,7 +120,17 @@ const TransferredIntoCollection = (props) => {
       Toast(t("未上传图片或NFT信息未填写完整"));
       return null;
     }
-    
+
+    if (
+      !nativeBalance ||
+      nativeBalance == 0 ||
+      (nativeBalance <
+        Number(GasMap["mintWithSignature"]) * Number(currentGasPrice))
+    ) {
+      Toast(t("余额不足"));
+      return null;
+    }
+
     if (WalletInUse == 1) {
       setVfModalVisible(true);
     } else {
@@ -110,7 +139,7 @@ const TransferredIntoCollection = (props) => {
         image: ipfsImgUrl,
         name: title,
       };
-      setUploadLoading(true)
+      setUploadLoading(true);
       fetch("https://deep-index.moralis.io/api/v2/ipfs/uploadFolder", {
         method: "POST",
         body: JSON.stringify([{ content: data, path: `${title}.json` }]),
@@ -140,7 +169,7 @@ const TransferredIntoCollection = (props) => {
           })
             .then((res) => res.json())
             .then((resp) => {
-              setUploadLoading(false)
+              setUploadLoading(false);
               console.log(resp, "zoubianjiekou");
               if (WalletInUse == 2) {
                 mintNftWithSignature(
@@ -158,6 +187,8 @@ const TransferredIntoCollection = (props) => {
         })
         .catch((err) => {
           console.log(err, "上传报错");
+          setUploadLoading(false);
+          Toast(t("上传失败，请重试"));
         });
     }
   };
@@ -180,7 +211,7 @@ const TransferredIntoCollection = (props) => {
             image: ipfsImgUrl,
             name: title,
           };
-          setUploadLoading(true)
+          setUploadLoading(true);
           fetch("https://deep-index.moralis.io/api/v2/ipfs/uploadFolder", {
             method: "POST",
             body: JSON.stringify([{ content: data, path: `${title}.json` }]),
@@ -211,7 +242,7 @@ const TransferredIntoCollection = (props) => {
                 .then((res) => res.json())
                 .then((resp) => {
                   console.log(resp, "zoubianjiekou");
-                  setUploadLoading(false)
+                  setUploadLoading(false);
                   if (WalletInUse == 1) {
                     dmwMintWithSignature(
                       walletRes.walletDict[currentDmwWallet].privateKey,
@@ -228,10 +259,12 @@ const TransferredIntoCollection = (props) => {
                 })
                 .catch((err) => {
                   console.log(err, "左边报错");
+                  setUploadLoading(false);
                 });
             })
             .catch((err) => {
               console.log(err, "上传报错");
+              setUploadLoading(false);
             });
         } else {
           Toast("密码错误");
@@ -575,41 +608,64 @@ const TransferredIntoCollection = (props) => {
                 } */}
             </View>
             {WalletInUse == 1 ? (
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginBottom: 20,
-                }}
-              >
-                <Text style={{ fontSize: 12, color: "#999999" }}>
-                  {t("上链费")}：
-                </Text>
-                {currentGasPrice ? (
-                  <Text style={{ fontSize: 16, color: "#897EF8" }}>
-                    {Web3.utils
-                      .fromWei(
-                        String(
-                          Number(GasMap["mintWithSignature"]) *
-                            Number(currentGasPrice)
-                        ),
-                        "ether"
-                      )
-                      .slice(0, 8)}{" "}
-                    {chainIdmap[currentChainId].nativeToken}
+              <View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginBottom: 20,
+                  }}
+                >
+                  <Text style={{ fontSize: 12, color: "#999999" }}>
+                    {t("上链费")}：
                   </Text>
-                ) : (
-                  <Text style={{ fontSize: 16, color: "#897EF8" }}>---</Text>
-                )}
+                  {currentGasPrice ? (
+                    <Text style={{ fontSize: 16, color: "#897EF8" }}>
+                      {Web3.utils
+                        .fromWei(
+                          String(
+                            Number(GasMap["mintWithSignature"]) *
+                              Number(currentGasPrice)
+                          ),
+                          "ether"
+                        )
+                        .slice(0, 8)}{" "}
+                      {chainIdmap[currentChainId].nativeToken}
+                    </Text>
+                  ) : (
+                    <Text style={{ fontSize: 16, color: "#897EF8" }}>---</Text>
+                  )}
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginBottom: 20,
+                  }}
+                >
+                  <Text style={{ fontSize: 12, color: "#999999" }}>
+                    {t("余额")}
+                  </Text>
+                  {nativeBalance ? (
+                    <Text style={{ fontSize: 16, color: "#897EF8" }}>
+                      {String(nativeBalance).slice(0, 8)}{" "}
+                      {chainIdmap[currentChainId].nativeToken}
+                    </Text>
+                  ) : (
+                    <Text style={{ fontSize: 16, color: "#897EF8" }}>---</Text>
+                  )}
+                </View>
               </View>
             ) : null}
           </ScrollView>
 
-          {!uploadLoading?<Text onPress={() => confirmToMint()} style={styles.btn}>
-            {t("创建并支付")}
-          </Text>:<Text  style={styles.btn}>
-            {t("上传中")}...
-          </Text>}
+          {!uploadLoading ? (
+            <Text onPress={() => confirmToMint()} style={styles.btn}>
+              {t("创建并支付")}
+            </Text>
+          ) : (
+            <Text style={styles.btn}>{t("上传中")}...</Text>
+          )}
 
           {/* <Modal
               visible={Modalvisible}

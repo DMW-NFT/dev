@@ -166,7 +166,7 @@ const GoodsDetail = (props) => {
   useEffect(() => {
     const walletAddress = WalletInUse == 1 ? dmwWalletList[0] : currentWallet;
 
-    if (detailsObj && detailsObj.contract_address &&detailsObj.contract_type=="ERC1155") {
+    if (detailsObj && detailsObj.contract_address &&detailsObj.contract_type=="ERC1155" && walletAddress) {
       getBalanceOf1155(
         detailsObj.contract_address,
         walletAddress,
@@ -192,7 +192,7 @@ const GoodsDetail = (props) => {
       });
     }
 
-    if (detailsObj && detailsObj.contract_address &&detailsObj.contract_type=="ERC721"){
+    if (detailsObj && detailsObj.contract_address &&detailsObj.contract_type=="ERC721" && walletAddress){
       checkIsApproveForAll(detailsObj.contract_address, walletAddress).then(
         (isApproved) => {
           // console.log("isApproved:", isApproved)

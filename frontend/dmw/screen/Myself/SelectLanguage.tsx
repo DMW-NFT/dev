@@ -21,7 +21,7 @@ const screenHeight = Dimensions.get('window').height;
 const SelectLanguage = (porps) => {
   const { setlanguage, language } = useDmwLogin()
   const { setlanguageType } = useDmwApi()
-  const [type, setType] = useState(language == 'zh' ? 'zh' : language == 'jp' ? 'jp' : 'en')
+  const [type, setType] = useState(language)
   const { t, i18n } = useTranslation();
   // constructor(porps) {
   //   super(porps);
@@ -30,8 +30,8 @@ const SelectLanguage = (porps) => {
   //   };
   // }
   useEffect(() => {
-
-  }, [])
+    setType(setType)
+  }, [language])
 
   return (
     <SafeAreaView
