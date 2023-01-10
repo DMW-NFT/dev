@@ -175,6 +175,8 @@
   "输入地址": "Enter the address",
   "导入助记词": "Import mnemonic ",
   "修改支付密码": "Change your payment password",
+  "请输入原支付密码":"Please enter the original payment password",
+  "请输入新支付密码":"Please enter the new payment password",
   "链接第三方钱包": "Link to third-party wallets",
   "从私钥导入钱包": "Import the wallet from the private key",
   "服务条款": "Terms of Service",
