@@ -124,8 +124,11 @@ const TransferredIntoCollection = (props) => {
     if (
       !nativeBalance ||
       nativeBalance == 0 ||
-      (nativeBalance <
-        Number(GasMap["mintWithSignature"]) * Number(currentGasPrice))
+      nativeBalance <
+        Number(Web3.utils.fromWei(
+          String(Number(GasMap["mintWithSignature"]) * Number(currentGasPrice)),
+          "ether"
+        ))
     ) {
       Toast(t("余额不足"));
       return null;
