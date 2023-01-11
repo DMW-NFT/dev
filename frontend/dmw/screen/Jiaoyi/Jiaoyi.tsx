@@ -160,14 +160,12 @@ const Jiaoyi = (props) => {
                     token_id,
                     network
                   ) => {
-                    if (WalletInUse == 1 && !dmwWalletList[0]) {
+                    if (!(currentWallet || dmwWalletList[0])) {
                       Toast(t("请先登录钱包"));
                       return;
-                    } else if (WalletInUse == 2 && !currentWallet) {
-                      Toast(t("请先登录钱包"));
-                      return;
-                    }
+                    } 
 
+                    
                     props.navigation.navigate("QuotationDetails", {
                       id: item.order_no,
                     });
