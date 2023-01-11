@@ -182,7 +182,10 @@ const TransferredIntoCollection = (props) => {
                   ]
                 );
                 setTxModalVisible(true);
+                console.log('上传成功？');
+                
               }
+              
             })
             .catch((err) => {
               console.log(err, "左边报错");
@@ -255,6 +258,8 @@ const TransferredIntoCollection = (props) => {
                       ]
                     );
                     setTxModalVisible(true);
+                    console.log('上传成功？本地钱包');
+                    
                   }
                   //  else {
                   //   mintNftWithSignature(resp.result.SignedPayload[0], resp.result.SignedPayload[resp.result.SignedPayload.length - 1])

@@ -167,7 +167,7 @@ const Lmodal = (props) => {
               />
             </View> */}
 
-            <View style={styles.more}>
+            {/* <View style={styles.more}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Image
                   style={styles.moreimg}
@@ -180,7 +180,7 @@ const Lmodal = (props) => {
                 color="#707070"
                 size={16}
               />
-            </View>
+            </View> */}
 
             <TouchableWithoutFeedback onPress={() => logout()}>
               {

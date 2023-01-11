@@ -71,9 +71,9 @@ const LoginHome = (props) => {
   };
 
   return (
-    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
+    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1,}}>
       <View style={[styles.container]}>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between",elevation:10 }}>
           <View></View>
           <TouchableWithoutFeedback
             onPress={() => {
@@ -116,6 +116,7 @@ const LoginHome = (props) => {
                     borderWidth: 1,
                     overflow: "hidden",
                     borderColor: "#897EF8",
+                    elevation:10
                     
                   }}
                 >
@@ -200,11 +201,13 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
+    elevation:1
     
   },
   loginImg: {
     width: 512 / 2,
     height: 512 / 2,
+    elevation:1
   },
   loginBtnBox: {
     width: "100%",
