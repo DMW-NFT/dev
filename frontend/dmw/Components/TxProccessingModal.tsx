@@ -37,19 +37,19 @@ export default function TxProccessingModal(props) {
 
     useEffect(() => {
 
-        console.log("asdasasd", dmwTransactionList)
+        // console.log("asdasasd", dmwTransactionList)
         if (dmwTransactionList && dmwTransactionList.length) {
-            console.log("get latest hash1")
+            // console.log("get latest hash1")
             setDmwLatestHash(dmwTransactionList[dmwTransactionList.length - 1])
-            console.log("get latest hash!", dmwTransactionList[dmwTransactionList.length - 1])
+            // console.log("get latest hash!", dmwTransactionList[dmwTransactionList.length - 1])
         }
     }, [dmwTransactionList])
 
     useEffect(() => {
         if (dmwTransactionMap && dmwTransactionMap[dmwlatestHash]) {
-            console.log(dmwTransactionMap[dmwlatestHash], 'latest hash!')
+            // console.log(dmwTransactionMap[dmwlatestHash], 'latest hash!')
             if (dmwTransactionMap[dmwlatestHash].state == "confirmed") {
-                console.log("got you !", dmwTransactionMap[dmwlatestHash])
+                // console.log("got you !", dmwTransactionMap[dmwlatestHash])
                 setDmwLatestHash(null)
                 // Toast(t('创建成功！'))
                 setScreenLoding(false)
@@ -60,7 +60,7 @@ export default function TxProccessingModal(props) {
                 }, 5000)
 
             } else if (dmwTransactionMap[dmwlatestHash].state == "reversed") {
-                console.log("got you !", dmwTransactionMap[dmwlatestHash])
+                // console.log("got you !", dmwTransactionMap[dmwlatestHash])
                 setDmwLatestHash(null)
                 // Toast(t('创建成功！'))
                 setScreenLoding(false)
@@ -81,19 +81,19 @@ export default function TxProccessingModal(props) {
 
     useEffect(() => {
 
-        console.log("asdasasd", transactionList)
+        // console.log("asdasasd", transactionList)
         if (transactionList && transactionList.length) {
-            console.log("get latest hash1")
+            // console.log("get latest hash1")
             setLatestHash(transactionList[transactionList.length - 1])
-            console.log("get latest hash!", transactionList[transactionList.length - 1])
+            // console.log("get latest hash!", transactionList[transactionList.length - 1])
         }
     }, [transactionList])
 
     useEffect(() => {
         if (transactionMap && transactionMap[latestHash]) {
-            console.log(transactionMap[latestHash], 'latest hash!')
+            // console.log(transactionMap[latestHash], 'latest hash!')
             if (transactionMap[latestHash].state == "comfirmed") {
-                console.log("got you !", transactionMap[latestHash])
+                // console.log("got you !", transactionMap[latestHash])
                 setLatestHash(null)
                 // Toast(t('创建成功！'))
                 setScreenLoding(false)

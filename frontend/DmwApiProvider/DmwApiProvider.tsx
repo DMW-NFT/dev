@@ -10,7 +10,7 @@ import { useDmwWeb3 } from "../DmwWeb3/DmwWeb3Provider";
 import { Wallet } from "ethers";
 const DmwApiProvider = ({ children }) => {
   const { logOut, language, setlanguage, setWalletInUse,WalletInUse,isLogin } = useDmwLogin();
-  const { connected, currentWallet } = useDmwWeb3();
+  const { connected, currentWallet,globalError } = useDmwWeb3();
   const { dmwWalletList } = useDmwWallet();
 
   const { t, i18n } = useTranslation();
@@ -20,11 +20,16 @@ const DmwApiProvider = ({ children }) => {
   const [time, setTime] = useState(2000);
   const [toastVal, setToastVal] = useState(t("温馨提示"));
   const [MoneyRouteState, setMoneyRouteState] = useState("createMoney");
-
+  const [gerrorTemp,setGErrorTmep] = useState(globalError)
   useEffect(() => {
     languageType();
     i18n.changeLanguage(language);
   }, [language]);
+
+  useEffect(()=>{
+    globalError!=gerrorTemp&&Toast(globalError[globalError.length-1])
+    setGErrorTmep(globalError)
+  },[globalError])
 
   // 设置语言
   const setlanguageType = async (type) => {

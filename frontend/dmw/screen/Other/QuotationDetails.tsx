@@ -1132,7 +1132,7 @@ const QuotationDetails = (props) => {
             <Text
               style={[styles.BuyBtnC, {}]}
               onPress={() => {
-                setBuyNowVisible(false);
+                setOfferNowVisible(false);
               }}
             >
               {t("取消")}
@@ -1146,7 +1146,7 @@ const QuotationDetails = (props) => {
               </Text>
             )}
             {offerState == 0 && (
-              <Text style={[styles.BuyBtnQ, { backgroundColor: "gray" }]}>
+              <Text style={[styles.BuyBtnQ, { backgroundColor: "gray" }]} onPress={()=>{Toast(t("已批准额度不足"))}}>
                 {t("确定")}
               </Text>
             )}

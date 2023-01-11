@@ -13,6 +13,8 @@ import { BigNumber } from "ethers";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ChainIdMap from "../constans/chainIdMap.json";
 import { ethers } from "ethers";
+import { resolve } from "path";
+import { rejects } from "assert";
 const DmwWeb3Provider = ({ children }) => {
   const connector = useWalletConnect();
   const [currentWallet, setCurrentWallet] = useState("");
@@ -27,6 +29,29 @@ const DmwWeb3Provider = ({ children }) => {
   const [globalError, setGlobalError] = useState([]);
   const GasMap = txGasMap;
   const web3 = new Web3();
+
+  
+  const throwTxError=(error)=>{
+    setGlobalError([...globalError, String(error)]);
+  }
+
+
+  const sendAndSyncTransaction = async (tx) => {
+    return new Promise((resolve, rejects) => {
+      connector
+        .sendTransaction(tx)
+        .then((result) => {
+          syncTransactionSatus(result).then((res) => {
+            // console.log("sync transaction result:", res);
+            resolve(res);
+          });
+        })
+        .catch((error) => {
+          throwTxError(error)
+          console.error(error);
+        });
+    });
+  };
 
   useEffect(() => {
     if (connector.connected) {
@@ -69,52 +94,19 @@ const DmwWeb3Provider = ({ children }) => {
     });
   };
 
-  // 转移
-  const transferERC20 = (
-    contractAddress: string,
-    to: string,
-    amount: string,
-    decimals: number
-  ) => {
-    web3.eth.setProvider(getProvider(currentChainId));
-    const contract = new web3.eth.Contract(ERC20ABI, contractAddress);
-    const rawdata = contract.methods
-      .transfer(to, ethers.utils.parseUnits(amount, decimal))
-      .encodeABI();
-    console.log(currentWallet, to, (Number(amount) * 10 ** decimals).toFixed());
-    const tx = {
-      from: currentWallet, // Required
-      to: contractAddress, // Required (for non contract deployments)
-      data: rawdata, // Required
-      // gasPrice: "0x02540be400", // Optional
-      // gasLimit: "0x9c40", // Optional
-      value: web3.utils.toWei("0", "ether"), // Optional
-      // nonce: "0x0114", // Optional
-    };
-    connector
-      .sendTransaction(tx)
-
-      .then((result) => {
-        // Returns transaction id (hash)
-        console.log(result);
-        syncTransactionSatus(result);
-      })
-      .catch((error) => {
-        // Error returned when rejected
-        setGlobalError([...globalError, String(error)]);
-        console.error(error);
-      });
-  };
-
   const transferToken = (
     to: string,
     amount: string,
     contract: string = null,
     decimals: number
   ) => {
-    contract
-      ? transferERC20(contract, to, amount, decimals)
-      : transferNative(to, amount);
+    return contract
+      ? transferERC20(contract, to, amount, decimals).then((res) => {
+          return res;
+        })
+      : transferNative(to, amount).then((res) => {
+          return res;
+        });
   };
 
   const getNativeBalance = (address) => {
@@ -202,18 +194,36 @@ const DmwWeb3Provider = ({ children }) => {
       value: web3.utils.toWei(value, "ether"), // Optional
     };
 
-    connector
-      .sendTransaction(tx)
-      .then((result) => {
-        // Returns transaction id (hash)
-        console.log(result);
-        syncTransactionSatus(result);
-      })
-      .catch((error) => {
-        // Error returned when rejected
-        setGlobalError([...globalError, String(error)]);
-        console.error(error);
-      });
+    return sendAndSyncTransaction(tx).then((res) => {
+      return res;
+    });
+  };
+
+  // 转移erc20 代币
+  const transferERC20 = (
+    contractAddress: string,
+    to: string,
+    amount: string,
+    decimals: number
+  ) => {
+    web3.eth.setProvider(getProvider(currentChainId));
+    const contract = new web3.eth.Contract(ERC20ABI, contractAddress);
+    const rawdata = contract.methods
+      .transfer(to, ethers.utils.parseUnits(amount, decimals))
+      .encodeABI();
+    console.log(currentWallet, to, (Number(amount) * 10 ** decimals).toFixed());
+    const tx = {
+      from: currentWallet, // Required
+      to: contractAddress, // Required (for non contract deployments)
+      data: rawdata, // Required
+      // gasPrice: "0x02540be400", // Optional
+      // gasLimit: "0x9c40", // Optional
+      value: web3.utils.toWei("0", "ether"), // Optional
+      // nonce: "0x0114", // Optional
+    };
+    return sendAndSyncTransaction(tx).then((res) => {
+      return res;
+    });
   };
 
   const mintNft = () => {
@@ -241,18 +251,9 @@ const DmwWeb3Provider = ({ children }) => {
     };
 
     // Send transaction
-    connector
-      .sendTransaction(tx)
-      .then((result) => {
-        // Returns transaction id (hash)
-        console.log(result);
-        syncTransactionSatus(result);
-      })
-      .catch((error) => {
-        // Error returned when rejected
-        console.error(error);
-        setGlobalError([...globalError, String(error)]);
-      });
+    return sendAndSyncTransaction(tx).then((res) => {
+      return res;
+    });
   };
   const mintNftWithSignature = (SignedPayload, Signature) => {
     const contractAddress = ChainIdMap[currentChainId].nft_contract;
@@ -274,19 +275,9 @@ const DmwWeb3Provider = ({ children }) => {
     };
 
     // Send transaction
-    connector
-      .sendTransaction(tx)
-
-      .then((result) => {
-        // Returns transaction id (hash)
-        console.log(result);
-        syncTransactionSatus(result);
-      })
-      .catch((error) => {
-        // Error returned when rejected
-        console.error(error);
-        setGlobalError([...globalError, String(error)]);
-      });
+    return sendAndSyncTransaction(tx).then((res) => {
+      return res;
+    });
   };
 
   const getWalletNfts = () => {
@@ -313,7 +304,7 @@ const DmwWeb3Provider = ({ children }) => {
       })
       .catch((error) => {
         console.error(error);
-        setGlobalError([...globalError, String(error)]);
+        // setGlobalError([...globalError, String(error)]);
       });
   };
 
@@ -352,24 +343,32 @@ const DmwWeb3Provider = ({ children }) => {
       ...transactionMap,
       [txHash]: { payload: null, state: "pending" },
     });
-
-    let syncInterval = setInterval(() => {
-      web3.eth.getTransactionReceipt(txHash).then((res) => {
-        // console.log(getProvider('5'))
-        res ? console.log(res) : console.log(txHash, "pending");
-        if (res) {
-          console.log(JSON.stringify(res));
-          clearInterval(syncInterval);
-          setTransactionMap({
-            ...transactionMap,
-            [txHash]: {
-              payload: res,
-              state: res.status ? "comfirmed" : "reversed",
-            },
-          });
-        }
-      });
-    }, 5000);
+    return new Promise((resolve, reject) => {
+      let syncInterval = setInterval(() => {
+        web3.eth.getTransactionReceipt(txHash).then((res) => {
+          // console.log(getProvider('5'))
+          res ? console.log(res) : console.log(txHash, "pending");
+          if (res) {
+            console.log(JSON.stringify(res));
+            clearInterval(syncInterval);
+            setTransactionMap({
+              ...transactionMap,
+              [txHash]: {
+                payload: res,
+                state: res.status ? "comfirmed" : "reversed",
+              },
+            });
+            resolve({
+              hash: txHash,
+              result: {
+                payload: res,
+                state: res.status ? "comfirmed" : "reversed",
+              },
+            });
+          }
+        });
+      }, 5000);
+    });
   };
 
   /* 
@@ -413,20 +412,9 @@ const DmwWeb3Provider = ({ children }) => {
     };
     console.log(tx);
     // Send transaction
-    connector
-      .sendTransaction(tx)
-
-      .then((result) => {
-        // Returns transaction id (hash)
-        console.log(result);
-        syncTransactionSatus(result);
-      })
-      .catch((error) => {
-        // Error returned when rejected
-        // console.error(error);
-        setGlobalError([...globalError, String(error)]);
-        // throw error;
-      });
+    return sendAndSyncTransaction(tx).then((res) => {
+      return res;
+    });
   };
 
   /* 
@@ -467,19 +455,9 @@ const DmwWeb3Provider = ({ children }) => {
       value: web3.utils.toWei("0", "ether"), // Optional
       // nonce: "0x0114", // Optional
     };
-    connector
-      .sendTransaction(tx)
-
-      .then((result) => {
-        // Returns transaction id (hash)
-        console.log(result);
-        syncTransactionSatus(result);
-      })
-      .catch((error) => {
-        // Error returned when rejected
-        console.error(error);
-        setGlobalError([...globalError, String(error)]);
-      });
+    return sendAndSyncTransaction(tx).then((res) => {
+      return res;
+    });
   };
 
   /* 
@@ -510,19 +488,9 @@ const DmwWeb3Provider = ({ children }) => {
       value: web3.utils.toWei("0", "ether"), // Optional
       // nonce: "0x0114", // Optional
     };
-    connector
-      .sendTransaction(tx)
-
-      .then((result) => {
-        // Returns transaction id (hash)
-        console.log(result);
-        syncTransactionSatus(result);
-      })
-      .catch((error) => {
-        // Error returned when rejected
-        console.error(error);
-        setGlobalError([...globalError, String(error)]);
-      });
+    return sendAndSyncTransaction(tx).then((res) => {
+      return res;
+    });
   };
   /* 
     cancelDirectListing：取消直接挂单
@@ -542,19 +510,9 @@ const DmwWeb3Provider = ({ children }) => {
       value: web3.utils.toWei("0", "ether"), // Optional
       // nonce: "0x0114", // Optional
     };
-    connector
-      .sendTransaction(tx)
-
-      .then((result) => {
-        // Returns transaction id (hash)
-        console.log(result);
-        syncTransactionSatus(result);
-      })
-      .catch((error) => {
-        // Error returned when rejected
-        console.error(error);
-        setGlobalError([...globalError, String(error)]);
-      });
+    return sendAndSyncTransaction(tx).then((res) => {
+      return res;
+    });
   };
 
   /*
@@ -617,19 +575,9 @@ const DmwWeb3Provider = ({ children }) => {
       // nonce: "0x0114", // Optional
     };
     console.log(tx);
-    connector
-      .sendTransaction(tx)
-
-      .then((result) => {
-        // Returns transaction id (hash)
-        console.log(result);
-        syncTransactionSatus(result);
-      })
-      .catch((error) => {
-        // Error returned when rejected
-        console.error(error);
-        setGlobalError([...globalError, String(error)]);
-      });
+    return sendAndSyncTransaction(tx).then((res) => {
+      return res;
+    });
   };
   /*
     授权交易合约转移NFT
@@ -652,19 +600,9 @@ const DmwWeb3Provider = ({ children }) => {
       // nonce: "0x0114", // Optional
     };
 
-    connector
-      .sendTransaction(tx)
-
-      .then((result) => {
-        // Returns transaction id (hash)
-        console.log(result);
-        syncTransactionSatus(result);
-      })
-      .catch((error) => {
-        // Error returned when rejected
-        console.error(error);
-        setGlobalError([...globalError, String(error)]);
-      });
+    return sendAndSyncTransaction(tx).then((res) => {
+      return res;
+    });
   };
 
   /* 
@@ -686,18 +624,9 @@ const DmwWeb3Provider = ({ children }) => {
       value: web3.utils.toWei("0", "ether"), // Optional
     };
 
-    connector
-      .sendTransaction(tx)
-      .then((result) => {
-        // Returns transaction id (hash)
-        console.log(result);
-        syncTransactionSatus(result);
-      })
-      .catch((error) => {
-        // Error returned when rejected
-        console.error(error);
-        setGlobalError([...globalError, String(error)]);
-      });
+    return sendAndSyncTransaction(tx).then((res) => {
+      return res;
+    });
   };
 
   const getErc20Allowance = (
@@ -742,20 +671,9 @@ const DmwWeb3Provider = ({ children }) => {
       // nonce: "0x0114", // Optional
     };
 
-    connector
-      .sendTransaction(tx)
-
-      .then((result) => {
-        // Returns transaction id (hash)
-        console.log(result);
-        syncTransactionSatus(result);
-      })
-      .catch((error) => {
-        // Error returned when rejected
-
-        console.error(error);
-        setGlobalError([...globalError, String(error)]);
-      });
+    return sendAndSyncTransaction(tx).then((res) => {
+      return res;
+    });
   };
 
   const transfer721NFT = (
@@ -778,19 +696,9 @@ const DmwWeb3Provider = ({ children }) => {
       // nonce: "0x0114", // Optional
     };
 
-    connector
-      .sendTransaction(tx)
-
-      .then((result) => {
-        // Returns transaction id (hash)
-        console.log(result);
-        syncTransactionSatus(result);
-      })
-      .catch((error) => {
-        // Error returned when rejected
-        console.error(error);
-        setGlobalError([...globalError, String(error)]);
-      });
+    return sendAndSyncTransaction(tx).then((res) => {
+      return res;
+    });
   };
 
   const transfer1155NFT = (
@@ -814,19 +722,9 @@ const DmwWeb3Provider = ({ children }) => {
       // nonce: "0x0114", // Optional
     };
 
-    connector
-      .sendTransaction(tx)
-
-      .then((result) => {
-        // Returns transaction id (hash)
-        console.log(result);
-        syncTransactionSatus(result);
-      })
-      .catch((error) => {
-        // Error returned when rejected
-        console.error(error);
-        setGlobalError([...globalError, String(error)]);
-      });
+    return sendAndSyncTransaction(tx).then((res) => {
+      return res;
+    });
   };
 
   return (
@@ -870,6 +768,7 @@ const DmwWeb3Provider = ({ children }) => {
         currentChainId,
         getErc20Balance,
         acceptOffer,
+        throwTxError
       }}
     >
       {children}

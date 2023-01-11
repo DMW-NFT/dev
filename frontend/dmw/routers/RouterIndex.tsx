@@ -16,7 +16,9 @@ import { Dialog, Portal, Paragraph, Button } from "react-native-paper";
 import { useDmwLogin } from "../../loginProvider/constans/DmwLoginProvider";
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 
-
+const isErrorToast = (content:string) =>{
+    return content.toLowerCase().includes('error')
+}
 // async function FN() {
 //     let a = await api.GetStorage()
 //     initState['isLogin'] = a ? true : false
@@ -41,12 +43,18 @@ const RouterIndex = (props) => {
   return (
     <View style={styles.body}>
       {isLogin ? <Routers /> : <StackNavigator />}
-      {show ? (
-        <Portal>
+      {show? (
+
+        isErrorToast(toastVal)?<Portal>
+          <View style={styles.box}>
+            <Text style={styles.errText}>{toastVal}</Text>
+          </View>
+        </Portal>:<Portal>
           <View style={styles.box}>
             <Text style={styles.text}>{toastVal}</Text>
           </View>
         </Portal>
+        
       ) : null}
     </View>
   );
@@ -82,6 +90,17 @@ const styles = StyleSheet.create({
   text: {
     width: 200,
     backgroundColor: "rgba(0,0,0,0.5)",
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
+    textAlign: "center",
+    borderRadius: 20,
+    color: "#fff",
+  },
+  errText: {
+    width: 200,
+    backgroundColor: "rgba(255,0,0,0.5)",
     paddingLeft: 10,
     paddingRight: 10,
     paddingTop: 10,

@@ -216,7 +216,7 @@ export default function TransferNftModal(props) {
               {Number(txNftAmount) != 1 ? (
                 <TouchableWithoutFeedback
                   onPress={() => {
-                    setTxNftAmount(String(Number(txNftAmount) - 1));
+                    setTxNftAmount(Number(txNftAmount) - 1);
                   }}
                 >
                   <Image
@@ -242,7 +242,7 @@ export default function TransferNftModal(props) {
               />
               <TouchableWithoutFeedback
                 onPress={() => {
-                  setTxNftAmount(String(Number(txNftAmount) + 1));
+                  setTxNftAmount(Number(txNftAmount) + 1);
                 }}
               >
                 <Image

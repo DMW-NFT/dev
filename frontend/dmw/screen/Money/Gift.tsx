@@ -38,7 +38,7 @@ const Gift = (props) => {
     }, [])
 
     useEffect(() => {
-        console.log(selectedIndex, '下拉框')
+        // console.log(balanceData.ERC20Token[selectedIndex.row - 1], '下拉框')
         setnumber('')
         if (selectedIndex.row == 0) {
             setSelectedToken({ symbol: nativeToken, amount: Number(balanceData.NativToken), contractAddress: null })
@@ -63,7 +63,7 @@ const Gift = (props) => {
         if (WalletInUse == 1) {
             setVfModalVisible(true)
         } else {
-            transferToken(String(receiptAddress), String(number), selectedToken.contractAddress, selectedToken.decimals ? selectedToken.decimals : null)
+            transferToken(String(receiptAddress), String(number), selectedToken.contractAddress, selectedToken.decimals ? selectedToken.decimals : null).then(res=>{console.log("tw wallet transfer native token result: ",res)})
             setTxModalVisible(true)
             setTimeout(() => {
                 setnumber('')

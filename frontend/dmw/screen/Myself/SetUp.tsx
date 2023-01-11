@@ -45,7 +45,7 @@ const SetUp = (props) => {
       </View>
 
 
-      <View style={[{ padding: 20 }, styles.box]}>
+      {/* <View style={[{ padding: 20 }, styles.box]}>
         <Text style={styles.title}>{t("关于&支持")}</Text>
         <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('WebViewModal')}}>
           <View style={[styles.list, { marginBottom: 31 }]}>
@@ -73,7 +73,7 @@ const SetUp = (props) => {
             <FontAwesomeIcon icon={faChevronRight} color='#707070' size={16} />
           </View>
         </TouchableWithoutFeedback>
-      </View>
+      </View> */}
 
 
     </SafeAreaView>

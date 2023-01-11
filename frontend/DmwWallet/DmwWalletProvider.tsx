@@ -24,7 +24,7 @@ const DmwWalletProvider = ({ children }) => {
   const [dmwChainId, setDmwChainId] = useState(137);
   const [dmwTransactionMap, setDmwTransactionMap] = useState({});
   const [dmwTransactionList, setDmwTransactionList] = useState([]);
-  const { globalError, setGlobalError } = useDmwWeb3();
+  const { globalError, setGlobalError,throwTxError } = useDmwWeb3();
   const web3 = new Web3();
 
   const verifySecretKey = (
@@ -209,7 +209,9 @@ const DmwWalletProvider = ({ children }) => {
     const mnemonic = await loadMnemonicFromStorage(originSecretKey);
     await addMnemonic(newSecretKey, mnemonic);
 
-    let currentWalletList = await getWalletListFromAccountStorage(originSecretKey);
+    let currentWalletList = await getWalletListFromAccountStorage(
+      originSecretKey
+    );
 
     try {
       console.log("new wallet to add:", currentWalletList);
@@ -222,12 +224,12 @@ const DmwWalletProvider = ({ children }) => {
       await AsyncStorage.setItem(
         "@dmw_wallet_list_storage",
         JSON.stringify(currentWalletList)
-      )
+      );
 
-      return true
+      return true;
     } catch (e) {
       console.log("error on add wallet to storage", e);
-      return false
+      return false;
       // saving error
     }
   };
@@ -244,9 +246,11 @@ const DmwWalletProvider = ({ children }) => {
       value: web3.utils.toWei(value, "ether"), // Optional
       // gasPrice: "34544552563",
     };
-    dmwSendTransaction(tx, secretKey)
-      .then((hash) => console.log("hash!!!", hash))
-      .catch((error) => console.log("!!!", error));
+    return dmwSendTransaction(tx, secretKey)
+      .then((res) => {
+        return res;
+      })
+      .catch((error) => throwTxError(error));
   };
 
   const dmwTransferERC20 = (
@@ -270,9 +274,11 @@ const DmwWalletProvider = ({ children }) => {
       value: web3.utils.toWei("0", "ether"), // Optional
       // nonce: "0x0114", // Optional
     };
-    dmwSendTransaction(tx, secretKey)
-      .then((hash) => console.log("hash!!!", hash))
-      .catch((error) => console.log("!!!", error));
+    return dmwSendTransaction(tx, secretKey)
+      .then((res) => {
+        return res;
+      })
+      .catch((error) => throwTxError(error));
   };
 
   const dmwTransferToken = (
@@ -283,8 +289,14 @@ const DmwWalletProvider = ({ children }) => {
     decimal: number = null
   ) => {
     contract
-      ? dmwTransferERC20(secretKey, contract, to, amount, decimal)
-      : dmwTransferNavtive(secretKey, to, amount);
+      ? dmwTransferERC20(secretKey, contract, to, amount, decimal).then(
+          (res) => {
+            return res;
+          }
+        )
+      : dmwTransferNavtive(secretKey, to, amount).then((res) => {
+          return res;
+        });
   };
 
   const dmwMintWithSignature = async (
@@ -309,9 +321,11 @@ const DmwWalletProvider = ({ children }) => {
       value: web3.utils.toWei("0", "ether"), // Optional
       // nonce: "0x0114", // Optional
     };
-    dmwSendTransaction(tx, secretKey)
-      .then((hash) => console.log("hash!!!", JSON.stringify(hash)))
-      .catch((error) => console.log("!!!", error));
+    return dmwSendTransaction(tx, secretKey)
+      .then((res) => {
+        return res;
+      })
+      .catch((error) => throwTxError(error));
   };
 
   const dmwBuyNFT = async (
@@ -348,9 +362,11 @@ const DmwWalletProvider = ({ children }) => {
     };
     console.log(tx);
     // Send transaction
-    dmwSendTransaction(tx, secretKey)
-      .then((hash) => console.log("hash!!!", JSON.stringify(hash)))
-      .catch((error) => console.log("!!!", error));
+    return dmwSendTransaction(tx, secretKey)
+      .then((res) => {
+        return res;
+      })
+      .catch((error) => throwTxError(error));
   };
 
   const dmwSendTransaction = async (
@@ -358,12 +374,8 @@ const DmwWalletProvider = ({ children }) => {
     privateKey: string
   ) => {
     web3.eth.setProvider(getProvider(dmwChainId));
-    // const walletList = await getWalletListFromAccountStorage(secretKey)
-    // const privateKey = walletList.walletDict[currentDmwWallet].privateKey
-    // console.log(privateKey)
     const gas = await web3.eth.estimateGas(tx);
     tx["gas"] = gas;
-    // tx["gasPrice"] = web3.utils.toHex(web3.utils.toWei('70','Gwei'))
 
     const signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
     const hash = signedTx.transactionHash;
@@ -417,9 +429,11 @@ const DmwWalletProvider = ({ children }) => {
       value: web3.utils.toWei("0", "ether"), // Optional
       // nonce: "0x0114", // Optional
     };
-    dmwSendTransaction(tx, secretKey)
-      .then((hash) => console.log("hash!!!", JSON.stringify(hash)))
-      .catch((error) => console.log("!!!", error));
+    return dmwSendTransaction(tx, secretKey)
+      .then((res) => {
+        return res;
+      })
+      .catch((error) => throwTxError(error));
   };
 
   const dmwCreateListing = (
@@ -470,9 +484,11 @@ const DmwWalletProvider = ({ children }) => {
       value: web3.utils.toWei("0", "ether"), // Optional
       // nonce: "0x0114", // Optional
     };
-    dmwSendTransaction(tx, secretKey)
-      .then((hash) => console.log("hash!!!", JSON.stringify(hash)))
-      .catch((error) => console.log("!!!", error));
+    return dmwSendTransaction(tx, secretKey)
+      .then((res) => {
+        return res;
+      })
+      .catch((error) => throwTxError(error));
   };
 
   const dmwMakeOffer = async (
@@ -508,9 +524,11 @@ const DmwWalletProvider = ({ children }) => {
       value: web3.utils.toWei("0", "ether"), // Optional
       // nonce: "0x0114", // Optional
     };
-    dmwSendTransaction(tx, secretKey)
-      .then((hash) => console.log("hash!!!", JSON.stringify(hash)))
-      .catch((error) => console.log("!!!", error));
+    return dmwSendTransaction(tx, secretKey)
+      .then((res) => {
+        return res;
+      })
+      .catch((error) => throwTxError(error));
   };
 
   const dmwAcceptOffer = async (
@@ -543,9 +561,11 @@ const DmwWalletProvider = ({ children }) => {
       value: web3.utils.toWei("0", "ether"), // Optional
       // nonce: "0x0114", // Optional
     };
-    dmwSendTransaction(tx, secretKey)
-      .then((hash) => console.log("hash!!!", JSON.stringify(hash)))
-      .catch((error) => console.log("!!!", error));
+    return dmwSendTransaction(tx, secretKey)
+      .then((res) => {
+        return res;
+      })
+      .catch((error) => throwTxError(error));
   };
 
   const dmwCancelDirectListing = async (
@@ -565,9 +585,11 @@ const DmwWalletProvider = ({ children }) => {
       value: web3.utils.toWei("0", "ether"), // Optional
       // nonce: "0x0114", // Optional
     };
-    dmwSendTransaction(tx, secretKey)
-      .then((hash) => console.log("hash!!!", JSON.stringify(hash)))
-      .catch((error) => console.log("!!!", error));
+    return dmwSendTransaction(tx, secretKey)
+      .then((res) => {
+        return res;
+      })
+      .catch((error) => throwTxError(error));
   };
 
   const dmwErc20Approve = (
@@ -591,10 +613,10 @@ const DmwWalletProvider = ({ children }) => {
       // nonce: "0x0114", // Optional
     };
     return dmwSendTransaction(tx, secretKey)
-      .then((hash) => {
-        return hash;
+      .then((res) => {
+        return res;
       })
-      .catch((error) => console.log("!!!", error));
+      .catch((error) => throwTxError(error));
   };
 
   const dmwTransfer721NFT = (
@@ -618,9 +640,11 @@ const DmwWalletProvider = ({ children }) => {
       // nonce: "0x0114", // Optional
     };
 
-    dmwSendTransaction(tx, secretKey)
-      .then((hash) => console.log("hash!!!", JSON.stringify(hash)))
-      .catch((error) => console.log("!!!", error));
+    return dmwSendTransaction(tx, secretKey)
+      .then((res) => {
+        return res;
+      })
+      .catch((error) => throwTxError(error));
   };
 
   const dmwTransfer1155NFT = (
@@ -645,9 +669,11 @@ const DmwWalletProvider = ({ children }) => {
       // nonce: "0x0114", // Optional
     };
 
-    dmwSendTransaction(tx, secretKey)
-      .then((hash) => console.log("hash!!!", JSON.stringify(hash)))
-      .catch((error) => console.log("!!!", error));
+    return dmwSendTransaction(tx, secretKey)
+      .then((res) => {
+        return res;
+      })
+      .catch((error) => throwTxError(error));
   };
 
   useEffect(() => {
@@ -719,7 +745,7 @@ const DmwWalletProvider = ({ children }) => {
         dmwTransfer1155NFT,
         addMnemonic,
         dmwTransferToken,
-        changeSecretKey
+        changeSecretKey,
       }}
     >
       {children}

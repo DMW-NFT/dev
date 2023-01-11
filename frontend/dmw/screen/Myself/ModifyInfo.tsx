@@ -34,7 +34,7 @@ const ModifyInfo = (props) => {
   const [message, setMessage] = useState("温馨提示");
   const { username, setUsername } = useDmwLogin();
   const { avatarUrl, setAvatarUrl } = useDmwLogin();
-  const { post, formData } = useDmwApi()
+  const { post, formData,Toast } = useDmwApi()
 
   const sava = () => {
     let data = { nickname: username };
@@ -61,6 +61,9 @@ const ModifyInfo = (props) => {
         console.log(res, "上传");
         if (res.code == 200) {
           getUserInfo();
+        }else{
+          Toast("Error:"+res.message)
+          console.log(res)
         }
       });
     } catch (err) {
@@ -135,9 +138,9 @@ const ModifyInfo = (props) => {
                        
                     </TouchableWithoutFeedback> */}
         <TextInput
-          maxLength={6}
+          maxLength={16}
           placeholder={t("请输入昵称")}
-          keyboardType="decimal-pad"
+          keyboardType="ascii-capable"
           style={[styles.input]}
           onChangeText={(e) => setUsername(e)}
           value={username}

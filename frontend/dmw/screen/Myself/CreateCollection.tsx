@@ -125,10 +125,14 @@ const TransferredIntoCollection = (props) => {
       !nativeBalance ||
       nativeBalance == 0 ||
       nativeBalance <
-        Number(Web3.utils.fromWei(
-          String(Number(GasMap["mintWithSignature"]) * Number(currentGasPrice)),
-          "ether"
-        ))
+        Number(
+          Web3.utils.fromWei(
+            String(
+              Number(GasMap["mintWithSignature"]) * Number(currentGasPrice)
+            ),
+            "ether"
+          )
+        )
     ) {
       Toast(t("余额不足"));
       return null;
@@ -610,56 +614,55 @@ const TransferredIntoCollection = (props) => {
                     </View> : null
                 } */}
             </View>
-            {WalletInUse == 1 ? (
-              <View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginBottom: 20,
-                  }}
-                >
-                  <Text style={{ fontSize: 12, color: "#999999" }}>
-                    {t("上链费")}：
+
+            <View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginBottom: 20,
+                }}
+              >
+                <Text style={{ fontSize: 12, color: "#999999" }}>
+                  {t("上链费")}：
+                </Text>
+                {currentGasPrice ? (
+                  <Text style={{ fontSize: 16, color: "#897EF8" }}>
+                    {Web3.utils
+                      .fromWei(
+                        String(
+                          Number(GasMap["mintWithSignature"]) *
+                            Number(currentGasPrice)
+                        ),
+                        "ether"
+                      )
+                      .slice(0, 8)}{" "}
+                    {chainIdmap[currentChainId].nativeToken}
                   </Text>
-                  {currentGasPrice ? (
-                    <Text style={{ fontSize: 16, color: "#897EF8" }}>
-                      {Web3.utils
-                        .fromWei(
-                          String(
-                            Number(GasMap["mintWithSignature"]) *
-                              Number(currentGasPrice)
-                          ),
-                          "ether"
-                        )
-                        .slice(0, 8)}{" "}
-                      {chainIdmap[currentChainId].nativeToken}
-                    </Text>
-                  ) : (
-                    <Text style={{ fontSize: 16, color: "#897EF8" }}>---</Text>
-                  )}
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginBottom: 20,
-                  }}
-                >
-                  <Text style={{ fontSize: 12, color: "#999999" }}>
-                    {t("余额")}
-                  </Text>
-                  {nativeBalance ? (
-                    <Text style={{ fontSize: 16, color: "#897EF8" }}>
-                      {String(nativeBalance).slice(0, 8)}{" "}
-                      {chainIdmap[currentChainId].nativeToken}
-                    </Text>
-                  ) : (
-                    <Text style={{ fontSize: 16, color: "#897EF8" }}>---</Text>
-                  )}
-                </View>
+                ) : (
+                  <Text style={{ fontSize: 16, color: "#897EF8" }}>---</Text>
+                )}
               </View>
-            ) : null}
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginBottom: 20,
+                }}
+              >
+                <Text style={{ fontSize: 12, color: "#999999" }}>
+                  {t("余额")}
+                </Text>
+                {nativeBalance ? (
+                  <Text style={{ fontSize: 16, color: "#897EF8" }}>
+                    {String(nativeBalance).slice(0, 8)}{" "}
+                    {chainIdmap[currentChainId].nativeToken}
+                  </Text>
+                ) : (
+                  <Text style={{ fontSize: 16, color: "#897EF8" }}>---</Text>
+                )}
+              </View>
+            </View>
           </ScrollView>
 
           {!uploadLoading ? (
