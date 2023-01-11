@@ -8,7 +8,7 @@ const DmwLoginProvider = ({ children }) => {
   const [isLogin, setIsLogin] = useState(true); //登录状态
   const [username, setUsername] = useState(t("用户昵称")); //用户名
   const [avatarUrl, setAvatarUrl] = useState(); //用户名
-  const [WalletInUse, setWalletInUse] = useState(1)
+  const [WalletInUse, setWalletInUse] = useState(null)
   const [language, setlanguage] = useState('jp')
   const { connected,currentWallet } = useDmwWeb3()
   const { dmwWalletList } = useDmwWallet()
@@ -29,15 +29,6 @@ const DmwLoginProvider = ({ children }) => {
   useEffect(() => {
     console.log("someone call login");
   }, [isLogin]);
-
-  useEffect(() => {
-    connected ? null : setWalletInUse(1)
-
-  }, [])
-
-  useEffect(() => {
-    connected ? null : setWalletInUse(1)
-  }, [connected])
 
   
   useEffect(() => {

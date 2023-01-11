@@ -2,6 +2,7 @@ import { Card, Modal, Datepicker, Drawer, DrawerGroup, DrawerItem } from '@ui-ki
 import { Text, Image, StyleSheet, View, SafeAreaView, ScrollView, InteractionManager, TouchableWithoutFeedback, FlatList, TextInput, Keyboard } from 'react-native'
 import React, { useState, useContext, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { verify } from 'crypto';
 
 
 export default function VerfiySecretModal(props) {
@@ -16,7 +17,7 @@ export default function VerfiySecretModal(props) {
             inputRefX.current.focus();
         }, 100)
 
-        console.log("open keyboard")
+        console.log("open keyboard",props.verifyType)
         // empty();
     }
 
@@ -62,7 +63,9 @@ export default function VerfiySecretModal(props) {
 
                 </View>
                 <View>
-                    <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{t("请输入支付密码")}</Text>
+                    {props.verifyType==null&&<Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{t("请输入支付密码")}</Text>}
+                    {props.verifyType==1&&<Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{t("请输入原支付密码")}</Text>}
+                    {props.verifyType==2&&<Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{t("请输入新支付密码")}</Text>}
                     <TouchableWithoutFeedback onPress={() => { openPassWordModal() }}>
                         <View style={{ height: 48, flexDirection: 'row', justifyContent: 'space-between', }} >
                             {

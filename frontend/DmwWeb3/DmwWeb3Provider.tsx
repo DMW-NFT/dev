@@ -64,7 +64,7 @@ const DmwWeb3Provider = ({ children }) => {
   const updateGasPrice = () => {
     web3.eth.setProvider(getProvider(currentChainId));
     web3.eth.getGasPrice().then((gasPrice) => {
-      console.log(`chain:${currentChainId} current gas price==>${gasPrice}`);
+      // console.log(`chain:${currentChainId} current gas price==>${gasPrice}`);
       setCurrentGasPrice(gasPrice);
     });
   };

@@ -54,6 +54,7 @@ export default function TxProccessingModal(props) {
                 // Toast(t('创建成功！'))
                 setScreenLoding(false)
                 setCurrentState("confirmed")
+                props.setTxHash&&props.setTxHash(dmwlatestHash)
                 setTimeout(() => {
                     setModalVisible(false)
                 }, 5000)
@@ -100,6 +101,7 @@ export default function TxProccessingModal(props) {
                     setModalVisible(false)
                 }, 5000)
                 setCurrentState("confirmed")
+                props.setTxHash&&props.setTxHash(latestHash)
 
             } else if (transactionMap[latestHash].state == "reversed") {
                 setScreenLoding(false)

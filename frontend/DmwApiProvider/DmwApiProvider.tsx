@@ -7,8 +7,9 @@ import storage from "../dmw/Storage/storage";
 import { useTranslation } from "react-i18next";
 import { useDmwWallet } from "../DmwWallet/DmwWalletProvider";
 import { useDmwWeb3 } from "../DmwWeb3/DmwWeb3Provider";
+import { Wallet } from "ethers";
 const DmwApiProvider = ({ children }) => {
-  const { logOut, language, setlanguage, setWalletInUse } = useDmwLogin();
+  const { logOut, language, setlanguage, setWalletInUse,WalletInUse,isLogin } = useDmwLogin();
   const { connected, currentWallet } = useDmwWeb3();
   const { dmwWalletList } = useDmwWallet();
 
@@ -223,7 +224,8 @@ const DmwApiProvider = ({ children }) => {
     if (currentWallet&&dmwWalletList[0]){
       Switchwallet(1)
     }
-  },[currentWallet,dmwWalletList,connected])
+
+  },[currentWallet,dmwWalletList,connected,isLogin])
 
   return (
     <DmwApiContext.Provider

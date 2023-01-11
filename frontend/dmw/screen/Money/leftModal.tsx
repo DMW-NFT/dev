@@ -13,16 +13,26 @@ import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
-import { useTranslation } from 'react-i18next'
+import VerfiySecretModal from "../../Components/VerfiySecretModal";
+import { useTranslation } from "react-i18next";
 const scale = Dimensions.get("window").scale;
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const Lmodal = (props) => {
   const { t, i18n } = useTranslation();
-  const { Toast } = useDmwApi()
-  const { WalletInUse } = useDmwLogin()
-  const { dmwWalletList } = useDmwWallet();
+  const { Toast } = useDmwApi();
+  const { WalletInUse } = useDmwLogin();
+  const {
+    dmwWalletList,
+    getWalletListFromAccountStorage,
+    changeSecretKey,
+  } = useDmwWallet();
+  const [vfModalVisible, setVfModalVisible] = useState(false);
+  const [password, setPassword] = useState("");
+  const [originPassword, setOriginPassword] = useState("");
+  const [changePwdStep, setChangePwdStep] = useState(1);
+
   const close = () => {
     props.close();
   };
@@ -31,14 +41,49 @@ const Lmodal = (props) => {
   };
   const FNZ = () => {
     if (WalletInUse == 1 && dmwWalletList && dmwWalletList[0]) {
-      props.openModal()
+      props.openModal();
     } else {
       // props.navigation.navigate("Exchange");
-      Toast('请先导入助记词或登录DMW！')
+      Toast("请先导入助记词或登录DMW！");
     }
-  }
+  };
 
-  const { disconnectWallet, connectWallet } = useDmwWeb3()
+  const { disconnectWallet, connectWallet } = useDmwWeb3();
+
+  useEffect(() => {
+    if (changePwdStep == 1 && Array.from(password).length == 6) {
+      getWalletListFromAccountStorage(password).then((res) => {
+        if (res) {
+          console.log(res.walletDict);
+          setOriginPassword(password);
+
+          setVfModalVisible(false);
+          setVfModalVisible(true);
+          setChangePwdStep(2);
+        } else {
+          Toast(t("密码错误"));
+        }
+      });
+    }
+
+    if (changePwdStep == 2 && Array.from(password).length == 6) {
+      originPassword &&
+        changeSecretKey(originPassword, password).then((res) => {
+          console.log("change pwd:", res);
+          if (res) {
+            Toast(t("修改成功"));
+            setVfModalVisible(false);
+          } else {
+            Toast(t("修改失败"));
+          }
+        });
+
+      setOriginPassword("");
+
+      setChangePwdStep(1);
+    }
+    setPassword("");
+  }, [password]);
 
   return (
     <View style={{ position: "absolute" }}>
@@ -87,8 +132,7 @@ const Lmodal = (props) => {
             </View>
           </TouchableWithoutFeedback>
 
-
-          <TouchableWithoutFeedback onPress={() => cilck('importWord')}>
+          <TouchableWithoutFeedback onPress={() => cilck("importWord")}>
             <View style={styles.listBox}>
               <Image
                 style={styles.Limg}
@@ -98,9 +142,11 @@ const Lmodal = (props) => {
             </View>
           </TouchableWithoutFeedback>
 
-
-
-          <TouchableWithoutFeedback>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              setVfModalVisible(true);
+            }}
+          >
             <View style={styles.listBox}>
               <Image
                 style={styles.Limg}
@@ -110,8 +156,11 @@ const Lmodal = (props) => {
             </View>
           </TouchableWithoutFeedback>
 
-
-          <TouchableWithoutFeedback onPress={() => { connectWallet() }}>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              connectWallet();
+            }}
+          >
             <View style={styles.listBox}>
               <Image
                 style={styles.Limg}
@@ -121,8 +170,7 @@ const Lmodal = (props) => {
             </View>
           </TouchableWithoutFeedback>
 
-
-          <TouchableWithoutFeedback onPress={() => cilck('Privatekeyimport')}>
+          <TouchableWithoutFeedback onPress={() => cilck("Privatekeyimport")}>
             <View style={styles.listBox}>
               <Image
                 style={styles.Limg}
@@ -131,8 +179,6 @@ const Lmodal = (props) => {
               <Text>{t("从私钥导入钱包")}</Text>
             </View>
           </TouchableWithoutFeedback>
-
-
 
           {/* <TouchableWithoutFeedback onPress={() => cilck('TermsOfService')}>
             <View style={styles.listBox}>
@@ -145,6 +191,14 @@ const Lmodal = (props) => {
           </TouchableWithoutFeedback> */}
         </View>
       ) : null}
+      {vfModalVisible && (
+        <VerfiySecretModal
+          setModalVisible={setVfModalVisible}
+          modalVisible={vfModalVisible}
+          setPassword={setPassword}
+          verifyType={changePwdStep}
+        />
+      )}
     </View>
   );
 };
@@ -155,7 +209,7 @@ const styles = StyleSheet.create({
   listBox: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20
+    marginBottom: 20,
   },
   Limg: {
     width: 24,
@@ -163,7 +217,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   black: {
-    width: screenWidth *5,
+    width: screenWidth * 5,
     height: screenHeight,
     backgroundColor: "rgba(0,0,0,0.5)",
     zIndex: 9,

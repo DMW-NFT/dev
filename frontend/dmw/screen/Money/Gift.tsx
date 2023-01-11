@@ -30,6 +30,7 @@ const Gift = (props) => {
     const [password, setPassword] = useState('')
     const [vfModalVisible, setVfModalVisible] = useState(false)
     const [txModalVisible, setTxModalVisible] = useState(false)
+    const [txHash,setTxHash]=useState('')
     useEffect(() => {
         console.log(props.route.params, '传参');
         setBalanceData(props.route.params);
@@ -187,7 +188,7 @@ const Gift = (props) => {
             <Text style={styles.btn} onPress={() => sendout()}>{t("发送")}</Text>
 
             {vfModalVisible && <VerfiySecretModal setModalVisible={setVfModalVisible} modalVisible={vfModalVisible} setPassword={setPassword} />}
-            {txModalVisible && <TxProccessingModal setModalVisible={setTxModalVisible} modalVisible={txModalVisible} />}
+            {txModalVisible && <TxProccessingModal setModalVisible={setTxModalVisible} modalVisible={txModalVisible} setTxHash = {setTxHash} />}
         </SafeAreaView>
     );
 }

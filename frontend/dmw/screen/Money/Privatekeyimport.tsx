@@ -14,12 +14,13 @@ const screenWidth = Dimensions.get("window").width;
 import { useTranslation } from "react-i18next";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import Web3 from "web3";
+import { ScrollView } from "react-native-gesture-handler";
 const Privatekeyimport = (props) => {
   const web3 = new Web3();
   const { addWalletToAccountStorage } = useDmwWallet();
   const { t, i18n } = useTranslation();
   const { Toast, Copy } = useDmwApi();
-  const [secureTextEntry, setsecureTextEntry] = useState(false);
+  const [secureTextEntry, setsecureTextEntry] = useState(true);
 
   const [word, setword] = useState("");
   const [password, setpassword] = useState("");
@@ -43,10 +44,10 @@ const Privatekeyimport = (props) => {
       if (isValidPrivateKey(word)) {
         const newAccount = web3.eth.accounts.privateKeyToAccount(word);
         // console.log(newAccount);
-        addWalletToAccountStorage(newAccount.privateKey,password)
-        Toast(t('导入成功'))
+        addWalletToAccountStorage(newAccount.privateKey, password);
+        Toast(t("导入成功"));
         setTimeout(() => {
-            props.navigation.popToTop() 
+          props.navigation.popToTop();
         }, 1000);
       } else {
         Toast(t("私钥验证不通过，请检查后重试"));
@@ -55,94 +56,98 @@ const Privatekeyimport = (props) => {
   };
   return (
     <SafeAreaView style={styles.box}>
-      <View style={{ paddingLeft: 20, paddingRight: 20 }}>
-        <Image
-          style={styles.daoruimg}
-          source={require("../../assets/img/money/daorusiyao.png")}
-        ></Image>
-        <Text style={styles.title}>{t("导入账户")}</Text>
-        <Text style={styles.text}>
-          {t("导入的钱包可在【钱包】中查看，但无法通过DMW助记词找回")}
-        </Text>
-      </View>
-      <View style={styles.twoBox}>
-        <Text style={styles.Ttitle}>{t("粘贴您的私钥字符串")}</Text>
-        <TextInput
-          multiline={true}
-          textAlignVertical="top"
-          numberOfLines={5}
-          maxLength={100}
-          secureTextEntry={secureTextEntry}
-          placeholder={t("例如")+t("4d56sd46sd445d6s4d6544d56s4d656d4s65465")}
-          keyboardType="decimal-pad"
-          style={{
-            borderStyle: "dotted", // 虚线 效果
-            borderWidth: 1, //虚线 线宽
-            borderColor: "#e8e8e8", // 虚线颜色
-            borderRadius: 10,
-            padding: 20,
-          }}
-          onChangeText={(e) => {
-            setword(e);
-          }}
-          value={word}
-        />
-        <View style={{ marginTop: 40 }}>
-          <View
+      <ScrollView>
+        <View style={{ paddingLeft: 20, paddingRight: 20 }}>
+          <Image
+            style={styles.daoruimg}
+            source={require("../../assets/img/money/daorusiyao.png")}
+          ></Image>
+          <Text style={styles.title}>{t("导入账户")}</Text>
+          <Text style={styles.text}>
+            {t("导入的钱包可在【钱包】中查看，但无法通过DMW助记词找回")}
+          </Text>
+        </View>
+        <View style={styles.twoBox}>
+          <Text style={styles.Ttitle}>{t("粘贴您的私钥字符串")}</Text>
+          <TextInput
+            multiline={true}
+            textAlignVertical="top"
+            numberOfLines={5}
+            maxLength={100}
+            // secureTextEntry={secureTextEntry}
+            placeholder={
+              t("例如") + t("4d56sd46sd445d6s4d6544d56s4d656d4s65465")
+            }
+            keyboardType="decimal-pad"
             style={{
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexDirection: "row",
+              borderStyle: "dotted", // 虚线 效果
+              borderWidth: 1, //虚线 线宽
+              borderColor: "#e8e8e8", // 虚线颜色
+              borderRadius: 10,
+              padding: 20,
             }}
-          >
-            <Text>{t("新密码")}</Text>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                setsecureTextEntry(!secureTextEntry);
+            onChangeText={(e) => {
+              setword(e);
+            }}
+            value={word}
+          />
+          <View style={{ marginTop: 40 }}>
+            <View
+              style={{
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexDirection: "row",
               }}
             >
-              {secureTextEntry ? (
-                <Image
-                  style={[styles.imageshow]}
-                  source={require("../../assets/img/login/nopass.png")}
-                ></Image>
-              ) : (
-                <Image
-                  style={[styles.imageshow]}
-                  source={require("../../assets/img/login/showpass.png")}
-                ></Image>
-              )}
-            </TouchableWithoutFeedback>
+              <Text>{t("新密码")}</Text>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setsecureTextEntry(!secureTextEntry);
+                }}
+              >
+                {secureTextEntry ? (
+                  <Image
+                    style={[styles.imageshow]}
+                    source={require("../../assets/img/login/nopass.png")}
+                  ></Image>
+                ) : (
+                  <Image
+                    style={[styles.imageshow]}
+                    source={require("../../assets/img/login/showpass.png")}
+                  ></Image>
+                )}
+              </TouchableWithoutFeedback>
+            </View>
+            <TextInput
+              maxLength={6}
+              secureTextEntry={secureTextEntry}
+              placeholder={t("新密码")}
+              keyboardType="decimal-pad"
+              style={[styles.input]}
+              onChangeText={(e) => {
+                setpassword(e);
+              }}
+              value={password}
+            />
+            <Text>{t("确认密码")}</Text>
+            <TextInput
+              maxLength={6}
+              secureTextEntry={secureTextEntry}
+              placeholder={t("确认密码")}
+              keyboardType="decimal-pad"
+              style={[styles.input]}
+              onChangeText={(e) => {
+                setpassword1(e);
+              }}
+              value={password1}
+            />
           </View>
-          <TextInput
-            maxLength={6}
-            secureTextEntry={secureTextEntry}
-            placeholder={t("新密码")}
-            keyboardType="decimal-pad"
-            style={[styles.input]}
-            onChangeText={(e) => {
-              setpassword(e);
-            }}
-            value={password}
-          />
-          <Text>{t("确认密码")}</Text>
-          <TextInput
-            maxLength={6}
-            secureTextEntry={secureTextEntry}
-            placeholder={t("确认密码")}
-            keyboardType="decimal-pad"
-            style={[styles.input]}
-            onChangeText={(e) => {
-              setpassword1(e);
-            }}
-            value={password1}
-          />
         </View>
-      </View>
 
-      <Text style={styles.btn} onPress={() => introduce()}>
-        导入
-      </Text>
+        <Text style={styles.btn} onPress={() => introduce()}>
+          导入
+        </Text>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -193,8 +198,9 @@ const styles = StyleSheet.create({
     marginRight: 20,
     marginLeft: 20,
     borderRadius: 50,
-    position: "absolute",
+    // position: "absolute",
     bottom: 14,
+    marginTop:30
   },
   input: {
     height: 48,
