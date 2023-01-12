@@ -53,6 +53,10 @@ const Home = (props) => {
       setListTtpe(res.data)
     })
   }
+  useEffect(() => {
+    geNftList(1, 1)
+    geNftList(2, 1)
+  }, [props])
 
   useEffect(() => {
     console.log(language, '切换语言');
@@ -88,12 +92,11 @@ const Home = (props) => {
 
   useEffect(() => {
     setTimeout(() => {
-      setLoding(false)
+      setrefreshing(false)
     }, 2000);
   }, [NftList, blindlist])
 
   const geNftList = (type, page) => {
-    setLoding(true)
     let params = { type: type || 1, page: page || 1, limit: 4 }
 
     let nftDataObj = formData(params)
@@ -106,13 +109,17 @@ const Home = (props) => {
         } else {
           setNftList([...NftList, ...res.data.data])
         }
+        setrefreshing(false)
       } else {
         if (page == 1) {
           setblindlist([...res.data.data])
         } else {
           setblindlist([...blindlist, ...res.data.data])
         }
+        setrefreshing(false)
       }
+
+
       setlast_page(res.data.last_page)
       // console.log(last_page, 'last_page');
     })
@@ -120,32 +127,43 @@ const Home = (props) => {
 
 
   const paging = (typename) => {
-    setpage(1)
+    // setpage(1)
     setTypename(typename)
-    if (typename == 'nft' && !NftList.length) {
-      setNftList([])
-      geNftList(1, 1)
-    } else if (typename != 'nft' && !blindlist.length) {
-      setblindlist([])
-      geNftList(2, 1)
-    }
+    // if (typename == 'nft' && !NftList.length) {
+    //   setNftList([])
+    //   geNftList(1, 1)
+    // } else if (typename != 'nft' && !blindlist.length) {
+    //   setblindlist([])
+    //   geNftList(2, 1)
+    // }
   }
   const getList = () => {
     console.log('触底');
     console.log(page);
-
+    setrefreshing(true)
     let pageNumber
     if (last_page) {
       pageNumber = page + 1
       console.log(last_page);
 
       if (pageNumber > last_page) {
+        setrefreshing(false)
       } else {
         setpage(page + 1)
       }
 
     }
 
+  }
+  // 下拉刷新
+  const Refresh = () => {
+    setpage(1)
+    setrefreshing(true)
+    if (typename == 'nft') {
+      geNftList(1, 1)
+    } else if (typename != 'nft') {
+      geNftList(2, 1)
+    }
   }
 
   useEffect(() => {
@@ -185,10 +203,10 @@ const Home = (props) => {
                     source={require('../../assets/img/allIconAndlImage/3571.png')}></Image>
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback onPress={() => { props.navigation.navigate('MessageCenter') }}>
-                <Image
-                  style={[styles.top_img, { marginLeft: 30 }]}
-                  source={require('../../assets/img/allIconAndlImage/3572.png')}></Image>
-                  </TouchableWithoutFeedback> 
+                  <Image
+                    style={[styles.top_img, { marginLeft: 30 }]}
+                    source={require('../../assets/img/allIconAndlImage/3572.png')}></Image>
+                </TouchableWithoutFeedback>
               </View>
             </View>
             {/* title -- end */}
@@ -266,8 +284,8 @@ const Home = (props) => {
                                     onMomentumScrollEnd={() => {onEnableScroll(true);}} */}
 
         {
-          !loading ? <FlatList
-            showsVerticalScrollIndicator={false}
+          <FlatList
+
             refreshing={refreshing}
             style={{ flex: 1 }}
             ListEmptyComponent={() => {
@@ -283,7 +301,7 @@ const Home = (props) => {
               return <List list={item} type={1} navigatetoDetail={(id, unique_id, contract_address, token_id, network) => { props.navigation.navigate('goodsDetail', { id: id, unique_id, contract_address, token_id, network }) }}
               />
             }}
-            keyExtractor={(item, index) => item.id}
+            keyExtractor={(item, index) => index.toString()}
             ListFooterComponent={() => {
               // 声明尾部组件
               return NftList.length ? <Text style={{ textAlign: 'center', marginVertical: 20 }}>{t("没有更多了")}</Text> : null
@@ -291,10 +309,9 @@ const Home = (props) => {
             // 下刷新
             onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
             onEndReached={getList}
+            onRefresh={Refresh}
           >
-          </FlatList> : <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: '40%' }}>
-            <Spinner />
-          </View>
+          </FlatList>
 
         }
 
@@ -420,7 +437,7 @@ const styles = StyleSheet.create({
     width: screenWidth - 40,
     height: 140,
     resizeMode: 'stretch',
-    borderRadius:10
+    borderRadius: 10
   },
   line: {
     borderColor: '#CCCCCC',
