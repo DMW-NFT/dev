@@ -1,0 +1,24 @@
+[
+  {
+    "title": {
+      "name": "状态",
+      "value": "collection_status",
+      "multi_select": 0
+    },
+    "tabs": [
+      { "name": "售卖中", "value": 1 },
+      { "name": "拍卖中", "value": 2 },
+      { "name": "有出价", "value": 3 }
+    ]
+  },
+  {
+    "title": { "name": "排序", "value": "collection_sort", "multi_select": 0 },
+    "tabs": [
+      { "name": "最新上市", "value": 1 },
+      { "name": "最多浏览", "value": 2 },
+      { "name": "最早发布", "value": 3 },
+      { "name": "价格从高到低", "value": 4 },
+      { "name": "价格从低到高", "value": 5 }
+    ]
+  }
+]

@@ -15,7 +15,7 @@ import {
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Spinner } from '@ui-kitten/components';
-import { Card, Layout, Modal } from '@ui-kitten/components';
+import { Card, Layout } from '@ui-kitten/components';
 import { Surface } from 'react-native-paper';
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";

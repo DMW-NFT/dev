@@ -1,10 +1,11 @@
 import { Text, StyleSheet, ScrollView, SafeAreaView, View, StatusBar, ImageBackground, Image, Dimensions, FlatList } from 'react-native'
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect, Suspense } from 'react'
 import Screen from '../../Components/screen';
 import Search from '../../Components/Searchbox';
 import List from '../../Components/List';
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { useTranslation } from 'react-i18next'
+import { Modal } from 'react-native-paper'
 const data = [
     {
         typename: 'Status',
@@ -40,22 +41,52 @@ const CollectionDetails = (props) => {
     const [NftTotal, setNftTotal] = useState(0) //合集详情nft列表总数量
     const [ActivityList, setActivityList] = useState([{}])//合集详情 -- 活动列表
     const [DetailsInfo, setDetailsInfo] = useState({
-        banner_url: '../../assets/img/index/default.png',
-        logo_url: '../../assets/img/index/default.png',
+        banner_url: '',
+        logo_url: '',
         details: 'details',
         name: 'name',
         items: 0
     })
+
+    const [status, setstatus] = useState('Buy now')
+    const [sort, setsort] = useState('recently created')
+    const [screenData, setscreenData] = useState([])
+    const [selListParams, setselListParams] = useState({})
     useEffect(() => {
         getDetails()
+        post("/index/common/get_filter", formData({ type: 'collection' })).then(res => {
+            // console.log(JSON.stringify(res.data), '筛选条件');
+            let a = {}
+            setscreenData(res.data)
+            res.data.map(item => {
+                a[item.title.value] = ''
+            })
+            setselListParams(a)
+        })
     }, [props])
+
+    useEffect(() => {
+        console.log(selListParams, 'selListParams监听');
+    }, [selListParams])
+    useEffect(() => {
+        console.log(strText, 'strText');
+
+        getList(1, 1)
+    }, [strText])
+
+    useEffect(() => {
+        // console.log(list.length, 'list.length--', list);
+    }, [list])
+
 
 
     const getDetails = () => {
         post('/index/collection/get_collection_details', formData({ id: ID })).then(res => {
-            console.log(res.data, '合集详情');
+            // console.log(res.data, '合集详情');
             setDetailsInfo(res.data)
+            setrefreshing(true)
             getList(1)
+            getActivityList(1)
         })
     }
     const visibleFn = () => {
@@ -67,49 +98,93 @@ const CollectionDetails = (props) => {
         setlMvisible(false)
     }
     // 活动列表
-    const getActivityList = () => {
-        console.log(ID,'ID');
-        
-        post('/index/collection/get_collection_activity', formData({ id: ID })).then(res => {
-            console.log(res, '活动列表');
+    // type = 1 下拉刷新 
+    // type = 2 上拉加载 
+    const getActivityList = (page, type = 1) => {
+        // console.log(ID, 'ID');
+        post('/index/collection/get_collection_activity', formData({ page: page || 1, id: ID })).then(res => {
+            // console.log(res, '活动列表');
             setActivityList(res.data.data)
             setActivityTotal(res.data.total)
         })
-    } 
+    }
     // nft列表
-    const getList = (page) => {
-        post('/index/collection/get_collection_nft_by_search', formData({ collection_id: ID,limit:4,page:page?page:1, })).then(res => {
-            console.log(res, '合集nft');
-            let ar = [...list,...res.data.data]
-            setlist(Array.from(new Set(ar)))
+    // type = 1 下拉刷新 
+    // type = 2 上拉加载 
+    const getList = (page, type = 1) => {
+        setrefreshing(true)
+        let params = formData({ collection_id: ID, limit: 4, page: page ? page : 1, ...selListParams, keyword: strText })
+        console.log(params, 'params');
+
+        post('/index/collection/get_collection_nft_by_search', params).then(res => {
+            // console.log(res, '合集nft');
+            // console.log(list.length, res.data.data.length);
+            let ar = []
+            if (type == 1) {
+                ar = [...res.data.data]
+            } else {
+                ar = [...list, ...res.data.data]
+            }
+            // let list1 = Array.from(...new Set(ar))
+            setlist([...ar])
             setNftTotal(res.data.total)
+            setTimeout(() => {
+                setrefreshing(false)
+            }, 1000);
         })
     }
     const Bottoming = () => {
-        console.log('nft触底');
+        // console.log('nft触底');
         if (typename == 'Items') {
-            let a = Math.trunc(list.length / 2)
-            if(NftTotal == list.length){
-            }else{
-                console.log(a+1,'page');
-                getList(a + 1)
+            let a = Math.trunc(list.length / 4)
+            if (NftTotal == list.length) {
+            } else {
+                console.log(a + 1, 'page');
+                getList(a + 1, 2)
             }
         } else {
-
+            let a = Math.trunc(ActivityList.length / 4)
+            if (ActivityTotal == ActivityList.length) {
+            } else {
+                console.log(a + 1, 'page');
+                getActivityList(a + 1, 2)
+            }
         }
 
+    }
+
+    const Refresh = () => {
+        setrefreshing(true)
+        setTimeout(() => {
+            getList(1)
+        }, 1000);
     }
     const paging = (typename) => {
         setTypename(typename)
         if (typename == 'Activity') {//获取合集活动
-            getActivityList()
+            // getActivityList()
         } else {
-            getList(1)
+            // getList(1)
         }
     }
 
+    const hideModal = () => {
+        setvisible(false)
+    }
+
+    const setParams = (a) => {
+        setselListParams(a)
+
+    }
+
+    // 提交筛选
+    const searchFn = () => {
+        setvisible(false)
+        getList(1, 1)
+    }
+
     return (
-        <SafeAreaView style={{ backgroundColor: '#fff', flex: 1 }}>
+        <SafeAreaView style={{ backgroundColor: '#fff', flex: 1, position: 'relative' }}>
             <View style={{ flex: 1 }}>
                 {/* <StatusBar barStyle="dark-content" backgroundColor="#fff" /> */}
                 <View>
@@ -119,7 +194,6 @@ const CollectionDetails = (props) => {
                     <View style={[styles.collDetailBox]}>
                         <Text style={[styles.collName]}>{DetailsInfo.name}</Text>
                         <Text style={[styles.detail]}>{DetailsInfo.details}</Text>
-
                     </View>
 
                     <View style={[styles.index_box, styles.daohang]}>
@@ -134,37 +208,41 @@ const CollectionDetails = (props) => {
                             <Search onChange={(strText) => { setstrText(strText) }} visible={() => visibleFn()}></Search> : null
                     }
                     <FlatList
-                        style={{ marginTop: 20, flex: 1 }}
-                        refreshing={refreshing}
+
+                        style={{ marginTop: 20, flex: 1, minHeight: 200 }}
                         ListEmptyComponent={() => {
-                            return typename == 'Activity' && !ActivityList.length ? <Text style={{ textAlign: 'center' }}>{t("空空如也")}</Text> :
-                                typename == 'Items' && list && list.length ? null : <Text style={{ textAlign: 'center' }}>{t("空空如也")}</Text>
+                            return typename == 'Activity' && !ActivityList.length ? <Text style={{ textAlign: 'center', height: 100 }}>{t("空空如也")}</Text> :
+                                typename == 'Items' && list && list.length ? null : <Text style={{ textAlign: 'center', height: 100 }}>{t("空空如也")}</Text>
                             // 列表为空展示改组件
                         }}
                         // 一屏幕展示几个
-                        number={10}
                         //  2列显示
+                        number={4}
                         numColumns={2}
                         data={typename == 'Activity' ? ActivityList : list}
                         renderItem={({ item }) => {
                             return typename == 'Activity' && ActivityList && ActivityList.length ?
-                                <List list={item} type={1} navigatetoDetail={(id) => { props.navigation.navigate('goodsDetail', { id: id }) }} />
+                                <List list={item} type={1} navigatetoDetail={(id, unique_id, contract_address, token_id, network) => { props.navigation.navigate('goodsDetail', { id: id, unique_id, contract_address, token_id, network }) }} />
                                 :
                                 typename == 'Items' && list && list.length ?
-                                    <List list={item} type={1} navigatetoDetail={(id) => { props.navigation.navigate('goodsDetail', { id: id }) }} />
-                                   : null
+                                    <List list={item} type={1} navigatetoDetail={(id, unique_id, contract_address, token_id, network) => { props.navigation.navigate('goodsDetail', { id: id, unique_id, contract_address, token_id, network }) }} />
+                                    : null
                         }}
-                        keyExtractor={(item, index) => index}
+                        keyExtractor={(item, index) => index.toString()}
                         ListFooterComponent={() => {
+
+                            return null
                             // 声明尾部组件  
-                            return typename == 'Activity' && ActivityList && ActivityList.length && ActivityList.length == ActivityTotal ?
-                                <Text style={{ textAlign: 'center' }}>{t("没有更多了")}</Text> :
-                                typename == 'Items' && list && list.length && list.length == NftTotal ?
-                                    <Text style={{ textAlign: 'center' }}>{t("没有更多了")}</Text> : null
+                            // return typename == 'Activity' && ActivityList && ActivityList.length && ActivityList.length == ActivityTotal ?
+                            //     <Text style={{ textAlign: 'center' }}>{t("没有更多了")}</Text> :
+                            //     typename == 'Items' && list && list.length && list.length == NftTotal ?
+                            //         <Text style={{ textAlign: 'center' }}>{t("没有更多了")}</Text> : null
                         }}
                         // 下刷新
                         onEndReachedThreshold={0.2} //表示还有10% 的时候加载onRefresh 函数
                         onEndReached={Bottoming}
+                        refreshing={refreshing}
+                        onRefresh={Refresh}
                     >
                     </FlatList>
                 </View>
@@ -175,6 +253,59 @@ const CollectionDetails = (props) => {
                 close={() => close()}
                 datalist={data}>
             </Screen> */}
+            {/* onDismiss={hideModal} contentContainerStyle={containerStyle} */}
+            <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.containerStyle}>
+                <View style={styles.ModalBOX}>
+                    <View style={styles.HlineBox}><View style={styles.Hline}></View></View>
+                    <Text style={styles.selectfilter}>Select Filter</Text>
+
+                    {
+                        screenData.map((item, idnex) => {
+                            return <View>
+                                <Text style={styles.selTitle}>{item.title.name}</Text>
+                                <View style={styles.optionBox}>
+                                    {
+                                        item['tabs'].map((jitem, jindex) => {
+
+                                            return <>
+                                                <Text onPress={() => {
+                                                    console.log(123);
+                                                    let a = { ...selListParams }
+                                                    if (a[item.title.value] == jitem.value) {
+                                                        a[item.title.value] = ''
+                                                    } else {
+                                                        a[item.title.value] = jitem.value
+                                                    }
+
+                                                    setParams(a)
+                                                }} style={selListParams[item.title.value] == jitem.value ? styles.btn_active : styles.btn_noactive}>{jitem.name}</Text>
+                                            </>
+                                        })
+                                    }
+
+                                </View>
+
+
+                                {
+                                    idnex == screenData.length - 1 ?
+                                        null : <View style={styles.btnline}></View>
+                                }
+
+
+
+
+                            </View>
+                        })
+
+                    }
+
+
+                    <View style={styles.btnlinelang}></View>
+                    <View style={styles.sureBtn}>
+                        <Text style={styles.sureBtnText} onPress={searchFn}>{t('确定')}</Text>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
 
     )
@@ -184,6 +315,112 @@ const CollectionDetails = (props) => {
 export default CollectionDetails
 
 const styles = StyleSheet.create({
+    sureBtn: {
+        height: 50,
+        backgroundColor: '#897EF8',
+        borderRadius: 50,
+        // marginBottom:49
+    },
+    sureBtnText: {
+        fontSize: 16,
+        fontWeight: '700',
+        lineHeight: 50,
+        color: '#FFFFFF',
+        textAlign: 'center'
+    },
+    btnline: {
+        // border: 1px solid #CCCCCC;
+        borderWidth: 1 / 3,
+        borderColor: '#ccc',
+        marginBottom: 20
+    },
+    btnlinelang: {
+        borderWidth: 1 / 3,
+        borderColor: '#ccc',
+        marginBottom: 20,
+        marginRight: -20,
+        marginLeft: -20
+    },
+    btn_active: {
+        color: '#fff',
+        backgroundColor: '#ACA4FA',
+        height: 34,
+        paddingRight: 15,
+        paddingLeft: 15,
+        borderColor: '#877EF0',
+        borderWidth: 1,
+        lineHeight: 34,
+        borderRadius: 20,
+        marginBottom: 15,
+        marginRight: 15,
+    },
+    btn_noactive: {
+        height: 34,
+        paddingRight: 15,
+        paddingLeft: 15,
+        borderColor: '#877EF0',
+        borderWidth: 1,
+        lineHeight: 34,
+        borderRadius: 20,
+        marginBottom: 15,
+        marginRight: 15,
+        color: '#333',
+    },
+    optionBox: {
+        flexDirection: 'row',
+        // justifyContent: 'space-between',
+        marginBottom: 20,
+        flexWrap: 'wrap'
+
+    },
+
+    selTitle: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#333',
+        fontFamily: 'Source Han Sans CN',
+        marginBottom: 20
+    },
+    ModalBOX: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#fff',
+        fontFamily: 'Source Han Sans CN',
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingBottom: 49,
+    },
+    selectfilter: {
+        fontSize: 16,
+        fontFamily: 'Source Han Sans CN',
+        fontWeight: '700',
+        color: '#333',
+        marginTop: 20,
+        textAlign: 'center',
+        marginBottom: 30
+    },
+    HlineBox: {
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
+    Hline: {
+        width: 40,
+        height: 6,
+        backgroundColor: '#E0E0E0',
+        borderRadius: 50,
+        marginTop: 6
+    },
+    containerStyle: {
+        width: '100%',
+        minheight: 885 / 2,
+        backgroundColor: '#fff',
+        borderTopRightRadius: 40,
+        borderTopLeftRadius: 40,
+        position: 'absolute',
+        bottom: 0,
+        overflow: 'hidden'
+
+    },
     daohang: {
         flexDirection: 'row',
     },
