@@ -1,24 +1,36 @@
 [
   {
-    "title": {
-      "name": "状态",
-      "value": "collection_status",
-      "multi_select": 0
-    },
+    "title": { "name": "状态", "value": "home_status", "multi_select": 0 },
     "tabs": [
       { "name": "售卖中", "value": 1 },
-      { "name": "拍卖中", "value": 2 },
-      { "name": "有出价", "value": 3 }
+      { "name": "拍卖中", "value": 2 }
     ]
   },
   {
-    "title": { "name": "排序", "value": "collection_sort", "multi_select": 0 },
+    "title": { "name": "排序", "value": "home_sort", "multi_select": 0 },
     "tabs": [
       { "name": "最新上市", "value": 1 },
-      { "name": "最多浏览", "value": 2 },
-      { "name": "最早发布", "value": 3 },
+      { "name": "最新创建", "value": 2 },
+      { "name": "即将结束", "value": 3 },
       { "name": "价格从高到低", "value": 4 },
       { "name": "价格从低到高", "value": 5 }
+    ]
+  },
+  {
+    "title": { "name": "区块链", "value": "network", "multi_select": 1 },
+    "tabs": [
+      {
+        "name": "Polygon",
+        "value": "Polygon",
+        "icon": 6,
+        "icon_url": "https://ipfs.moralis.io:2053/ipfs/QmbnqLBB9yucaYMGg594GN22uq7jhUcTUm3wXU32CxPuq3/rn_image_picker_lib_temp_d66cdef4-30d1-4b3e-a561-33613747a6b3.png"
+      },
+      {
+        "name": "Mumbai",
+        "value": "Mumbai",
+        "icon": 4,
+        "icon_url": "https://ipfs.moralis.io:2053/ipfs/QmRbYD5QbjtR27NaKP1k8M5jPJiaPzfZRbhNC4TmotfVD7/rn_image_picker_lib_temp_8f4bbe5c-0164-464b-b57b-c42a50641837.jpg"
+      }
     ]
   }
 ]
