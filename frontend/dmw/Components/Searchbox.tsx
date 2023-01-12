@@ -6,6 +6,19 @@ import { useTranslation } from 'react-i18next'
 const Search = (props)=>{
   const [strText,setStrText] = useState('')
   const { t, i18n } = useTranslation();
+//   constructor(props){
+//     super(props)
+//     this.state = {
+//         strText : ''
+//     }
+// }
+// cosnt  onChange = (strText) = >{
+//     console.log(strText);
+//     this.setState({
+//         strText
+//     })
+    
+// }
   return (
     <View style={{flexDirection: 'row', alignItems: 'center', height: 50}}>
       <View
@@ -29,7 +42,10 @@ const Search = (props)=>{
           placeholder={t("请输入关键字")}
           cursorColor='#897EF8'
           style={{flex: 1, borderRadius: 10, height: 50}}
-          onChangeText={ (strText) => setStrText(strText)}
+          onChangeText={ (strText) => {
+            setStrText(strText)
+             props.onChange(strText)
+          }}
         />
       </View>
       <Pressable onPress={props.visible}>
@@ -43,19 +59,7 @@ const Search = (props)=>{
 }
 export default Search;
 // export default class Search extends Component {
-//     constructor(props){
-//         super(props)
-//         this.state = {
-//             strText : ''
-//         }
-//     }
-//     onChange(strText){
-//         console.log(strText);
-//         this.setState({
-//             strText
-//         })
-//         this.props.onChange(strText)
-//     }
+ 
 //   render() {
 //     return (
 //       <View style={{flexDirection: 'row', alignItems: 'center', height: 50}}>
