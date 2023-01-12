@@ -94,7 +94,7 @@ const List = (props) => {
                 >
                   {t("复制链接")}
                 </Text>
-                <Text
+                {props.showTransferNft&&<Text
                   style={{
                     paddingTop: 6,
                     paddingBottom: 6,
@@ -109,7 +109,7 @@ const List = (props) => {
                   }}
                 >
                   {t("转移/赠与")}
-                </Text>
+                </Text>}
               </View>
             </View>
           </TouchableWithoutFeedback>

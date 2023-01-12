@@ -118,6 +118,23 @@ const QuotationDetails = (props) => {
     }
   };
 
+  const likeNft = () => {
+    post(
+      "/index/nft/enshrine_update",
+      formData({ unique_id: orderList.nft.unique_id })
+    ).then((res) => {
+      if (res.code == 200) {
+        Toast(t(res.message));
+        let newOrderList = { ...orderList };
+        newOrderList.nft.is_like = !orderList.nft.is_like;
+        newOrderList.nft.is_like?newOrderList.nft.likes +=1:newOrderList.nft.likes-=1
+        console.log("likes:",newOrderList.nft.likes)
+        setOrderList(newOrderList);
+      }
+      console.log("like nft result:", res);
+    });
+  };
+
   //获取订单详情
   const getList = () => {
     setLoding(true);
@@ -789,15 +806,22 @@ const QuotationDetails = (props) => {
             )}
 
             {/* 喜欢 */}
-            <View style={[styles.likeBox, styles.flexJBC]}>
-              <Text style={[styles.likeBoxName]}>
-                {collection ? collection.name : "--"}
-              </Text>
-              <View style={[styles.flex]}>
-                <FontAwesomeIcon icon={faHeart} color="red" size={12} />
-                <Text style={[styles.likenum]}>{likes}</Text>
+            <TouchableWithoutFeedback onPress={()=>{likeNft()}}>
+              <View style={[styles.likeBox, styles.flexJBC]}>
+                <Text style={[styles.likeBoxName]}>
+                  {collection ? collection.name : "--"}
+                </Text>
+                <View style={[styles.flex]}>
+                  {orderList.nft&&orderList.nft.is_like ? (
+                    <FontAwesomeIcon icon={faHeart} color="red" size={30} />
+                  ) : (
+                    <FontAwesomeIcon icon={faHeart} color="gray" size={30} />
+                  )}
+                  <Text style={[styles.likenum]}>{orderList.nft&&orderList.nft.likes}</Text>
+                </View>
               </View>
-            </View>
+            </TouchableWithoutFeedback>
+
             {/* 卖家详情 */}
             <View style={[styles.coll]}>
               <View
@@ -816,7 +840,8 @@ const QuotationDetails = (props) => {
                   ></Image>
                   <Text style={{ fontSize: 14, color: "#333" }}>
                     {Price}{" "}
-                    {NftInfo && chainNameMap[NftInfo.network.toLowerCase()].nativeToken}
+                    {NftInfo &&
+                      chainNameMap[NftInfo.network.toLowerCase()].nativeToken}
                   </Text>
                 </View>
               </View>
@@ -958,7 +983,9 @@ const QuotationDetails = (props) => {
             <View style={[styles.flex, { alignItems: "flex-end" }]}>
               <Text style={[styles.bottomPrice]}>
                 {" "}
-                {Price} {NftInfo && chainNameMap[NftInfo.network.toLowerCase()].nativeToken}
+                {Price}{" "}
+                {NftInfo &&
+                  chainNameMap[NftInfo.network.toLowerCase()].nativeToken}
               </Text>
               {/* <Text style={[styles.bottomcoinType]}> Wfca</Text> */}
             </View>
@@ -1146,7 +1173,12 @@ const QuotationDetails = (props) => {
               </Text>
             )}
             {offerState == 0 && (
-              <Text style={[styles.BuyBtnQ, { backgroundColor: "gray" }]} onPress={()=>{Toast(t("已批准额度不足"))}}>
+              <Text
+                style={[styles.BuyBtnQ, { backgroundColor: "gray" }]}
+                onPress={() => {
+                  Toast(t("已批准额度不足"));
+                }}
+              >
                 {t("确定")}
               </Text>
             )}

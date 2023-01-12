@@ -166,7 +166,12 @@ const GoodsDetail = (props) => {
   useEffect(() => {
     const walletAddress = WalletInUse == 1 ? dmwWalletList[0] : currentWallet;
 
-    if (detailsObj && detailsObj.contract_address &&detailsObj.contract_type=="ERC1155" && walletAddress) {
+    if (
+      detailsObj &&
+      detailsObj.contract_address &&
+      detailsObj.contract_type == "ERC1155" &&
+      walletAddress
+    ) {
       getBalanceOf1155(
         detailsObj.contract_address,
         walletAddress,
@@ -192,7 +197,12 @@ const GoodsDetail = (props) => {
       });
     }
 
-    if (detailsObj && detailsObj.contract_address &&detailsObj.contract_type=="ERC721" && walletAddress){
+    if (
+      detailsObj &&
+      detailsObj.contract_address &&
+      detailsObj.contract_type == "ERC721" &&
+      walletAddress
+    ) {
       checkIsApproveForAll(detailsObj.contract_address, walletAddress).then(
         (isApproved) => {
           // console.log("isApproved:", isApproved)
@@ -207,7 +217,6 @@ const GoodsDetail = (props) => {
         }
       );
     }
-
   }, [WalletInUse, detailsObj]);
 
   useEffect(() => {
@@ -333,6 +342,22 @@ const GoodsDetail = (props) => {
     }
   };
 
+  const likeNft = () => {
+    post(
+      "/index/nft/enshrine_update",
+      formData({ unique_id: detailsObj.unique_id })
+    ).then(res=>{
+      if (res.code==200){
+        Toast(t(res.message))
+        let newDetailObj = {...detailsObj}
+        newDetailObj.is_like = !detailsObj.is_like
+        newDetailObj.is_like?newDetailObj.likes +=1:newDetailObj.likes-=1
+        setDetailsObj(newDetailObj)
+      }
+      console.log("like nft result:",res)
+    });
+  };
+
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
       {loading ? (
@@ -372,10 +397,22 @@ const GoodsDetail = (props) => {
                   ? detailsObj["collection"].name
                   : "--"}
               </Text>
-              <View style={[styles.flex]}>
-                <FontAwesomeIcon icon={faHeart} color="red" size={12} />
-                <Text style={[styles.likenum]}>{detailsObj.likes}</Text>
-              </View>
+
+              <TouchableWithoutFeedback onPress={()=>{likeNft()}}>
+                <View style={[styles.flex]}>
+                {detailsObj.is_like ? <FontAwesomeIcon
+                    icon={faHeart}
+                    color="red"
+                    size={30}
+                  /> : <FontAwesomeIcon
+                  icon={faHeart}
+                  color="gray"
+                  size={30}
+                />}
+
+                  <Text style={[styles.likenum]}>{detailsObj.likes}</Text>
+                </View>
+              </TouchableWithoutFeedback>
             </View>
             {/* 合集详情 */}
             <View
@@ -1197,7 +1234,7 @@ const styles = StyleSheet.create({
   likenum: {
     color: "#ccc",
     marginLeft: 3,
-    fontSize: 10,
+    fontSize: 15,
   },
   likeBoxName: {
     color: "#666",

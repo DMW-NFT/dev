@@ -27,6 +27,8 @@ import AddCreateCollection from "../screen/Myself/AddCreateCollection"; //卖出
 import GoodsDetail from "../screen/Other/GoodsDetail";
 import QuotationDetails from "../screen/Other/QuotationDetails";
 import WebViewModal from "../screen/Other/WebViewModal";
+import ContactUs from "../screen/Myself/ContactUs";
+import BlockChainExploer from "../screen/Myself/BlockChainExploer";
 
 import { useTranslation } from "react-i18next";
 const Stack = createStackNavigator();
@@ -219,6 +221,20 @@ const Home = () => {
         name="WebViewModal"
         options={{
           title: "",
+        }}
+      ></Stack.Screen>
+      <Stack.Screen
+        component={ContactUs}
+        name="ContactUs"
+        options={{
+          title: t("联系我们"),
+        }}
+      ></Stack.Screen>
+      <Stack.Screen
+        component={BlockChainExploer}
+        name="BlockChainExploer"
+        options={{
+          title: t("区块链信息查询"),
         }}
       ></Stack.Screen>
     </Stack.Navigator>

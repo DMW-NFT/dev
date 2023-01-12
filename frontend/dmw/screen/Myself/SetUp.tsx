@@ -45,35 +45,35 @@ const SetUp = (props) => {
       </View>
 
 
-      {/* <View style={[{ padding: 20 }, styles.box]}>
+      <View style={[{ padding: 20 }, styles.box]}>
         <Text style={styles.title}>{t("关于&支持")}</Text>
-        <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('WebViewModal')}}>
+        <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('ContactUs')}} >
           <View style={[styles.list, { marginBottom: 31 }]}>
             <Text style={styles.textname}>{t("联系我们")}</Text>
             <FontAwesomeIcon icon={faChevronRight} color='#707070' size={16} />
           </View>
         </TouchableWithoutFeedback>
 
-        <TouchableWithoutFeedback >
+        <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('WebViewModal',{type:'userAgreement',language:language})}}>
           <View style={[styles.list, { marginBottom: 31 }]}>
             <Text style={styles.textname}>{t("常见问题解答")}</Text>
             <FontAwesomeIcon icon={faChevronRight} color='#707070' size={16} />
           </View>
         </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('WebViewModal',{type:'userAgreement',language:language})}}>
           <View style={[styles.list, { marginBottom: 31 }]}>
             <Text style={styles.textname}>{t("服务条款")}</Text>
             <FontAwesomeIcon icon={faChevronRight} color='#707070' size={16} />
           </View>
         </TouchableWithoutFeedback>
 
-        <TouchableWithoutFeedback >
+        <TouchableWithoutFeedback  onPress={()=>{props.navigation.navigate('WebViewModal',{type:'privacyPolicy',language:language})}}>
           <View style={[styles.list, { marginBottom: 31 }]}>
-            <Text style={styles.textname}>{t("隐私政策")}</Text>
+            <Text style={styles.textname}>{t("隐私政策") }</Text>
             <FontAwesomeIcon icon={faChevronRight} color='#707070' size={16} />
           </View>
         </TouchableWithoutFeedback>
-      </View> */}
+      </View>
 
 
     </SafeAreaView>

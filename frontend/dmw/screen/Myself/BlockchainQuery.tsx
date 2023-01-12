@@ -9,27 +9,55 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   Button,
+  Linking,
 } from "react-native";
 import { useTranslation } from "react-i18next";
-import { IndexPath, Layout, Select, SelectItem } from "@ui-kitten/components";
+
+import { ButtonGroup } from "@rneui/themed";
+import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
+import BlockChainExploer from "./BlockChainExploer";
 const screenWidth = Dimensions.get("window").width;
 const scale = Dimensions.get("window").scale;
 const screenHeight = Dimensions.get("window").height;
-const BlockchainQuery = () => {
+
+const BlockchainQuery = (props) => {
   const { t, i18n } = useTranslation();
+  const { post, formData, Toast } = useDmwApi();
   // constructor(porps) {
   //   super(porps);
   //   state = {
   //       Blockchainval: '',
   //   };
   // }
-  const [network, setNetWork] = useState("");
-  const [selectedIndex, setSelectedIndex] = useState(new IndexPath(0));
-  const [searchContent, setSearchContent] = useState('');
-  const networkList =  ['ethereume','bsc','polygon']
-  useEffect(()=>{
-    setNetWork(networkList[selectedIndex.row])
-  },[selectedIndex])
+  const [queryContent,setQueryContent] = useState('')
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const blockChainExploerList = [
+    "https://etherscan.io/",
+    "https://polygonscan.com/",
+    "https://bscscan.com/",
+  ];
+  const openLinkUrl = (url: string) => {
+    props.navigation.navigate('BlockChainExploer',{uri:url})
+  };
+
+  function checkInput(input) {
+    if (input.length === 66 && input.startsWith("0x")) {
+      return "tx/";
+    } else if (input.length === 42 && input.startsWith("0x")) {
+      return "address/";
+    } else {
+      return false;
+    }
+  }
+
+  const queryData = () => {
+    const prefix = checkInput(queryContent);
+    if (prefix) {
+      openLinkUrl(blockChainExploerList[selectedIndex] + prefix + queryContent);
+    } else {
+      Toast(t("请输入正确的交易哈希或钱包地址"));
+    }
+  };
 
   return (
     <SafeAreaView
@@ -41,17 +69,16 @@ const BlockchainQuery = () => {
       }}
     >
       <View style={{ paddingLeft: 20, paddingRight: 20 }}>
-        <Select
+        <ButtonGroup
+          buttons={["Ethereume", "Polygon", "BSC"]}
           selectedIndex={selectedIndex}
-          onSelect={(index) => setSelectedIndex(index)}
-          style={{paddingBottom:20}}
-          // placeholder='ethereume'
-          value={networkList[selectedIndex.row]}
-        >
-          <SelectItem title="ethereume" />
-          <SelectItem title="bsc" />
-          <SelectItem title="polygon" />
-        </Select>
+          onPress={(value) => {
+            setSelectedIndex(value);
+            console.log(value);
+          }}
+          containerStyle={{ marginBottom: 20, borderRadius: 20 }}
+          selectedButtonStyle={{ backgroundColor: "#897EF8" }}
+        />
         <TextInput
           multiline={true}
           textAlignVertical="top"
@@ -59,8 +86,8 @@ const BlockchainQuery = () => {
           placeholder={t("请输入地址")}
           keyboardType="default"
           style={[styles.textarea]}
-          onChangeText={(e) => setSearchContent(e)}
-          value={searchContent}
+          onChangeText={(e) => setQueryContent(e)}
+          value={queryContent}
         />
 
         <Text style={{ color: "#999999", fontSize: 10 }}>
@@ -68,7 +95,7 @@ const BlockchainQuery = () => {
         </Text>
       </View>
 
-      <Text style={styles.btn}>{t("查询")}</Text>
+      <Text style={styles.btn} onPress={()=>{queryData()}}>{t("查询")}</Text>
     </SafeAreaView>
   );
 };

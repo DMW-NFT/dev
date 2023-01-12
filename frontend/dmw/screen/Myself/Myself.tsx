@@ -62,7 +62,8 @@ const Myself = (props) => {
   const [determinelist, setdetermine] = useState({});
   const [nftToTransfer, setNftToTransfer] = useState(null);
   const [txNftModalVisible, setTxNftModalVisible] = useState(false);
-  const [txNftParams, setTxNftPramas] = useState({});
+
+  const [showTransferNft, setShowTransferNft] = useState(false);
   // Context方法
   const { logOut } = useDmwLogin();
   const { post, formData, Toast, Copy } = useDmwApi();
@@ -109,21 +110,25 @@ const Myself = (props) => {
     // console.log("myself currentchain id",currentChainId)
     if (typename == "我创建的") {
       console.log("查看我创建的");
+      setShowTransferNft(false)
       getMyNft("/index/nft/get_my_create_nft_by_search", {
         keyword: strText,
         ...determinelist,
       });
     } else if (typename == "事件") {
+      setShowTransferNft(false)
       getMyNft("/index/nft/get_nft_activity", {
         keyword: strText,
         ...determinelist,
       });
     } else if (typename == "我喜欢的") {
+      setShowTransferNft(false)
       getMyNft("/index/nft/get_my_likes_nft_by_search", {
         keyword: strText,
         ...determinelist,
       });
     } else if (typename == "我的藏品") {
+      setShowTransferNft(true)
       getMyNft(
         determinelist == {}
           ? "/index/nft/get_my_nft_by_search"
@@ -322,6 +327,7 @@ const Myself = (props) => {
                     type={4}
                     setNftToTransfer={setNftToTransfer}
                     setTxNftModalVisible={setTxNftModalVisible}
+                    showTransferNft={showTransferNft}
                     navigatetoDetail={(
                       id,
                       unique_id,
