@@ -103,7 +103,7 @@ const CollectionDetails = (props) => {
     const getActivityList = (page, type = 1) => {
         // console.log(ID, 'ID');
         post('/index/collection/get_collection_activity', formData({ page: page || 1, id: ID })).then(res => {
-            // console.log(res, '活动列表');
+            console.log(res.data.data, '活动列表');
             setActivityList(res.data.data)
             setActivityTotal(res.data.total)
         })
@@ -209,7 +209,7 @@ const CollectionDetails = (props) => {
                     }
                     <FlatList
 
-                        style={{ marginTop: 20, flex: 1, minHeight: 200 }}
+                        style={{ marginTop: typename == 'Items' ? 20 : 0, flex: 1, minHeight: 200 }}
                         ListEmptyComponent={() => {
                             return typename == 'Activity' && !ActivityList.length ? <Text style={{ textAlign: 'center', height: 100 }}>{t("空空如也")}</Text> :
                                 typename == 'Items' && list && list.length ? null : <Text style={{ textAlign: 'center', height: 100 }}>{t("空空如也")}</Text>
@@ -218,11 +218,37 @@ const CollectionDetails = (props) => {
                         // 一屏幕展示几个
                         //  2列显示
                         number={4}
-                        numColumns={2}
+                        numColumns={typename == 'Items' ? 2 : 1}
+                        key={typename == 'Items' ? 'hh' : 'nn'}
                         data={typename == 'Activity' ? ActivityList : list}
                         renderItem={({ item }) => {
                             return typename == 'Activity' && ActivityList && ActivityList.length ?
-                                <List list={item} type={1} navigatetoDetail={(id, unique_id, contract_address, token_id, network) => { props.navigation.navigate('goodsDetail', { id: id, unique_id, contract_address, token_id, network }) }} />
+                                <View style={{marginBottom:20, paddingTop: 10, paddingBottom: 10, paddingLeft: 20, paddingRight: 20, borderBottomWidth: 1, borderBottomColor: '#ccc', }}>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <Image style={{ width: 80, height: 80 }} source={{ uri: item.image_attachment_url }}></Image>
+                                        <View style={{ flex: 1, }}>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                                <Text style={{ fontSize: 14, color: "#333", marginLeft: 20 }}>{item.name}</Text>
+                                                <Text style={{ fontSize: 12, color: '#999999' }}>{item.create_time}</Text>
+                                            </View>
+                                            <View style={{ flexDirection: 'column', justifyContent: 'space-between', marginTop: 20 }}>
+                                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 20 }}>
+                                                    <Text style={{ fontSize: 12, color: "#333", }}>{t("状态") + ''}</Text>
+                                                    <Text style={{ fontSize: 12, color: "#333", }}>{t("成交价") + ''}</Text>
+                                                    <Text style={{ fontSize: 12, color: "#333", }}>to</Text>
+                                                    {/* <Text style={{ fontSize: 12, color: "#333", }}>network</Text> */}
+                                                </View>
+                                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 20, marginTop: 4 }}>
+                                                    <Text style={{ fontSize: 12, color: "#999999", }}>{item.listing_type == 0 ? t('寄售') + '' : t('拍卖') + ''}</Text>
+                                                    <Text style={{ fontSize: 12, color: "#999999", }}>{item['total_offer_amount'].number + item['total_offer_amount'].currency_name}</Text>
+                                                    <Text style={{ fontSize: 12, color: "#999999", }}>{item.currency.slice(0, 4)}</Text>
+                                                    {/* <Text style={{ fontSize: 12, color: "#999999", }}>network</Text> */}
+                                                </View>
+                                                {/* <Text style={{ fontSize: 12, color: '#999999' }}>{item.create_time}</Text> */}
+                                            </View>
+                                        </View>
+                                    </View>
+                                </View>
                                 :
                                 typename == 'Items' && list && list.length ?
                                     <List list={item} type={1} navigatetoDetail={(id, unique_id, contract_address, token_id, network) => { props.navigation.navigate('goodsDetail', { id: id, unique_id, contract_address, token_id, network }) }} />

@@ -31,7 +31,7 @@ const  paging = (typename) => {
             onPress={() => paging('我创建的')}>
             {t("我创建的")}
           </Text>
-          <Text
+          {/* <Text
             style={[
               props.typename == '事件'
                 ? styles.daonghang_text_ative
@@ -39,7 +39,7 @@ const  paging = (typename) => {
             ]}
             onPress={() => paging('事件')}>
            {t("事件")} 
-          </Text>
+          </Text> */}
           <Text
             style={[
               props.typename == '我喜欢的'
@@ -61,6 +61,8 @@ const styles = StyleSheet.create({
     height: 56,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginRight:-20,
+    marginLeft:-20
     // backgroundColor: 'pink',
   },
   daonghang_text: {
