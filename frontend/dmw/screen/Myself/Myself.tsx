@@ -316,7 +316,7 @@ const Myself = (props) => {
           {!isActivity ? (
             <FlatList
               refreshing={false}
-              style={{ height: "55%", zIndex: 1, marginBottom: -90 }}
+              style={{ height: "60%", zIndex: 1, marginBottom: -90 }}
               ListEmptyComponent={() => {
                 return (
                   <Text style={{ textAlign: "center", marginTop: "50%" }}>
@@ -377,7 +377,7 @@ const Myself = (props) => {
           ) : (
             <FlatList
               refreshing={false}
-              style={{ height: "55%", zIndex: 1 }}
+              style={{ height: "60%", zIndex: 1 }}
               ListEmptyComponent={() => {
                 return (
                   <Text style={{ textAlign: "center", marginTop: "50%" }}>
