@@ -133,7 +133,11 @@ export default function TxProccessingModal(props) {
   return (
     <Modal
       visible={modalVisible}
-      backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+      backdropStyle={{
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        // flexDirection: "row",
+        // justifyContent: "center",
+      }}
       onBackdropPress={() => {
         setModalVisible(false);
       }}
@@ -145,12 +149,11 @@ export default function TxProccessingModal(props) {
           }}
         >
           <Image
-            style={styles.colose}
+            style={[styles.colose]}
             source={require("../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png")}
           ></Image>
         </TouchableWithoutFeedback>
-
-        <View style={{ paddingTop: 120 }}>
+        <View style={styles.lodingBox}>
           <View
             style={{
               flexDirection: "row",
@@ -158,17 +161,20 @@ export default function TxProccessingModal(props) {
               marginBottom: 40,
             }}
           >
-            {!confirm ? (
+            {!(currentState == "confirmed") ? (
               <Spinner size="giant" />
             ) : (
               <Icon
-                reverse
+                // reverse
                 name="check-circle"
                 type="font-awesome"
                 color="green"
+                size={120}
+                iconStyle={{ position: "relative", alignSelf: "center" }}
               />
             )}
           </View>
+
           <View style={{ flexDirection: "row", justifyContent: "center" }}>
             <Text>{currentState}</Text>
           </View>
@@ -179,6 +185,13 @@ export default function TxProccessingModal(props) {
 }
 
 const styles = StyleSheet.create({
+  lodingBox: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+    // backgroundColor: "pink",
+    width:540 / 2
+  },
   passinputfirst: {
     textAlign: "center",
     lineHeight: 48,
@@ -267,6 +280,9 @@ const styles = StyleSheet.create({
     position: "relative",
     paddingBottom: 20,
     zIndex: 100,
+    flexDirection: "row",
+    // justifyContent:'center',
+
     // paddingTop: 10,
     // paddingRight: 10
   },

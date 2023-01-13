@@ -24,7 +24,7 @@ const DmwWalletProvider = ({ children }) => {
   const [dmwChainId, setDmwChainId] = useState(137);
   const [dmwTransactionMap, setDmwTransactionMap] = useState({});
   const [dmwTransactionList, setDmwTransactionList] = useState([]);
-  const { globalError, setGlobalError,throwTxError } = useDmwWeb3();
+  const { globalError, setGlobalError, throwTxError } = useDmwWeb3();
   const web3 = new Web3();
 
   const verifySecretKey = (
@@ -405,7 +405,7 @@ const DmwWalletProvider = ({ children }) => {
           ...dmwTransactionMap,
           [hash]: { payload: "", state: "error", error: error.message },
         });
-        throw error;
+        throwTxError(error);
       })
       .then((receipt) => {
         return receipt;

@@ -261,7 +261,7 @@ const SystemNotification = (props) => {
         backgroundColor: "#F5F5F5",
       }}
     >
-      {list&&<TouchableWithoutFeedback
+      {list[0]&&<TouchableWithoutFeedback
         onPress={() => {
           cleanAll();
         }}
