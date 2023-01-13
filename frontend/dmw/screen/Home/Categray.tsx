@@ -51,9 +51,9 @@ const Categray = (props) => {
             <TouchableWithoutFeedback onPress={() => { props.navigation.navigate('searchScreen', { visible: true }) }}>
               <ImageBackground source={require('../../assets/img/allIconAndlImage/3571.png')} style={{ width: 40, height: 40, marginRight: 15 }}></ImageBackground>
             </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => { setvisible(true) }}>
+            {/* <TouchableWithoutFeedback onPress={() => { setvisible(true) }}>
               <ImageBackground source={require('../../assets/img/allIconAndlImage/3574.png')} style={{ width: 40, height: 40, marginRight: 15 }}></ImageBackground>
-            </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback> */}
           </View>
         )
       }

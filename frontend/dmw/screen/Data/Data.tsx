@@ -9,6 +9,7 @@ import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import React, { useState, useEffect } from 'react';
 import { Dimensions } from 'react-native'
 import { useTranslation } from 'react-i18next'
+import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider';
 const Data = (props) => {
   const { t, i18n } = useTranslation();
   const [category, changeVisible0] = useState({ id: 1, name: "All categories1" })
@@ -22,6 +23,7 @@ const Data = (props) => {
   const [page,setpage]=useState(0)
   const [total,settotal]=useState(null)
   const { post, formData } = useDmwApi()
+  const { language } = useDmwLogin()
 
 
 
@@ -69,18 +71,20 @@ const Data = (props) => {
     });
     // setpage(1) 
     return () => { };
-  }, []);
+  }, [props,language]);
 
   useEffect(() => {
-    getList() 
+    // getList() 
     return () => {};
   }, [page]);
 
   const getList = () => { 
     let params = formData({ categories: category.value?category.value:'',network:chain.value?chain.value:'',day:time.value?time.value:'' ,page:page,limit:20})
-   
+    
       post("/index/stats/get_rankings",params).then((res) => {
         if (res.code == 200) {
+          console.log(res.data.data,'数据');
+          
           settotal(res.data.total) 
           if(page>1){
             // 触底
@@ -93,7 +97,7 @@ const Data = (props) => {
   }
   const getList1=()=>{ 
     console.log('触底111111111111')
-    if(total!==list.length){
+    if(total!==list.length){ 
       setpage(page=>page++) 
     }
   }
@@ -138,9 +142,10 @@ const Data = (props) => {
                 data={list}
                 renderItem={({ item }) => {
                   return (
+                    <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('collectionDetails',{ID:item.collection_id})}}>
                     <View style={[styles.listbox, styles.flexJBC]}>
                       <View style={[styles.flex]}>
-                        <Image source={require('../../assets/img/index/any4.jpg')} style={[styles.listboxImg]}></Image>
+                        <Image source={{uri:item.logo_url}} style={[styles.listboxImg]}></Image>
                         <Text style={[styles.listboxName, { marginLeft: 20 }]}>{item.name}</Text>
                       </View>
                       <View>
@@ -148,9 +153,10 @@ const Data = (props) => {
                         <Text style={[styles.add, { color: true ? "#3FAA85" : "#D56262" }]}>{item.range}%</Text>
                       </View>
                     </View>
+                    </TouchableWithoutFeedback>
                   )
                 }}
-                keyExtractor={(item, index) => index}
+                keyExtractor={(item, index) => index.toString()}
                 ListFooterComponent={() => {
                   // 声明尾部组件
                   return <Text style={{ textAlign: 'center', marginTop: 30, }}>{t("没有更多了")}</Text>
