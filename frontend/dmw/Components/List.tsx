@@ -25,7 +25,7 @@ const List = (props) => {
   const [imgs, setimgs] = useState(true);
   const [type, setype] = useState(props.type);
   const item = props.list;
-  const [imgurl, setImgurl] = useState(item.image_attachment_url);
+  // const [imgurl, setImgurl] = useState(props.list.image_attachment_url);
   const [show, setshow] = useState(false);
   const { Copy } = useDmwApi();
 
@@ -36,6 +36,8 @@ const List = (props) => {
     setshow(false);
     console.log(item)
   }
+
+
 
   return (
     <TouchableWithoutFeedback
@@ -125,7 +127,7 @@ const List = (props) => {
                 }}
                 style={[styles.imageBox]}
                 resizeMode="cover"
-                source={{ uri: imgurl }}
+                source={{ uri: props.list.image_attachment_url }}
               >
                 {type != 4 ? (
                   <Text numberOfLines={2} style={[styles.network]}>

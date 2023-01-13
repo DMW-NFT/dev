@@ -57,9 +57,9 @@ const Searchsc = (props) => {
 
     const getList = (page, type = 1) => {
         setLoding(true)
-        let params = formData({ page: page, limit: 6, type: 1, keyword: strText,...selListParams })
-        console.log(params,'=selListParams');
-        
+        let params = formData({ page: page, limit: 6, type: 1, keyword: strText, ...selListParams })
+        console.log(params, '=selListParams');
+
         post("/index/nft/get_home_nft_by_search", params).then((res) => {
             if (res.code == 200) {
                 if (type == 1) {
@@ -67,6 +67,9 @@ const Searchsc = (props) => {
                 } else {
                     setlist([...list, ...res.data.data])
                 }
+
+                // console.log(list,'list');
+
                 settotal(res.data.total)
                 setLoding(false)
                 setrefreshing(false)

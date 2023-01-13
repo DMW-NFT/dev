@@ -40,12 +40,13 @@ const Home = (props) => {
   const [loading, setLoding] = useState(false)
   const [page, setpage] = useState(1)
   const [bpage, setbpage] = useState(1)
-  const [last_page, setlast_page] = useState(null)
+  const [total, setTotal] = useState(null)
   const [lastbpage, setlastbpage] = useState(null)
   const [password, setpassword] = useState("");
   const [passwordlist, setpasswordlist] = useState([]);
   const [listType, setListTtpe] = useState([])
   const { buyNFT, currentWallet, transactionMap, transactionList, connectWallet, connected } = useDmwWeb3()
+  const [nftIdList, setNftIdList] = useState([])
   // 获取type类型
   const getCoType = () => {
     post('/index/common/get_categories').then(res => {
@@ -53,18 +54,7 @@ const Home = (props) => {
       setListTtpe(res.data)
     })
   }
-  useEffect(() => {
-    geNftList(1, 1)
-    geNftList(2, 1)
-  }, [props])
 
-  useEffect(() => {
-    console.log(language, '切换语言');
-
-  }, [language])
-  useEffect(() => {
-    geNftList(typename == 'nft' ? 1 : 2, page)
-  }, [page])
 
   useEffect(() => {
     console.log("Home useEffe currentWallet,connected", currentWallet)
@@ -80,21 +70,25 @@ const Home = (props) => {
   }, [password])
 
   useEffect(() => {
-    console.log('post请求');
+    console.log('切换语言+init');
     get('/index/banner/list').then(res => {
       setImglist(res.data)
     }).catch(err => {
       console.log(err, 'err');
     })
-    geNftList(typename == 'nft' ? 1 : 2, 1)
+    geNftList(1, 1)
+    geNftList(2, 1)
     getCoType()
   }, [language])
 
   useEffect(() => {
+    console.log(NftList.length, 'NftList.length');
+
     setTimeout(() => {
       setrefreshing(false)
     }, 2000);
   }, [NftList, blindlist])
+
 
   const geNftList = (type, page) => {
     let params = { type: type || 1, page: page || 1, limit: 4 }
@@ -105,9 +99,25 @@ const Home = (props) => {
 
       if (type == 1) {
         if (page == 1) {
-          setNftList([...res.data.data])
+          setNftList(res.data.data)
+          res.data.data.map(item => {
+            nftIdList? setNftIdList([]):setNftIdList([...nftIdList, item.unique_id])
+          })
         } else {
-          setNftList([...NftList, ...res.data.data])
+          let idTmep = [...nftIdList]
+          let nftTmep = [...NftList]
+          res.data.data.map(item => {
+            
+
+            if (!idTmep.includes(item.unique_id)) { 
+              idTmep =[...idTmep,item.unique_id]
+              nftTmep =[...nftTmep,item]
+            }
+          })
+          setNftIdList(idTmep)
+          setNftList(nftTmep)
+          // setNftList(prevItems => [...new Set([...prevItems, res.data.data])]);
+          // setNftList([...NftList, ...res.data.data])
         }
         setrefreshing(false)
       } else {
@@ -120,7 +130,7 @@ const Home = (props) => {
       }
 
 
-      setlast_page(res.data.last_page)
+      setTotal(res.data.total)
       // console.log(last_page, 'last_page');
     })
   }
@@ -139,25 +149,20 @@ const Home = (props) => {
   }
   const getList = () => {
     console.log('触底');
-    console.log(page);
+
     setrefreshing(true)
-    let pageNumber
-    if (last_page) {
-      pageNumber = page + 1
-      console.log(last_page);
-
-      if (pageNumber > last_page) {
-        setrefreshing(false)
-      } else {
-        setpage(page + 1)
-      }
-
+    let a = Math.trunc(NftList.length / 4)
+    if (total == NftList.length) {
+      setrefreshing(false)
+    } else {
+      console.log(a + 1, 'page');
+      geNftList(typename == 'nft' ? 1 : 2, a + 1)
     }
 
   }
   // 下拉刷新
   const Refresh = () => {
-    setpage(1)
+    // setpage(1)
     setrefreshing(true)
     if (typename == 'nft') {
       geNftList(1, 1)
@@ -319,55 +324,7 @@ const Home = (props) => {
       </View>
 
 
-      {currentWallet && <Modal
-        visible={Modalvisible}
-        backdropStyle={{ "backgroundColor": 'rgba(0, 0, 0, 0.5)' }}
-        onBackdropPress={() => { setModalvisible(false) }}>
-        <Card disabled={true} style={styles.CardBox}>
 
-          <TextInput
-            ref={inputRefX}
-            maxLength={6}
-            caretHidden={true}
-            secureTextEntry={true}
-            onKeyPress={() => { }}
-            placeholder='123456'
-            keyboardType="numeric"
-            style={{ position: 'absolute', zIndex: 1, top: -40 }}
-            onChangeText={(e) => {
-              setpassword(e);
-            }
-            }
-            value={password}
-          />
-          <View style={{ justifyContent: 'flex-end', flexDirection: 'row', position: 'absolute', top: 10, right: 20, width: 22, height: 22 }}>
-            <TouchableWithoutFeedback onPress={() => { setModalvisible(false) }}>
-              <Image style={styles.colose} source={require('../../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png')}></Image>
-            </TouchableWithoutFeedback>
-
-          </View>
-          <View>
-            <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{t("请输入支付密码")}</Text>
-            <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>Uzumaki Naruto #0001</Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
-              <Text style={{ color: '#999999', fontSize: 16, fontWeight: '700' }}>价格</Text>
-              <Text style={{ flexDirection: 'row' }}>
-                <Text style={{ fontSize: 16, fontWeight: '700' }}>4,218</Text>
-                <Text>&nbsp;</Text>
-                <Text style={{ fontSize: 10 }}>Wfca</Text>
-              </Text>
-            </View>
-
-            <View style={{ height: 48, flexDirection: 'row', justifyContent: 'space-between', }}>
-              {
-                passwordlist.map((item, index) => (
-                  <Text style={[index == 0 ? styles.passinputfirst : styles.passinput]}>{item ? "●" : ''}</Text>
-                ))
-              }
-            </View>
-          </View>
-        </Card>
-      </Modal>}
 
 
     </SafeAreaView>
