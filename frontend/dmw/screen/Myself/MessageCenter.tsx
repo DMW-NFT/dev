@@ -66,7 +66,7 @@ const MessageCenter = (props) => {
 
         <TouchableWithoutFeedback
           onPress={() => {
-            props.navigation.navigate('ILikeIt',{type:2})
+            props.navigation.navigate('SystemNotification',{type:2})
           }}
         >
           {
@@ -96,7 +96,7 @@ const MessageCenter = (props) => {
 
 
 
-        <TouchableWithoutFeedback
+        {/* <TouchableWithoutFeedback
           onPress={() => {
             props.navigation.navigate('SystemNotification',{type:3})
           }}
@@ -119,13 +119,13 @@ const MessageCenter = (props) => {
                 </View>
                 <Text style={styles.test}>
                     {t(messageList.auction)}
-                  {/* 藏品《<Text style={{ color: '#897EF8' }}>sdssd</Text>》拍卖结束用户<Text style={{ color: '#897EF8' }}>123</Text>以100USDT的价... */}
+                  藏品《<Text style={{ color: '#897EF8' }}>sdssd</Text>》拍卖结束用户<Text style={{ color: '#897EF8' }}>123</Text>以100USDT的价...
                 </Text>
               </View>
             </View>
           }
         </TouchableWithoutFeedback>
-
+ */}
 
 
 
