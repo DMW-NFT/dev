@@ -2,7 +2,9 @@ import { StyleSheet } from 'react-native'
 import React, { Component } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import DataScreen from '../screen/Data/Data'
-import MyCollection from "../screen/Myself/MyCollection"
+
+
+import CollectionDetails from "../screen/Other/CollectionDetails";
 import { useTranslation } from 'react-i18next'
 const Stack = createStackNavigator()
 const Data = () => {
@@ -19,8 +21,8 @@ const Data = () => {
       </Stack.Screen>
 
       <Stack.Screen
-        component={MyCollection}
-        name="myCollection"
+        component={CollectionDetails}
+        name="CollectionDetails"
         options={{
           headerTitle: t("合集"),
         }}

@@ -93,9 +93,7 @@ const Myself = (props) => {
         // console.log(userInfo, "用户信息打印");
         setUsername(res.data.nickname);
         setAvatarUrl(res.data.avatar_url);
-        getMyNft("/index/nft/get_my_nft", {
-          network: ChainIdMap[currentChainId].network,
-        });
+        
       }
     });
 
@@ -142,9 +140,6 @@ const Myself = (props) => {
     }
   }, [typename, determinelist, strText, currentChainId, WalletInUse]);
 
-  useEffect(() => {
-    // setLoding(false)
-  }, [myNftList]);
 
   const getMyNft = (posturl: string, data) => {
     // console.log(data,'请求参数');

@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import MessageCenter from "../screen/Myself/MessageCenter";
 import SystemNotification from "../screen/Myself/SystemNotification";
 import NoticeDetails from "../screen/Myself/NoticeDetails";
+import TradeSuccessfully from "../screen/Myself/TradeSuccessfully";
 import ILikeIt from "../screen/Myself/ILikeIt";
 const Stack = createStackNavigator();
 
@@ -44,14 +45,14 @@ const Home = () => {
           title: "",
         }}
       ></Stack.Screen>
-      {/* <Stack.Screen
-        component={QuotationDetails}
-        name='QuotationDetails'
+      <Stack.Screen
+        component={TradeSuccessfully}
+        name="TradeSuccessfully"
         options={{
-          title: "",
+          title: t("交易成功"),
         }}
-      >
-      </Stack.Screen> */}
+      ></Stack.Screen>
+
 
       <Stack.Screen
         component={MessageCenter}

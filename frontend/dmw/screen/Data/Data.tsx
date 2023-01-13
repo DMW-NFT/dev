@@ -142,7 +142,7 @@ const Data = (props) => {
                 data={list}
                 renderItem={({ item }) => {
                   return (
-                    <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('collectionDetails',{ID:item.collection_id})}}>
+                    <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('CollectionDetails',{ID:item.collection_id})}}>
                     <View style={[styles.listbox, styles.flexJBC]}>
                       <View style={[styles.flex]}>
                         <Image source={{uri:item.logo_url}} style={[styles.listboxImg]}></Image>

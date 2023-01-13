@@ -184,7 +184,7 @@ const SystemNotification = (props) => {
 
         <TouchableWithoutFeedback
           onPress={() => {
-            props.navigation.navigate("tradeSuccessfully", { offer_id: item.offer_id });
+            props.navigation.navigate("TradeSuccessfully",{id: item.offer_id});
           }}
         >
           <View
@@ -196,7 +196,7 @@ const SystemNotification = (props) => {
               marginStart: 10,
             }}
           >
-            <Text>查看详情</Text>
+            <Text>{t("查看详情")}</Text>
             <FontAwesomeIcon icon={faChevronRight} color="#707070" size={16} />
           </View>
         </TouchableWithoutFeedback>
