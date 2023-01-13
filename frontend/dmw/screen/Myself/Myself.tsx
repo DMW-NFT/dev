@@ -187,6 +187,7 @@ const Myself = (props) => {
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
+      {/* <ScrollView></ScrollView> */}
       <View style={{ backgroundColor: "#fff" }}>
         <View style={styles.index_box}>
           {/* title -- start*/}

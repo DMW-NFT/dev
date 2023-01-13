@@ -41,7 +41,7 @@ const GoodsDetail = (props) => {
   const { t, i18n } = useTranslation();
   const inputRefX = useRef(null);
   const [showChain, setshowChain] = useState(true);
-  const [showcollection, setshowcollection] = useState(false);
+  const [showcollection, setshowcollection] = useState(true);
   const [showoffer, setshowoffer] = useState(false);
   const [showhistory, setshowhistory] = useState(false);
   const [loading, setLoding] = useState(true); //loading
@@ -346,15 +346,17 @@ const GoodsDetail = (props) => {
     post(
       "/index/nft/enshrine_update",
       formData({ unique_id: detailsObj.unique_id })
-    ).then(res=>{
-      if (res.code==200){
-        Toast(t(res.message))
-        let newDetailObj = {...detailsObj}
-        newDetailObj.is_like = !detailsObj.is_like
-        newDetailObj.is_like?newDetailObj.likes +=1:newDetailObj.likes-=1
-        setDetailsObj(newDetailObj)
+    ).then((res) => {
+      if (res.code == 200) {
+        Toast(t(res.message));
+        let newDetailObj = { ...detailsObj };
+        newDetailObj.is_like = !detailsObj.is_like;
+        newDetailObj.is_like
+          ? (newDetailObj.likes += 1)
+          : (newDetailObj.likes -= 1);
+        setDetailsObj(newDetailObj);
       }
-      console.log("like nft result:",res)
+      console.log("like nft result:", res);
     });
   };
 
@@ -398,17 +400,17 @@ const GoodsDetail = (props) => {
                   : "--"}
               </Text>
 
-              <TouchableWithoutFeedback onPress={()=>{likeNft()}}>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  likeNft();
+                }}
+              >
                 <View style={[styles.flex]}>
-                {detailsObj.is_like ? <FontAwesomeIcon
-                    icon={faHeart}
-                    color="red"
-                    size={30}
-                  /> : <FontAwesomeIcon
-                  icon={faHeart}
-                  color="gray"
-                  size={30}
-                />}
+                  {detailsObj.is_like ? (
+                    <FontAwesomeIcon icon={faHeart} color="red" size={30} />
+                  ) : (
+                    <FontAwesomeIcon icon={faHeart} color="gray" size={30} />
+                  )}
 
                   <Text style={[styles.likenum]}>{detailsObj.likes}</Text>
                 </View>
@@ -755,15 +757,24 @@ const GoodsDetail = (props) => {
               }}
             >
               {showcollection && detailsObj.collection ? (
-                <View style={[styles.flex, { marginVertical: 20 }]}>
-                  <Image
-                    source={{ uri: detailsObj.collection.logo_url }}
-                    style={[styles.collectionImage]}
-                  ></Image>
-                  <Text style={[styles.createAndByuerName, { marginLeft: 15 }]}>
-                    {detailsObj.collection.name}
-                  </Text>
-                </View>
+                <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('collectionDetails', {ID: detailsObj.collection_id})}}>
+                  <View
+                    style={[
+                      styles.flex,
+                      { marginVertical: 20, marginHorizontal: 20 },
+                    ]}
+                  >
+                    <Image
+                      source={{ uri: detailsObj.collection.logo_url }}
+                      style={[styles.collectionImage]}
+                    ></Image>
+                    <Text
+                      style={[styles.createAndByuerName, { marginLeft: 15 }]}
+                    >
+                      {detailsObj.collection.name}
+                    </Text>
+                  </View>
+                </TouchableWithoutFeedback>
               ) : (
                 <Text></Text>
               )}

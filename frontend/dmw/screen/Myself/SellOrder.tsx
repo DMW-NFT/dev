@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { Modal } from 'react-native-paper';
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { useTranslation } from 'react-i18next'
+import chainNameMap from '../../../constans/chainNameMap.json'
 
 const SellOrder = (props) => {
     const { t, i18n } = useTranslation();
@@ -146,7 +147,7 @@ const SellOrder = (props) => {
                                                 // <Text style={[styles.finshingText, { color: "#F26377" }]}>4h 16m 27s后结束</Text>
                                                 <View style={{ alignItems: 'flex-end' }}>
                                                     <Text style={[styles.lisPriceText]}>{t("成交价")}</Text>
-                                                    <Text style={[styles.lisPrice]}>{item.total_offer_amount.number + item.total_offer_amount.currency_name}</Text>
+                                                    <Text style={[styles.lisPrice]}>{item.total_offer_amount.number} {item.buyout_price_per.currency_name!="ETH"?item.buyout_price_per.currency_name:chainNameMap[item.nft_network.toLowerCase()].nativeToken}</Text>
                                                 </View>
                                         }
                                     </View>
@@ -156,18 +157,18 @@ const SellOrder = (props) => {
                                         </View>
                                         <View style={{ alignItems: "center" }}>
                                             <Text style={[styles.sellPriceText]}>{t('售卖价') + ''}</Text>
-                                            <Text style={[styles.sellPrice]}>{item.buyout_price_per.number + item.buyout_price_per.currency_name}</Text>
+                                            <Text style={[styles.sellPrice]}>{item.buyout_price_per.number } {item.buyout_price_per.currency_name!="ETH"?item.buyout_price_per.currency_name:chainNameMap[item.nft_network.toLowerCase()].nativeToken}</Text>
                                         </View>
                                         <View>
                                             {
                                                 typename != 1 ?
                                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                                         {/* <Text style={[styles.lisBottomLookBtn]} onPress={() => {  }}>{t('更多功能')}</Text> */}
-                                                        {/* <Text style={[styles.lisBottomLookBtn]} onPress={() => { props.navigation.navigate('tradeSuccessfully') }}>查看</Text> */}
+                                                        {/* <Text style={[styles.lisBottomLookBtn]} onPress={() => { props.navigation.navigate('TradeSuccessfully') }}>查看</Text> */}
                                                     </View>
                                                     :
                                                     <Text style={[styles.lisBottomLookBtn, { backgroundColor: "#fff", color: "#897EF8" }]}
-                                                        onPress={() => { props.navigation.navigate('tradeSuccessfully', { id: item.offer_id }) }}
+                                                        onPress={() => { props.navigation.navigate('TradeSuccessfully', { id: item.offer_id }) }}
                                                     >{t('查看') + ''}</Text>
                                             }
 
@@ -204,7 +205,7 @@ const SellOrder = (props) => {
                                                                         <Text style={[styles.moreTop]}>offer</Text>
                                                                         <View style={[styles.flex, styles.moreBottom]}>
                                                                             <Image style={{ width: 15, height: 15 }} source={require('../../assets/img/money/offer.png')}></Image>
-                                                                            <Text style={{ fontSize: 14, color: "#333" }}>{items.total_offer_amount.number + items.total_offer_amount.currency_name}</Text>
+                                                                            <Text style={{ fontSize: 14, color: "#333" }}>{items.total_offer_amount.number } {item.buyout_price_per.currency_name!="ETH"?item.buyout_price_per.currency_name:chainNameMap[item.nft_network.toLowerCase()].nativeToken}</Text>
                                                                         </View>
                                                                     </View>
                                                                     <View >
@@ -212,7 +213,7 @@ const SellOrder = (props) => {
                                                                         <Text style={[styles.moreBottom]}>{items.quantity_wanted}</Text>
                                                                     </View>
 
-                                                                    <Text style={[styles.lisBottomLookBtn]} onPress={() => { props.navigation.navigate('tradeSuccessfully', { id: items.offer_id }) }}>{t('查看') + ''}</Text>
+                                                                    <Text style={[styles.lisBottomLookBtn]} onPress={() => { props.navigation.navigate('TradeSuccessfully', { id: items.offer_id }) }}>{t('查看') + ''}</Text>
                                                                 </View>
                                                             </View>
                                                         </TouchableWithoutFeedback>

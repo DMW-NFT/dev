@@ -308,7 +308,7 @@ const EmailAndPhoneReginster = (props) => {
           )}
         </TouchableWithoutFeedback>
         <TextInput
-          maxLength={6}
+          maxLength={20}
           placeholder={t("请输入密码")}
           keyboardType="default"
           secureTextEntry={secureTextEntry}
@@ -322,7 +322,7 @@ const EmailAndPhoneReginster = (props) => {
           source={require("../assets/img/login/password.png")}
         ></Image>
         <TextInput
-          maxLength={6}
+          maxLength={20}
           placeholder={t("请再次输入密码")}
           keyboardType="default"
           secureTextEntry={true}

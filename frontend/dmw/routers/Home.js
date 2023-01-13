@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import React, { Component } from "react";
-import { createStackNavigator,Navigator } from "@react-navigation/stack";
+import { createStackNavigator, Navigator } from "@react-navigation/stack";
 import HomeScreen from "../screen/Home/Home";
 import SearchScreen from "../screen/Home/Search";
 import CategrayScreen from "../screen/Home/Categray";
@@ -18,6 +18,7 @@ import SystemNotification from "../screen/Myself/SystemNotification";
 import NoticeDetails from "../screen/Myself/NoticeDetails";
 import TradeSuccessfully from "../screen/Myself/TradeSuccessfully";
 import ILikeIt from "../screen/Myself/ILikeIt";
+import CollectionDetails from "../screen/Other/CollectionDetails";
 const Stack = createStackNavigator();
 
 const Home = () => {
@@ -52,7 +53,14 @@ const Home = () => {
           title: t("交易成功"),
         }}
       ></Stack.Screen>
-
+      <Stack.Screen
+        component={CollectionDetails}
+        name="collectionDetails"
+        options={{
+          headerTransparent: true, // 会将页面与标题重叠
+          title: "",
+        }}
+      ></Stack.Screen>
 
       <Stack.Screen
         component={MessageCenter}

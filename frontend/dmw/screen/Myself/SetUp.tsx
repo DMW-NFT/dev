@@ -54,7 +54,7 @@ const SetUp = (props) => {
           </View>
         </TouchableWithoutFeedback>
 
-        <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('WebViewModal',{type:'userAgreement',language:language})}}>
+        <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('WebViewModal',{type:'commonProblem',language:language})}}>
           <View style={[styles.list, { marginBottom: 31 }]}>
             <Text style={styles.textname}>{t("常见问题解答")}</Text>
             <FontAwesomeIcon icon={faChevronRight} color='#707070' size={16} />

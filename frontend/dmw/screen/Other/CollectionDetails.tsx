@@ -184,6 +184,7 @@ const CollectionDetails = (props) => {
     }
 
     return (
+        <ScrollView>
         <SafeAreaView style={{ backgroundColor: '#fff', flex: 1, position: 'relative' }}>
             <View style={{ flex: 1 }}>
                 {/* <StatusBar barStyle="dark-content" backgroundColor="#fff" /> */}
@@ -209,7 +210,7 @@ const CollectionDetails = (props) => {
                     }
                     <FlatList
 
-                        style={{ marginTop: 20, flex: 1, minHeight: 200 }}
+                        style={{ marginTop: 20, flex: 1, minHeight: 400 }}
                         ListEmptyComponent={() => {
                             return typename == 'Activity' && !ActivityList.length ? <Text style={{ textAlign: 'center', height: 100 }}>{t("空空如也")}</Text> :
                                 typename == 'Items' && list && list.length ? null : <Text style={{ textAlign: 'center', height: 100 }}>{t("空空如也")}</Text>
@@ -307,6 +308,8 @@ const CollectionDetails = (props) => {
                 </View>
             </Modal>
         </SafeAreaView>
+        </ScrollView>
+
 
     )
 }
