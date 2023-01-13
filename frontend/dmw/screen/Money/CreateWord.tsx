@@ -15,7 +15,7 @@ import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 
 const ImportWord = (props) => {
   const { t, i18n } = useTranslation();
-  const [secureTextEntry, setsecureTextEntry] = useState(false);
+  const [secureTextEntry, setsecureTextEntry] = useState(true);
   const [word, setword] = useState("");
   const [password, setpassword] = useState("");
   const [password1, setpassword1] = useState("");
@@ -51,7 +51,8 @@ const {Toast} = useDmwApi()
             <Text style={styles.text}>{t("密码")}</Text>
             <TouchableWithoutFeedback
               onPress={() => {
-                setsecureTextEntry(!setsecureTextEntry);
+                setsecureTextEntry(!secureTextEntry);
+                // console.log()
               }}
             >
               {secureTextEntry ? (

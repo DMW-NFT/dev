@@ -40,7 +40,7 @@ const WalletSafe = (props) => {
         <View style={[styles.blackBox]}>
           <TouchableWithoutFeedback
             onPress={() => {
-              props.navigation.navigate("walletSafeShow");
+              props.navigation.navigate("walletSafeShow",{ password });
             }}
           >
             <Image
