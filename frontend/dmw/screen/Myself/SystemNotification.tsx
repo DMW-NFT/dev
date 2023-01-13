@@ -102,9 +102,10 @@ const SystemNotification = (props) => {
                 marginHorizontal: 5,
               }}
             >
-              <Text style={{ fontSize: 22 }}>{item.nickname}</Text>
+              <Text style={{ fontSize: 22 }}>{item.nickname} </Text>
+              <Text style={{ fontSize: 15 }}>{t("赞了这个合集")} </Text>
               <Text style={{ color: "gray" }}>
-                {t("赞了这个合集")} {item.create_time}{" "}
+                 {item.create_time}{" "}
               </Text>
             </View>
           </View>
@@ -211,10 +212,10 @@ const SystemNotification = (props) => {
             <FontAwesomeIcon icon={faCogs} color="#707070" size={16} />
             <Text style={{ marginLeft: 10 }}>{item.type}</Text>
           </View>
-          <FontAwesomeIcon icon={faListUl} color="#707070" size={16} />
+          {/* <FontAwesomeIcon icon={faListUl} color="#707070" size={16} /> */}
         </View>
 
-        <View style={styles.titleBox}>
+        {/* <View style={styles.titleBox}>
           <View>
             <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.time}>{item.create_time}</Text>
@@ -222,7 +223,7 @@ const SystemNotification = (props) => {
           <Text style={styles.del} onPress={() => delnotice(item.id)}>
             删除
           </Text>
-        </View>
+        </View> */}
 
         <View style={{ marginBottom: 15 }}>
           <Text style={styles.content} numberOfLines={3}>

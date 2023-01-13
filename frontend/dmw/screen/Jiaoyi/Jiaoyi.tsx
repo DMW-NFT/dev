@@ -114,7 +114,7 @@ const Jiaoyi = (props) => {
             type === 2 ? styles.daonghang_text_ative : styles.daonghang_text,
           ]}
           onPress={() => {
-            type != 2 ? changetype(2) : reload();
+            changetype(2) 
           }}
         >
           {t("寄售")}

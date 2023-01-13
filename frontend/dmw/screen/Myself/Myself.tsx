@@ -352,7 +352,7 @@ const Myself = (props) => {
               ListFooterComponent={() => {
                 // 声明尾部组件
                 return myNftList && myNftList.length ? (
-                  <Text style={{ textAlign: "center" }}>没有更多了</Text>
+                  <Text style={{ textAlign: "center" }}>{t("没有更多了")}</Text>
                 ) : null;
               }}
               // 下刷新

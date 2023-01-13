@@ -83,7 +83,7 @@ const Home = () => {
       ></Stack.Screen>
       <Stack.Screen
         component={TradeSuccessfully}
-        name="tradeSuccessfully"
+        name="TradeSuccessfully"
         options={{
           title: t("交易成功"),
         }}

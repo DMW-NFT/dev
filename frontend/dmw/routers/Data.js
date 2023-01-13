@@ -5,6 +5,7 @@ import DataScreen from '../screen/Data/Data'
 
 
 import CollectionDetails from "../screen/Other/CollectionDetails";
+import GoodsDetail from "../screen/Other/GoodsDetail";
 import { useTranslation } from 'react-i18next'
 const Stack = createStackNavigator()
 const Data = () => {
@@ -23,6 +24,13 @@ const Data = () => {
       <Stack.Screen
         component={CollectionDetails}
         name="CollectionDetails"
+        options={{
+          headerTitle: t("合集"),
+        }}
+      ></Stack.Screen>
+      <Stack.Screen
+        component={GoodsDetail}
+        name="goodsDetail"
         options={{
           headerTitle: t("合集"),
         }}
