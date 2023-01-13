@@ -64,6 +64,7 @@ const Myself = (props) => {
   const [txNftModalVisible, setTxNftModalVisible] = useState(false);
 
   const [showTransferNft, setShowTransferNft] = useState(false);
+  const [isActivity, setIsActivity] = useState(false)
   // Context方法
   const { logOut } = useDmwLogin();
   const { post, formData, Toast, Copy } = useDmwApi();
@@ -93,7 +94,7 @@ const Myself = (props) => {
         // console.log(userInfo, "用户信息打印");
         setUsername(res.data.nickname);
         setAvatarUrl(res.data.avatar_url);
-        
+
       }
     });
 
@@ -143,19 +144,33 @@ const Myself = (props) => {
 
   const getMyNft = (posturl: string, data) => {
     // console.log(data,'请求参数');
+    console.log(data, 'page:1,limit:999');
+    let rdata = data;
+    rdata.page = 1;
+    rdata.limit = 999;
+    console.log(rdata, 'rdata');
 
     let params = {};
-    if (data) {
-      params = formData(data);
+    if (rdata) {
+      params = formData(rdata);
     }
 
-    setLoding(true);
+    // setLoding(true);
     // console.log(posturl,'url,yemian');
 
     post(posturl, params)
       .then((res) => {
         // console.log(res.data, '回调----------');
         if (res.code == 200) {
+          if (posturl == '/index/nft/get_nft_activity') {
+            console.log(res.data.data, '事件');
+            setIsActivity(true)
+            setmyNftList(res.data.data);
+            return
+          } else {
+            setIsActivity(false)
+          }
+
           let arr = res.data.result ? res.data.result : res.data.data;
           let strarr = [];
           arr.map((item, index) => {
@@ -298,10 +313,10 @@ const Myself = (props) => {
           {/*  navigatetoDetail={(id, unique_id, contract_address, token_id, network)
                    =>
                   { props.navigation.navigate('goodsDetail', { id: id, unique_id, contract_address, token_id, network }) }} */}
-          {!loading ? (
+          {!isActivity ? (
             <FlatList
               refreshing={false}
-              style={{ height: "55%", zIndex: 1 }}
+              style={{ height: "55%", zIndex: 1, marginBottom: -90 }}
               ListEmptyComponent={() => {
                 return (
                   <Text style={{ textAlign: "center", marginTop: "50%" }}>
@@ -360,15 +375,63 @@ const Myself = (props) => {
               onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
             ></FlatList>
           ) : (
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                marginTop: "40%",
+            <FlatList
+              refreshing={false}
+              style={{ height: "55%", zIndex: 1 }}
+              ListEmptyComponent={() => {
+                return (
+                  <Text style={{ textAlign: "center", marginTop: "50%" }}>
+                    {t("空空如也")}
+                  </Text>
+                );
+                // 列表为空展示改组件
               }}
-            >
-              <Spinner />
-            </View>
+              // 一屏幕展示几个
+              number={4}
+              //  2列显示
+              numColumns={1}
+              data={myNftList}
+              renderItem={({ item, index }) => {
+                return (
+                  <View style={{ paddingTop: 10, paddingBottom: 10, paddingLeft: 20, paddingRight: 20, borderWidth: 1, borderColor: '#ccc', borderRadius: 10 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                      <Image style={{ width: 80, height: 80 }} source={{ uri: item.image_attachment_url }}></Image>
+                      <View style={{ flex: 1, }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                          <Text style={{ fontSize: 14, color: "#333", marginLeft: 20 }}>{item.name}</Text>
+                          <Text style={{ fontSize: 12, color: '#999999' }}>{item.create_time}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'column', justifyContent: 'space-between',  marginTop: 20 }}>
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 20 }}>
+                            <Text style={{ fontSize: 12, color: "#333", }}>network</Text>
+                            <Text style={{ fontSize: 12, color: "#333", }}>offer</Text>
+                            <Text style={{ fontSize: 12, color: "#333", }}>currency</Text>
+                            {/* <Text style={{ fontSize: 12, color: "#333", }}>network</Text> */}
+                          </View>
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 20,marginTop:4 }}>
+                            <Text style={{ fontSize: 12, color: "#999999", }}>{item.network}</Text>
+                            <Text style={{ fontSize: 12, color: "#999999", }}>{item['total_offer_amount'].number + item['total_offer_amount'].currency_name}</Text>
+                            <Text style={{ fontSize: 12, color: "#999999", }}>{item.currency.slice(0, 4)}</Text>
+                            {/* <Text style={{ fontSize: 12, color: "#999999", }}>network</Text> */}
+                          </View>
+                          {/* <Text style={{ fontSize: 12, color: '#999999' }}>{item.create_time}</Text> */}
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                )
+              }}
+              key={'snsn'}
+              keyExtractor={(item, index) => item.id}
+              ListFooterComponent={() => {
+                // 声明尾部组件
+                return myNftList && myNftList.length ? (
+                  <Text style={{ textAlign: "center", marginTop: 20 }}>没有更多了</Text>
+                ) : null;
+              }}
+              // 下刷新
+              onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
+            ></FlatList>
           )}
         </View>
       </View>
