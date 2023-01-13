@@ -9,6 +9,7 @@ import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import React, { useState, useEffect } from 'react';
 import { Dimensions } from 'react-native'
 import { useTranslation } from 'react-i18next'
+import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider';
 const Data = (props) => {
   const { t, i18n } = useTranslation();
   const [category, changeVisible0] = useState({ id: 1, name: "All categories1" })
@@ -22,6 +23,7 @@ const Data = (props) => {
   const [page,setpage]=useState(0)
   const [total,settotal]=useState(null)
   const { post, formData } = useDmwApi()
+  const { language } = useDmwLogin()
 
 
 
@@ -62,14 +64,14 @@ const Data = (props) => {
     post("/index/common/get_filter", nftDataObj).then((res) => {
       if (res.code == 200) {
         setshaiuanList(res.data)
-        // changeVisible0(res.data[0].tabs[0])
-        // changeVisible1(res.data[1].tabs[0])
-        // changeVisible2(res.data[2].tabs[0])
+        changeVisible0(res.data[0].tabs[0])
+        changeVisible1(res.data[1].tabs[0])
+        changeVisible2(res.data[2].tabs[0])
       }
     });
     // setpage(1) 
     return () => { };
-  }, [props]);
+  }, [props,language]);
 
   useEffect(() => {
     // getList() 
