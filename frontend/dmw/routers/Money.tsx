@@ -22,7 +22,7 @@ import Privatekeyimport from "../screen/Money/Privatekeyimport"; // 发送
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 import { useDmwWallet } from "../../DmwWallet/DmwWalletProvider";
 import { useTranslation } from "react-i18next";
-
+import TransactionDetail from '../screen/Money/TransactionDetail'
 const Stack = createStackNavigator();
 const Home = (props) => {
   const { t, i18n } = useTranslation();
@@ -155,13 +155,13 @@ const Home = (props) => {
         }}
       ></Stack.Screen>
 
-      {/* <Stack.Screen
-        component={TermsOfService}
-        name="TermsOfService"
+      <Stack.Screen
+        component={TransactionDetail}
+        name="TransactionDetail"
         options={{
-          title: t("服务条款"),
+          title: "Tx "+t("详情"),
         }}
-      ></Stack.Screen> */}
+      ></Stack.Screen>
     </Stack.Navigator>
   );
 };

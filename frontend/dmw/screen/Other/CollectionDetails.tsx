@@ -241,7 +241,7 @@ const CollectionDetails = (props) => {
                                                 </View>
                                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 20, marginTop: 4 }}>
                                                     <Text style={{ fontSize: 12, color: "#999999", }}>{item.listing_type == 0 ? t('寄售') + '' : t('拍卖') + ''}</Text>
-                                                    <Text style={{ fontSize: 12, color: "#999999", }}>{item['total_offer_amount'].number + item['total_offer_amount'].currency_name}</Text>
+                                                    <Text style={{ fontSize: 12, color: "#999999", }}>{item.total_offer_amount.number + item.total_offer_amount.currency_name}</Text>
                                                     <Text style={{ fontSize: 12, color: "#999999", }}>{item.currency.slice(0, 4)}</Text>
                                                     {/* <Text style={{ fontSize: 12, color: "#999999", }}>network</Text> */}
                                                 </View>

@@ -11,7 +11,7 @@ import React, { useState, useEffect } from "react";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { t } from "i18next";
 
-const RradeSuccessfully = (props) => {
+const TradeSuccessfully = (props) => {
   // state = {
   //   type: 1, //1是交易成功  2是交易关闭
   // }
@@ -176,7 +176,7 @@ const RradeSuccessfully = (props) => {
   );
 };
 
-export default RradeSuccessfully;
+export default TradeSuccessfully;
 
 const styles = StyleSheet.create({
   borderling: {

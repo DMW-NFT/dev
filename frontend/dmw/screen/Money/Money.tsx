@@ -22,6 +22,7 @@ import React, {
 import Screen from "./BottomPopUpWindow";
 import Lmodal from "./leftModal";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
+import { SocialIcon, SocialIconProps, Icon } from "@rneui/themed";
 import {
   Button,
   Card,
@@ -36,27 +37,13 @@ import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import CryptoJS from "crypto-js";
 import { useTranslation } from "react-i18next";
 import chainIdMap from "../../../constans/chainIdMap.json";
+import Web3 from "web3";
 
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
 const scale = Dimensions.get("window").scale;
 
 const Money = (props) => {
-  const { t, i18n } = useTranslation();
-  // inputRef = React.createRef();
-  const inputRefX = useRef(null);
-  const [contenType, setContenType] = useState("token");
-  const [list, setList] = useState([{}, {}]);
-  const [visible, setVisible] = useState(false);
-  const [chainMenuVisible, setChainMenuVisible] = useState(false);
-
-  const [selectedChain, setSelectedChain] = useState("polygon");
-  const [lMvisible, setLMvisible] = useState(false);
-  const [Modalvisible, setModalvisible] = useState(false);
-  const { dmwWalletList, setDmwChainId } = useDmwWallet();
-  const [password, setpassword] = useState("");
-  const [passwordlist, setpasswordlist] = useState([]);
-  const { WalletInUse, setWalletInUse, avatarUrl } = useDmwLogin();
   const {
     disconnectWallet,
     connected,
@@ -78,12 +65,29 @@ const Money = (props) => {
     shortenAddress,
     Copy,
   } = useDmwApi();
+  const { t, i18n } = useTranslation();
+  // inputRef = React.createRef();
+  const inputRefX = useRef(null);
+  const [contenType, setContenType] = useState("token");
+  const [list, setList] = useState([{}, {}]);
+  const [visible, setVisible] = useState(false);
+  const [chainMenuVisible, setChainMenuVisible] = useState(false);
+
+  const [selectedChain, setSelectedChain] = useState(
+    chainIdMap[currentChainId].network.toLowerCase()
+  );
+  const [lMvisible, setLMvisible] = useState(false);
+  const [Modalvisible, setModalvisible] = useState(false);
+  const { dmwWalletList, setDmwChainId } = useDmwWallet();
+  const [password, setpassword] = useState("");
+  const [passwordlist, setpasswordlist] = useState([]);
+  const { WalletInUse, setWalletInUse, avatarUrl } = useDmwLogin();
 
   const [lwNativeBalance, setLwNativeBalance] = useState("");
   const [tpwNativeBalance, setTpwNativeBalance] = useState("");
-
   const [lwErc20Balance, setLwErc20Balance] = useState([]);
   const [tpwErc20Balance, setTpwErc20Balance] = useState([]);
+  const [txHistory, setTxHistory] = useState([]);
 
   const scrollX = new Animated.Value(-500);
   const opacity = new Animated.Value(0);
@@ -118,10 +122,9 @@ const Money = (props) => {
   }, [currentChainId]);
 
   const getAddressBalance = (address) => {
+    console.log("getting ", chainIdMap[currentChainId].network, "erc20");
     return fetch(
-      `https://deep-index.moralis.io/api/v2/${address}/erc20?chain=${
-        selectedChain == "bsc testnet" ? "bsc%20testnet" : selectedChain
-      }`,
+      `https://deep-index.moralis.io/api/v2/${address}/erc20?chain=${chainIdMap[currentChainId].network}`,
       {
         method: "GET",
         headers: {
@@ -130,11 +133,15 @@ const Money = (props) => {
             "Lf0hom3miHg82XaKYaQg1Ej3LiyXmfO9kCSAsfws9XpUX1V9sh1isIsOorRf1xYf",
         },
       }
-    ).then((res) => {
-      return res.json().then((finnalRes) => {
-        return finnalRes;
+    )
+      .then((res) => {
+        return res.json().then((finnalRes) => {
+          return finnalRes;
+        });
+      })
+      .catch((error) => {
+        Toast(error);
       });
-    });
   };
 
   const empty = () => {
@@ -143,20 +150,22 @@ const Money = (props) => {
 
   useEffect(() => {
     // console.log('钱包变化',connected,currentWallet);
-    if (currentWallet) {
+    if (currentWallet && WalletInUse == 2) {
       getNativeBalance(currentWallet).then((res) => {
         setTpwNativeBalance(res);
       });
       getAddressBalance(currentWallet).then((res) => {
+        console.log("get current wallet", res);
         setTpwErc20Balance(res);
       });
     }
 
-    if (dmwWalletList && dmwWalletList[0]) {
+    if (dmwWalletList && dmwWalletList[0] && WalletInUse == 1) {
       getNativeBalance(dmwWalletList[0]).then((res) => {
         setLwNativeBalance(res);
       });
       getAddressBalance(dmwWalletList[0]).then((res) => {
+        console.log("get currentdmw wallet", res);
         setLwErc20Balance(res);
       });
     }
@@ -164,11 +173,11 @@ const Money = (props) => {
     setMoneyRouteState(
       connected || dmwWalletList.length ? "12345" : "createMoney"
     );
-  }, [connected, dmwWalletList, currentWallet, WalletInUse, selectedChain]);
+  }, [currentChainId, WalletInUse]);
 
   useEffect(() => {
-    console.log("monney useeffect currentwallet", currentWallet);
-  }, [currentWallet]);
+    getAccuontTxHistory();
+  }, [WalletInUse]);
 
   useEffect(() => {
     let blackPointArry = [null, null, null, null, null, null];
@@ -228,17 +237,6 @@ const Money = (props) => {
       });
   };
 
-  const encrypt = (word, keyStr, ivStr) => {
-    const key = CryptoJS.enc.Latin1.parse(keyStr);
-    const iv = CryptoJS.enc.Latin1.parse(ivStr);
-    const encoded = CryptoJS.AES.encrypt(word, key, {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      adding: CryptoJS.pad.ZeroPadding,
-    }).toString();
-
-    return encoded;
-  };
   const renderChainMenu = () => (
     <TouchableWithoutFeedback onPress={() => setChainMenuVisible(true)}>
       <View
@@ -257,16 +255,22 @@ const Money = (props) => {
     </TouchableWithoutFeedback>
   );
 
-  const randomString = (len) => {
-    len = len || 32;
-    var $chars =
-      "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678"; /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
-    var maxPos = $chars.length;
-    var pwd = "";
-    for (var i = 0; i < len; i++) {
-      pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
-    }
-    return pwd;
+  const getAccuontTxHistory = () => {
+    setTxHistory([]);
+    post(
+      "/index/wallet/get_native_transactions_by_wallet",
+      formData({ network: selectedChain })
+    )
+      .then((res) => {
+        // console.log(res, wallet_address, "qianbao denglu");
+        if (res.code == 200) {
+          setTxHistory(res.data.result);
+          console.log(res.data.result[0]);
+        }
+      })
+      .catch((err) => {
+        Toast(err.message);
+      });
   };
 
   return (
@@ -277,390 +281,471 @@ const Money = (props) => {
         position: "relative",
       }}
     >
-      <View style={styles.hearder}>
-        <OverflowMenu
-          anchor={renderChainMenu}
-          visible={chainMenuVisible}
-          placement={"bottom"}
-          onBackdropPress={() => setChainMenuVisible(false)}
-        >
-          {/* <MenuItem
-            onPress={() => {
-              setSelectedChain("goerli");
-              setCurrenChainId("5");
-              setDmwChainId("5");
-            }}
-            title="goerli"
-          />
-          <MenuItem
-            onPress={() => {
-              setSelectedChain("bsc testnet");
-              setCurrenChainId("97"), setDmwChainId("97");
-            }}
-            title="bsc testnet"
-          /> */}
-          <MenuItem
-            onPress={() => {
-              setSelectedChain("polygon");
-              setCurrenChainId("137"), setDmwChainId("137");
-            }}
-            title="polygon"
-          />
-          <MenuItem
-            onPress={() => {
-              setSelectedChain("mumbai");
-              setCurrenChainId("80001"), setDmwChainId("80001");
-            }}
-            title="mumbai"
-          />
-        </OverflowMenu>
+      <ScrollView
+        style={{
+          maxHeight: screenHeight * 1,
+          // minHeight: screenHeight,
+          // backgroundColor: "green",
+        }}
+      >
+        <View style={styles.hearder}>
+          <OverflowMenu
+            anchor={renderChainMenu}
+            visible={chainMenuVisible}
+            placement={"bottom"}
+            onBackdropPress={() => setChainMenuVisible(false)}
+          >
+            <MenuItem
+              onPress={() => {
+                setSelectedChain("polygon");
+                setCurrenChainId("137"), setDmwChainId("137");
+              }}
+              title="polygon"
+            />
+            <MenuItem
+              onPress={() => {
+                setSelectedChain("mumbai");
+                setCurrenChainId("80001"), setDmwChainId("80001");
+              }}
+              title="mumbai"
+            />
+          </OverflowMenu>
 
-        <TouchableWithoutFeedback onPress={() => lMvisibleopen()}>
-          <Image
-            style={styles.top_img}
-            source={require("../../assets/img/my/top_left_list.png")}
-          ></Image>
-        </TouchableWithoutFeedback>
-      </View>
+          <TouchableWithoutFeedback onPress={() => lMvisibleopen()}>
+            <Image
+              style={styles.top_img}
+              source={require("../../assets/img/my/top_left_list.png")}
+            ></Image>
+          </TouchableWithoutFeedback>
+        </View>
 
-      <View>
-        <ScrollView
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          style={[
-            {
-              marginBottom: 20,
-              height: 336 / 2,
-            },
-            { marginLeft: dmwWalletList && dmwWalletList[0] ? null : 20 },
-          ]}
-        >
-          {dmwWalletList && dmwWalletList[0] ? (
-            <View style={styles.USDT}>
-              {WalletInUse == 1 ? (
-                <Text style={styles.active}>{t("当前登录")}</Text>
-              ) : (
-                <TouchableWithoutFeedback onPress={() => Switchwallet(1)}>
-                  <Image
-                    style={{
-                      width: 36,
-                      height: 36,
-                      position: "absolute",
-                      top: 0,
-                      right: 0,
-                    }}
-                    source={require("../../assets/img/money/SwitchwalletA.png")}
-                  ></Image>
-                </TouchableWithoutFeedback>
-              )}
-              <Text style={styles.WName}>DMW</Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  marginTop: 15,
-                  marginBottom: 14,
-                }}
-              >
-                <ImageBackground
-                  source={require("../../assets/img/money/WFCA.png")}
-                  style={{ marginRight: 10, justifyContent: "center" }}
+        <View>
+          <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            nestedScrollEnabled={true}
+            style={[
+              {
+                marginBottom: 20,
+                height: 336 / 2,
+              },
+              { marginLeft: dmwWalletList && dmwWalletList[0] ? null : 20 },
+            ]}
+          >
+            {dmwWalletList && dmwWalletList[0] ? (
+              <View style={styles.USDT}>
+                {WalletInUse == 1 ? (
+                  <Text style={styles.active}>{t("当前登录")}</Text>
+                ) : (
+                  <TouchableWithoutFeedback onPress={() => Switchwallet(1)}>
+                    <Image
+                      style={{
+                        width: 36,
+                        height: 36,
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
+                      }}
+                      source={require("../../assets/img/money/SwitchwalletA.png")}
+                    ></Image>
+                  </TouchableWithoutFeedback>
+                )}
+                <Text style={styles.WName}>DMW</Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    marginTop: 15,
+                    marginBottom: 14,
+                  }}
                 >
-                  <Text style={styles.CurrencyName}>{nativeToken}</Text>
-                </ImageBackground>
+                  <ImageBackground
+                    source={require("../../assets/img/money/WFCA.png")}
+                    style={{ marginRight: 10, justifyContent: "center" }}
+                  >
+                    <Text style={styles.CurrencyName}>{nativeToken}</Text>
+                  </ImageBackground>
 
-                <Text style={styles.balance}>
-                  {lwNativeBalance ? Number(lwNativeBalance).toFixed(4) : "--"}
-                </Text>
+                  <Text style={styles.balance}>
+                    {lwNativeBalance
+                      ? Number(lwNativeBalance).toFixed(4)
+                      : "--"}
+                  </Text>
+                </View>
+                {/* <Text style={{ color: "#fff" }}>$10.000</Text> */}
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    Copy(dmwWalletList[0]);
+                  }}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Text style={{ color: "#fff" }}>
+                      {shortenAddress(dmwWalletList[0])}
+                    </Text>
+
+                    <Image
+                      style={{ width: 10, height: 10, marginLeft: 5 }}
+                      source={require("../../assets/img/money/copyW.png")}
+                    ></Image>
+                  </View>
+                </TouchableWithoutFeedback>
               </View>
-              {/* <Text style={{ color: "#fff" }}>$10.000</Text> */}
+            ) : null}
+
+            {connected && currentWallet ? (
+              <View style={styles.WFCA}>
+                {WalletInUse == 2 ? (
+                  <Text style={styles.active}>{t("当前登录")}</Text>
+                ) : (
+                  <TouchableWithoutFeedback onPress={() => Switchwallet(2)}>
+                    <Image
+                      style={{
+                        width: 36,
+                        height: 36,
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
+                      }}
+                      source={require("../../assets/img/money/SwitchwalletA.png")}
+                    ></Image>
+                  </TouchableWithoutFeedback>
+                )}
+
+                <Text style={[styles.WName, { color: "#897EF8" }]}>
+                  {t("外部钱包")}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    marginTop: 15,
+                    marginBottom: 14,
+                  }}
+                >
+                  <ImageBackground
+                    source={require("../../assets/img/money/USDT.png")}
+                    style={{ marginRight: 10, justifyContent: "center" }}
+                  >
+                    <Text style={[styles.CurrencyName, { color: "#897EF8" }]}>
+                      {nativeToken}
+                    </Text>
+                  </ImageBackground>
+
+                  <Text style={[styles.balance, { color: "#897EF8" }]}>
+                    {Number(tpwNativeBalance).toFixed(4)}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    paddingRight: 20,
+                  }}
+                >
+                  {/* <Text style={{ color: "#897EF8" }}>$10.000</Text> */}
+                  <Text></Text>
+                  <Text
+                    style={{ color: "#897EF8" }}
+                    onPress={() => {
+                      disconnectWallet();
+                    }}
+                  >
+                    {t("断开链接")}
+                  </Text>
+                </View>
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    Copy(currentWallet);
+                  }}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Text style={{ color: "#897EF8" }}>
+                      {shortenAddress(currentWallet)}
+                    </Text>
+
+                    <Image
+                      style={{ width: 10, height: 10, marginLeft: 5 }}
+                      source={require("../../assets/img/my/copy.png")}
+                    ></Image>
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+            ) : null}
+          </ScrollView>
+        </View>
+
+        <View style={{ marginBottom: 20 }}>
+          <Text style={styles.service}>service</Text>
+        </View>
+
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <TouchableWithoutFeedback onPress={() => open()}>
+            <View style={styles.ListService}>
+              <Image
+                style={styles.ListServiceImg}
+                source={require("../../assets/img/money/list1.png")}
+              ></Image>
+              <Text>{t("接收")}</Text>
+            </View>
+          </TouchableWithoutFeedback>
+
+          <TouchableWithoutFeedback
+            onPress={() => {
+              // props.navigation.navigate("Exchange");
+              Toast("coming soon...");
+            }}
+          >
+            <View style={[styles.ListService]}>
+              <Image
+                style={[styles.ListServiceImg]}
+                source={require("../../assets/img/money/list3.png")}
+              ></Image>
+              <Text>{t("兑换")}</Text>
+            </View>
+          </TouchableWithoutFeedback>
+
+          <TouchableWithoutFeedback
+            onPress={() => {
+              props.navigation.navigate("Gift", {
+                WalletInuse: WalletInUse,
+                ERC20Token: WalletInUse == 1 ? lwErc20Balance : tpwErc20Balance,
+                NativToken:
+                  WalletInUse == 1 ? lwNativeBalance : tpwNativeBalance,
+              });
+            }}
+          >
+            <View style={styles.ListService}>
+              <Image
+                style={styles.ListServiceImg}
+                source={require("../../assets/img/money/list4.png")}
+              ></Image>
+              <Text>{t("赠予")}</Text>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+
+        {/* tab栏 -- start */}
+        <View style={[styles.daohang]}>
+          <Text
+            style={[
+              contenType == "token"
+                ? styles.daonghang_text_ative
+                : styles.daonghang_text,
+            ]}
+            onPress={() => setContenType("token")}
+          >
+            {t("代币")}
+          </Text>
+          <Text
+            style={[
+              contenType == "nft"
+                ? styles.daonghang_text_ative
+                : styles.daonghang_text,
+            ]}
+            onPress={() => setContenType("nft")}
+          >
+            Tx {t("记录") + ""}
+          </Text>
+        </View>
+        {/* tab栏 -- end */}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{ maxHeight: screenHeight * 0.5, minHeight: "100%" }}
+          nestedScrollEnabled={true}
+        >
+          <View style={[styles.listbox]}>
+            {contenType == "token"
+              ? (WalletInUse == 1 ? lwErc20Balance : tpwErc20Balance).map(
+                  (item, index) => (
+                    <View style={styles.ListLi}>
+                      <Image
+                        style={{ width: 40, height: 40 }}
+                        source={require("../../assets/img/money/list4.png")}
+                      ></Image>
+                      <View style={styles.ListLeftText}>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            fontWeight: "700",
+                            lineHeight: 40,
+                          }}
+                        >
+                          {Number(item.balance) / 10 ** item.decimals +
+                            " " +
+                            item.symbol}
+                        </Text>
+                        {/* <Text style={{ fontSize: 12 }}>$10.000</Text> */}
+                      </View>
+                    </View>
+                  )
+                )
+              : txHistory[0] &&
+                txHistory.map((item) => (
+                  <TouchableWithoutFeedback
+                    onPress={() => {
+                      props.navigation.navigate("TransactionDetail", {
+                        detail: item,
+                        token: chainIdMap[currentChainId].nativeToken,
+                      });
+                    }}
+                  >
+                    <SafeAreaView
+                      style={{
+                        marginBottom: 10,
+                        justifyContent: "space-around",
+                        borderColor: "#cfcde18c",
+                        borderWidth: 1,
+                        borderRadius: 15,
+                        // alignContent:"center",
+                        // height:50
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          // backgroundColor: "pink",
+                        }}
+                      >
+                        <View
+                          style={{ flexDirection: "row", alignItems: "center" }}
+                        >
+                          <Icon
+                            reverse
+                            name="retweet"
+                            type="antdesign"
+                            color="#8a7ef6"
+                            size={15}
+                          />
+                          <View style={{ flexDirection: "column" }}>
+                            <Text>
+                              {item.hash.slice(0, 7)}...{item.hash.slice(-7)}
+                            </Text>
+                            <Text style={{ fontSize: 10, color: "gray" }}>
+                              {item.block_timestamp
+                                .replace("T", " ")
+                                .replace(".000Z", "")}
+                            </Text>
+                          </View>
+                        </View>
+
+                        <Text
+                          style={{
+                            paddingEnd: 20,
+                            color:
+                              item.to_address ==
+                              (WalletInUse == 1
+                                ? dmwWalletList[0]
+                                : currentWallet)
+                                ? "gray"
+                                : "#4ccb79",
+                          }}
+                        >
+                          {item.to_address ==
+                          (WalletInUse == 1 ? dmwWalletList[0] : currentWallet)
+                            ? "+"
+                            : "-"}
+                          {Web3.utils.fromWei(item.value, "ether")}{" "}
+                          {chainIdMap[currentChainId].nativeToken}
+                        </Text>
+                      </View>
+                    </SafeAreaView>
+                  </TouchableWithoutFeedback>
+                ))}
+          </View>
+        </ScrollView>
+      </ScrollView>
+
+      {Modalvisible && (
+        <Modal
+          visible={Modalvisible}
+          backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+          onBackdropPress={() => {
+            setModalvisible(false);
+          }}
+        >
+          <Card disabled={true} style={styles.CardBox}>
+            <TextInput
+              ref={inputRefX}
+              maxLength={6}
+              caretHidden={true}
+              secureTextEntry={true}
+              onKeyPress={() => {}}
+              placeholder="123456"
+              keyboardType="numeric"
+              style={{ position: "absolute", zIndex: 1, top: -40 }}
+              onChangeText={(e) => {
+                setpassword(e);
+              }}
+              value={password}
+            />
+            <View
+              style={{
+                justifyContent: "flex-end",
+                flexDirection: "row",
+                position: "absolute",
+                top: 10,
+                right: 20,
+                width: 22,
+                height: 22,
+              }}
+            >
               <TouchableWithoutFeedback
                 onPress={() => {
-                  Copy(dmwWalletList[0]);
+                  setModalvisible(false);
                 }}
               >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Text style={{ color: "#fff" }}>
-                    {shortenAddress(dmwWalletList[0])}
-                  </Text>
-
-                  <Image
-                    style={{ width: 10, height: 10, marginLeft: 5 }}
-                    source={require("../../assets/img/money/copyW.png")}
-                  ></Image>
-                </View>
+                <Image
+                  style={styles.colose}
+                  source={require("../../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png")}
+                ></Image>
               </TouchableWithoutFeedback>
             </View>
-          ) : null}
-
-          {connected && currentWallet ? (
-            <View style={styles.WFCA}>
-              {WalletInUse == 2 ? (
-                <Text style={styles.active}>{t("当前登录")}</Text>
-              ) : (
-                <TouchableWithoutFeedback onPress={() => Switchwallet(2)}>
-                  <Image
-                    style={{
-                      width: 36,
-                      height: 36,
-                      position: "absolute",
-                      top: 0,
-                      right: 0,
-                    }}
-                    source={require("../../assets/img/money/SwitchwalletA.png")}
-                  ></Image>
-                </TouchableWithoutFeedback>
-              )}
-
-              <Text style={[styles.WName, { color: "#897EF8" }]}>
-                {t("外部钱包")}
+            <View>
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontSize: 16,
+                  fontWeight: "700",
+                  marginBottom: 30,
+                }}
+              >
+                请输入支付密码
               </Text>
               <View
                 style={{
                   flexDirection: "row",
-                  marginTop: 15,
-                  marginBottom: 14,
+                  justifyContent: "space-between",
+                  marginBottom: 20,
                 }}
-              >
-                <ImageBackground
-                  source={require("../../assets/img/money/USDT.png")}
-                  style={{ marginRight: 10, justifyContent: "center" }}
-                >
-                  <Text style={[styles.CurrencyName, { color: "#897EF8" }]}>
-                    {nativeToken}
-                  </Text>
-                </ImageBackground>
-
-                <Text style={[styles.balance, { color: "#897EF8" }]}>
-                  {Number(tpwNativeBalance).toFixed(4)}
-                </Text>
-              </View>
+              ></View>
               <View
                 style={{
+                  height: 48,
                   flexDirection: "row",
                   justifyContent: "space-between",
-                  paddingRight: 20,
                 }}
               >
-                {/* <Text style={{ color: "#897EF8" }}>$10.000</Text> */}
-                <Text></Text>
-                <Text
-                  style={{ color: "#897EF8" }}
-                  onPress={() => {
-                    disconnectWallet();
-                  }}
-                >
-                  {t("断开链接")}
-                </Text>
-              </View>
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  Copy(currentWallet);
-                }}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Text style={{ color: "#897EF8" }}>
-                    {shortenAddress(currentWallet)}
+                {passwordlist.map((item, index) => (
+                  <Text
+                    style={[
+                      index == 0 ? styles.passinputfirst : styles.passinput,
+                    ]}
+                  >
+                    {item ? "●" : ""}
                   </Text>
-
-                  <Image
-                    style={{ width: 10, height: 10, marginLeft: 5 }}
-                    source={require("../../assets/img/my/copy.png")}
-                  ></Image>
-                </View>
-              </TouchableWithoutFeedback>
+                ))}
+              </View>
             </View>
-          ) : null}
-        </ScrollView>
-      </View>
-
-      <View style={{ marginBottom: 20 }}>
-        <Text style={styles.service}>service</Text>
-      </View>
-
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <TouchableWithoutFeedback onPress={() => open()}>
-          <View style={styles.ListService}>
-            <Image
-              style={styles.ListServiceImg}
-              source={require("../../assets/img/money/list1.png")}
-            ></Image>
-            <Text>{t("接收")}</Text>
-          </View>
-        </TouchableWithoutFeedback>
-
-        <TouchableWithoutFeedback
-          onPress={() => {
-            // props.navigation.navigate("Exchange");
-            Toast("coming soon...");
-          }}
-        >
-          <View style={[styles.ListService]}>
-            <Image
-              style={[styles.ListServiceImg]}
-              source={require("../../assets/img/money/list3.png")}
-            ></Image>
-            <Text>{t("兑换")}</Text>
-          </View>
-        </TouchableWithoutFeedback>
-
-        <TouchableWithoutFeedback
-          onPress={() => {
-            props.navigation.navigate("Gift", {
-              WalletInuse: WalletInUse,
-              ERC20Token: WalletInUse == 1 ? lwErc20Balance : tpwErc20Balance,
-              NativToken: WalletInUse == 1 ? lwNativeBalance : tpwNativeBalance,
-            });
-          }}
-        >
-          <View style={styles.ListService}>
-            <Image
-              style={styles.ListServiceImg}
-              source={require("../../assets/img/money/list4.png")}
-            ></Image>
-            <Text>{t("赠予")}</Text>
-          </View>
-        </TouchableWithoutFeedback>
-      </View>
-
-      {/* tab栏 -- start */}
-      <View style={[styles.daohang]}>
-        <Text
-          style={[
-            contenType == "token"
-              ? styles.daonghang_text_ative
-              : styles.daonghang_text,
-          ]}
-          onPress={() => setContenType("token")}
-        >
-          {t("代币")}
-        </Text>
-        <Text
-          style={[
-            contenType == "nft"
-              ? styles.daonghang_text_ative
-              : styles.daonghang_text,
-          ]}
-          onPress={() => setContenType("nft")}
-        >
-          {t("藏品")}
-        </Text>
-      </View>
-      {/* tab栏 -- end */}
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={[styles.listbox]}>
-          {contenType == "token"
-            ? (WalletInUse == 1 ? lwErc20Balance : tpwErc20Balance).map(
-                (item, index) => (
-                  <View style={styles.ListLi}>
-                    <Image
-                      style={{ width: 40, height: 40 }}
-                      source={require("../../assets/img/money/list4.png")}
-                    ></Image>
-                    <View style={styles.ListLeftText}>
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: "700",
-                          lineHeight: 40,
-                        }}
-                      >
-                        {Number(item.balance) / 10 ** item.decimals +
-                          " " +
-                          item.symbol}
-                      </Text>
-                      {/* <Text style={{ fontSize: 12 }}>$10.000</Text> */}
-                    </View>
-                  </View>
-                )
-              )
-            : null}
-        </View>
-      </ScrollView>
-
-      <Screen style={[styles.Screen]} visible={visible} close={close}></Screen>
-
-      <Modal
-        visible={Modalvisible}
-        backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-        onBackdropPress={() => {
-          setModalvisible(false);
-        }}
-      >
-        <Card disabled={true} style={styles.CardBox}>
-          <TextInput
-            ref={inputRefX}
-            maxLength={6}
-            caretHidden={true}
-            secureTextEntry={true}
-            onKeyPress={() => {}}
-            placeholder="123456"
-            keyboardType="numeric"
-            style={{ position: "absolute", zIndex: 1, top: -40 }}
-            onChangeText={(e) => {
-              setpassword(e);
-            }}
-            value={password}
-          />
-          <View
-            style={{
-              justifyContent: "flex-end",
-              flexDirection: "row",
-              position: "absolute",
-              top: 10,
-              right: 20,
-              width: 22,
-              height: 22,
-            }}
-          >
-            <TouchableWithoutFeedback
-              onPress={() => {
-                setModalvisible(false);
-              }}
-            >
-              <Image
-                style={styles.colose}
-                source={require("../../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png")}
-              ></Image>
-            </TouchableWithoutFeedback>
-          </View>
-          <View>
-            <Text
-              style={{
-                textAlign: "center",
-                fontSize: 16,
-                fontWeight: "700",
-                marginBottom: 30,
-              }}
-            >
-              请输入支付密码
-            </Text>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginBottom: 20,
-              }}
-            ></View>
-            <View
-              style={{
-                height: 48,
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              {passwordlist.map((item, index) => (
-                <Text
-                  style={[
-                    index == 0 ? styles.passinputfirst : styles.passinput,
-                  ]}
-                >
-                  {item ? "●" : ""}
-                </Text>
-              ))}
-            </View>
-          </View>
-        </Card>
-      </Modal>
+          </Card>
+        </Modal>
+      )}
+      {visible && (
+        <Screen
+          // style={[styles.Screen]}
+          visible={visible}
+          close={close}
+        ></Screen>
+      )}
 
       <Animated.View
         style={{ position: "absolute", translateX: scrollX, opacity: opacity }}

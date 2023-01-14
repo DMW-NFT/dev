@@ -55,7 +55,7 @@ const Home = () => {
       ></Stack.Screen>
       <Stack.Screen
         component={CollectionDetails}
-        name="collectionDetails"
+        name="CollectionDetails"
         options={{
           headerTransparent: true, // 会将页面与标题重叠
           title: "",

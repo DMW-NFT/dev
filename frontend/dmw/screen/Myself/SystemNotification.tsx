@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   Button,
+  ScrollView,
 } from "react-native";
 
 import { Icon, Avatar } from "@rneui/themed";
@@ -59,7 +60,7 @@ const SystemNotification = (props) => {
     console.log(id, props.route.params.type);
     post(
       "/index/message/del_message",
-      formData({ id:id, type: props.route.params.type })
+      formData({ id: id, type: props.route.params.type })
     ).then((res) => {
       console.log(res);
       Toast(t("删除成功"));
@@ -104,9 +105,7 @@ const SystemNotification = (props) => {
             >
               <Text style={{ fontSize: 22 }}>{item.nickname} </Text>
               <Text style={{ fontSize: 15 }}>{t("赞了这个合集")} </Text>
-              <Text style={{ color: "gray" }}>
-                 {item.create_time}{" "}
-              </Text>
+              <Text style={{ color: "gray" }}>{item.create_time} </Text>
             </View>
           </View>
           <Avatar
@@ -185,7 +184,9 @@ const SystemNotification = (props) => {
 
         <TouchableWithoutFeedback
           onPress={() => {
-            props.navigation.navigate("TradeSuccessfully",{id: item.offer_id});
+            props.navigation.navigate("TradeSuccessfully", {
+              id: item.offer_id,
+            });
           }}
         >
           <View
@@ -254,47 +255,51 @@ const SystemNotification = (props) => {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        // paddingTop: 44,
-        position: "relative",
-        height: Dimensions.get("window").height,
-        backgroundColor: "#F5F5F5",
-      }}
-    >
-      {list[0]&&<TouchableWithoutFeedback
-        onPress={() => {
-          cleanAll();
+    <ScrollView>
+      <SafeAreaView
+        style={{
+          // paddingTop: 44,
+          position: "relative",
+          height: Dimensions.get("window").height,
+          backgroundColor: "#F5F5F5",
         }}
       >
-        <View
-          style={{
-            alignSelf: "flex-end",
-            paddingHorizontal: 10,
-            paddingVertical: 5,
-            marginHorizontal: 20,
-            marginVertical: 5,
-            backgroundColor: "gray",
-            borderRadius: 15,
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Icon name="delete" type="material-community" color="white" />
-          <Text style={{ color: "white", textAlign: "center" }}>ALL</Text>
-        </View>
-      </TouchableWithoutFeedback>}
+        {list[0] && (
+          <TouchableWithoutFeedback
+            onPress={() => {
+              cleanAll();
+            }}
+          >
+            <View
+              style={{
+                alignSelf: "flex-end",
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+                marginHorizontal: 20,
+                marginVertical: 5,
+                backgroundColor: "gray",
+                borderRadius: 15,
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Icon name="delete" type="material-community" color="white" />
+              <Text style={{ color: "white", textAlign: "center" }}>ALL</Text>
+            </View>
+          </TouchableWithoutFeedback>
+        )}
 
-      <View style={{ paddingLeft: 20, paddingRight: 20 }}>
-        {props.route.params.type == 1 &&
-          list.map((item, index) => systemMsg(item))}
-        {props.route.params.type == 2 &&
-          list.map((item, index) => likeMsgCard(item))}
-        {props.route.params.type == 4 &&
-          list.map((item, index) => saleMsg(item))}
-      </View>
-    </SafeAreaView>
+        <View style={{ paddingLeft: 20, paddingRight: 20 }}>
+          {props.route.params.type == 1 &&
+            list.map((item, index) => systemMsg(item))}
+          {props.route.params.type == 2 &&
+            list.map((item, index) => likeMsgCard(item))}
+          {props.route.params.type == 4 &&
+            list.map((item, index) => saleMsg(item))}
+        </View>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 

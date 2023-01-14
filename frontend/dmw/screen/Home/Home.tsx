@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
 
 const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 const scale = Dimensions.get("window").scale;
 const Home = (props) => {
   const { t, i18n } = useTranslation();
@@ -237,6 +238,7 @@ const Home = (props) => {
               style={styles.shuipin}
               horizontal={true}
               showsHorizontalScrollIndicator={false}
+              
             >
               {listType.map((item, index) => (
                 <Text
@@ -331,7 +333,8 @@ const Home = (props) => {
           {
             <FlatList
               refreshing={refreshing}
-              style={{ flex: 1 }}
+              style={{ flex: 1,maxHeight:screenHeight*0.8,minHeight:"100%"}}
+              nestedScrollEnabled={true}
               ListEmptyComponent={() => {
                 return (
                   <Text style={{ textAlign: "center", flex: 1 }}>

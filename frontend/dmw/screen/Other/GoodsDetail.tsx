@@ -757,7 +757,7 @@ const GoodsDetail = (props) => {
               }}
             >
               {showcollection && detailsObj.collection ? (
-                <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('collectionDetails', {ID: detailsObj.collection_id})}}>
+                <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('CollectionDetails', {ID: detailsObj.collection_id})}}>
                   <View
                     style={[
                       styles.flex,

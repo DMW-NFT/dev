@@ -46,6 +46,7 @@ const data = [
   },
 ];
 const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 const scale = Dimensions.get("window").scale;
 const Myself = (props) => {
   const { t, i18n } = useTranslation();
@@ -64,7 +65,7 @@ const Myself = (props) => {
   const [txNftModalVisible, setTxNftModalVisible] = useState(false);
 
   const [showTransferNft, setShowTransferNft] = useState(false);
-  const [isActivity, setIsActivity] = useState(false)
+  const [isActivity, setIsActivity] = useState(false);
   // Context方法
   const { logOut } = useDmwLogin();
   const { post, formData, Toast, Copy } = useDmwApi();
@@ -94,7 +95,6 @@ const Myself = (props) => {
         // console.log(userInfo, "用户信息打印");
         setUsername(res.data.nickname);
         setAvatarUrl(res.data.avatar_url);
-
       }
     });
 
@@ -109,25 +109,25 @@ const Myself = (props) => {
     // console.log("myself currentchain id",currentChainId)
     if (typename == "我创建的") {
       console.log("查看我创建的");
-      setShowTransferNft(false)
+      setShowTransferNft(false);
       getMyNft("/index/nft/get_my_create_nft_by_search", {
         keyword: strText,
         ...determinelist,
       });
     } else if (typename == "事件") {
-      setShowTransferNft(false)
+      setShowTransferNft(false);
       getMyNft("/index/nft/get_nft_activity", {
         keyword: strText,
         ...determinelist,
       });
     } else if (typename == "我喜欢的") {
-      setShowTransferNft(false)
+      setShowTransferNft(false);
       getMyNft("/index/nft/get_my_likes_nft_by_search", {
         keyword: strText,
         ...determinelist,
       });
     } else if (typename == "我的藏品") {
-      setShowTransferNft(true)
+      setShowTransferNft(true);
       getMyNft(
         determinelist == {}
           ? "/index/nft/get_my_nft_by_search"
@@ -141,14 +141,13 @@ const Myself = (props) => {
     }
   }, [typename, determinelist, strText, currentChainId, WalletInUse]);
 
-
   const getMyNft = (posturl: string, data) => {
     // console.log(data,'请求参数');
-    console.log(data, 'page:1,limit:999');
+    console.log(data, "page:1,limit:999");
     let rdata = data;
     rdata.page = 1;
     rdata.limit = 999;
-    console.log(rdata, 'rdata');
+    console.log(rdata, "rdata");
 
     let params = {};
     if (rdata) {
@@ -162,13 +161,13 @@ const Myself = (props) => {
       .then((res) => {
         // console.log(res.data, '回调----------');
         if (res.code == 200) {
-          if (posturl == '/index/nft/get_nft_activity') {
-            console.log(res.data.data, '事件');
-            setIsActivity(true)
+          if (posturl == "/index/nft/get_nft_activity") {
+            console.log(res.data.data, "事件");
+            setIsActivity(true);
             setmyNftList(res.data.data);
-            return
+            return;
           } else {
-            setIsActivity(false)
+            setIsActivity(false);
           }
 
           let arr = res.data.result ? res.data.result : res.data.data;
@@ -202,239 +201,313 @@ const Myself = (props) => {
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
-      {/* <ScrollView></ScrollView> */}
-      <View style={{ backgroundColor: "#fff" }}>
-        <View style={styles.index_box}>
-          {/* title -- start*/}
-          <View
-            style={{
-              marginBottom: 28,
-            }}
-          >
+      <ScrollView>
+        <View style={{ backgroundColor: "#fff" }}>
+          <View style={styles.index_box}>
+            {/* title -- start*/}
             <View
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                height: 52,
+                marginBottom: 28,
               }}
             >
-              <Pressable
-                onPress={() => {
-                  setlMvisible(true);
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  height: 52,
                 }}
               >
-                <Image
-                  style={styles.top_img}
-                  source={require("../../assets/img/my/top_left_list.png")}
-                ></Image>
-              </Pressable>
-              <Pressable
-                onPress={() => {
-                  props.navigation.navigate("SetUp");
-                }}
-              >
-                <Image
-                  style={styles.top_img}
-                  source={require("../../assets/img/my/top_right_set.png")}
-                ></Image>
-              </Pressable>
+                <Pressable
+                  onPress={() => {
+                    setlMvisible(true);
+                  }}
+                >
+                  <Image
+                    style={styles.top_img}
+                    source={require("../../assets/img/my/top_left_list.png")}
+                  ></Image>
+                </Pressable>
+                <Pressable
+                  onPress={() => {
+                    props.navigation.navigate("SetUp");
+                  }}
+                >
+                  <Image
+                    style={styles.top_img}
+                    source={require("../../assets/img/my/top_right_set.png")}
+                  ></Image>
+                </Pressable>
+              </View>
             </View>
-          </View>
-          {/* title -- end */}
+            {/* title -- end */}
 
-          {/* 头像 -- start */}
-          <View style={{ justifyContent: "center", flexDirection: "row" }}>
-            <Image
-              style={styles.headportrait}
-              source={{ uri: avatarUrl }}
-            ></Image>
+            {/* 头像 -- start */}
+            <View style={{ justifyContent: "center", flexDirection: "row" }}>
+              <Image
+                style={styles.headportrait}
+                source={{ uri: avatarUrl }}
+              ></Image>
+            </View>
+            <Text style={styles.nickname}>{username}</Text>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                Copy(WalletInUse == 1 ? dmwWalletList[0] : currentWallet);
+              }}
+            >
+              <Text style={styles.identification}>
+                {/* 此处勿忘加空格 */}
+                {WalletInUse == 1 ? dmwWalletList[0] : currentWallet}{" "}
+                <Image
+                  style={{ width: 12, height: 12 }}
+                  source={require("../../assets/img/my/copy.png")}
+                ></Image>
+              </Text>
+            </TouchableWithoutFeedback>
+            {/* 头像 -- end */}
           </View>
-          <Text style={styles.nickname}>{username}</Text>
-          <TouchableWithoutFeedback
-            onPress={() => {
-              Copy(WalletInUse == 1 ? dmwWalletList[0] : currentWallet);
+
+          {/* tab栏 -- start */}
+          <View style={[styles.index_box, { paddingLeft: 40 }]}>
+            <Tabcolumn
+              typename={typename}
+              paging={(typename) => {
+                setTypename(typename);
+              }}
+            ></Tabcolumn>
+          </View>
+          {/* tab栏 -- end */}
+          {/* line -- start*/}
+          <View style={styles.line}></View>
+          {/* line -- end */}
+          <View style={styles.index_box}>
+            <Search
+              onChange={(strText) => {
+                setStrText(strText);
+              }}
+              visible={() => visibleFn()}
+            ></Search>
+          </View>
+          {/* <Text onPress={() => this.visible()}>123</Text> */}
+
+          {visible ? (
+            <Screen
+              title="select filter"
+              style={[styles.Screen]}
+              visible={visible}
+              close={() => close()}
+              datalist={screenData}
+              determineFn={(determine) => Fndetermine(determine)}
+            ></Screen>
+          ) : null}
+
+          <View
+            style={{
+              paddingRight: 20,
+              paddingLeft: 20,
+              paddingTop: 20,
+              // marginBottom:100,
+              zIndex: 1,
             }}
           >
-            <Text style={styles.identification}>
-              {/* 此处勿忘加空格 */}
-              {WalletInUse == 1 ? dmwWalletList[0] : currentWallet}{" "}
-              <Image
-                style={{ width: 12, height: 12 }}
-                source={require("../../assets/img/my/copy.png")}
-              ></Image>
-            </Text>
-          </TouchableWithoutFeedback>
-          {/* 头像 -- end */}
-        </View>
-
-        {/* tab栏 -- start */}
-        <View style={[styles.index_box, { paddingLeft: 40 }]}>
-          <Tabcolumn
-            typename={typename}
-            paging={(typename) => {
-              setTypename(typename);
-            }}
-          ></Tabcolumn>
-        </View>
-        {/* tab栏 -- end */}
-        {/* line -- start*/}
-        <View style={styles.line}></View>
-        {/* line -- end */}
-        <View style={styles.index_box}>
-          <Search
-            onChange={(strText) => {
-              setStrText(strText);
-            }}
-            visible={() => visibleFn()}
-          ></Search>
-        </View>
-        {/* <Text onPress={() => this.visible()}>123</Text> */}
-
-        {visible ? (
-          <Screen
-            title="select filter"
-            style={[styles.Screen]}
-            visible={visible}
-            close={() => close()}
-            datalist={screenData}
-            determineFn={(determine) => Fndetermine(determine)}
-          ></Screen>
-        ) : null}
-
-        <View
-          style={{
-            paddingRight: 20,
-            paddingLeft: 20,
-            paddingTop: 20,
-            zIndex: 1,
-          }}
-        >
-          {/*  navigatetoDetail={(id, unique_id, contract_address, token_id, network)
+            {/*  navigatetoDetail={(id, unique_id, contract_address, token_id, network)
                    =>
                   { props.navigation.navigate('goodsDetail', { id: id, unique_id, contract_address, token_id, network }) }} */}
-          {!isActivity ? (
-            <FlatList
-              refreshing={false}
-              style={{ height: "60%", zIndex: 1, marginBottom: -90 }}
-              ListEmptyComponent={() => {
-                return (
-                  <Text style={{ textAlign: "center", marginTop: "50%" }}>
-                    {t("空空如也")}
-                  </Text>
-                );
-                // 列表为空展示改组件
-              }}
-              // 一屏幕展示几个
-              number={4}
-              //  2列显示
-              numColumns={2}
-              data={myNftList}
-              renderItem={({ item, index }) => {
-                return (
-                  <List
-                    key={index}
-                    list={item}
-                    type={4}
-                    setNftToTransfer={setNftToTransfer}
-                    setTxNftModalVisible={setTxNftModalVisible}
-                    showTransferNft={showTransferNft}
-                    navigatetoDetail={(
-                      id,
-                      unique_id,
-                      contract_address,
-                      token_id,
-                      network
-                    ) => {
-                      if (WalletInUse == 1 && !dmwWalletList[0]) {
-                        Toast(t("请先登录钱包"));
-                        return;
-                      } else if (WalletInUse == 2 && !currentWallet) {
-                        Toast(t("请先登录钱包"));
-                        return;
-                      }
-                      props.navigation.navigate("goodsDetail", {
-                        id: id,
+            {!isActivity ? (
+              <FlatList
+                refreshing={false}
+                nestedScrollEnabled={true}
+                style={{ maxHeight: screenHeight*0.75,minHeight:"100%", zIndex: 1, marginBottom: 0 }}
+                ListEmptyComponent={() => {
+                  return (
+                    <Text style={{ textAlign: "center", marginTop: "50%" }}>
+                      {t("空空如也")}
+                    </Text>
+                  );
+                  // 列表为空展示改组件
+                }}
+                // 一屏幕展示几个
+                number={4}
+                //  2列显示
+                numColumns={2}
+                data={myNftList}
+                renderItem={({ item, index }) => {
+                  return (
+                    <List
+                      key={index}
+                      list={item}
+                      type={4}
+                      setNftToTransfer={setNftToTransfer}
+                      setTxNftModalVisible={setTxNftModalVisible}
+                      showTransferNft={showTransferNft}
+                      navigatetoDetail={(
+                        id,
                         unique_id,
                         contract_address,
                         token_id,
-                        network,
-                      });
-                    }}
-                  />
-                );
-              }}
-              keyExtractor={(item, index) => index}
-              ListFooterComponent={() => {
-                // 声明尾部组件
-                return myNftList && myNftList.length ? (
-                  <Text style={{ textAlign: "center" }}>{t("没有更多了")}</Text>
-                ) : null;
-              }}
-              // 下刷新
-              onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
-            ></FlatList>
-          ) : (
-            <FlatList
-              refreshing={false}
-              style={{ height: "60%", zIndex: 1 }}
-              ListEmptyComponent={() => {
-                return (
-                  <Text style={{ textAlign: "center", marginTop: "50%" }}>
-                    {t("空空如也")}
-                  </Text>
-                );
-                // 列表为空展示改组件
-              }}
-              // 一屏幕展示几个
-              number={4}
-              //  2列显示
-              numColumns={1}
-              data={myNftList}
-              renderItem={({ item, index }) => {
-                return (
-                  <View style={{ paddingTop: 10, paddingBottom: 10, paddingLeft: 20, paddingRight: 20, borderWidth: 1, borderColor: '#ccc', borderRadius: 10 }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                      <Image style={{ width: 80, height: 80 }} source={{ uri: item.image_attachment_url }}></Image>
-                      <View style={{ flex: 1, }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                          <Text style={{ fontSize: 14, color: "#333", marginLeft: 20 }}>{item.name}</Text>
-                          <Text style={{ fontSize: 12, color: '#999999' }}>{item.create_time}</Text>
-                        </View>
-                        <View style={{ flexDirection: 'column', justifyContent: 'space-between',  marginTop: 20 }}>
-                          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 20 }}>
-                            <Text style={{ fontSize: 12, color: "#333", }}>network</Text>
-                            <Text style={{ fontSize: 12, color: "#333", }}>offer</Text>
-                            <Text style={{ fontSize: 12, color: "#333", }}>currency</Text>
-                            {/* <Text style={{ fontSize: 12, color: "#333", }}>network</Text> */}
+                        network
+                      ) => {
+                        if (WalletInUse == 1 && !dmwWalletList[0]) {
+                          Toast(t("请先登录钱包"));
+                          return;
+                        } else if (WalletInUse == 2 && !currentWallet) {
+                          Toast(t("请先登录钱包"));
+                          return;
+                        }
+                        props.navigation.navigate("goodsDetail", {
+                          id: id,
+                          unique_id,
+                          contract_address,
+                          token_id,
+                          network,
+                        });
+                      }}
+                    />
+                  );
+                }}
+                keyExtractor={(item, index) => index}
+                ListFooterComponent={() => {
+                  // 声明尾部组件
+                  return myNftList && myNftList.length ? (
+                    <Text style={{ textAlign: "center" }}>
+                      {t("没有更多了")}
+                    </Text>
+                  ) : null;
+                }}
+                // 下刷新
+                onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
+              ></FlatList>
+            ) : (
+              <FlatList
+                refreshing={false}
+                nestedScrollEnabled={false}
+                style={{ maxHeight: screenHeight*0.75,minHeight:"100%", zIndex: 1 }}
+                ListEmptyComponent={() => {
+                  return (
+                    <Text style={{ textAlign: "center", marginTop: "50%" }}>
+                      {t("空空如也")}
+                    </Text>
+                  );
+                  // 列表为空展示改组件
+                }}
+                // 一屏幕展示几个
+                number={4}
+                //  2列显示
+                numColumns={1}
+                data={myNftList}
+                renderItem={({ item, index }) => {
+                  return (
+                    <View
+                      style={{
+                        paddingTop: 10,
+                        paddingBottom: 10,
+                        paddingLeft: 20,
+                        paddingRight: 20,
+                        borderWidth: 1,
+                        borderColor: "#ccc",
+                        borderRadius: 10,
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Image
+                          style={{ width: 80, height: 80 }}
+                          source={{ uri: item.image_attachment_url }}
+                        ></Image>
+                        <View style={{ flex: 1 }}>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                color: "#333",
+                                marginLeft: 20,
+                              }}
+                            >
+                              {item.name}
+                            </Text>
+                            <Text style={{ fontSize: 12, color: "#999999" }}>
+                              {item.create_time}
+                            </Text>
                           </View>
-                          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 20,marginTop:4 }}>
-                            <Text style={{ fontSize: 12, color: "#999999", }}>{item.network}</Text>
-                            <Text style={{ fontSize: 12, color: "#999999", }}>{item['total_offer_amount'].number + item['total_offer_amount'].currency_name}</Text>
-                            <Text style={{ fontSize: 12, color: "#999999", }}>{item.currency.slice(0, 4)}</Text>
-                            {/* <Text style={{ fontSize: 12, color: "#999999", }}>network</Text> */}
+                          <View
+                            style={{
+                              flexDirection: "column",
+                              justifyContent: "space-between",
+                              marginTop: 20,
+                            }}
+                          >
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                marginLeft: 20,
+                              }}
+                            >
+                              <Text style={{ fontSize: 12, color: "#333" }}>
+                                network
+                              </Text>
+                              <Text style={{ fontSize: 12, color: "#333" }}>
+                                offer
+                              </Text>
+                              <Text style={{ fontSize: 12, color: "#333" }}>
+                                currency
+                              </Text>
+                              {/* <Text style={{ fontSize: 12, color: "#333", }}>network</Text> */}
+                            </View>
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                marginLeft: 20,
+                                marginTop: 4,
+                              }}
+                            >
+                              <Text style={{ fontSize: 12, color: "#999999" }}>
+                                {item.network}
+                              </Text>
+                              <Text style={{ fontSize: 12, color: "#999999" }}>
+                                {item["total_offer_amount"].number +
+                                  item["total_offer_amount"].currency_name}
+                              </Text>
+                              <Text style={{ fontSize: 12, color: "#999999" }}>
+                                {item.currency.slice(0, 4)}
+                              </Text>
+                              {/* <Text style={{ fontSize: 12, color: "#999999", }}>network</Text> */}
+                            </View>
+                            {/* <Text style={{ fontSize: 12, color: '#999999' }}>{item.create_time}</Text> */}
                           </View>
-                          {/* <Text style={{ fontSize: 12, color: '#999999' }}>{item.create_time}</Text> */}
                         </View>
                       </View>
                     </View>
-                  </View>
-                )
-              }}
-              key={'snsn'}
-              keyExtractor={(item, index) => item.id}
-              ListFooterComponent={() => {
-                // 声明尾部组件
-                return myNftList && myNftList.length ? (
-                  <Text style={{ textAlign: "center", marginTop: 20 }}>没有更多了</Text>
-                ) : null;
-              }}
-              // 下刷新
-              onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
-            ></FlatList>
-          )}
+                  );
+                }}
+                key={"snsn"}
+                keyExtractor={(item, index) => item.id}
+                ListFooterComponent={() => {
+                  // 声明尾部组件
+                  return myNftList && myNftList.length ? (
+                    <Text style={{ textAlign: "center", marginTop: 20 }}>
+                      没有更多了
+                    </Text>
+                  ) : null;
+                }}
+                // 下刷新
+                onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
+              ></FlatList>
+            )}
+          </View>
         </View>
-      </View>
+      </ScrollView>
+
       <Lmodal
         goto={(path) => {
           props.navigation.navigate(path);
