@@ -106,6 +106,7 @@ const Myself = (props) => {
 
   useEffect(() => {
     setmyNftList([]);
+    // setdetermine({})
     // console.log("myself currentchain id",currentChainId)
     if (typename == "我创建的") {
       console.log("查看我创建的");
@@ -507,6 +508,7 @@ const Myself = (props) => {
               close={() => close()}
               datalist={screenData}
               determineFn={(determine) => Fndetermine(determine)}
+              Fndetermine={determinelist}
             ></Screen>
           ) : null}
 

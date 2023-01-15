@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useDmwWallet } from '../../../DmwWallet/DmwWalletProvider'
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider'
 import { useTranslation } from 'react-i18next'
+import { ScrollView } from 'react-native-gesture-handler'
 
 const ImportWord = (props) => {
     // state={
@@ -61,7 +62,7 @@ const ImportWord = (props) => {
 
     return (
         <SafeAreaView>
-            <View style={[styles.container]}>
+            <ScrollView style={[styles.container]}>
                 <View style={styles.lis}>
                     <Text style={styles.text}>{t("助记词")}</Text>
                     <TextInput
@@ -109,7 +110,7 @@ const ImportWord = (props) => {
 
                 </View>
                 <Text style={[styles.import]} onPress={() => introduce()}>{t("导入")}</Text>
-            </View>
+            </ScrollView>
 
 
         </SafeAreaView>
