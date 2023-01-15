@@ -334,7 +334,7 @@ const TransferredIntoCollection = (props) => {
               setUploadLoading(false);
             });
         } else {
-          Toast("密码错误");
+          Toast(t("密码错误"));
         }
       });
   }, [password]);

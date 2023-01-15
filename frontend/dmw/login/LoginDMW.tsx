@@ -34,7 +34,7 @@ const LoginDMW = (props) => {
   ]);
   const [showareaCode, setShowareaCode] = useState(false);
   const [showlocal, setShowlocal] = useState(false);
-  const [local, setLocal] = useState({ name: "中文", id: "zh" });
+  const [local, setLocal] = useState({ name: "日文", id: "jp" });
   const [localLIst, setLocalLIst] = useState([
     { name: "中文", id: "zh" },
     { name: "英文", id: "en" },
@@ -46,7 +46,7 @@ const LoginDMW = (props) => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [agree, setAgree] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [message, setMessage] = useState("温馨提示");
+  const [message, setMessage] = useState(t("温馨提示"));
   const { post, formData, Toast, setlanguageType } = useDmwApi();
   const onChangeText = (e, num) => {
     if (num == 1) {

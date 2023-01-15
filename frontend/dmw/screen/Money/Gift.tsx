@@ -120,7 +120,7 @@ const Gift = (props) => {
             selectedToken.decimals ? selectedToken.decimals : null
           );
         } else {
-          Toast("密码错误");
+          Toast(t("密码错误"));
         }
       });
   }, [password]);

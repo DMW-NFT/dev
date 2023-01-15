@@ -261,7 +261,7 @@ const Money = (props) => {
       setModalvisible(false);
       props.navigation.navigate("ViewMnemonics", { password });
     } else if (password.length == 6 && !dmwWalletList[0]) {
-      Toast("密码错误或暂未创建DMW钱包");
+      Toast(t("密码错误或暂未创建DMW钱包"));
     }
   }, [password]);
 
