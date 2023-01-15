@@ -4,7 +4,7 @@ import { Modal } from 'react-native-paper';
 
 const scale = Dimensions.get('window').scale;
 const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get("window").height;
+
 const CreateMoney = (props) => {
   // constructor(props) {
   //   super(props);
@@ -51,7 +51,7 @@ const CreateMoney = (props) => {
 
   let { visible } = props;
   return (
-    <View style={[props.style, { position: 'absolute', width: "100%",top:0,height:screenHeight }]}>
+    <View style={[props.style, { position: 'absolute', width: "100%" }]}>
       <View style={styles.container}></View>
       <Modal
         visible={visible}
@@ -161,7 +161,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     paddingHorizontal: 20,
     paddingTop: 23,
-    minWidth:'50%'
     // paddingBottom: 48,
   },
   createMoneyBtn: {

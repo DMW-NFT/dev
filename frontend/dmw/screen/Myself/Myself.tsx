@@ -201,7 +201,7 @@ const Myself = (props) => {
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
-      <ScrollView scrollEnabled={!visible} >
+      <ScrollView>
         <View style={{ backgroundColor: "#fff" }}>
           <View style={styles.index_box}>
             {/* title -- start*/}
@@ -290,7 +290,16 @@ const Myself = (props) => {
           </View>
           {/* <Text onPress={() => this.visible()}>123</Text> */}
 
-          
+          {visible ? (
+            <Screen
+              title="select filter"
+              style={[styles.Screen]}
+              visible={visible}
+              close={() => close()}
+              datalist={screenData}
+              determineFn={(determine) => Fndetermine(determine)}
+            ></Screen>
+          ) : null}
 
           <View
             style={{
@@ -308,7 +317,7 @@ const Myself = (props) => {
               <FlatList
                 refreshing={false}
                 nestedScrollEnabled={true}
-                style={{ maxHeight: screenHeight*0.75,minHeight:screenHeight*0.75, zIndex: 1, marginBottom: 0 }}
+                style={{ maxHeight: screenHeight*0.75,minHeight:"100%", zIndex: 1, marginBottom: 0 }}
                 ListEmptyComponent={() => {
                   return (
                     <Text style={{ textAlign: "center", marginTop: "50%" }}>
@@ -498,17 +507,6 @@ const Myself = (props) => {
           </View>
         </View>
       </ScrollView>
-
-      {visible ? (
-            <Screen
-              title="select filter"
-              style={[styles.Screen]}
-              visible={visible}
-              close={() => close()}
-              datalist={screenData}
-              determineFn={(determine) => Fndetermine(determine)}
-            ></Screen>
-          ) : null}
 
       <Lmodal
         goto={(path) => {

@@ -262,6 +262,7 @@ const SystemNotification = (props) => {
           position: "relative",
           height: Dimensions.get("window").height,
           backgroundColor: "#F5F5F5",
+          marginBottom:100
         }}
       >
         {list[0] && (
@@ -290,7 +291,7 @@ const SystemNotification = (props) => {
           </TouchableWithoutFeedback>
         )}
 
-        <View style={{ paddingLeft: 20, paddingRight: 20,marginBottom:60 }}>
+        <View style={{ paddingLeft: 20, paddingRight: 20,marginBottom:100 }}>
           {props.route.params.type == 1 &&
             list.map((item, index) => systemMsg(item))}
           {props.route.params.type == 2 &&

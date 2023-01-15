@@ -1,11 +1,13 @@
 import { Text, StyleSheet, ScrollView, SafeAreaView, View, StatusBar, ImageBackground, Image, Dimensions, FlatList } from 'react-native'
-import React, { useState, useContext, useEffect, Suspense } from 'react'
+import React, { useState, useContext, useEffect, Suspense,useRef } from 'react'
 import Screen from '../../Components/screen';
 import Search from '../../Components/Searchbox';
 import List from '../../Components/List';
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { useTranslation } from 'react-i18next'
 import { Modal } from 'react-native-paper'
+
+
 const data = [
     {
         typename: 'Status',
@@ -52,6 +54,8 @@ const CollectionDetails = (props) => {
     const [sort, setsort] = useState('recently created')
     const [screenData, setscreenData] = useState([])
     const [selListParams, setselListParams] = useState({})
+    const scrollViewRef = useRef<ScrollView>(null);
+
     useEffect(() => {
         getDetails()
         post("/index/common/get_filter", formData({ type: 'collection' })).then(res => {
@@ -91,6 +95,9 @@ const CollectionDetails = (props) => {
     }
     const visibleFn = () => {
         setvisible(true)
+        if (scrollViewRef.current) {
+            scrollViewRef.current.scrollToEnd({ animated: true });
+          }
     }
     // 筛选关闭
     const close = () => {
@@ -184,7 +191,7 @@ const CollectionDetails = (props) => {
     }
 
     return (
-        <ScrollView>
+        <ScrollView ref = {scrollViewRef}>
         <SafeAreaView style={{ backgroundColor: '#fff', flex: 1, position: 'relative' }}>
             <View style={{ flex: 1 }}>
                 {/* <StatusBar barStyle="dark-content" backgroundColor="#fff" /> */}
@@ -209,8 +216,7 @@ const CollectionDetails = (props) => {
                             <Search onChange={(strText) => { setstrText(strText) }} visible={() => visibleFn()}></Search> : null
                     }
                     <FlatList
-
-                        style={{ marginTop: 20, flex: 1, minHeight: 400 }}
+                        style={{ marginTop: 20, flex: 1, minHeight: "100%",maxHeight:500 }}
                         ListEmptyComponent={() => {
                             return typename == 'Activity' && !ActivityList.length ? <Text style={{ textAlign: 'center', height: 100 }}>{t("空空如也")}</Text> :
                                 typename == 'Items' && list && list.length ? null : <Text style={{ textAlign: 'center', height: 100 }}>{t("空空如也")}</Text>
@@ -222,6 +228,7 @@ const CollectionDetails = (props) => {
                         numColumns={typename == 'Items' ? 2 : 1}
                         key={typename == 'Items' ? 'hh' : 'nn'}
                         data={typename == 'Activity' ? ActivityList : list}
+                        nestedScrollEnabled={true}
                         renderItem={({ item }) => {
                             return typename == 'Activity' && ActivityList && ActivityList.length ?
                                 <View style={{marginBottom:20, paddingTop: 10, paddingBottom: 10, paddingLeft: 20, paddingRight: 20, borderBottomWidth: 1, borderBottomColor: '#ccc', }}>

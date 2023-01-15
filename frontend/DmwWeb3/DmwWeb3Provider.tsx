@@ -42,8 +42,9 @@ const DmwWeb3Provider = ({ children }) => {
       connector
         .sendTransaction(tx)
         .then((result) => {
+          console.log("open third party wallet res:",result)
           syncTransactionSatus(result).then((res) => {
-            // console.log("sync transaction result:", res);
+            console.log("sync transaction result:", res);
             resolve(res);
           });
         })
@@ -344,6 +345,7 @@ const DmwWeb3Provider = ({ children }) => {
       ...transactionMap,
       [txHash]: { payload: null, state: "pending" },
     });
+    console.log("syncing tx:",txHash)
     return new Promise((resolve, reject) => {
       let syncInterval = setInterval(() => {
         web3.eth.getTransactionReceipt(txHash).then((res) => {
