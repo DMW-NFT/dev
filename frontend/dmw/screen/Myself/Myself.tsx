@@ -201,7 +201,7 @@ const Myself = (props) => {
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
-      <ScrollView>
+      <ScrollView scrollEnabled={!visible} >
         <View style={{ backgroundColor: "#fff" }}>
           <View style={styles.index_box}>
             {/* title -- start*/}
@@ -290,16 +290,7 @@ const Myself = (props) => {
           </View>
           {/* <Text onPress={() => this.visible()}>123</Text> */}
 
-          {visible ? (
-            <Screen
-              title="select filter"
-              style={[styles.Screen]}
-              visible={visible}
-              close={() => close()}
-              datalist={screenData}
-              determineFn={(determine) => Fndetermine(determine)}
-            ></Screen>
-          ) : null}
+          
 
           <View
             style={{
@@ -507,6 +498,17 @@ const Myself = (props) => {
           </View>
         </View>
       </ScrollView>
+
+      {visible ? (
+            <Screen
+              title="select filter"
+              style={[styles.Screen]}
+              visible={visible}
+              close={() => close()}
+              datalist={screenData}
+              determineFn={(determine) => Fndetermine(determine)}
+            ></Screen>
+          ) : null}
 
       <Lmodal
         goto={(path) => {
