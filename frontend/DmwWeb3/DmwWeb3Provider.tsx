@@ -9,7 +9,8 @@ import chainIdMap from "../constans/chainIdMap.json";
 import marketplaceABI from "../../frontend/contract/MARKETPLACE.json";
 import txGasMap from "../constans/txGasMap.json";
 import ERC20ABI from "../contract/ERC20.json";
-import { BigNumber } from "ethers";
+// import { BigNumber } from "ethers";
+import BigNumber from 'bignumber.js';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ChainIdMap from "../constans/chainIdMap.json";
 import { ethers } from "ethers";
@@ -477,7 +478,7 @@ const DmwWeb3Provider = ({ children }) => {
     const contractAddress = ChainIdMap[currentChainId].market_contract;
     const contract = new web3.eth.Contract(marketplaceABI, contractAddress);
     const rawdata = contract.methods
-      .acceptOffer(listingId, offeror, currency, pricePerToken)
+      .acceptOffer(listingId, offeror, currency, new BigNumber(pricePerToken).toString())
       .encodeABI();
     const tx = {
       from: currentWallet, // Required
@@ -496,7 +497,7 @@ const DmwWeb3Provider = ({ children }) => {
     cancelDirectListing：取消直接挂单
         listingId:订单的ID
     */
-  const cancelDirectListing = async (listingId: BigNumber) => {
+  const cancelDirectListing = async (listingId: string) => {
     web3.eth.setProvider(getProvider(currentChainId));
     const contractAddress = ChainIdMap[currentChainId].market_contract;
     const contract = new web3.eth.Contract(marketplaceABI, contractAddress);

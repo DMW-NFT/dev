@@ -164,6 +164,7 @@ const QuotationDetails = (props) => {
   };
   // 确认购买
   const confirmPurchase = () => {
+    setBuyNowVisible(false)
     if (WalletInUse == 1) {
       setVfModalVisible(true);
     } else {
@@ -228,6 +229,7 @@ const QuotationDetails = (props) => {
     setReadyToTakeOffer(true);
     if (WalletInUse == 2) {
       // setTxModalVisible(true);
+      // console.log(orderList.listing_id, offeror, currency, pricePerToken)
       acceptOffer(orderList.listing_id, offeror, currency, pricePerToken);
       setTxModalVisible(true);
     } else {

@@ -112,6 +112,7 @@ const GoodsDetail = (props) => {
   // 出售数量限制
   useEffect(() => {
     Number(sellNumber) > nftNumber && setSellNumber(String(nftNumber));
+    Number(sellNumber) < 0 && setSellNumber(String(0));
   }, [sellNumber, nftNumber]);
 
   // 外部网络检测
@@ -145,6 +146,7 @@ const GoodsDetail = (props) => {
   };
   const sellNFT = () => {
     if (WalletInUse == 1) {
+      setSellOptionVisible(false);
       setVfModalVisible(true);
     } else {
       let sTime = Math.round(new Date().getTime() / 1000 + 60).toString();
@@ -757,7 +759,13 @@ const GoodsDetail = (props) => {
               }}
             >
               {showcollection && detailsObj.collection ? (
-                <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('CollectionDetails', {ID: detailsObj.collection_id})}}>
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    props.navigation.navigate("CollectionDetails", {
+                      ID: detailsObj.collection_id,
+                    });
+                  }}
+                >
                   <View
                     style={[
                       styles.flex,
@@ -954,26 +962,31 @@ const GoodsDetail = (props) => {
         onBackdropPress={() => {
           setShowOwnerlist(!showOwnerList);
         }}
+        overlayStyle={{marginHorizontal:10}}
       >
-        <View>
-          {ownersArrCopy.map((item, index) => (
-            <View
-              key={index}
-              style={[
-                styles.flex,
-                { marginTop: 10, justifyContent: "space-around" },
-              ]}
-            >
-              <Image
-                source={{ uri: item.avatar }}
-                style={[styles.createAndByuerImage]}
-              ></Image>
-              <Text style={[styles.createAndByuerName]}>
-                {item.wallet_address}
-              </Text>
-            </View>
-          ))}
-        </View>
+        <SafeAreaView style={{}}>
+          <View style={{}}>
+            <ScrollView style={{maxHeight:300,minHeight:200}}>
+              {ownersArrCopy.map((item, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.flex,
+                    { marginTop: 10, justifyContent: "space-around" },
+                  ]}
+                >
+                  <Image
+                    source={{ uri: item.avatar }}
+                    style={[styles.createAndByuerImage]}
+                  ></Image>
+                  <Text style={[styles.createAndByuerName,{fontSize:10}]}>
+                    {item.wallet_address}
+                  </Text>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
+        </SafeAreaView>
       </Overlay>
       {vfModalVisible && (
         <VerfiySecretModal

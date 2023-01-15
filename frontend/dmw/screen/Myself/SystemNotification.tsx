@@ -290,7 +290,7 @@ const SystemNotification = (props) => {
           </TouchableWithoutFeedback>
         )}
 
-        <View style={{ paddingLeft: 20, paddingRight: 20 }}>
+        <View style={{ paddingLeft: 20, paddingRight: 20,marginBottom:60 }}>
           {props.route.params.type == 1 &&
             list.map((item, index) => systemMsg(item))}
           {props.route.params.type == 2 &&

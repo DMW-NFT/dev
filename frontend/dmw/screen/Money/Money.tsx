@@ -92,35 +92,6 @@ const Money = (props) => {
   const scrollX = new Animated.Value(-500);
   const opacity = new Animated.Value(0);
 
-  useEffect(() => {
-    if (lMvisible) {
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-      Animated.timing(scrollX, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start(); // 开始执行动画
-      // 开始执行动画
-    }
-  }, [lMvisible]);
-
-  useEffect(() => {
-    if (memConnectStatus.connected) {
-      connectWallet();
-    }
-  }, [memConnectStatus]);
-
-  useEffect(() => {
-    if (currentChainId != 0) {
-      setDmwChainId(currentChainId);
-      setSelectedChain(chainIdMap[currentChainId].network.toLowerCase());
-    }
-  }, [currentChainId]);
-
   const getAddressBalance = (address) => {
     console.log("getting ", chainIdMap[currentChainId].network, "erc20");
     return fetch(
@@ -141,59 +112,13 @@ const Money = (props) => {
       })
       .catch((error) => {
         Toast(error);
+        return []
       });
   };
 
   const empty = () => {
     setpassword("");
   };
-
-  useEffect(() => {
-    // console.log('钱包变化',connected,currentWallet);
-    if (currentWallet && WalletInUse == 2) {
-      getNativeBalance(currentWallet).then((res) => {
-        setTpwNativeBalance(res);
-      });
-      getAddressBalance(currentWallet).then((res) => {
-        console.log("get current wallet", res);
-        setTpwErc20Balance(res);
-      });
-    }
-
-    if (dmwWalletList && dmwWalletList[0] && WalletInUse == 1) {
-      getNativeBalance(dmwWalletList[0]).then((res) => {
-        setLwNativeBalance(res);
-      });
-      getAddressBalance(dmwWalletList[0]).then((res) => {
-        console.log("get currentdmw wallet", res);
-        setLwErc20Balance(res);
-      });
-    }
-
-    setMoneyRouteState(
-      connected || dmwWalletList.length ? "12345" : "createMoney"
-    );
-  }, [currentChainId, WalletInUse]);
-
-  useEffect(() => {
-    getAccuontTxHistory();
-  }, [WalletInUse]);
-
-  useEffect(() => {
-    let blackPointArry = [null, null, null, null, null, null];
-
-    let arr = password.split("");
-    arr.map((item, index) => {
-      blackPointArry[index] = item;
-    });
-    setpasswordlist(blackPointArry);
-    if (password.length == 6 && dmwWalletList[0]) {
-      setModalvisible(false);
-      props.navigation.navigate("ViewMnemonics", { password });
-    } else if (password.length == 6 && !dmwWalletList[0]) {
-      Toast("密码错误或暂未创建DMW钱包");
-    }
-  }, [password]);
 
   const close = () => {
     setVisible(false);
@@ -262,16 +187,97 @@ const Money = (props) => {
       formData({ network: selectedChain })
     )
       .then((res) => {
-        // console.log(res, wallet_address, "qianbao denglu");
+        
         if (res.code == 200) {
           setTxHistory(res.data.result);
           console.log(res.data.result[0]);
+        }else{
+          setTxHistory([])
         }
+
       })
       .catch((err) => {
-        Toast(err.message);
+        // console.log("err",err)
+        // Toast(err.message);
+        // setTxHistory([])
       });
   };
+
+  useEffect(() => {
+    if (lMvisible) {
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+      Animated.timing(scrollX, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start(); // 开始执行动画
+      // 开始执行动画
+    }
+  }, [lMvisible]);
+
+  useEffect(() => {
+    if (memConnectStatus.connected) {
+      connectWallet();
+    }
+  }, [memConnectStatus]);
+
+  useEffect(() => {
+    if (currentChainId != 0) {
+      setDmwChainId(currentChainId);
+      setSelectedChain(chainIdMap[currentChainId].network.toLowerCase());
+    }
+  }, [currentChainId]);
+
+  useEffect(() => {
+    // console.log('钱包变化',connected,currentWallet);
+    if (currentWallet && WalletInUse == 2) {
+      getNativeBalance(currentWallet).then((res) => {
+        setTpwNativeBalance(res);
+      });
+      getAddressBalance(currentWallet).then((res) => {
+        console.log("get current wallet", res);
+        setTpwErc20Balance(res);
+      });
+    }
+
+    if (dmwWalletList && dmwWalletList[0] && WalletInUse == 1) {
+      getNativeBalance(dmwWalletList[0]).then((res) => {
+        setLwNativeBalance(res);
+      });
+      getAddressBalance(dmwWalletList[0]).then((res) => {
+        console.log("get currentdmw wallet", res);
+        setLwErc20Balance(res);
+      });
+    }
+
+    setMoneyRouteState(
+      connected || dmwWalletList.length ? "12345" : "createMoney"
+    );
+  }, [currentChainId, WalletInUse]);
+
+  useEffect(() => {
+    getAccuontTxHistory();
+  }, [WalletInUse]);
+
+  useEffect(() => {
+    let blackPointArry = [null, null, null, null, null, null];
+
+    let arr = password.split("");
+    arr.map((item, index) => {
+      blackPointArry[index] = item;
+    });
+    setpasswordlist(blackPointArry);
+    if (password.length == 6 && dmwWalletList[0]) {
+      setModalvisible(false);
+      props.navigation.navigate("ViewMnemonics", { password });
+    } else if (password.length == 6 && !dmwWalletList[0]) {
+      Toast("密码错误或暂未创建DMW钱包");
+    }
+  }, [password]);
 
   return (
     <SafeAreaView
@@ -577,7 +583,7 @@ const Money = (props) => {
                     </View>
                   )
                 )
-              : txHistory[0] &&
+              : txHistory&&txHistory[0]&&
                 txHistory.map((item) => (
                   <TouchableWithoutFeedback
                     onPress={() => {

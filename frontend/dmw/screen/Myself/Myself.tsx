@@ -317,7 +317,7 @@ const Myself = (props) => {
               <FlatList
                 refreshing={false}
                 nestedScrollEnabled={true}
-                style={{ maxHeight: screenHeight*0.75,minHeight:"100%", zIndex: 1, marginBottom: 0 }}
+                style={{ maxHeight: screenHeight*0.75,minHeight:screenHeight*0.75, zIndex: 1, marginBottom: 0 }}
                 ListEmptyComponent={() => {
                   return (
                     <Text style={{ textAlign: "center", marginTop: "50%" }}>
@@ -381,7 +381,7 @@ const Myself = (props) => {
               <FlatList
                 refreshing={false}
                 nestedScrollEnabled={false}
-                style={{ maxHeight: screenHeight*0.75,minHeight:"100%", zIndex: 1 }}
+                style={{ maxHeight: screenHeight*0.75,minHeight:screenHeight*0.75, zIndex: 1 }}
                 ListEmptyComponent={() => {
                   return (
                     <Text style={{ textAlign: "center", marginTop: "50%" }}>
