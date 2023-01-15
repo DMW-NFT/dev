@@ -136,9 +136,7 @@ const Myself = (props) => {
       setShowTransferNft(true);
       let obj =JSON.stringify(determinelist)
       getMyNft(
-        obj != '{}'
-          ? "/index/nft/get_my_nft_by_search"
-          : "/index/nft/get_my_nft",
+     "/index/nft/get_my_nft_by_search",
         {
           keyword: strText,
           network: ChainIdMap[currentChainId].network,
