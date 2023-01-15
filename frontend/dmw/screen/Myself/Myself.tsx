@@ -134,8 +134,9 @@ const Myself = (props) => {
       });
     } else if (typename == "我的藏品") {
       setShowTransferNft(true);
+      let obj =JSON.stringify(determinelist)
       getMyNft(
-        determinelist == {}
+        obj != '{}'
           ? "/index/nft/get_my_nft_by_search"
           : "/index/nft/get_my_nft",
         {
