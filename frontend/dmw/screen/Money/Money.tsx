@@ -87,32 +87,28 @@ const Money = (props) => {
   const [tpwNativeBalance, setTpwNativeBalance] = useState("");
   const [lwErc20Balance, setLwErc20Balance] = useState([]);
   const [tpwErc20Balance, setTpwErc20Balance] = useState([]);
+  const [erc20Balance, setErc20Balance] = useState([]);
   const [txHistory, setTxHistory] = useState([]);
 
   const scrollX = new Animated.Value(-500);
   const opacity = new Animated.Value(0);
 
-  const getAddressBalance = (address) => {
+  const getAddressBalance = () => {
     console.log("getting ", chainIdMap[currentChainId].network, "erc20");
-    return fetch(
-      `https://deep-index.moralis.io/api/v2/${address}/erc20?chain=${chainIdMap[currentChainId].network}`,
-      {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          "X-API-Key":
-            "Lf0hom3miHg82XaKYaQg1Ej3LiyXmfO9kCSAsfws9XpUX1V9sh1isIsOorRf1xYf",
-        },
-      }
+    setErc20Balance([]);
+    post(
+      "/index/wallet/get_erc20_token_balance_by_wallet",
+      formData({ network: selectedChain })
     )
       .then((res) => {
-        return res.json().then((finnalRes) => {
-          return finnalRes;
-        });
+        res.data&&setErc20Balance(res.data)
+        console.log("erc20:",res.data)
+        
       })
-      .catch((error) => {
-        Toast(error);
-        return []
+      .catch((err) => {
+        // console.log("err",err)
+        Toast(err.message);
+        // setTxHistory([])
       });
   };
 
@@ -162,6 +158,7 @@ const Money = (props) => {
       });
   };
 
+
   const renderChainMenu = () => (
     <TouchableWithoutFeedback onPress={() => setChainMenuVisible(true)}>
       <View
@@ -190,7 +187,7 @@ const Money = (props) => {
         
         if (res.code == 200) {
           setTxHistory(res.data.result);
-          console.log(res.data.result[0]);
+          // console.log(res.data.result);
         }else{
           setTxHistory([])
         }
@@ -198,7 +195,7 @@ const Money = (props) => {
       })
       .catch((err) => {
         // console.log("err",err)
-        // Toast(err.message);
+        Toast(err.message);
         // setTxHistory([])
       });
   };
@@ -238,19 +235,11 @@ const Money = (props) => {
       getNativeBalance(currentWallet).then((res) => {
         setTpwNativeBalance(res);
       });
-      getAddressBalance(currentWallet).then((res) => {
-        console.log("get current wallet", res);
-        setTpwErc20Balance(res);
-      });
-    }
 
+    }
     if (dmwWalletList && dmwWalletList[0] && WalletInUse == 1) {
       getNativeBalance(dmwWalletList[0]).then((res) => {
         setLwNativeBalance(res);
-      });
-      getAddressBalance(dmwWalletList[0]).then((res) => {
-        console.log("get currentdmw wallet", res);
-        setLwErc20Balance(res);
       });
     }
 
@@ -260,8 +249,12 @@ const Money = (props) => {
   }, [currentChainId, WalletInUse]);
 
   useEffect(() => {
-    getAccuontTxHistory();
-  }, [WalletInUse]);
+    setTimeout(() => {
+      getAddressBalance()
+      getAccuontTxHistory();
+    }, 1000);
+
+  }, [WalletInUse,currentChainId]);
 
   useEffect(() => {
     let blackPointArry = [null, null, null, null, null, null];
@@ -512,7 +505,7 @@ const Money = (props) => {
             onPress={() => {
               props.navigation.navigate("Gift", {
                 WalletInuse: WalletInUse,
-                ERC20Token: WalletInUse == 1 ? lwErc20Balance : tpwErc20Balance,
+                ERC20Token: erc20Balance,
                 NativToken:
                   WalletInUse == 1 ? lwNativeBalance : tpwNativeBalance,
               });
@@ -559,7 +552,7 @@ const Money = (props) => {
         >
           <View style={[styles.listbox]}>
             {contenType == "token"
-              ? (WalletInUse == 1 ? lwErc20Balance : tpwErc20Balance).map(
+              ? erc20Balance[0]&&erc20Balance.map(
                   (item, index) => (
                     <View style={styles.ListLi}>
                       <Image

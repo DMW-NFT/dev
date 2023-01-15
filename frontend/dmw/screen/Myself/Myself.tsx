@@ -206,7 +206,7 @@ const Myself = (props) => {
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
-      <ScrollView ref={scrollViewRef}>
+      <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}> 
         <View style={{ backgroundColor: "#fff" }}>
           <View style={styles.index_box}>
             {/* title -- start*/}
@@ -322,6 +322,7 @@ const Myself = (props) => {
               <FlatList
                 refreshing={false}
                 nestedScrollEnabled={true}
+                showsVerticalScrollIndicator={false}
                 style={{
                   maxHeight: screenHeight * 0.75,
                   minHeight: "100%",
@@ -390,7 +391,8 @@ const Myself = (props) => {
             ) : (
               <FlatList
                 refreshing={false}
-                nestedScrollEnabled={false}
+                nestedScrollEnabled={true}
+                showsVerticalScrollIndicator={false}
                 style={{
                   maxHeight: screenHeight * 0.75,
                   minHeight: screenHeight * 0.75,
