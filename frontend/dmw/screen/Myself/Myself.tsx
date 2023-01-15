@@ -92,6 +92,61 @@ const Myself = (props) => {
     setTypename(typename);
   };
 
+  useEffect(() => {
+    post("/index/user/get_user_msg").then((res) => {
+      // console.log(res, "用户信息");
+      if (res.code == 200) {
+        setUserInfo(res.data);
+        // console.log(userInfo, "用户信息打印");
+        setUsername(res.data.nickname);
+        setAvatarUrl(res.data.avatar_url);
+      }
+    });
+
+    post("/index/common/get_filter", formData({ type: "nft" })).then((res) => {
+      // console.log(res.data,'筛选');
+      setScreenData(res.data);
+    });
+  }, [currentChainId, language]);
+
+  useEffect(() => {
+    setmyNftList([]);
+    // setdetermine({})
+    // console.log("myself currentchain id",currentChainId)
+    if (typename == "我创建的") {
+      console.log("查看我创建的");
+      setShowTransferNft(false);
+      getMyNft("/index/nft/get_my_create_nft_by_search", {
+        keyword: strText,
+        ...determinelist,
+      });
+    } else if (typename == "事件") {
+      setShowTransferNft(false);
+      getMyNft("/index/nft/get_nft_activity", {
+        keyword: strText,
+        ...determinelist,
+      });
+    } else if (typename == "我喜欢的") {
+      setShowTransferNft(false);
+      getMyNft("/index/nft/get_my_likes_nft_by_search", {
+        keyword: strText,
+        ...determinelist,
+      });
+    } else if (typename == "我的藏品") {
+      setShowTransferNft(true);
+      getMyNft(
+        determinelist == {}
+          ? "/index/nft/get_my_nft_by_search"
+          : "/index/nft/get_my_nft",
+        {
+          keyword: strText,
+          network: ChainIdMap[currentChainId].network,
+          ...determinelist,
+        }
+      );
+    }
+  }, [typename, determinelist, strText, currentChainId, WalletInUse]);
+
   const getMyNft = (posturl: string, data) => {
     // console.log(data,'请求参数');
     console.log(data, "page:1,limit:999");
@@ -145,60 +200,6 @@ const Myself = (props) => {
         console.log(err, "----");
       });
   };
-
-  useEffect(() => {
-    post("/index/user/get_user_msg").then((res) => {
-      // console.log(res, "用户信息");
-      if (res.code == 200) {
-        setUserInfo(res.data);
-        // console.log(userInfo, "用户信息打印");
-        setUsername(res.data.nickname);
-        setAvatarUrl(res.data.avatar_url);
-      }
-    });
-
-    post("/index/common/get_filter", formData({ type: "nft" })).then((res) => {
-      // console.log(res.data,'筛选');
-      setScreenData(res.data);
-    });
-  }, [currentChainId, language]);
-
-  useEffect(() => {
-    setmyNftList([]);
-    // console.log("myself currentchain id",currentChainId)
-    if (typename == "我创建的") {
-      console.log("查看我创建的");
-      setShowTransferNft(false);
-      getMyNft("/index/nft/get_my_create_nft_by_search", {
-        keyword: strText,
-        ...determinelist,
-      });
-    } else if (typename == "事件") {
-      setShowTransferNft(false);
-      getMyNft("/index/nft/get_nft_activity", {
-        keyword: strText,
-        ...determinelist,
-      });
-    } else if (typename == "我喜欢的") {
-      setShowTransferNft(false);
-      getMyNft("/index/nft/get_my_likes_nft_by_search", {
-        keyword: strText,
-        ...determinelist,
-      });
-    } else if (typename == "我的藏品") {
-      setShowTransferNft(true);
-      getMyNft(
-        determinelist == {}
-          ? "/index/nft/get_my_nft_by_search"
-          : "/index/nft/get_my_nft",
-        {
-          keyword: strText,
-          network: ChainIdMap[currentChainId].network,
-          ...determinelist,
-        }
-      );
-    }
-  }, [typename, determinelist, strText, currentChainId, WalletInUse]);
 
   useEffect(() => {
     nftToTransfer && console.log("get nft to transfer");
@@ -523,6 +524,18 @@ const Myself = (props) => {
           </View>
         </View>
       </ScrollView>
+
+      {visible ? (
+            <Screen
+              title="select filter"
+              style={[styles.Screen]}
+              visible={visible}
+              close={() => close()}
+              datalist={screenData}
+              determineFn={(determine) => Fndetermine(determine)}
+              Fndetermine={determinelist}
+            ></Screen>
+          ) : null}
 
       <Lmodal
         goto={(path) => {

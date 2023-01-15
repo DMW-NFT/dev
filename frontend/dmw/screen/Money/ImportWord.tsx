@@ -33,41 +33,44 @@ const ImportWord = (props) => {
     addWalletToAccountStorage,
   } = useDmwWallet();
 
-  const introduce = () => {
-    if (!word) {
-      Toast(t("请输入助记词"));
-      return;
-    }
-    if (!password) {
-      Toast(t("请输入密码"));
-      return;
-    }
-    if (!password1) {
-      Toast(t("请重新输入密码"));
-      return;
-    }
-    if (password != password1) {
-      Toast(t("两次密码不一致"));
-      return;
-    }
-    let res = loadWalletFromMnemonic(word);
-    if (res) {
-      console.log(res.privateKey, "钱包地址");
-      addMnemonic(password1, word).then((resp) => {
-        console.log(resp, "助记词登录");
-        setMoneyRouteState("456");
-        addWalletToAccountStorage(res.privateKey, password1).then((res) => {
-          Toast(t("导入成功"));
+    const introduce = () => {
+        if (!word) {
+            Toast(t("请输入助记词"))
+            return
+        }
+        if (!password) {
+            Toast(t("请输入密码"))
+            return
+        }
+        if (!password1) {
+            Toast(t("请重新输入密码"))
+            return
+        }
+        if (password != password1) {
+            Toast(t("两次密码不一致"))
+            return
+        }
+        let res = loadWalletFromMnemonic(word);
+        if (res) {
+            console.log(res.privateKey, "钱包地址");
+            addMnemonic(password1, word).then(resp => {
+                console.log(resp, '助记词登录');
+                setMoneyRouteState('456')
+                addWalletToAccountStorage(res.privateKey, password1).then((res) => {
+                    Toast(t("导入成功"))
+                    
+                    setTimeout(() => {
+                        props.navigation.popToTop() 
+                    }, 1000);
+                });
+            })
+        } else {
+            Toast(t("助记词解析错误，请重新尝试"))
+        }
 
-          setTimeout(() => {
-            props.navigation.popToTop();
-          }, 1000);
-        });
-      });
-    } else {
-      Toast(t("助记词解析错误，请重新尝试"));
+
+
     }
-  };
 
   return (
     <SafeAreaView>
