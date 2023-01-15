@@ -10,7 +10,7 @@ import {
   FlatList,
   TouchableWithoutFeedback,
 } from "react-native";
-import React, { Component, useEffect, useState, Context } from "react";
+import React, { Component, useEffect, useState, Context, useRef } from "react";
 import Tabcolumn from "./Tabcolumn";
 import Screen from "../../Components/screen";
 import Search from "../../Components/Searchbox";
@@ -71,9 +71,14 @@ const Myself = (props) => {
   const { post, formData, Toast, Copy } = useDmwApi();
   const { currentWallet, currentChainId } = useDmwWeb3();
   const { dmwWalletList } = useDmwWallet();
+  const scrollViewRef = useRef<ScrollView>(null);
+
 
   const visibleFn = () => {
     setVisible(true);
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollToEnd({ animated: true });
+    }
   };
 
   const close = () => {
@@ -86,60 +91,6 @@ const Myself = (props) => {
     setdetermine(determine);
     setTypename(typename);
   };
-
-  useEffect(() => {
-    post("/index/user/get_user_msg").then((res) => {
-      // console.log(res, "用户信息");
-      if (res.code == 200) {
-        setUserInfo(res.data);
-        // console.log(userInfo, "用户信息打印");
-        setUsername(res.data.nickname);
-        setAvatarUrl(res.data.avatar_url);
-      }
-    });
-
-    post("/index/common/get_filter", formData({ type: "nft" })).then((res) => {
-      // console.log(res.data,'筛选');
-      setScreenData(res.data);
-    });
-  }, [currentChainId, language]);
-
-  useEffect(() => {
-    setmyNftList([]);
-    // console.log("myself currentchain id",currentChainId)
-    if (typename == "我创建的") {
-      console.log("查看我创建的");
-      setShowTransferNft(false);
-      getMyNft("/index/nft/get_my_create_nft_by_search", {
-        keyword: strText,
-        ...determinelist,
-      });
-    } else if (typename == "事件") {
-      setShowTransferNft(false);
-      getMyNft("/index/nft/get_nft_activity", {
-        keyword: strText,
-        ...determinelist,
-      });
-    } else if (typename == "我喜欢的") {
-      setShowTransferNft(false);
-      getMyNft("/index/nft/get_my_likes_nft_by_search", {
-        keyword: strText,
-        ...determinelist,
-      });
-    } else if (typename == "我的藏品") {
-      setShowTransferNft(true);
-      getMyNft(
-        determinelist == {}
-          ? "/index/nft/get_my_nft_by_search"
-          : "/index/nft/get_my_nft",
-        {
-          keyword: strText,
-          network: ChainIdMap[currentChainId].network,
-          ...determinelist,
-        }
-      );
-    }
-  }, [typename, determinelist, strText, currentChainId, WalletInUse]);
 
   const getMyNft = (posturl: string, data) => {
     // console.log(data,'请求参数');
@@ -196,12 +147,66 @@ const Myself = (props) => {
   };
 
   useEffect(() => {
+    post("/index/user/get_user_msg").then((res) => {
+      // console.log(res, "用户信息");
+      if (res.code == 200) {
+        setUserInfo(res.data);
+        // console.log(userInfo, "用户信息打印");
+        setUsername(res.data.nickname);
+        setAvatarUrl(res.data.avatar_url);
+      }
+    });
+
+    post("/index/common/get_filter", formData({ type: "nft" })).then((res) => {
+      // console.log(res.data,'筛选');
+      setScreenData(res.data);
+    });
+  }, [currentChainId, language]);
+
+  useEffect(() => {
+    setmyNftList([]);
+    // console.log("myself currentchain id",currentChainId)
+    if (typename == "我创建的") {
+      console.log("查看我创建的");
+      setShowTransferNft(false);
+      getMyNft("/index/nft/get_my_create_nft_by_search", {
+        keyword: strText,
+        ...determinelist,
+      });
+    } else if (typename == "事件") {
+      setShowTransferNft(false);
+      getMyNft("/index/nft/get_nft_activity", {
+        keyword: strText,
+        ...determinelist,
+      });
+    } else if (typename == "我喜欢的") {
+      setShowTransferNft(false);
+      getMyNft("/index/nft/get_my_likes_nft_by_search", {
+        keyword: strText,
+        ...determinelist,
+      });
+    } else if (typename == "我的藏品") {
+      setShowTransferNft(true);
+      getMyNft(
+        determinelist == {}
+          ? "/index/nft/get_my_nft_by_search"
+          : "/index/nft/get_my_nft",
+        {
+          keyword: strText,
+          network: ChainIdMap[currentChainId].network,
+          ...determinelist,
+        }
+      );
+    }
+  }, [typename, determinelist, strText, currentChainId, WalletInUse]);
+
+  useEffect(() => {
     nftToTransfer && console.log("get nft to transfer");
   }, [nftToTransfer]);
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
-      <ScrollView>
+      <ScrollView ref={scrollViewRef}>
         <View style={{ backgroundColor: "#fff" }}>
           <View style={styles.index_box}>
             {/* title -- start*/}
@@ -293,7 +298,7 @@ const Myself = (props) => {
           {visible ? (
             <Screen
               title="select filter"
-              style={[styles.Screen]}
+              // style={[styles.Screen]}
               visible={visible}
               close={() => close()}
               datalist={screenData}
@@ -317,7 +322,12 @@ const Myself = (props) => {
               <FlatList
                 refreshing={false}
                 nestedScrollEnabled={true}
-                style={{ maxHeight: screenHeight*0.75,minHeight:"100%", zIndex: 1, marginBottom: 0 }}
+                style={{
+                  maxHeight: screenHeight * 0.75,
+                  minHeight: "100%",
+                  zIndex: 1,
+                  marginBottom: 0,
+                }}
                 ListEmptyComponent={() => {
                   return (
                     <Text style={{ textAlign: "center", marginTop: "50%" }}>
@@ -381,7 +391,11 @@ const Myself = (props) => {
               <FlatList
                 refreshing={false}
                 nestedScrollEnabled={false}
-                style={{ maxHeight: screenHeight*0.75,minHeight:screenHeight*0.75, zIndex: 1 }}
+                style={{
+                  maxHeight: screenHeight * 0.75,
+                  minHeight: screenHeight * 0.75,
+                  zIndex: 1,
+                }}
                 ListEmptyComponent={() => {
                   return (
                     <Text style={{ textAlign: "center", marginTop: "50%" }}>

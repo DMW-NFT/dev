@@ -51,7 +51,7 @@ const CreateMoney = (props) => {
 
   let { visible } = props;
   return (
-    <View style={[props.style, { position: 'absolute', width: "100%" }]}>
+    <View style={[{ position: 'absolute', width: "100%" ,zIndex:100,bottom:0,height:"100%"}]}>
       <View style={styles.container}></View>
       <Modal
         visible={visible}
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 100,
+    marginBottom: 20,
   },
   container: {
     height: Dimensions.get('window').height,
