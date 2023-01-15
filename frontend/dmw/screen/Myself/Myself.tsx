@@ -134,9 +134,13 @@ const Myself = (props) => {
       });
     } else if (typename == "我的藏品") {
       setShowTransferNft(true);
-      let obj =JSON.stringify(determinelist)
+      let obj ={...determinelist}
+      let objB  = isEmptyJson(obj)
       getMyNft(
-     "/index/nft/get_my_nft_by_search",
+        !objB
+          ? "/index/nft/get_my_nft_by_search"
+          : "/index/nft/get_my_nft"
+          ,
         {
           keyword: strText,
           network: ChainIdMap[currentChainId].network,
@@ -146,6 +150,8 @@ const Myself = (props) => {
     }
   }, [typename, determinelist, strText, currentChainId, WalletInUse]);
 
+
+  const  isEmptyJson = (json) => { for (var key in json) { if (json.hasOwnProperty(key) && json[key]) { return false; } } return true; }
   const getMyNft = (posturl: string, data) => {
     // console.log(data,'请求参数');
     console.log(data, "page:1,limit:999");
