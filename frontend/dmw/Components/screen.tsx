@@ -35,7 +35,12 @@ const CreateMoney = (props) => {
         arr[title.value].push(item.value)
         setActiveBtn(arr)
       } else {
-        arr[title.value] = item.value
+        if(arr[title.value] == item.value){
+          arr[title.value] = ''
+        }else{
+          arr[title.value] = item.value
+        }
+       
         setActiveBtn(arr)
       }
       // console.log(arr);
