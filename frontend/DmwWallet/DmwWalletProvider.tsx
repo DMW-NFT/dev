@@ -16,7 +16,7 @@ import NFT721ABI from "../../frontend/contract/NFT721.json";
 import marketplaceABI from "../../frontend/contract/MARKETPLACE.json";
 import ERC20ABI from "../contract/ERC20.json";
 import { Address } from "cluster";
-import ChainIdMap from "../constans/chainIdMap.json";
+
 
 const DmwWalletProvider = ({ children }) => {
   const [dmwWalletList, setDmwWalletList] = useState([]);
@@ -24,7 +24,7 @@ const DmwWalletProvider = ({ children }) => {
   const [dmwChainId, setDmwChainId] = useState(137);
   const [dmwTransactionMap, setDmwTransactionMap] = useState({});
   const [dmwTransactionList, setDmwTransactionList] = useState([]);
-  const { globalError, setGlobalError, throwTxError } = useDmwWeb3();
+  const { globalError, setGlobalError, throwTxError,contractMap } = useDmwWeb3();
   const web3 = new Web3();
 
   const verifySecretKey = (
@@ -304,7 +304,7 @@ const DmwWalletProvider = ({ children }) => {
     SignedPayload,
     Signature
   ) => {
-    const contractAddress = ChainIdMap[dmwChainId].nft_contract;
+    const contractAddress = contractMap()[dmwChainId].nft_contract;
 
     const contract = new web3.eth.Contract(NFT1155ABI, contractAddress);
 
@@ -336,7 +336,7 @@ const DmwWalletProvider = ({ children }) => {
     totalPrice: string
   ) => {
     web3.eth.setProvider(getProvider(dmwChainId));
-    const contractAddress = ChainIdMap[dmwChainId].market_contract;
+    const contractAddress = contractMap()[dmwChainId].market_contract;
     const contract = new web3.eth.Contract(marketplaceABI, contractAddress);
     const rawdata = contract.methods
       .buy(
@@ -418,7 +418,7 @@ const DmwWalletProvider = ({ children }) => {
     web3.eth.setProvider(getProvider(dmwChainId));
     const contract = new web3.eth.Contract(NFT1155ABI, contractAddress);
     const rawdata = contract.methods
-      .setApprovalForAll(ChainIdMap[dmwChainId].market_contract, true)
+      .setApprovalForAll(contractMap()[dmwChainId].market_contract, true)
       .encodeABI();
     const tx = {
       from: currentDmwWallet, // Required
@@ -448,7 +448,7 @@ const DmwWalletProvider = ({ children }) => {
     listingType: number
   ) => {
     web3.eth.setProvider(getProvider(dmwChainId));
-    const contractAddress = ChainIdMap[dmwChainId].market_contract;
+    const contractAddress = contractMap()[dmwChainId].market_contract;
     const contract = new web3.eth.Contract(marketplaceABI, contractAddress);
     // console.log(web3.utils.toWei(reservePricePerToken, 'ether'))
     console.log(
@@ -502,7 +502,7 @@ const DmwWalletProvider = ({ children }) => {
   ) => {
     web3.eth.setProvider(getProvider(dmwChainId));
     console.log("making offer..");
-    const contractAddress = ChainIdMap[dmwChainId].market_contract;
+    const contractAddress = contractMap()[dmwChainId].market_contract;
     const contract = new web3.eth.Contract(marketplaceABI, contractAddress);
     const rawdata = contract.methods
       .offer(
@@ -547,7 +547,7 @@ const DmwWalletProvider = ({ children }) => {
       pricePerToken
     );
     web3.eth.setProvider(getProvider(dmwChainId));
-    const contractAddress = ChainIdMap[dmwChainId].market_contract;
+    const contractAddress = contractMap()[dmwChainId].market_contract;
     const contract = new web3.eth.Contract(marketplaceABI, contractAddress);
     const rawdata = contract.methods
       .acceptOffer(listingId, offeror, currency, pricePerToken)
@@ -573,7 +573,7 @@ const DmwWalletProvider = ({ children }) => {
     listingId: BigNumber
   ) => {
     web3.eth.setProvider(getProvider(dmwChainId));
-    const contractAddress = ChainIdMap[dmwChainId].market_contract;
+    const contractAddress = contractMap()[dmwChainId].market_contract;
     const contract = new web3.eth.Contract(marketplaceABI, contractAddress);
     const rawdata = contract.methods.cancelDirectListing(listingId).encodeABI();
     const tx = {
@@ -598,7 +598,7 @@ const DmwWalletProvider = ({ children }) => {
     amount: string
   ) => {
     web3.eth.setProvider(getProvider(dmwChainId));
-    const contractAddress = ChainIdMap[dmwChainId].market_contract;
+    const contractAddress = contractMap()[dmwChainId].market_contract;
     const contract = new web3.eth.Contract(ERC20ABI, tokenAddress);
     const rawdata = contract.methods
       .approve(contractAddress, amount)

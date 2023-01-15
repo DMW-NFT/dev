@@ -55,6 +55,7 @@ const Money = (props) => {
     setCurrenChainId,
     nativeToken,
     currentChainId,
+    dmwConfig,
   } = useDmwWeb3();
   const {
     MoneyRouteState,
@@ -65,28 +66,26 @@ const Money = (props) => {
     shortenAddress,
     Copy,
   } = useDmwApi();
+  const { dmwWalletList, setDmwChainId } = useDmwWallet();
   const { t, i18n } = useTranslation();
   // inputRef = React.createRef();
   const inputRefX = useRef(null);
   const [contenType, setContenType] = useState("token");
-  const [list, setList] = useState([{}, {}]);
   const [visible, setVisible] = useState(false);
   const [chainMenuVisible, setChainMenuVisible] = useState(false);
 
   const [selectedChain, setSelectedChain] = useState(
-    chainIdMap[currentChainId].network.toLowerCase()
+    chainIdMap[currentChainId].network
   );
   const [lMvisible, setLMvisible] = useState(false);
   const [Modalvisible, setModalvisible] = useState(false);
-  const { dmwWalletList, setDmwChainId } = useDmwWallet();
+
   const [password, setpassword] = useState("");
   const [passwordlist, setpasswordlist] = useState([]);
   const { WalletInUse, setWalletInUse, avatarUrl } = useDmwLogin();
 
   const [lwNativeBalance, setLwNativeBalance] = useState("");
   const [tpwNativeBalance, setTpwNativeBalance] = useState("");
-  const [lwErc20Balance, setLwErc20Balance] = useState([]);
-  const [tpwErc20Balance, setTpwErc20Balance] = useState([]);
   const [erc20Balance, setErc20Balance] = useState([]);
   const [txHistory, setTxHistory] = useState([]);
 
@@ -98,12 +97,11 @@ const Money = (props) => {
     setErc20Balance([]);
     post(
       "/index/wallet/get_erc20_token_balance_by_wallet",
-      formData({ network: selectedChain })
+      formData({ network: selectedChain.toLowerCase() })
     )
       .then((res) => {
-        res.data&&setErc20Balance(res.data)
-        console.log("erc20:",res.data)
-        
+        res.data && setErc20Balance(res.data);
+        console.log("erc20:", res.data);
       })
       .catch((err) => {
         // console.log("err",err)
@@ -158,7 +156,6 @@ const Money = (props) => {
       });
   };
 
-
   const renderChainMenu = () => (
     <TouchableWithoutFeedback onPress={() => setChainMenuVisible(true)}>
       <View
@@ -184,14 +181,12 @@ const Money = (props) => {
       formData({ network: selectedChain })
     )
       .then((res) => {
-        
         if (res.code == 200) {
           setTxHistory(res.data.result);
           // console.log(res.data.result);
-        }else{
-          setTxHistory([])
+        } else {
+          setTxHistory([]);
         }
-
       })
       .catch((err) => {
         // console.log("err",err)
@@ -235,7 +230,6 @@ const Money = (props) => {
       getNativeBalance(currentWallet).then((res) => {
         setTpwNativeBalance(res);
       });
-
     }
     if (dmwWalletList && dmwWalletList[0] && WalletInUse == 1) {
       getNativeBalance(dmwWalletList[0]).then((res) => {
@@ -250,11 +244,10 @@ const Money = (props) => {
 
   useEffect(() => {
     setTimeout(() => {
-      getAddressBalance()
+      getAddressBalance();
       getAccuontTxHistory();
     }, 1000);
-
-  }, [WalletInUse,currentChainId]);
+  }, [WalletInUse, currentChainId]);
 
   useEffect(() => {
     let blackPointArry = [null, null, null, null, null, null];
@@ -294,20 +287,34 @@ const Money = (props) => {
             placement={"bottom"}
             onBackdropPress={() => setChainMenuVisible(false)}
           >
-            <MenuItem
-              onPress={() => {
-                setSelectedChain("polygon");
-                setCurrenChainId("137"), setDmwChainId("137");
-              }}
-              title="polygon"
-            />
-            <MenuItem
+            {dmwConfig&&dmwConfig ? (
+               Object.entries(dmwConfig).map(([key, value]) => (
+                <MenuItem
+                  onPress={() => {
+                    setSelectedChain(value.name.toLowerCase())
+                    setCurrenChainId(value.chainId)
+                    setDmwChainId(value.chainId)
+                  }}
+                  title={value.name}
+                />
+              ))
+            ) : (
+              <MenuItem
+                onPress={() => {
+                  setSelectedChain("polygon");
+                  setCurrenChainId("137"), setDmwChainId("137");
+                }}
+                title="polygon"
+              />
+            )}
+
+            {/* <MenuItem
               onPress={() => {
                 setSelectedChain("mumbai");
                 setCurrenChainId("80001"), setDmwChainId("80001");
               }}
               title="mumbai"
-            />
+            /> */}
           </OverflowMenu>
 
           <TouchableWithoutFeedback onPress={() => lMvisibleopen()}>
@@ -552,31 +559,31 @@ const Money = (props) => {
         >
           <View style={[styles.listbox]}>
             {contenType == "token"
-              ? erc20Balance[0]&&erc20Balance.map(
-                  (item, index) => (
-                    <View style={styles.ListLi}>
-                      <Image
-                        style={{ width: 40, height: 40 }}
-                        source={require("../../assets/img/money/list4.png")}
-                      ></Image>
-                      <View style={styles.ListLeftText}>
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            fontWeight: "700",
-                            lineHeight: 40,
-                          }}
-                        >
-                          {Number(item.balance) / 10 ** item.decimals +
-                            " " +
-                            item.symbol}
-                        </Text>
-                        {/* <Text style={{ fontSize: 12 }}>$10.000</Text> */}
-                      </View>
+              ? erc20Balance[0] &&
+                erc20Balance.map((item, index) => (
+                  <View style={styles.ListLi}>
+                    <Image
+                      style={{ width: 40, height: 40 }}
+                      source={require("../../assets/img/money/list4.png")}
+                    ></Image>
+                    <View style={styles.ListLeftText}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "700",
+                          lineHeight: 40,
+                        }}
+                      >
+                        {Number(item.balance) / 10 ** item.decimals +
+                          " " +
+                          item.symbol}
+                      </Text>
+                      {/* <Text style={{ fontSize: 12 }}>$10.000</Text> */}
                     </View>
-                  )
-                )
-              : txHistory&&txHistory[0]&&
+                  </View>
+                ))
+              : txHistory &&
+                txHistory[0] &&
                 txHistory.map((item) => (
                   <TouchableWithoutFeedback
                     onPress={() => {

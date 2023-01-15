@@ -72,35 +72,7 @@ const TransferredIntoCollection = (props) => {
   const [listType, setListTtpe] = useState([]);
   const [vfModalVisible, setVfModalVisible] = useState(false);
   const [txModalVisible, setTxModalVisible] = useState(false);
-
-  useEffect(() => {
-    // getBlockchain()
-    getCoType();
-  }, []);
-
-  useEffect(() => {
-    if (!dmwWalletList[0] && !currentWallet) {
-      Toast(t("请先登录钱包"));
-      setTimeout(() => {
-        props.navigation.goBack();
-      }, 1500);
-    } else {
-      const walletAddress = WalletInUse == 1 ? dmwWalletList[0] : currentWallet;
-      console.log("curren wallet address:", walletAddress);
-      walletAddress &&
-        getNativeBalance(walletAddress).then((res) => {
-          console.log("native balance:", res);
-          setNativeBalance(res);
-        });
-    }
-  }, [WalletInUse, dmwWalletList, currentWallet]);
-
-  // 获取区块链
-  // const getBlockchain = () => {
-  //   post('/index/common/get_network').then(res => {
-  //     setlistE(res.data)
-  //   })
-  // }
+  const [txConfirmed, setTxConfirmed] = useState("");
 
   // 获取type类型
   const getCoType = () => {
@@ -203,6 +175,94 @@ const TransferredIntoCollection = (props) => {
     return explain && ipfsImgUrl && title;
   };
 
+  // b本地
+  const uuup = () => {
+    setLoding(true);
+    let options = {
+      maxWidth: 300,
+      maxHeight: 550,
+      quality: 1,
+      mediaType: "photo",
+      includeBase64: true,
+    };
+    // You can also use as a promise without 'callback':
+    launchImageLibrary(options, (response) => {
+      // console.log('Response = ', response);
+      if (response.didCancel) {
+        setscreenLoding(false);
+        return;
+      } else if (response.errorCode == "camera_unavailable") {
+        setscreenLoding(false);
+        return;
+      } else if (response.errorCode == "permission") {
+        setscreenLoding(false);
+        return;
+      } else if (response.errorCode == "others") {
+        setscreenLoding(false);
+        return;
+      }
+      // console.log('base64 => ', response.assets[0].base64)
+      setimgurlUp1(response.assets[0].base64);
+      // let data =formData({content:response.assets[0].base64,path:'123'})
+      // console.log(response.assets[0],'上传数据');
+      console.log("pandaun");
+
+      fetch("https://deep-index.moralis.io/api/v2/ipfs/uploadFolder", {
+        method: "POST",
+        body: JSON.stringify([
+          {
+            content: response.assets[0].base64,
+            path: response.assets[0].fileName,
+          },
+        ]),
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          "X-API-Key":
+            "Lf0hom3miHg82XaKYaQg1Ej3LiyXmfO9kCSAsfws9XpUX1V9sh1isIsOorRf1xYf",
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          Toast(t("上传成功"));
+          setLoding(false);
+          console.log(res[0].path, "上传");
+          setIpfsImgUrl(res[0].path);
+        })
+        .catch((err) => {
+          console.log(err, "上传报错");
+        });
+    });
+  };
+
+  useEffect(()=>{
+    setTimeout(()=>{
+      txConfirmed&&props.navigation.goBack();
+    },2000)
+  },[txConfirmed])
+
+  useEffect(() => {
+    // getBlockchain()
+    getCoType();
+  }, []);
+
+  useEffect(() => {
+    if (!dmwWalletList[0] && !currentWallet) {
+      Toast(t("请先登录钱包"));
+      setTimeout(() => {
+        props.navigation.goBack();
+      }, 1500);
+    } else {
+      const walletAddress = WalletInUse == 1 ? dmwWalletList[0] : currentWallet;
+      console.log("curren wallet address:", walletAddress);
+      walletAddress &&
+        getNativeBalance(walletAddress).then((res) => {
+          console.log("native balance:", res);
+          setNativeBalance(res);
+        });
+    }
+  }, [WalletInUse, dmwWalletList, currentWallet]);
+
   useEffect(() => {
     WalletInUse == 1 &&
       Array.from(password).length == 6 &&
@@ -278,125 +338,6 @@ const TransferredIntoCollection = (props) => {
         }
       });
   }, [password]);
-
-  // useEffect(() => {
-  //   let blackPointArry = [null, null, null, null, null, null]
-
-  //   let arr = password.split('');
-  //   arr.map((item, index) => {
-  //     blackPointArry[index] = item;
-  //   })
-  //   setPasswordlist(blackPointArry)
-  //   if (password.length == 6) {
-  //     setModalvisible(false)
-
-  //     let data = {
-  //       description: explain,
-  //       image: ipfsImgUrl,
-  //       name: title
-  //     }
-  //     fetch('https://deep-index.moralis.io/api/v2/ipfs/uploadFolder', {
-  //       method: "POST",
-  //       body: JSON.stringify([{ content: data, path: `${title}.json` }]),
-  //       headers: {
-  //         accept: 'application/json',
-  //         'content-type': 'application/json',
-  //         'X-API-Key': 'XRjc1mIurthZ3xNGZtAp9Mk2Rv7f991jvqfMwdZBAJPETdwks4afavF6gfkP8515'
-  //       },
-  //     })
-  //       .then((res) => res.json()).then(res => {
-  //         console.log(res[0].path, '上传');
-
-  //         fetch('http://13.214.32.151:6666/getSignature', {
-  //           method: "POST",
-  //           body: JSON.stringify({
-  //             metadataUri: res[0].path,
-  //             mintTo: WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
-  //             mintAmount: 1,
-  //             network: chainIdmap[currentChainId].network.toLowerCase()
-  //           }),
-  //           headers: {
-  //             accept: 'application/json',
-  //             'content-type': 'application/json',
-  //           },
-  //         })
-  //           .then((res) => res.json()).then(resp => {
-  //             console.log(resp, 'zoubianjiekou');
-  //             if (WalletInUse == 1) {
-  //               dmwMintWithSignature(password, resp.result.SignedPayload[0], resp.result.SignedPayload[resp.result.SignedPayload.length - 1])
-  //             } else {
-  //               mintNftWithSignature(resp.result.SignedPayload[0], resp.result.SignedPayload[resp.result.SignedPayload.length - 1])
-  //             }
-  //           }).catch(err => {
-  //             console.log(err, '左边报错');
-  //           })
-  //       }).catch(err => {
-  //         console.log(err, '上传报错');
-  //       })
-  //   } else if (password.length == 6) {
-  //     Toast(t('密码错误或暂未创建DMW钱包'))
-  //   }
-  // }, [password])
-
-  // b本地
-  const uuup = () => {
-    setLoding(true);
-    let options = {
-      maxWidth: 300,
-      maxHeight: 550,
-      quality: 1,
-      mediaType: "photo",
-      includeBase64: true,
-    };
-    // You can also use as a promise without 'callback':
-    launchImageLibrary(options, (response) => {
-      // console.log('Response = ', response);
-      if (response.didCancel) {
-        setscreenLoding(false);
-        return;
-      } else if (response.errorCode == "camera_unavailable") {
-        setscreenLoding(false);
-        return;
-      } else if (response.errorCode == "permission") {
-        setscreenLoding(false);
-        return;
-      } else if (response.errorCode == "others") {
-        setscreenLoding(false);
-        return;
-      }
-      // console.log('base64 => ', response.assets[0].base64)
-      setimgurlUp1(response.assets[0].base64);
-      // let data =formData({content:response.assets[0].base64,path:'123'})
-      // console.log(response.assets[0],'上传数据');
-      console.log("pandaun");
-
-      fetch("https://deep-index.moralis.io/api/v2/ipfs/uploadFolder", {
-        method: "POST",
-        body: JSON.stringify([
-          {
-            content: response.assets[0].base64,
-            path: response.assets[0].fileName,
-          },
-        ]),
-        headers: {
-          accept: "application/json",
-          "content-type": "application/json",
-          "X-API-Key":
-            "Lf0hom3miHg82XaKYaQg1Ej3LiyXmfO9kCSAsfws9XpUX1V9sh1isIsOorRf1xYf",
-        },
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          Toast(t("上传成功"));
-          setLoding(false);
-          console.log(res[0].path, "上传");
-          setIpfsImgUrl(res[0].path);
-        })
-        .catch((err) => {
-          console.log(err, "上传报错");
-        });
-    });
-  };
 
   return (
     <SafeAreaView
@@ -727,6 +668,7 @@ const TransferredIntoCollection = (props) => {
         <TxProccessingModal
           setModalVisible={setTxModalVisible}
           modalVisible={txModalVisible}
+          setTxHash={setTxConfirmed}
         />
       )}
     </SafeAreaView>
