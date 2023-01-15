@@ -182,7 +182,7 @@ const Home = (props) => {
     setenableScrollViewScroll(value);
   };
   return (
-    <ScrollView  scrollEnabled={true} >
+    <ScrollView>
       <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
         {/* scrollEnabled={enableScrollViewScroll} */}
         <View style={{ flexDirection: "column" }}>
@@ -333,7 +333,7 @@ const Home = (props) => {
           {
             <FlatList
               refreshing={refreshing}
-              style={{ flex: 1,maxHeight:screenHeight - 56 - 80,minHeight:"100%"}}
+              style={{ flex: 1,maxHeight:screenHeight*0.8,minHeight:"100%"}}
               nestedScrollEnabled={true}
               ListEmptyComponent={() => {
                 return (

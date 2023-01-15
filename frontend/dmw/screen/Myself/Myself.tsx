@@ -10,7 +10,7 @@ import {
   FlatList,
   TouchableWithoutFeedback,
 } from "react-native";
-import React, { Component, useEffect, useState, Context } from "react";
+import React, { Component, useEffect, useState, Context, useRef } from "react";
 import Tabcolumn from "./Tabcolumn";
 import Screen from "../../Components/screen";
 import Search from "../../Components/Searchbox";
@@ -71,9 +71,14 @@ const Myself = (props) => {
   const { post, formData, Toast, Copy } = useDmwApi();
   const { currentWallet, currentChainId } = useDmwWeb3();
   const { dmwWalletList } = useDmwWallet();
+  const scrollViewRef = useRef<ScrollView>(null);
+
 
   const visibleFn = () => {
     setVisible(true);
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollToEnd({ animated: true });
+    }
   };
 
   const close = () => {
@@ -202,7 +207,7 @@ const Myself = (props) => {
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
-      <ScrollView scrollEnabled={!visible} >
+      <ScrollView ref={scrollViewRef}>
         <View style={{ backgroundColor: "#fff" }}>
           <View style={styles.index_box}>
             {/* title -- start*/}
@@ -291,7 +296,16 @@ const Myself = (props) => {
           </View>
           {/* <Text onPress={() => this.visible()}>123</Text> */}
 
-          
+          {visible ? (
+            <Screen
+              title="select filter"
+              // style={[styles.Screen]}
+              visible={visible}
+              close={() => close()}
+              datalist={screenData}
+              determineFn={(determine) => Fndetermine(determine)}
+            ></Screen>
+          ) : null}
 
           <View
             style={{
@@ -309,7 +323,12 @@ const Myself = (props) => {
               <FlatList
                 refreshing={false}
                 nestedScrollEnabled={true}
-                style={{  zIndex: 1, marginBottom: 0 }}
+                style={{
+                  maxHeight: screenHeight * 0.75,
+                  minHeight: "100%",
+                  zIndex: 1,
+                  marginBottom: 0,
+                }}
                 ListEmptyComponent={() => {
                   return (
                     <Text style={{ textAlign: "center", marginTop: "50%" }}>
@@ -373,7 +392,11 @@ const Myself = (props) => {
               <FlatList
                 refreshing={false}
                 nestedScrollEnabled={false}
-                style={{ maxHeight: screenHeight*0.75,minHeight:"100%", zIndex: 1 }}
+                style={{
+                  maxHeight: screenHeight * 0.75,
+                  minHeight: screenHeight * 0.75,
+                  zIndex: 1,
+                }}
                 ListEmptyComponent={() => {
                   return (
                     <Text style={{ textAlign: "center", marginTop: "50%" }}>

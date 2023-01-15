@@ -9,7 +9,8 @@ import chainIdMap from "../constans/chainIdMap.json";
 import marketplaceABI from "../../frontend/contract/MARKETPLACE.json";
 import txGasMap from "../constans/txGasMap.json";
 import ERC20ABI from "../contract/ERC20.json";
-import { BigNumber } from "ethers";
+// import { BigNumber } from "ethers";
+import BigNumber from 'bignumber.js';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ChainIdMap from "../constans/chainIdMap.json";
 import { ethers } from "ethers";
@@ -41,8 +42,9 @@ const DmwWeb3Provider = ({ children }) => {
       connector
         .sendTransaction(tx)
         .then((result) => {
+          console.log("open third party wallet res:",result)
           syncTransactionSatus(result).then((res) => {
-            // console.log("sync transaction result:", res);
+            console.log("sync transaction result:", res);
             resolve(res);
           });
         })
@@ -343,6 +345,7 @@ const DmwWeb3Provider = ({ children }) => {
       ...transactionMap,
       [txHash]: { payload: null, state: "pending" },
     });
+    console.log("syncing tx:",txHash)
     return new Promise((resolve, reject) => {
       let syncInterval = setInterval(() => {
         web3.eth.getTransactionReceipt(txHash).then((res) => {
@@ -477,7 +480,7 @@ const DmwWeb3Provider = ({ children }) => {
     const contractAddress = ChainIdMap[currentChainId].market_contract;
     const contract = new web3.eth.Contract(marketplaceABI, contractAddress);
     const rawdata = contract.methods
-      .acceptOffer(listingId, offeror, currency, pricePerToken)
+      .acceptOffer(listingId, offeror, currency, new BigNumber(pricePerToken).toString())
       .encodeABI();
     const tx = {
       from: currentWallet, // Required
@@ -496,7 +499,7 @@ const DmwWeb3Provider = ({ children }) => {
     cancelDirectListing：取消直接挂单
         listingId:订单的ID
     */
-  const cancelDirectListing = async (listingId: BigNumber) => {
+  const cancelDirectListing = async (listingId: string) => {
     web3.eth.setProvider(getProvider(currentChainId));
     const contractAddress = ChainIdMap[currentChainId].market_contract;
     const contract = new web3.eth.Contract(marketplaceABI, contractAddress);

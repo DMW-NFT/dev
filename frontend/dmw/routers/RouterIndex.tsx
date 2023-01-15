@@ -16,9 +16,6 @@ import { Dialog, Portal, Paragraph, Button } from "react-native-paper";
 import { useDmwLogin } from "../../loginProvider/constans/DmwLoginProvider";
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 
-const isErrorToast = (content:string) =>{
-    return content.toLowerCase().includes('error')
-}
 // async function FN() {
 //     let a = await api.GetStorage()
 //     initState['isLogin'] = a ? true : false
@@ -28,34 +25,27 @@ const isErrorToast = (content:string) =>{
 const RouterIndex = (props) => {
   const { isLogin, setIsLogin, login, logOut } = useDmwLogin();
   const { show, toastVal } = useDmwApi();
-  // const api = new Api();
-  // const [a,setA]  = useState()
 
-  // const getA = async () =>{
-  //     let a = await api.GetStorage()
-  //     console.log(a,"fuck")
-  //     // setA(a)
-  // }
-
-  // useEffect( () => {
-
-  // },[])
   return (
     <View style={styles.body}>
       {isLogin ? <Routers /> : <StackNavigator />}
-      {show? (
-
-        isErrorToast(toastVal)?<Portal>
+      {show && (toastVal.toString().toLowerCase().includes("error") ? (
+        <Portal>
           <View style={styles.box}>
-            <Text style={styles.errText}>{toastVal}</Text>
-          </View>
-        </Portal>:<Portal>
-          <View style={styles.box}>
-            <Text style={styles.text}>{toastVal}</Text>
+            <Text style={styles.errText}>
+              {toastVal.toString()}
+            </Text>
           </View>
         </Portal>
-        
-      ) : null}
+      ) : (
+        <Portal>
+          <View style={styles.box}>
+            <Text style={styles.text}>
+              {toastVal.toString()}
+            </Text>
+          </View>
+        </Portal>
+      ))}
     </View>
   );
 };
@@ -76,7 +66,7 @@ const RouterIndex = (props) => {
 //         )
 //     }
 // }
-export default RouterIndex
+export default RouterIndex;
 
 const styles = StyleSheet.create({
   body: {

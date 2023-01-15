@@ -5,7 +5,7 @@ import { t } from 'i18next';
 
 const scale = Dimensions.get('window').scale;
 const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get("window").height;
+
 const CreateMoney = (props) => {
   // constructor(props) {
   //   super(props);
@@ -14,7 +14,7 @@ const CreateMoney = (props) => {
   //   };
   // }
   const [datalist, setdatalist] = useState(props.datalist)
-  const [activeBtn, setActiveBtn] = useState(props.Fndetermine)
+  const [activeBtn, setActiveBtn] = useState(props.Fndetermine || {})
   const close = () => {
     props.close();
   }
@@ -53,7 +53,7 @@ const CreateMoney = (props) => {
 
   let { visible } = props;
   return (
-    <View style={[props.style, { position: 'absolute', width: "100%", top: 0, height: screenHeight }]}>
+    <View style={[{ position: 'absolute', width: "100%" ,zIndex:100,bottom:0,height:"100%"}]}>
       <View style={styles.container}></View>
       <Modal
         visible={visible}
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     paddingHorizontal: 20,
     paddingTop: 23,
-    minWidth: '50%'
+    minWidth:'50%'
     // paddingBottom: 48,
   },
   createMoneyBtn: {
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 100,
+    marginBottom: 20,
   },
   container: {
     height: Dimensions.get('window').height,
