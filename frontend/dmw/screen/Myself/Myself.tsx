@@ -296,17 +296,6 @@ const Myself = (props) => {
           </View>
           {/* <Text onPress={() => this.visible()}>123</Text> */}
 
-          {visible ? (
-            <Screen
-              title="select filter"
-              // style={[styles.Screen]}
-              visible={visible}
-              close={() => close()}
-              datalist={screenData}
-              determineFn={(determine) => Fndetermine(determine)}
-            ></Screen>
-          ) : null}
-
           <View
             style={{
               paddingRight: 20,
