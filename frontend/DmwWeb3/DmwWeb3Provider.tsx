@@ -31,7 +31,20 @@ const DmwWeb3Provider = ({ children }) => {
   const GasMap = txGasMap;
   const web3 = new Web3();
 
-  
+  const getDmwConfig=()=>{
+    console.log("getting config")
+    fetch(
+      `http://18.142.150.253/index/common/get_network`,
+      {
+        method: "GET",
+      }
+    ).then((res) => {
+      res.json().then((result)=>{
+        console.log("got config:",result)
+      })
+    });
+  }
+
   const throwTxError=(error)=>{
     setGlobalError([...globalError, String(error)]);
   }
@@ -56,6 +69,7 @@ const DmwWeb3Provider = ({ children }) => {
   };
 
   useEffect(() => {
+    getDmwConfig();
     if (connector.connected) {
       setCurrentWallet(connector.accounts[0]);
       setConnected(true);
