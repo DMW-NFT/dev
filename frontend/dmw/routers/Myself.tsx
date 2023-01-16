@@ -50,7 +50,7 @@ const Home = () => {
         component={Sell}
         name="sell"
         options={{
-          headerTitle: "卖出",
+          headerTitle: t("卖出"),
         }}
       ></Stack.Screen>
       <Stack.Screen
@@ -109,7 +109,7 @@ const Home = () => {
         component={TransferNft}
         name="TransferNft"
         options={{
-          title: "转移藏品",
+          title: t("转移藏品"),
         }}
       ></Stack.Screen>
 

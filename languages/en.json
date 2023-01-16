@@ -345,5 +345,9 @@
   "请勾选用户协议": "Please tick the User Agreement",
   "购买": "Buy",
   "设置": "Settings",
-  "请先登录钱包": "Please log in to the wallet first"
+  "请先登录钱包": "Please log in to the wallet first",
+  "创建成功": "Creation Successful",
+  "密码不一致": "Passwords do not match",
+  "请重新输入密码": "Please re-enter password",
+  "当前选择网络与外部钱包不一致，请切换外部钱包网络后再进行购买操作！": "The currently selected network and external wallet do not match, please switch the network of the external wallet before purchasing!"
 }

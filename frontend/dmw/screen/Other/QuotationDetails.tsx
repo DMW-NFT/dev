@@ -95,6 +95,8 @@ const QuotationDetails = (props) => {
     cancelDirectListing,
     getErc20Balance,
     acceptOffer,
+    currentChainId,
+    updateNetwork
   } = useDmwWeb3();
   const {
     dmwBuyNFT,
@@ -251,7 +253,15 @@ const QuotationDetails = (props) => {
         return null;
       }
     }
-
+    if (WalletInUse == 1 && NftInfo.network) {
+      if (
+        currentChainId !=
+        chainNameMap[NftInfo.network.toLowerCase()].chainId
+      ) {
+        updateNetwork(chainNameMap[NftInfo.network.toLowerCase()].chainId);
+        Toast(`Switch to network: ${NftInfo.network.toLowerCase()}`)
+      }
+    }
     setBuyNowVisible(true);
     setIsOffer(false);
     setBuyNumber("1");

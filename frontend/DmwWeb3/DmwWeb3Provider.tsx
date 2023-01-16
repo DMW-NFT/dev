@@ -10,7 +10,7 @@ import marketplaceABI from "../../frontend/contract/MARKETPLACE.json";
 import txGasMap from "../constans/txGasMap.json";
 import ERC20ABI from "../contract/ERC20.json";
 // import { BigNumber } from "ethers";
-import BigNumber from 'bignumber.js';
+import BigNumber from "bignumber.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ChainIdMap from "../constans/chainIdMap.json";
 import { ethers } from "ethers";
@@ -28,60 +28,58 @@ const DmwWeb3Provider = ({ children }) => {
   const [memConnectStatus, setMemConnectStatus] = useState({});
   const [nativeToken, setNativeToken] = useState("ETH");
   const [globalError, setGlobalError] = useState([]);
-  const [dmwConfig,setDmwConfig] = useState({})
+  const [dmwConfig, setDmwConfig] = useState({});
   const GasMap = txGasMap;
   const web3 = new Web3();
 
+  const updateNetwork = (chainId: string) => {
+    setCurrenChainId(String(chainId));
+  };
+
   function convertArrayToJson(arr) {
     return arr.reduce((acc, item) => {
-        acc[item.chainId] = item;
-        return acc;
+      acc[item.chainId] = item;
+      return acc;
     }, {});
-}
+  }
 
-  const getDmwConfig=()=>{
-    console.log("getting config")
-    fetch(
-      `http://18.142.150.253/index/common/get_network`,
-      {
-        method: "GET",
-      }
-    ).then((res) => {
-      res.json().then((result)=>{
-
-        if (result&&result.data){
-          let jsonConfig = convertArrayToJson(result.data)
-          console.log("got config:",jsonConfig)
-          setDmwConfig(jsonConfig)
+  const getDmwConfig = () => {
+    console.log("getting config");
+    fetch(`http://18.142.150.253/index/common/get_network`, {
+      method: "GET",
+    }).then((res) => {
+      res.json().then((result) => {
+        if (result && result.data) {
+          let jsonConfig = convertArrayToJson(result.data);
+          console.log("got config:", jsonConfig);
+          setDmwConfig(jsonConfig);
         }
-      })
+      });
     });
-  }
+  };
 
-  const contractMap =():{}=>{
-    console.log(dmwConfig?"using online config":"usesing local config")
-    return  dmwConfig?dmwConfig:ChainIdMap
-  }
+  const contractMap = (): {} => {
+    console.log(dmwConfig ? "using online config" : "usesing local config");
+    return dmwConfig ? dmwConfig : ChainIdMap;
+  };
 
-
-  const throwTxError=(error)=>{
+  const throwTxError = (error) => {
     setGlobalError([...globalError, String(error)]);
-  }
-
+  };
 
   const sendAndSyncTransaction = async (tx) => {
     return new Promise((resolve, rejects) => {
       connector
         .sendTransaction(tx)
         .then((result) => {
-          console.log("open third party wallet res:",result)
+          console.log("open third party wallet res:", result);
           syncTransactionSatus(result).then((res) => {
             console.log("sync transaction result:", res);
             resolve(res);
           });
         })
         .catch((error) => {
-          throwTxError(error)
+          throwTxError(error);
           console.error(error);
         });
     });
@@ -378,7 +376,7 @@ const DmwWeb3Provider = ({ children }) => {
       ...transactionMap,
       [txHash]: { payload: null, state: "pending" },
     });
-    console.log("syncing tx:",txHash)
+    console.log("syncing tx:", txHash);
     return new Promise((resolve, reject) => {
       let syncInterval = setInterval(() => {
         web3.eth.getTransactionReceipt(txHash).then((res) => {
@@ -513,7 +511,12 @@ const DmwWeb3Provider = ({ children }) => {
     const contractAddress = contractMap()[currentChainId].market_contract;
     const contract = new web3.eth.Contract(marketplaceABI, contractAddress);
     const rawdata = contract.methods
-      .acceptOffer(listingId, offeror, currency, new BigNumber(pricePerToken).toString())
+      .acceptOffer(
+        listingId,
+        offeror,
+        currency,
+        new BigNumber(pricePerToken).toString()
+      )
       .encodeABI();
     const tx = {
       from: currentWallet, // Required
@@ -806,7 +809,8 @@ const DmwWeb3Provider = ({ children }) => {
         acceptOffer,
         throwTxError,
         dmwConfig,
-        contractMap
+        contractMap,
+        updateNetwork,
       }}
     >
       {children}

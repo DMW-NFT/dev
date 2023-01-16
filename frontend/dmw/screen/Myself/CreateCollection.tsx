@@ -54,6 +54,7 @@ const TransferredIntoCollection = (props) => {
     GasMap,
     currentGasPrice,
     getNativeBalance,
+    connector,
   } = useDmwWeb3();
   const { WalletInUse } = useDmwLogin();
   const {
@@ -285,9 +286,9 @@ const TransferredIntoCollection = (props) => {
 
   useEffect(()=>{
     setTimeout(()=>{
-      txConfirmed&&props.navigation.goBack();
+      txHash&&props.navigation.goBack();
     },2000)
-  },[txConfirmed])
+  },[txHash])
 
   useEffect(() => {
     // getBlockchain()
@@ -388,6 +389,24 @@ const TransferredIntoCollection = (props) => {
         }
       });
   }, [password]);
+
+  // 外部网络检测
+  useEffect(() => {
+    if (WalletInUse == 2 ) {
+      if (
+        connector.chainId !=currentChainId
+      ) {
+        Toast(
+          t(
+            "当前选择网络与外部钱包不一致，请切换外部钱包网络后再进行购买操作！"
+          )
+        );
+        setTimeout(()=>{
+          props.navigation.goBack();
+        },2000)
+      }
+    }
+  }, [WalletInUse]);
 
   return (
     <SafeAreaView

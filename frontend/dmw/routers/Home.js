@@ -47,6 +47,13 @@ const Home = () => {
         }}
       ></Stack.Screen>
       <Stack.Screen
+        component={QuotationDetails}
+        name="QuotationDetails"
+        options={{
+          title: "",
+        }}
+      ></Stack.Screen>
+      <Stack.Screen
         component={TradeSuccessfully}
         name="TradeSuccessfully"
         options={{

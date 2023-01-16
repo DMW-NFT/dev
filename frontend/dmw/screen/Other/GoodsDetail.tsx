@@ -96,6 +96,8 @@ const GoodsDetail = (props) => {
     setTransactionList,
     createListing,
     nativeToken,
+    currentChainId,
+    updateNetwork,
     connector,
   } = useDmwWeb3();
 
@@ -131,6 +133,15 @@ const GoodsDetail = (props) => {
             "该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！"
           )
         );
+      }
+    }
+    if (WalletInUse == 1 && detailsObj.network) {
+      if (
+        currentChainId !=
+        chainNameMap[detailsObj.network.toLowerCase()].chainId
+      ) {
+        updateNetwork(chainNameMap[detailsObj.network.toLowerCase()].chainId);
+        Toast(`Switch to network: ${detailsObj.network.toLowerCase()}`)
       }
     }
   }, [detailsObj, WalletInUse]);

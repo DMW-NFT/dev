@@ -16,7 +16,7 @@ const Data = () => {
         component={DataScreen}
         name='dataScreen'
         options={{
-          title: "stats"
+          title: "Stats"
         }}
       >
       </Stack.Screen>

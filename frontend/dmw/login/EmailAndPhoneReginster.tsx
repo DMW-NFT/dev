@@ -325,7 +325,7 @@ const EmailAndPhoneReginster = (props) => {
           maxLength={20}
           placeholder={t("请再次输入密码")}
           keyboardType="default"
-          secureTextEntry={true}
+          secureTextEntry={secureTextEntry}
           numberOfLines={4}
           onChangeText={(text) => onChangeText(text, 5)}
           value={password1}
