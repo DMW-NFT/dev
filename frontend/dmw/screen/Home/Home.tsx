@@ -375,7 +375,7 @@ const Home = (props) => {
               ListFooterComponent={() => {
                 // 声明尾部组件
                 return NftList.length ? (
-                  <Text style={{ textAlign: "center", marginVertical: 20 }}>
+                  <Text style={{ textAlign: "center", marginTop: 60 ,marginBottom:20}}>
                     {t("没有更多了")}
                   </Text>
                 ) : null;

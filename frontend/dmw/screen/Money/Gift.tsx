@@ -212,7 +212,7 @@ const Gift = (props) => {
             <>
               <View style={styles.userlist}>
                 <View style={{ flex: 1, marginLeft: 10 }}>
-                  <Text>{t("输入数量")}</Text>
+                  <Text>{t("数量")}</Text>
                 </View>
 
                 <TextInput

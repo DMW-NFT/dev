@@ -78,13 +78,13 @@ const ContactUs = () => {
                 color={"green"}
               />
               <View style={{ flexDirection: "column", marginStart: 20 }}>
-                <Text style={{ marginBottom: 10, color: "gray", fontSize: 20 }}>
+                <Text style={{ marginBottom: 10, color: "gray", fontSize: 15 }}>
                   24H {t("在线客服")}
                 </Text>
                 <Text
-                  style={{ marginBottom: 10, color: "green", fontSize: 20 }}
+                  style={{ marginBottom: 10, color: "green", fontSize: 15 }}
                 >
-                  {contactInfo.mobile}
+                  {/* {contactInfo.mobile} */}
                 </Text>
               </View>
             </View>
@@ -115,10 +115,10 @@ const ContactUs = () => {
                 color={"blue"}
               />
               <View style={{ flexDirection: "column", marginStart: 20 }}>
-                <Text style={{ marginBottom: 10, color: "gray", fontSize: 20 }}>
+                <Text style={{ marginBottom: 10, color: "gray", fontSize: 15 }}>
                   {t("联系邮箱")}
                 </Text>
-                <Text style={{ marginBottom: 10, color: "blue", fontSize: 20 }}>
+                <Text style={{ marginBottom: 10, color: "blue", fontSize: 15 }}>
                   {contactInfo.email}
                 </Text>
               </View>
@@ -150,7 +150,7 @@ const ContactUs = () => {
                 color={"#1d9bf0"}
               />
               <View style={{ flexDirection: "column", marginStart: 20 }}>
-                <Text style={{ marginBottom: 10, color: "gray", fontSize: 20 }}>
+                <Text style={{ marginBottom: 10, color: "gray", fontSize: 15 }}>
                   {t("Twitter")}
                 </Text>
                 <Text
@@ -187,7 +187,7 @@ const ContactUs = () => {
                 color={"#2962ff"}
               />
               <View style={{ flexDirection: "column", marginStart: 20 }}>
-                <Text style={{ marginBottom: 10, color: "gray", fontSize: 20 }}>
+                <Text style={{ marginBottom: 10, color: "gray", fontSize: 15 }}>
                   {t("Discord")}
                 </Text>
                 <Text
@@ -224,7 +224,7 @@ const ContactUs = () => {
                 color={"red"}
               />
               <View style={{ flexDirection: "column", marginStart: 20 }}>
-                <Text style={{ marginBottom: 10, color: "gray", fontSize: 20 }}>
+                <Text style={{ marginBottom: 10, color: "gray", fontSize: 15 }}>
                   {t("Youtube")}
                 </Text>
                 <Text style={{ marginBottom: 10, color: "red", fontSize: 15 }}>
