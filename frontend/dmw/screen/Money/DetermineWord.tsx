@@ -3,7 +3,8 @@ import React, { useState, useEffect, useContext } from "react";
 import StepComp from "./StepComp";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from "react-i18next";
+import { TouchableOpacity } from "react-native-gesture-handler";
 const DetermineWord = (props) => {
   const { t, i18n } = useTranslation();
   const [checkdata, setCheckdata] = useState([]);
@@ -17,6 +18,7 @@ const DetermineWord = (props) => {
   const [MnemonicListdata, SetMnemonicListdata] = useState("");
   const [Mnemonic, SetMnemonic] = useState("");
   const [password, setpassword] = useState(props.route.params.password);
+  const [loading, setLoading] = useState(false);
   const { Toast } = useDmwApi();
   const shuffle = (arr) => {
     for (let i = 0; i < arr.length; i++) {
@@ -49,6 +51,7 @@ const DetermineWord = (props) => {
   };
 
   const Complete = () => {
+    setLoading(true);
     if (MnemonicListdata == checkdata.join()) {
       let res = loadWalletFromMnemonic(Mnemonic);
       console.log(res.privateKey, "钱包地址");
@@ -67,7 +70,7 @@ const DetermineWord = (props) => {
         <View>
           <Text style={[styles.topInfo]}>{t("确认助记词")}</Text>
           <Text style={[styles.topInfo1, { marginBottom: 20 }]}>
-          {t("按照之前按呈现的顺序选择每个字词")}
+            {t("按照之前按呈现的顺序选择每个字词")}
           </Text>
         </View>
         <View style={[styles.blackBox]}>
@@ -92,10 +95,39 @@ const DetermineWord = (props) => {
             );
           })}
         </View>
-
-        <Text style={[styles.import]} onPress={() => Complete()}>
-          {t("完成备份")}
-        </Text>
+        {!loading ? (
+          <TouchableOpacity
+            style={[styles.import, { justifyContent: "center" }]}
+            onPress={() => Complete()}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+                alignSelf: "center",
+                color: "white",
+                fontSize: 20,
+              }}
+            >
+              {t("完成备份")}
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={[styles.import, { justifyContent: "center" }]}
+            // onPress={() => Complete()}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+                alignSelf: "center",
+                color: "white",
+                fontSize: 20,
+              }}
+            >
+              {t("loading...")}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </SafeAreaView>
   );

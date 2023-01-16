@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback,
   TextInput,
 } from "react-native";
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useContext, useState } from "react";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import StepComp from "./StepComp";
@@ -17,27 +17,26 @@ const WalletSafeShow = (props) => {
   const { loadMnemonicFromStorage } = useDmwWallet();
   const [MnemonicList, SetMnemonicList] = useState([]);
   const [password, setpassword] = useState(props.route.params.password);
-
-        useEffect(() => {
-            loadMnemonicFromStorage(password).then((resp) => {
-            let arr = resp.split(" ");
-            SetMnemonicList(arr);
-            });
-            return () =>{
-                SetMnemonicList([]);
-            }
-        }, []);
+  const [loading,setLoading] =useState(false)
+  useEffect(() => {
+    loadMnemonicFromStorage(password).then((resp) => {
+      let arr = resp.split(" ");
+      SetMnemonicList(arr);
+    });
+    return () => {
+      SetMnemonicList([]);
+    };
+  }, []);
   return (
-    <SafeAreaView style={{ backgroundColor: "#fff" ,flex:1}}>
+    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
       <View style={[styles.container]}>
         <StepComp type={2} />
         <View>
           <Text style={[styles.topInfo]}> {t("保护您的钱包安全")}</Text>
           <Text style={[styles.topInfo1]}>
-          {t("这是您的助记词。将它写在纸上并存放在安全的地方。您将需要在下一步中重新输入此助记词（按顺序）。")}
-          </Text>
-          <Text style={[styles.topInfo1, { marginBottom: 72 / 2 }]}>
-            （按顺序）。
+            {t(
+              "这是您的助记词。将它写在纸上并存放在安全的地方。您将需要在下一步中重新输入此助记词（按顺序）。"
+            )}
           </Text>
         </View>
         <View style={[styles.blackBox]}>
@@ -58,12 +57,12 @@ const WalletSafeShow = (props) => {
           })}
         </View>
         <Text
-        style={[styles.import]}
+          style={[styles.import]}
           onPress={() => {
-            props.navigation.navigate("determineWord",{password});
+            props.navigation.navigate("determineWord", { password });
           }}
         >
-        {t("继续")}  
+          {t("继续")}
         </Text>
       </View>
     </SafeAreaView>
@@ -101,7 +100,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   import: {
-    marginTop: 60,
+    // marginTop: 60,
     width: "100%",
     backgroundColor: "#897EF8",
     height: 50,

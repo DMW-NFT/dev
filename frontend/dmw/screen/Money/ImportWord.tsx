@@ -11,8 +11,8 @@ import React, { useEffect, useState } from "react";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { useTranslation } from "react-i18next";
-import { ScrollView } from "react-native-gesture-handler";
-
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { Spinner } from "@ui-kitten/components";
 const ImportWord = (props) => {
   // state={
   //     secureTextEntry:false,
@@ -27,50 +27,49 @@ const ImportWord = (props) => {
   const [password, setpassword] = useState("");
   const [password1, setpassword1] = useState("");
   const { Toast, setMoneyRouteState } = useDmwApi();
+  const [loading, setLoading] = useState(false);
   const {
     addMnemonic,
     loadWalletFromMnemonic,
     addWalletToAccountStorage,
   } = useDmwWallet();
 
-    const introduce = () => {
-        if (!word) {
-            Toast(t("请输入助记词"))
-            return
-        }
-        if (!password) {
-            Toast(t("请输入密码"))
-            return
-        }
-        if (!password1) {
-            Toast(t("请重新输入密码"))
-            return
-        }
-        if (password != password1) {
-            Toast(t("两次密码不一致"))
-            return
-        }
-        let res = loadWalletFromMnemonic(word);
-        if (res) {
-            console.log(res.privateKey, "钱包地址");
-            addMnemonic(password1, word).then(resp => {
-                console.log(resp, '助记词登录');
-                setMoneyRouteState('456')
-                addWalletToAccountStorage(res.privateKey, password1).then((res) => {
-                    Toast(t("导入成功"))
-                    
-                    setTimeout(() => {
-                        props.navigation.popToTop() 
-                    }, 1000);
-                });
-            })
-        } else {
-            Toast(t("助记词解析错误，请重新尝试"))
-        }
-
-
-
+  const introduce = () => {
+    if (!word) {
+      Toast(t("请输入助记词"));
+      return;
     }
+    if (!password) {
+      Toast(t("请输入密码"));
+      return;
+    }
+    if (!password1) {
+      Toast(t("请重新输入密码"));
+      return;
+    }
+    if (password != password1) {
+      Toast(t("密码不一致"));
+      return;
+    }
+    let res = loadWalletFromMnemonic(word);
+    if (res) {
+      console.log(res.privateKey, "钱包地址");
+      setLoading(true);
+      addMnemonic(password1, word).then((resp) => {
+        console.log(resp, "助记词登录");
+        setMoneyRouteState("456");
+        addWalletToAccountStorage(res.privateKey, password1).then((res) => {
+          Toast(t("导入成功"));
+          setLoading(false);
+          setTimeout(() => {
+            props.navigation.popToTop();
+          }, 1000);
+        });
+      });
+    } else {
+      Toast(t("助记词解析错误，请重新尝试"));
+    }
+  };
 
   return (
     <SafeAreaView>
@@ -144,9 +143,17 @@ const ImportWord = (props) => {
               {t("请输入6位数字")}
             </Text>
           </View>
-          <Text style={[styles.import]} onPress={() => introduce()}>
-            {t("导入")}
-          </Text>
+
+          {!loading ? (
+            <TouchableOpacity
+              style={[styles.import,{justifyContent:"center"}]}
+              onPress={() => introduce()}
+            >
+              <Text style={{textAlign:"center",alignSelf:"center",color:"white",fontSize:20}}>{t("导入")}</Text>
+            </TouchableOpacity>
+          ) : (
+            <Text style={[styles.import]}>{t("loading...")}</Text>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -156,7 +163,7 @@ const ImportWord = (props) => {
 export default ImportWord;
 const styles = StyleSheet.create({
   import: {
-    marginTop: 60,
+    // marginTop: 60,
     width: "100%",
     backgroundColor: "#897EF8",
     height: 50,

@@ -94,7 +94,7 @@ const AddCreateCollection = (props) => {
     post('/index/collection/add', params).then(res => {
       console.log(res, '创建各级');
       if (res.code == 200) {
-        Toast('创建成功！')
+        Toast(t('创建成功'))
         setCreating(false)
         props.navigation.navigate('myCollection',{isReload:true})
       }

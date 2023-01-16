@@ -25,7 +25,7 @@ const {Toast} = useDmwApi()
   if(password != password1){
     Toast(t('密码不一致'))
   }else{
-    Toast(t('创建成功！'))
+    Toast(t('创建成功'))
     props.navigation.navigate("walletSafe",{password,password1});
   }
  }

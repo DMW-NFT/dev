@@ -72,7 +72,7 @@ export default function TxProccessingModal(props) {
       if (dmwTransactionMap[dmwlatestHash].state == "confirmed") {
         // console.log("got you !", dmwTransactionMap[dmwlatestHash])
         setDmwLatestHash(null);
-        // Toast(t('创建成功！'))
+        // Toast(t('创建成功'))
         setScreenLoding(false);
         setCurrentState("confirmed");
         props.setTxHash && props.setTxHash(dmwlatestHash);
@@ -82,7 +82,7 @@ export default function TxProccessingModal(props) {
       } else if (dmwTransactionMap[dmwlatestHash].state == "reversed") {
         // console.log("got you !", dmwTransactionMap[dmwlatestHash])
         setDmwLatestHash(null);
-        // Toast(t('创建成功！'))
+        // Toast(t('创建成功'))
         setScreenLoding(false);
         setCurrentState("reversed");
         setTimeout(() => {
@@ -109,7 +109,7 @@ export default function TxProccessingModal(props) {
       if (transactionMap[latestHash].state == "comfirmed") {
         // console.log("got you !", transactionMap[latestHash])
         setLatestHash(null);
-        // Toast(t('创建成功！'))
+        // Toast(t('创建成功'))
         setScreenLoding(false);
         setTimeout(() => {
           setModalVisible(false);
