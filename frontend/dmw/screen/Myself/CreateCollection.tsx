@@ -15,7 +15,7 @@ import {
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import { Spinner } from "@ui-kitten/components";
-import { Card, Layout, Modal } from "@ui-kitten/components";
+import { Card, Layout } from "@ui-kitten/components";
 import { Surface } from "react-native-paper";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
@@ -44,6 +44,7 @@ const TransferredIntoCollection = (props) => {
   const { post, formData, Toast } = useDmwApi();
   const [uploadLoading, setUploadLoading] = useState(false);
   const [nativeBalance, setNativeBalance] = useState(0);
+  const [txHash, setTxHash] = useState("")
   const {
     currentWallet,
     currentChainId,
@@ -77,6 +78,26 @@ const TransferredIntoCollection = (props) => {
     // getBlockchain()
     getCoType();
   }, []);
+
+
+  useEffect(() => {
+    console.log(txHash, 'txHash');
+    if (!txHash) {
+      return
+    }
+    let param = formData({ iv: 'aaaaaaaaaaaaaaaa', param: JSON.stringify({ collection_id: activeType.id, transaction_hash: txHash }) })
+    post('/index/nft/set_nft_collection_by_create_nft', param).then(res => {
+      console.log(res, 'cvnsnjcn');
+      if (res.code == 200) {
+        Toast(t('创建成功！'))
+
+      } else {
+        Toast(res.message)
+      }
+    }).catch(err => {
+      Toast(err.message)
+    })
+  }, [txHash])
 
   useEffect(() => {
     if (!dmwWalletList[0] && !currentWallet) {
@@ -125,14 +146,10 @@ const TransferredIntoCollection = (props) => {
       !nativeBalance ||
       nativeBalance == 0 ||
       nativeBalance <
-        Number(
-          Web3.utils.fromWei(
-            String(
-              Number(GasMap["mintWithSignature"]) * Number(currentGasPrice)
-            ),
-            "ether"
-          )
-        )
+      Number(Web3.utils.fromWei(
+        String(Number(GasMap["mintWithSignature"]) * Number(currentGasPrice)),
+        "ether"
+      ))
     ) {
       Toast(t("余额不足"));
       return null;
@@ -182,11 +199,14 @@ const TransferredIntoCollection = (props) => {
                 mintNftWithSignature(
                   resp.result.SignedPayload[0],
                   resp.result.SignedPayload[
-                    resp.result.SignedPayload.length - 1
+                  resp.result.SignedPayload.length - 1
                   ]
                 );
                 setTxModalVisible(true);
+                console.log('上传成功？');
+
               }
+
             })
             .catch((err) => {
               console.log(err, "左边报错");
@@ -255,10 +275,12 @@ const TransferredIntoCollection = (props) => {
                       walletRes.walletDict[currentDmwWallet].privateKey,
                       resp.result.SignedPayload[0],
                       resp.result.SignedPayload[
-                        resp.result.SignedPayload.length - 1
+                      resp.result.SignedPayload.length - 1
                       ]
                     );
                     setTxModalVisible(true);
+                    console.log('上传成功？本地钱包');
+
                   }
                   //  else {
                   //   mintNftWithSignature(resp.result.SignedPayload[0], resp.result.SignedPayload[resp.result.SignedPayload.length - 1])
@@ -537,29 +559,29 @@ const TransferredIntoCollection = (props) => {
                 >
                   {listType && listType.length
                     ? listType.map((item, index) => (
-                        <Text
-                          onPress={() => {
-                            setactiveType({
-                              id: item.value,
-                              name: item.name,
-                              logo: item.logo_url,
-                            });
-                            setisShowType(false);
-                          }}
-                          style={{
-                            color: activeType.id == item.id ? "blue" : "#333",
-                            paddingTop: 10,
-                            paddingBottom: 10,
-                            backgroundColor:
-                              activeType.id == item.id
-                                ? "rgba(40, 120, 255,0.1)"
-                                : "#fff",
-                            paddingLeft: 20,
-                          }}
-                        >
-                          {item.name}
-                        </Text>
-                      ))
+                      <Text
+                        onPress={() => {
+                          setactiveType({
+                            id: item.value,
+                            name: item.name,
+                            logo: item.logo_url,
+                          });
+                          setisShowType(false);
+                        }}
+                        style={{
+                          color: activeType.id == item.id ? "blue" : "#333",
+                          paddingTop: 10,
+                          paddingBottom: 10,
+                          backgroundColor:
+                            activeType.id == item.id
+                              ? "rgba(40, 120, 255,0.1)"
+                              : "#fff",
+                          paddingLeft: 20,
+                        }}
+                      >
+                        {item.name}
+                      </Text>
+                    ))
                     : null}
                 </View>
               ) : null}
@@ -614,55 +636,56 @@ const TransferredIntoCollection = (props) => {
                     </View> : null
                 } */}
             </View>
-
-            <View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginBottom: 20,
-                }}
-              >
-                <Text style={{ fontSize: 12, color: "#999999" }}>
-                  {t("上链费")}：
-                </Text>
-                {currentGasPrice ? (
-                  <Text style={{ fontSize: 16, color: "#897EF8" }}>
-                    {Web3.utils
-                      .fromWei(
-                        String(
-                          Number(GasMap["mintWithSignature"]) *
+            {WalletInUse == 1 ? (
+              <View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginBottom: 20,
+                  }}
+                >
+                  <Text style={{ fontSize: 12, color: "#999999" }}>
+                    {t("上链费")}：
+                  </Text>
+                  {currentGasPrice ? (
+                    <Text style={{ fontSize: 16, color: "#897EF8" }}>
+                      {Web3.utils
+                        .fromWei(
+                          String(
+                            Number(GasMap["mintWithSignature"]) *
                             Number(currentGasPrice)
-                        ),
-                        "ether"
-                      )
-                      .slice(0, 8)}{" "}
-                    {chainIdmap[currentChainId].nativeToken}
+                          ),
+                          "ether"
+                        )
+                        .slice(0, 8)}{" "}
+                      {chainIdmap[currentChainId].nativeToken}
+                    </Text>
+                  ) : (
+                    <Text style={{ fontSize: 16, color: "#897EF8" }}>---</Text>
+                  )}
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginBottom: 20,
+                  }}
+                >
+                  <Text style={{ fontSize: 12, color: "#999999" }}>
+                    {t("余额")}
                   </Text>
-                ) : (
-                  <Text style={{ fontSize: 16, color: "#897EF8" }}>---</Text>
-                )}
+                  {nativeBalance ? (
+                    <Text style={{ fontSize: 16, color: "#897EF8" }}>
+                      {String(nativeBalance).slice(0, 8)}{" "}
+                      {chainIdmap[currentChainId].nativeToken}
+                    </Text>
+                  ) : (
+                    <Text style={{ fontSize: 16, color: "#897EF8" }}>---</Text>
+                  )}
+                </View>
               </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginBottom: 20,
-                }}
-              >
-                <Text style={{ fontSize: 12, color: "#999999" }}>
-                  {t("余额")}
-                </Text>
-                {nativeBalance ? (
-                  <Text style={{ fontSize: 16, color: "#897EF8" }}>
-                    {String(nativeBalance).slice(0, 8)}{" "}
-                    {chainIdmap[currentChainId].nativeToken}
-                  </Text>
-                ) : (
-                  <Text style={{ fontSize: 16, color: "#897EF8" }}>---</Text>
-                )}
-              </View>
-            </View>
+            ) : null}
           </ScrollView>
 
           {!uploadLoading ? (
@@ -727,6 +750,7 @@ const TransferredIntoCollection = (props) => {
         <TxProccessingModal
           setModalVisible={setTxModalVisible}
           modalVisible={txModalVisible}
+          setTxHash={setTxHash}
         />
       )}
     </SafeAreaView>
@@ -808,7 +832,6 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 48,
-    borderColor: "gray",
     borderWidth: 1,
     borderColor: "#ccc",
     borderTopLeftRadius: 24,
