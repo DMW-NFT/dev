@@ -10,6 +10,7 @@ import {
   TextInput,
   Button,
   Linking,
+  ScrollView,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 
@@ -29,7 +30,7 @@ const BlockchainQuery = (props) => {
   //       Blockchainval: '',
   //   };
   // }
-  const [queryContent,setQueryContent] = useState('')
+  const [queryContent, setQueryContent] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const blockChainExploerList = [
     "https://etherscan.io/",
@@ -37,7 +38,7 @@ const BlockchainQuery = (props) => {
     "https://bscscan.com/",
   ];
   const openLinkUrl = (url: string) => {
-    props.navigation.navigate('BlockChainExploer',{uri:url})
+    props.navigation.navigate("BlockChainExploer", { uri: url });
   };
 
   function checkInput(input) {
@@ -68,34 +69,42 @@ const BlockchainQuery = (props) => {
         backgroundColor: "#fff",
       }}
     >
-      <View style={{ paddingLeft: 20, paddingRight: 20 }}>
-        <ButtonGroup
-          buttons={["Ethereume", "Polygon", "BSC"]}
-          selectedIndex={selectedIndex}
-          onPress={(value) => {
-            setSelectedIndex(value);
-            console.log(value);
-          }}
-          containerStyle={{ marginBottom: 20, borderRadius: 20 }}
-          selectedButtonStyle={{ backgroundColor: "#897EF8" }}
-        />
-        <TextInput
-          multiline={true}
-          textAlignVertical="top"
-          numberOfLines={5}
-          placeholder={t("请输入地址")}
-          keyboardType="default"
-          style={[styles.textarea]}
-          onChangeText={(e) => setQueryContent(e)}
-          value={queryContent}
-        />
+      <ScrollView>
+        <View style={{ paddingLeft: 20, paddingRight: 20 }}>
+          <ButtonGroup
+            buttons={["Ethereume", "Polygon", "BSC"]}
+            selectedIndex={selectedIndex}
+            onPress={(value) => {
+              setSelectedIndex(value);
+              console.log(value);
+            }}
+            containerStyle={{ marginBottom: 20, borderRadius: 20 }}
+            selectedButtonStyle={{ backgroundColor: "#897EF8" }}
+          />
+          <TextInput
+            multiline={true}
+            textAlignVertical="top"
+            numberOfLines={5}
+            placeholder={t("请输入地址")}
+            keyboardType="default"
+            style={[styles.textarea]}
+            onChangeText={(e) => setQueryContent(e)}
+            value={queryContent}
+          />
 
-        <Text style={{ color: "#999999", fontSize: 10 }}>
-          {t("支持藏品、账户相关区块链信息查询")}
-        </Text>
-      </View>
-
-      <Text style={styles.btn} onPress={()=>{queryData()}}>{t("查询")}</Text>
+          <Text style={{ color: "#999999", fontSize: 10 }}>
+            {t("支持藏品、账户相关区块链信息查询")}
+          </Text>
+          <Text
+            style={styles.btn}
+            onPress={() => {
+              queryData();
+            }}
+          >
+            {t("查询")}
+          </Text>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -110,11 +119,12 @@ const styles = StyleSheet.create({
     height: 50,
     lineHeight: 50,
     textAlign: "center",
-    marginRight: 20,
-    marginLeft: 20,
+    // marginRight: 20,
+    // marginLeft: 20,
     borderRadius: 50,
-    position: "absolute",
-    bottom: 138,
+    marginTop: 100,
+    // position: "absolute",
+    // bottom: 138,
   },
 
   textarea: {

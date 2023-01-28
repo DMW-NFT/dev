@@ -182,7 +182,7 @@ const Home = (props) => {
     setenableScrollViewScroll(value);
   };
   return (
-    <ScrollView>
+    <ScrollView showsVerticalScrollIndicator={false}>
       <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
         {/* scrollEnabled={enableScrollViewScroll} */}
         <View style={{ flexDirection: "column" }}>
@@ -238,7 +238,6 @@ const Home = (props) => {
               style={styles.shuipin}
               horizontal={true}
               showsHorizontalScrollIndicator={false}
-              
             >
               {listType.map((item, index) => (
                 <Text
@@ -333,8 +332,13 @@ const Home = (props) => {
           {
             <FlatList
               refreshing={refreshing}
-              style={{ flex: 1,maxHeight:screenHeight*0.8,minHeight:"100%"}}
+              style={{
+                flex: 1,
+                maxHeight: screenHeight * 0.8,
+                minHeight: "100%",
+              }}
               nestedScrollEnabled={true}
+              showsVerticalScrollIndicator={false}
               ListEmptyComponent={() => {
                 return (
                   <Text style={{ textAlign: "center", flex: 1 }}>
@@ -375,7 +379,13 @@ const Home = (props) => {
               ListFooterComponent={() => {
                 // 声明尾部组件
                 return NftList.length ? (
-                  <Text style={{ textAlign: "center", marginTop: 60 ,marginBottom:20}}>
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      marginTop: 60,
+                      marginBottom: 20,
+                    }}
+                  >
                     {t("没有更多了")}
                   </Text>
                 ) : null;

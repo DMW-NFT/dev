@@ -43,14 +43,16 @@ const Home = (props) => {
         component={MoneyRouteState == "createMoney" ? CreateMoney : MoneyScreen}
         name="createMoney"
         options={{
-          headerMode: "none",
+          headerMode: "null",
+          headerTransparent: true
         }}
       ></Stack.Screen>
       <Stack.Screen
         component={MoneyScreen}
         name="money"
         options={{
-          headerMode: "none",
+          headerMode: "null",
+          headerTransparent: true
         }}
       ></Stack.Screen>
 

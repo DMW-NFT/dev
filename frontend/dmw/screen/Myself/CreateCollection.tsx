@@ -44,7 +44,7 @@ const TransferredIntoCollection = (props) => {
   const { post, formData, Toast } = useDmwApi();
   const [uploadLoading, setUploadLoading] = useState(false);
   const [nativeBalance, setNativeBalance] = useState(0);
-  const [txHash, setTxHash] = useState("")
+  const [txHash, setTxHash] = useState("");
   const {
     currentWallet,
     currentChainId,
@@ -80,25 +80,31 @@ const TransferredIntoCollection = (props) => {
     getCoType();
   }, []);
 
-
   useEffect(() => {
-    console.log(txHash, 'txHash');
+    console.log(txHash, "txHash");
     if (!txHash) {
-      return
+      return;
     }
-    let param = formData({ iv: 'aaaaaaaaaaaaaaaa', param: JSON.stringify({ collection_id: activeType.id, transaction_hash: txHash }) })
-    post('/index/nft/set_nft_collection_by_create_nft', param).then(res => {
-      console.log(res, 'cvnsnjcn');
-      if (res.code == 200) {
-        Toast(t('创建成功！'))
-
-      } else {
-        Toast(res.message)
-      }
-    }).catch(err => {
-      Toast(err.message)
-    })
-  }, [txHash])
+    let param = formData({
+      iv: "aaaaaaaaaaaaaaaa",
+      param: JSON.stringify({
+        collection_id: activeType.id,
+        transaction_hash: txHash,
+      }),
+    });
+    post("/index/nft/set_nft_collection_by_create_nft", param)
+      .then((res) => {
+        console.log(res, "cvnsnjcn");
+        if (res.code == 200) {
+          Toast(t("创建成功！"));
+        } else {
+          Toast(res.message);
+        }
+      })
+      .catch((err) => {
+        Toast(err.message);
+      });
+  }, [txHash]);
 
   useEffect(() => {
     if (!dmwWalletList[0] && !currentWallet) {
@@ -147,10 +153,14 @@ const TransferredIntoCollection = (props) => {
       !nativeBalance ||
       nativeBalance == 0 ||
       nativeBalance <
-      Number(Web3.utils.fromWei(
-        String(Number(GasMap["mintWithSignature"]) * Number(currentGasPrice)),
-        "ether"
-      ))
+        Number(
+          Web3.utils.fromWei(
+            String(
+              Number(GasMap["mintWithSignature"]) * Number(currentGasPrice)
+            ),
+            "ether"
+          )
+        )
     ) {
       Toast(t("余额不足"));
       return null;
@@ -200,14 +210,12 @@ const TransferredIntoCollection = (props) => {
                 mintNftWithSignature(
                   resp.result.SignedPayload[0],
                   resp.result.SignedPayload[
-                  resp.result.SignedPayload.length - 1
+                    resp.result.SignedPayload.length - 1
                   ]
                 );
                 setTxModalVisible(true);
-                console.log('上传成功？');
-
+                console.log("上传成功？");
               }
-
             })
             .catch((err) => {
               console.log(err, "左边报错");
@@ -284,11 +292,11 @@ const TransferredIntoCollection = (props) => {
     });
   };
 
-  useEffect(()=>{
-    setTimeout(()=>{
-      txHash&&props.navigation.goBack();
-    },2000)
-  },[txHash])
+  useEffect(() => {
+    setTimeout(() => {
+      txHash && props.navigation.goBack();
+    }, 2000);
+  }, [txHash]);
 
   useEffect(() => {
     // getBlockchain()
@@ -364,12 +372,11 @@ const TransferredIntoCollection = (props) => {
                       walletRes.walletDict[currentDmwWallet].privateKey,
                       resp.result.SignedPayload[0],
                       resp.result.SignedPayload[
-                      resp.result.SignedPayload.length - 1
+                        resp.result.SignedPayload.length - 1
                       ]
                     );
                     setTxModalVisible(true);
-                    console.log('上传成功？本地钱包');
-
+                    console.log("上传成功？本地钱包");
                   }
                   //  else {
                   //   mintNftWithSignature(resp.result.SignedPayload[0], resp.result.SignedPayload[resp.result.SignedPayload.length - 1])
@@ -392,18 +399,16 @@ const TransferredIntoCollection = (props) => {
 
   // 外部网络检测
   useEffect(() => {
-    if (WalletInUse == 2 ) {
-      if (
-        connector.chainId !=currentChainId
-      ) {
+    if (WalletInUse == 2) {
+      if (connector.chainId != currentChainId) {
         Toast(
           t(
             "当前选择网络与外部钱包不一致，请切换外部钱包网络后再进行购买操作！"
           )
         );
-        setTimeout(()=>{
+        setTimeout(() => {
           props.navigation.goBack();
-        },2000)
+        }, 2000);
       }
     }
   }, [WalletInUse]);
@@ -411,12 +416,12 @@ const TransferredIntoCollection = (props) => {
   return (
     <SafeAreaView
       style={{
-        paddingTop: 20,
+        // paddingTop: 20,
         paddingLeft: 20,
         paddingRight: 20,
         position: "relative",
-        height: Dimensions.get("window").height,
-        paddingBottom: 200,
+        // height: Dimensions.get("window").height,
+        // paddingBottom: 300,
         backgroundColor: "#fff",
       }}
     >
@@ -434,11 +439,7 @@ const TransferredIntoCollection = (props) => {
         </View>
       ) : (
         <>
-          {/* <Image source={{ uri: imgurlUp1 }} style={{ width: 100, height: 100 }}></Image> */}
           <ScrollView showsVerticalScrollIndicator={false}>
-            {/* <Text>dnfjhsbdhfbhsdb电脑上减肥不上班分别少部分黑死病封神榜风寒湿痹封神榜粉红色部分少部分火山爆发s是
-                分三年级奋笔疾书不放是吧风寒湿痹红色不是基本上还不是吧
-            </Text> */}
             {loading ? (
               <View style={styles.up}>
                 <Spinner />
@@ -547,29 +548,29 @@ const TransferredIntoCollection = (props) => {
                 >
                   {listType && listType.length
                     ? listType.map((item, index) => (
-                      <Text
-                        onPress={() => {
-                          setactiveType({
-                            id: item.value,
-                            name: item.name,
-                            logo: item.logo_url,
-                          });
-                          setisShowType(false);
-                        }}
-                        style={{
-                          color: activeType.id == item.id ? "blue" : "#333",
-                          paddingTop: 10,
-                          paddingBottom: 10,
-                          backgroundColor:
-                            activeType.id == item.id
-                              ? "rgba(40, 120, 255,0.1)"
-                              : "#fff",
-                          paddingLeft: 20,
-                        }}
-                      >
-                        {item.name}
-                      </Text>
-                    ))
+                        <Text
+                          onPress={() => {
+                            setactiveType({
+                              id: item.value,
+                              name: item.name,
+                              logo: item.logo_url,
+                            });
+                            setisShowType(false);
+                          }}
+                          style={{
+                            color: activeType.id == item.id ? "blue" : "#333",
+                            paddingTop: 10,
+                            paddingBottom: 10,
+                            backgroundColor:
+                              activeType.id == item.id
+                                ? "rgba(40, 120, 255,0.1)"
+                                : "#fff",
+                            paddingLeft: 20,
+                          }}
+                        >
+                          {item.name}
+                        </Text>
+                      ))
                     : null}
                 </View>
               ) : null}
@@ -578,51 +579,6 @@ const TransferredIntoCollection = (props) => {
               <Text style={{ fontSize: 16, marginBottom: 17 }}>
                 {t("区块链")}:{chainIdmap[currentChainId].network}
               </Text>
-
-              {/* <TouchableWithoutFeedback onPress={() => {
-                  if (!listE) {
-                    Toast('未加载到其他')
-                    return
-                  } setisShowE(!isShowE)
-                }}>
-                  <View style={[styles.input, {
-                    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
-                  }]}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Image source={require('../../assets/img/index/default.png')} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
-                      <Text style={{ marginLeft: 10 }}>
-                        {activeEm.name}
-                      </Text></View>
-                    <FontAwesomeIcon
-                      icon={faAngleDown}
-                      color="#707070"
-                      size={16}
-                    />
-                  </View>
-                </TouchableWithoutFeedback>
-                {
-                  isShowE ?
-                    <View style={{
-                      paddingTop: 20, backgroundColor: '#fff', marginBottom: 20, marginTop: 2, borderRadius: 12, borderWidth: 1, borderColor: '#ccc', paddingBottom: 20
-                    }}>
-
-                      {
-                        listE && listE.length ?
-                          listE.map((item, index) => (
-                            <Text onPress={() => { setactiveEm({ value: item.value, name: item.name }); setisShowE(false) }}
-                              style={{
-                                color: activeEm.value == item.value ? 'blue' : '#333',
-                                paddingTop: 10, paddingBottom: 10,
-                                backgroundColor: activeEm.value == item.value ? 'rgba(40, 120, 255,0.1)' : '#fff',
-                                paddingLeft: 20
-                              }}>{item.name}</Text>
-
-                          )) : null
-                      }
-
-
-                    </View> : null
-                } */}
             </View>
             {WalletInUse == 1 ? (
               <View>
@@ -642,7 +598,7 @@ const TransferredIntoCollection = (props) => {
                         .fromWei(
                           String(
                             Number(GasMap["mintWithSignature"]) *
-                            Number(currentGasPrice)
+                              Number(currentGasPrice)
                           ),
                           "ether"
                         )
@@ -674,57 +630,14 @@ const TransferredIntoCollection = (props) => {
                 </View>
               </View>
             ) : null}
+            {!uploadLoading ? (
+              <Text onPress={() => confirmToMint()} style={styles.btn}>
+                {t("创建并支付")}
+              </Text>
+            ) : (
+              <Text style={styles.btn}>{t("上传中")}...</Text>
+            )}
           </ScrollView>
-
-          {!uploadLoading ? (
-            <Text onPress={() => confirmToMint()} style={styles.btn}>
-              {t("创建并支付")}
-            </Text>
-          ) : (
-            <Text style={styles.btn}>{t("上传中")}...</Text>
-          )}
-
-          {/* <Modal
-              visible={Modalvisible}
-              backdropStyle={{ "backgroundColor": 'rgba(0, 0, 0, 0.5)' }}
-              onBackdropPress={() => { setModalvisible(false) }}>
-              <Card disabled={true} style={styles.CardBox}>
-
-                <TextInput
-                  ref={inputRefX}
-                  maxLength={6}
-                  caretHidden={true}
-                  secureTextEntry={true}
-                  onKeyPress={() => { }}
-                  placeholder='123456'
-                  keyboardType="numeric"
-                  style={{ position: 'absolute', zIndex: 1, top: -40 }}
-                  onChangeText={(e) => {
-                    setPassword(e);
-                  }
-                  }
-                  value={password}
-                />
-                <View style={{ justifyContent: 'flex-end', flexDirection: 'row', position: 'absolute', top: 10, right: 20, width: 22, height: 22 }}>
-                  <TouchableWithoutFeedback onPress={() => { setModalvisible(false) }}>
-                    <Image style={styles.colose} source={require('../../assets/img/money/6a1315ae8e67c7c50114cbb39e1cf17.png')}></Image>
-                  </TouchableWithoutFeedback>
-
-                </View>
-                <View>
-                  <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', marginBottom: 30 }}>{t("请输入支付密码")}</Text>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
-                  </View>
-                  <View style={{ height: 48, flexDirection: 'row', justifyContent: 'space-between', }}>
-                    {
-                      passwordlist.map((item, index) => (
-                        <Text style={[index == 0 ? styles.passinputfirst : styles.passinput]}>{item ? "●" : ''}</Text>
-                      ))
-                    }
-                  </View>
-                </View>
-              </Card>
-            </Modal> */}
         </>
       )}
       {vfModalVisible && (
@@ -800,14 +713,14 @@ const styles = StyleSheet.create({
     width: screenWidth - 40,
     backgroundColor: "#897EF8",
     color: "#fff",
-    height: 50,
+    // height: 50,
     lineHeight: 50,
     textAlign: "center",
-    marginRight: 20,
-    marginLeft: 20,
+    // marginRight: 20,
+    // marginLeft: 20,
     borderRadius: 50,
-    position: "absolute",
-    bottom: 138,
+    // position: "absolute",
+    // bottom: 138,
   },
   line: {
     borderColor: "#CCCCCC",

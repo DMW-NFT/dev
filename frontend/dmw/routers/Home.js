@@ -26,7 +26,6 @@ const Home = () => {
   return (
     <Stack.Navigator
       initialRouteName="home"
-      screenOptions={{ headerShadowVisible: false }}
     >
       <Stack.Screen
         component={HomeScreen}
@@ -36,7 +35,8 @@ const Home = () => {
         }}
         options={{
           headerBackTitleVisible: false, //对于后退按钮标题是否应该可见
-          headerMode: "none",
+          headerMode: "null",
+          headerTransparent: true
         }}
       ></Stack.Screen>
       <Stack.Screen

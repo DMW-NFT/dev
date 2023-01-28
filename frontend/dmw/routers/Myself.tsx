@@ -43,7 +43,8 @@ const Home = () => {
         component={MyselfScreen}
         name="myself"
         options={{
-          headerMode: "none",
+          headerMode: "null",
+          headerTransparent: true
         }}
       ></Stack.Screen>
       <Stack.Screen

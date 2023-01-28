@@ -12,7 +12,8 @@ export default class Home extends Component {
           component={JiaoyiScreen}
           name="jiaoyi"
           options={{
-            headerMode: "none",
+            headerMode: "null",
+            headerTransparent: true
           }}
         ></Stack.Screen>
         <Stack.Screen

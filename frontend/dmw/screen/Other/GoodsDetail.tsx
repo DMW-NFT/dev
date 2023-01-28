@@ -36,6 +36,79 @@ import VerfiySecretModal from "../../Components/VerfiySecretModal";
 import TxProccessingModal from "../../Components/TxProccessingModal";
 import chainNameMap from "../../../constans/chainNameMap.json";
 import chainIdMap from "../../../constans/chainIdMap.json";
+import { TouchableOpacity } from "react-native-gesture-handler";
+
+const TradeHistoryCard = (props) => {
+  const [show, setShow] = useState(false);
+  const detailsObj = props.detailsObj;
+  const index = props.index;
+  const item = props.item;
+  return (
+    <View key={index}>
+      <View style={[styles.offerBox]}>
+        <View style={[styles.flexJBC]}>
+          <View>
+            <Text
+              style={{
+                fontSize: 14,
+                color: "#333",
+                fontWeight: "bold",
+                marginBottom: 9,
+              }}
+            >
+              Sale
+            </Text>
+          </View>
+          <View>
+            <View style={[styles.flex, { marginBottom: 9 }]}>
+              <Image
+                style={{ width: 15, height: 15 }}
+                source={require("../../assets/img/money/offer.png")}
+              ></Image>
+              <Text style={{ fontSize: 14, color: "#333" }}>
+                {item.total_offer_amount.number + " "}
+                {item.total_offer_amount.currency_name == "ETH"
+                  ? chainNameMap[detailsObj.network.toLowerCase()].nativeToken
+                  : item.total_offer_amount.currency_name}
+              </Text>
+            </View>
+            {/* <Text style={{ fontSize: 12, color: "#999" }}>$455.32</Text> */}
+          </View>
+        </View>
+        <View style={{width:"100%"}}>
+          <TouchableOpacity
+            onPress={() => {
+              setShow(!show);
+            }}
+            style={{ alignSelf: "flex-end"}}
+          >
+            <Text style={{ fontSize: 12, color: "#999" }}>
+              {show ? "-less" : "+more"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      {show && (
+        <View style={[styles.offerBox, styles.flexJBC]}>
+          <View>
+            <Text style={[styles.moreTop]}>Quantity</Text>
+            <Text style={[styles.moreBottom]}>{item.quantity_wanted}</Text>
+          </View>
+          <View>
+            <Text style={[styles.moreTop]}>From</Text>
+            <Text style={[styles.moreBottom]}>
+              {item.wallet_address.slice(2, 7)}
+            </Text>
+          </View>
+          <View>
+            <Text style={[styles.moreTop]}>To</Text>
+            <Text style={[styles.moreBottom]}>{item.offeror.slice(2, 7)}</Text>
+          </View>
+        </View>
+      )}
+    </View>
+  );
+};
 
 const GoodsDetail = (props) => {
   const { t, i18n } = useTranslation();
@@ -137,44 +210,13 @@ const GoodsDetail = (props) => {
     }
     if (WalletInUse == 1 && detailsObj.network) {
       if (
-        currentChainId !=
-        chainNameMap[detailsObj.network.toLowerCase()].chainId
+        currentChainId != chainNameMap[detailsObj.network.toLowerCase()].chainId
       ) {
         updateNetwork(chainNameMap[detailsObj.network.toLowerCase()].chainId);
-        Toast(`Switch to network: ${detailsObj.network.toLowerCase()}`)
+        Toast(`Switch to network: ${detailsObj.network.toLowerCase()}`);
       }
     }
   }, [detailsObj, WalletInUse]);
-
-  const approvalNFT = () => {
-    if (WalletInUse == 1) {
-      console.log("dmw approval nft");
-      setVfModalVisible(true);
-    } else {
-      ApprovalForAll(detailsObj.contract_address, detailsObj.token_id);
-      setTxModalVisible(true);
-    }
-  };
-  const sellNFT = () => {
-    if (WalletInUse == 1) {
-      setSellOptionVisible(false);
-      setVfModalVisible(true);
-    } else {
-      let sTime = Math.round(new Date().getTime() / 1000 + 60).toString();
-      createListing(
-        detailsObj.contract_address,
-        detailsObj.token_id,
-        sTime,
-        "3153600000",
-        sellNumber,
-        sellPrice,
-        sellPrice,
-        "0"
-      );
-      setTxModalVisible(true);
-      setSellOptionVisible(false);
-    }
-  };
 
   useEffect(() => {
     const walletAddress = WalletInUse == 1 ? dmwWalletList[0] : currentWallet;
@@ -289,6 +331,35 @@ const GoodsDetail = (props) => {
         }
       });
   }, [password]);
+  const approvalNFT = () => {
+    if (WalletInUse == 1) {
+      console.log("dmw approval nft");
+      setVfModalVisible(true);
+    } else {
+      ApprovalForAll(detailsObj.contract_address, detailsObj.token_id);
+      setTxModalVisible(true);
+    }
+  };
+  const sellNFT = () => {
+    if (WalletInUse == 1) {
+      setSellOptionVisible(false);
+      setVfModalVisible(true);
+    } else {
+      let sTime = Math.round(new Date().getTime() / 1000 + 60).toString();
+      createListing(
+        detailsObj.contract_address,
+        detailsObj.token_id,
+        sTime,
+        "3153600000",
+        sellNumber,
+        sellPrice,
+        sellPrice,
+        "0"
+      );
+      setTxModalVisible(true);
+      setSellOptionVisible(false);
+    }
+  };
 
   const getList = (data) => {
     setLoding(true);
@@ -556,9 +627,15 @@ const GoodsDetail = (props) => {
                 <View>
                   <View style={[styles.flexJBC, { marginBottom: 15 }]}>
                     <Text style={[styles.chainLeft]}>{t("合约地址")}</Text>
-                    <Text style={[styles.chainRight, { color: " #897EF8" }]}>
-                      {detailsObj.contract_address}
-                    </Text>
+                    <TouchableOpacity style={{ width: 200 }}>
+                      <Text
+                        numberOfLines={1}
+                        ellipsizeMode={"middle"}
+                        style={[styles.chainRight, { color: "#897EF8" }]}
+                      >
+                        {detailsObj.contract_address}
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                   <View style={[styles.flexJBC, { marginBottom: 15 }]}>
                     <Text style={[styles.chainLeft]}>Token ID</Text>
@@ -696,63 +773,11 @@ const GoodsDetail = (props) => {
             >
               {showhistory ? (
                 history.map((item, index) => (
-                  <View key={index}>
-                    <View style={[styles.offerBox]}>
-                      <View style={[styles.flexJBC]}>
-                        <View>
-                          <Text
-                            style={{
-                              fontSize: 14,
-                              color: "#333",
-                              fontWeight: "bold",
-                              marginBottom: 9,
-                            }}
-                          >
-                            Sale
-                          </Text>
-                          <Text style={{ fontSize: 12, color: "#999" }}>
-                            -less
-                          </Text>
-                        </View>
-                        <View>
-                          <View style={[styles.flex, { marginBottom: 9 }]}>
-                            <Image
-                              style={{ width: 15, height: 15 }}
-                              source={require("../../assets/img/money/offer.png")}
-                            ></Image>
-                            <Text style={{ fontSize: 14, color: "#333" }}>
-                              {item.total_offer_amount.number + " "}
-                              {item.total_offer_amount.currency_name == "ETH"
-                                ? chainNameMap[detailsObj.network.toLowerCase()]
-                                    .nativeToken
-                                : item.total_offer_amount.currency_name}
-                            </Text>
-                          </View>
-                          {/* <Text style={{ fontSize: 12, color: "#999" }}>$455.32</Text> */}
-                        </View>
-                      </View>
-                    </View>
-                    <View style={[styles.offerBox, styles.flexJBC]}>
-                      <View>
-                        <Text style={[styles.moreTop]}>Quantity</Text>
-                        <Text style={[styles.moreBottom]}>
-                          {item.quantity_wanted}
-                        </Text>
-                      </View>
-                      <View>
-                        <Text style={[styles.moreTop]}>From</Text>
-                        <Text style={[styles.moreBottom]}>
-                          {item.wallet_address.slice(2, 7)}
-                        </Text>
-                      </View>
-                      <View>
-                        <Text style={[styles.moreTop]}>To</Text>
-                        <Text style={[styles.moreBottom]}>
-                          {item.offeror.slice(2, 7)}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
+                  <TradeHistoryCard
+                    detailsObj={detailsObj}
+                    item={item}
+                    index={index}
+                  />
                 ))
               ) : (
                 <Text></Text>
@@ -973,11 +998,11 @@ const GoodsDetail = (props) => {
         onBackdropPress={() => {
           setShowOwnerlist(!showOwnerList);
         }}
-        overlayStyle={{marginHorizontal:10}}
+        overlayStyle={{ marginHorizontal: 10 }}
       >
         <SafeAreaView style={{}}>
           <View style={{}}>
-            <ScrollView style={{maxHeight:300,minHeight:200}}>
+            <ScrollView style={{ maxHeight: 300, minHeight: 200 }}>
               {ownersArrCopy.map((item, index) => (
                 <View
                   key={index}
@@ -990,7 +1015,7 @@ const GoodsDetail = (props) => {
                     source={{ uri: item.avatar }}
                     style={[styles.createAndByuerImage]}
                   ></Image>
-                  <Text style={[styles.createAndByuerName,{fontSize:10}]}>
+                  <Text style={[styles.createAndByuerName, { fontSize: 10 }]}>
                     {item.wallet_address}
                   </Text>
                 </View>

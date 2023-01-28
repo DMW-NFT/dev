@@ -59,29 +59,47 @@ const TransactionDetail = (props) => {
             >
               <View style={styles.detailColStyle}>
                 <Text style={[styles.ImageBoxName]}>From:</Text>
-                <Text style={[styles.ImageBoxColl]}>
-                  {detail.from_address}{" "}
-                  <Icon name="copy" type="feather" color="#c7c0f7" size={15} />
-                </Text>
+                <View style={{ flexDirection: "row", alignContent: "center" }}>
+                  <Text style={[styles.ImageBoxColl]}>
+                    {detail.from_address}{" "}
+                    <Icon
+                      name="copy"
+                      type="feather"
+                      color="#c7c0f7"
+                      size={15}
+                    />
+                  </Text>
+                </View>
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => Copy(detail.to_address)}>
               <View style={styles.detailColStyle}>
                 <Text style={[styles.ImageBoxName]}>To:</Text>
-                <Text style={[styles.ImageBoxColl]}>
-                  {detail.to_address}{" "}
-                  <Icon name="copy" type="feather" color="#c7c0f7" size={15} />
-                </Text>
+                <View style={{ flexDirection: "row", alignContent: "center" }}>
+                  <Text style={[styles.ImageBoxColl]}>
+                    {detail.to_address}{" "}
+                    <Icon
+                      name="copy"
+                      type="feather"
+                      color="#c7c0f7"
+                      size={15}
+                    />
+                  </Text>
+                </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => Copy(Web3.utils.fromWei(detail.value,'ether'))}>
+            <TouchableOpacity
+              onPress={() => Copy(Web3.utils.fromWei(detail.value, "ether"))}
+            >
               <View style={styles.detailColStyle}>
                 <Text style={[styles.ImageBoxName]}>Value:</Text>
-                <Text style={[styles.ImageBoxColl]}>
-                  {Web3.utils.fromWei(detail.value,'ether')} {token}
+                <View style={{ flexDirection: "row", alignContent: "center" }}>
+                  <Text style={[styles.ImageBoxColl]}>
+                    {Web3.utils.fromWei(detail.value, "ether")} {token}{" "}
+                  </Text>
                   <Icon name="copy" type="feather" color="#c7c0f7" size={15} />
-                </Text>
+                </View>
               </View>
             </TouchableOpacity>
 
@@ -187,7 +205,7 @@ const TransactionDetail = (props) => {
                     ellipsizeMode={"middle"}
                     style={{ fontSize: 10, color: "gray" }}
                   >
-                    {detail.block_number}
+                    {detail.block_number}{" "}
                   </Text>
                   <Icon name="copy" type="feather" color="#c7c0f7" size={15} />
                 </View>
@@ -207,7 +225,7 @@ const TransactionDetail = (props) => {
                     ellipsizeMode={"middle"}
                     style={{ fontSize: 10, color: "gray" }}
                   >
-                    {detail.block_timestamp}
+                    {detail.block_timestamp}{" "}
                   </Text>
                   <Icon name="copy" type="feather" color="#c7c0f7" size={15} />
                 </View>

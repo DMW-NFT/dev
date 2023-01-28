@@ -349,7 +349,14 @@
   "创建成功": "Creation Successful",
   "密码不一致": "Passwords do not match",
   "请重新输入密码": "Please re-enter password",
-  "请输入数量":"Please enter the quantity",
-  "当前选择网络与外部钱包不一致，请切换外部钱包网络后再进行购买操作！": "The currently selected network and external wallet do not match, please switch the network of the external wallet before purchasing!"
-  
+  "请输入数量": "Please enter the quantity",
+  "当前选择网络与外部钱包不一致，请切换外部钱包网络后再进行购买操作！": "The currently selected network and external wallet do not match, please switch the network of the external wallet before purchasing!",
+  "该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！": "The NFT is inconsistent with the external wallet connection network, please switch the external wallet network and then purchase!",
+  "支持的文件类型：": "Supported file types:",
+  "中文": "Chinese",
+  "导入的钱包可在【钱包】中查看，但无法通过DMW助记词找回": "The imported wallet can be viewed in [Wallet], but cannot be retrieved through DMW mnemonics.",
+  "暂无新消息": "No new messages",
+  "数量":"Amount",
+  "网络":"Network",
+  "版权费":"Copyright fee"
 }

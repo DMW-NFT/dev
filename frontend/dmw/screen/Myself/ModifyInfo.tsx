@@ -13,20 +13,20 @@ import {
 import DocumentPicker from "react-native-document-picker";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
 import DialogToast from "../../Components/DialogToast.js";
-import { useTranslation } from 'react-i18next'
-import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider"
+import { useTranslation } from "react-i18next";
+import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
+import { ScrollView } from "react-native-gesture-handler";
 
 const screenWidth = Dimensions.get("window").width;
 const scale = Dimensions.get("window").scale;
 const screenHeight = Dimensions.get("window").height;
 
 const ModifyInfo = (props) => {
-
   useEffect(() => {
     props.navigation.setOptions({
       title: t("修改个人信息"),
-    })
-  }, [])
+    });
+  }, []);
 
   const { t, i18n } = useTranslation();
   const [userInfo, setUserInfo] = useState({});
@@ -34,7 +34,7 @@ const ModifyInfo = (props) => {
   const [message, setMessage] = useState("温馨提示");
   const { username, setUsername } = useDmwLogin();
   const { avatarUrl, setAvatarUrl } = useDmwLogin();
-  const { post, formData,Toast } = useDmwApi()
+  const { post, formData, Toast } = useDmwApi();
 
   const sava = () => {
     let data = { nickname: username };
@@ -61,9 +61,9 @@ const ModifyInfo = (props) => {
         console.log(res, "上传");
         if (res.code == 200) {
           getUserInfo();
-        }else{
-          Toast("Error:"+res.message)
-          console.log(res)
+        } else {
+          Toast("Error:" + res.message);
+          console.log(res);
         }
       });
     } catch (err) {
@@ -77,7 +77,7 @@ const ModifyInfo = (props) => {
   };
 
   const getUserInfo = () => {
-    console.log('用户信息');
+    console.log("用户信息");
     post("/index/user/get_user_msg").then((res) => {
       console.log(res, "用户信息");
       if (res.code == 200) {
@@ -92,7 +92,7 @@ const ModifyInfo = (props) => {
     getUserInfo();
 
     console.log(userInfo["avatar_url"], "、、、、、、、");
-    return () => { };
+    return () => {};
   }, []);
 
   return (
@@ -104,51 +104,53 @@ const ModifyInfo = (props) => {
         backgroundColor: "#fff",
       }}
     >
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          position: "relative",
-        }}
-      >
-        <TouchableWithoutFeedback onPress={() => up()}>
-          <View style={{ width: 90, height: 90, borderRadius: 90 / 2 }}>
-            <Image
-              style={{ width: 90, height: 90, borderRadius: 90 / 2 }}
-              source={{ uri: avatarUrl }}
-            ></Image>
-            <Image
-              style={{
-                position: "absolute",
-                width: 20,
-                height: 20,
-                bottom: 0,
-                right: 0,
-              }}
-              source={require("../../assets/img/my/3588.png")}
-            ></Image>
-          </View>
-        </TouchableWithoutFeedback>
-      </View>
-      <View style={styles.line}></View>
+      <ScrollView>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            position: "relative",
+          }}
+        >
+          <TouchableWithoutFeedback onPress={() => up()}>
+            <View style={{ width: 90, height: 90, borderRadius: 90 / 2 }}>
+              <Image
+                style={{ width: 90, height: 90, borderRadius: 90 / 2 }}
+                source={{ uri: avatarUrl }}
+              ></Image>
+              <Image
+                style={{
+                  position: "absolute",
+                  width: 20,
+                  height: 20,
+                  bottom: 0,
+                  right: 0,
+                }}
+                source={require("../../assets/img/my/3588.png")}
+              ></Image>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+        <View style={styles.line}></View>
 
-      <View style={styles.lis}>
-        <Text style={styles.text}>{t("昵称")}</Text>
-        {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
+        <View style={styles.lis}>
+          <Text style={styles.text}>{t("昵称")}</Text>
+          {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
                        
                     </TouchableWithoutFeedback> */}
-        <TextInput
-          maxLength={16}
-          placeholder={t("请输入昵称")}
-          keyboardType="ascii-capable"
-          style={[styles.input]}
-          onChangeText={(e) => setUsername(e)}
-          value={username}
-        />
-      </View>
-      <Text style={styles.btn} onPress={() => sava()}>
-        {t("保存")}
-      </Text>
+          <TextInput
+            maxLength={16}
+            placeholder={t("请输入昵称")}
+            keyboardType="ascii-capable"
+            style={[styles.input]}
+            onChangeText={(e) => setUsername(e)}
+            value={username}
+          />
+        </View>
+        <Text style={styles.btn} onPress={() => sava()}>
+          {t("保存")}
+        </Text>
+      </ScrollView>
 
       <DialogToast
         visible={visible}
@@ -179,9 +181,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginRight: 20,
     marginLeft: 20,
+    marginTop: 100,
+
     borderRadius: 50,
-    position: "absolute",
-    bottom: 138,
+    // position: "absolute",
+    // bottom: 138,
   },
   line: {
     borderColor: "#CCCCCC",

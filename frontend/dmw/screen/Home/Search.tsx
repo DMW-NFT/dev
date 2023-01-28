@@ -128,7 +128,7 @@ const Searchsc = (props) => {
                     {
 
                         <FlatList
-
+                        showsVerticalScrollIndicator={false}
                             refreshing={refreshing}
                             style={{ height: '55%', flex: 1, }}
                             ListEmptyComponent={() => {

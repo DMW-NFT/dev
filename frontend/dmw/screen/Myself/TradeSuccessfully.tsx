@@ -10,6 +10,7 @@ import {
 import React, { useState, useEffect } from "react";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { t } from "i18next";
+import chainNameMap from "../../../constans/chainNameMap.json"
 
 const TradeSuccessfully = (props) => {
   // state = {
@@ -44,8 +45,8 @@ const TradeSuccessfully = (props) => {
               <View style={[styles.imageBox]}>
                 <View style={[styles.flex]}>
                   <Image
-                    source={{uri:list.image_attachment_url}}
-                    style={[styles.imgBoxImage]} 
+                    source={{ uri: list.image_attachment_url }}
+                    style={[styles.imgBoxImage]}
                   ></Image>
                   <View style={{ flex: 1 }}>
                     <View style={[styles.flexJBC]}>
@@ -55,8 +56,8 @@ const TradeSuccessfully = (props) => {
                       <Text
                         style={[styles.ImageBoxName, { fontWeight: "bold" }]}
                       >
-                        {list.buyout_price_per.number +
-                          list.buyout_price_per.currency_name}
+                        {list.buyout_price_per.number}{" "}
+                        {list.buyout_price_per.currency_name=="ETH"? chainNameMap[list.network].nativeToken : list.buyout_price_per.currency_name}
                       </Text>
                     </View>
                     <Text style={[styles.ImageBoxColl]}>
@@ -69,31 +70,33 @@ const TradeSuccessfully = (props) => {
                 <View>
                   <View style={[styles.flexJBC, styles.mb30]}>
                     <Text style={[styles.ImageBoxName]}>
-                      {t('服务费') + list.service * 100}%
+                      {t("服务费") + list.service * 100}%
                     </Text>
                     <Text style={[styles.ImageBoxColl]}>
-                      {list.service_fee.number + list.service_fee.currency_name}
+                      {list.service_fee.number} {list.service_fee.currency_name =="ETH"?chainNameMap[list.network].nativeToken:list.service_fee.currency_name}
                     </Text>
                   </View>
                   <View style={[styles.flexJBC, styles.mb30]}>
                     <Text style={[styles.ImageBoxName]}>
-                      {t('版权费') + list.royalties * 100}%
+                      {t("版权费") + " " + list.royalties * 100}%
                     </Text>
                     <Text style={[styles.ImageBoxColl]}>
-                      {list.royalties_fee.number +
-                        list.royalties_fee.currency_name}
+                      {list.royalties_fee.number}{" "}
+                      {list.royalties_fee.currency_name=="ETH"?chainNameMap[list.network].nativeToken:list.royalties_fee.currency_name}
                     </Text>
                   </View>
                   <View style={[styles.flexJBC, styles.borderling]}>
-                    <Text style={[styles.ImageBoxName]}>{t('成交价') + ''}</Text>
+                    <Text style={[styles.ImageBoxName]}>
+                      {t("成交价") + ""}
+                    </Text>
                     <Text
                       style={[
                         styles.ImageBoxColl,
                         { color: "#897EF8", fontSize: 16, fontWeight: "bold" },
                       ]}
                     >
-                      {list.total_offer_amount.number +
-                        list.total_offer_amount.currency_name}
+                      {list.total_offer_amount.number}{" "}
+                      {list.total_offer_amount.currency_name=="ETH"?chainNameMap[list.network].nativeToken:list.total_offer_amount.currency_name}
                     </Text>
                   </View>
                 </View>
@@ -102,19 +105,21 @@ const TradeSuccessfully = (props) => {
               )}
 
               <View style={[styles.flexJBC, styles.mb30]}>
-                <Text style={[styles.ImageBoxName]}>{t('创建时间') + ''}</Text>
+                <Text style={[styles.ImageBoxName]}>{t("创建时间") + ""}</Text>
                 <Text style={[styles.ImageBoxColl]}>{list.create_time}</Text>
               </View>
               {type == 1 ? (
                 <View style={[styles.flexJBC, styles.mb30]}>
-                  <Text style={[styles.ImageBoxName]}>{t('成交时间') + ''}</Text>
+                  <Text style={[styles.ImageBoxName]}>
+                    {t("成交时间") + ""}
+                  </Text>
                   <Text style={[styles.ImageBoxColl]}>{list.deal_time}</Text>
                 </View>
               ) : (
                 <Text></Text>
               )}
               <View style={[styles.flexJBC, styles.mb30]}>
-                <Text style={[styles.ImageBoxName]}>{t('买方') + ''}</Text>
+                <Text style={[styles.ImageBoxName]}>{t("买方") + ""}</Text>
                 <Text
                   numberOfLines={1}
                   ellipsizeMode={"middle"}
@@ -124,7 +129,7 @@ const TradeSuccessfully = (props) => {
                 </Text>
               </View>
               <View style={[styles.flexJBC, styles.mb30]}>
-                <Text style={[styles.ImageBoxName]}>{t('藏品地址') + ''}</Text>
+                <Text style={[styles.ImageBoxName]}>{t("藏品地址") + ""}</Text>
                 <Text
                   numberOfLines={1}
                   ellipsizeMode={"middle"}
@@ -138,13 +143,13 @@ const TradeSuccessfully = (props) => {
               </View>
 
               <View style={[styles.flexJBC, styles.mb30]}>
-                <Text style={[styles.ImageBoxName]}>{t('网络') + ''}</Text>
+                <Text style={[styles.ImageBoxName]}>{t("网络") + ""}</Text>
                 <Text
                   numberOfLines={1}
                   ellipsizeMode={"middle"}
                   style={[
                     styles.ImageBoxColl,
-                    { color: "#897EF8",textAlign:'right' },
+                    { color: "#897EF8", textAlign: "right" },
                   ]}
                 >
                   {list.network}
@@ -156,7 +161,7 @@ const TradeSuccessfully = (props) => {
                 <Text style={[styles.ImageBoxColl]}>{list.token_id}</Text>
               </View>
               <View style={[styles.flexJBC, styles.mb30]}>
-                <Text style={[styles.ImageBoxName]}>{t('哈希地址') + ''}</Text>
+                <Text style={[styles.ImageBoxName]}>{t("哈希地址") + ""}</Text>
                 <Text
                   numberOfLines={1}
                   ellipsizeMode={"middle"}
