@@ -71,7 +71,7 @@ const TransferredIntoCollection = (props) => {
     logo: "",
   });
   const [isShowType, setisShowType] = useState(false); //是否展开类型选择框
-  const [listType, setListTtpe] = useState([]);
+  const [listType, setListType] = useState([]);
   const [vfModalVisible, setVfModalVisible] = useState(false);
   const [txModalVisible, setTxModalVisible] = useState(false);
 
@@ -139,7 +139,7 @@ const TransferredIntoCollection = (props) => {
         name: res.data.data[0].name,
         logo: res.data.data[0].logo_url,
       });
-      setListTtpe(res.data.data);
+      setListType(res.data.data);
     });
   };
 
@@ -551,10 +551,15 @@ const TransferredIntoCollection = (props) => {
                         <Text
                           onPress={() => {
                             setactiveType({
-                              id: item.value,
+                              id: item.id,
                               name: item.name,
                               logo: item.logo_url,
                             });
+                            console.log({
+                              id: item.id,
+                              name: item.name,
+                              logo: item.logo_url,
+                            })
                             setisShowType(false);
                           }}
                           style={{
