@@ -333,9 +333,11 @@ const DmwWalletProvider = ({ children }) => {
     listingId: number,
     quantityToBuy: number,
     currency: string,
-    totalPrice: string
+    decimals: number,
+    unitPrice:string,
   ) => {
     web3.eth.setProvider(getProvider(dmwChainId));
+    const totalPrice = String(Number(ethers.utils.parseUnits(unitPrice, decimals)) * quantityToBuy);
     const contractAddress = contractMap()[dmwChainId].market_contract;
     const contract = new web3.eth.Contract(marketplaceABI, contractAddress);
     const rawdata = contract.methods
@@ -344,7 +346,7 @@ const DmwWalletProvider = ({ children }) => {
         currentDmwWallet,
         quantityToBuy,
         currency,
-        web3.utils.toWei(totalPrice, "ether")
+        totalPrice
       )
       .encodeABI();
     console.log(rawdata);
@@ -356,7 +358,7 @@ const DmwWalletProvider = ({ children }) => {
       // gasLimit: "0x9c40", // Optional
       value:
         currency.toLowerCase() == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-          ? web3.utils.toWei(totalPrice, "ether")
+          ? totalPrice
           : web3.utils.toWei("0", "ether"), // Optional
       // nonce: "0x0114", // Optional
     };
@@ -443,6 +445,8 @@ const DmwWalletProvider = ({ children }) => {
     startTime: number,
     secondsUntilEndTime: number,
     quantityToList: number,
+    tokenAddress: string,
+    tokenDecimals: number,
     reservePricePerToken: string,
     buyoutPricePerToken: string,
     listingType: number
@@ -457,8 +461,9 @@ const DmwWalletProvider = ({ children }) => {
       startTime,
       secondsUntilEndTime,
       quantityToList,
-      reservePricePerToken,
-      buyoutPricePerToken,
+      tokenAddress,
+      ethers.utils.parseUnits(reservePricePerToken, tokenDecimals),
+      ethers.utils.parseUnits(buyoutPricePerToken, tokenDecimals),
       listingType
     );
     const rawdata = contract.methods
@@ -468,9 +473,9 @@ const DmwWalletProvider = ({ children }) => {
         startTime,
         secondsUntilEndTime,
         quantityToList,
-        "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
-        web3.utils.toWei(reservePricePerToken, "ether"),
-        web3.utils.toWei(buyoutPricePerToken, "ether"),
+        tokenAddress,
+        ethers.utils.parseUnits(reservePricePerToken, tokenDecimals),
+        ethers.utils.parseUnits(buyoutPricePerToken, tokenDecimals),
         listingType,
       ])
       .encodeABI();

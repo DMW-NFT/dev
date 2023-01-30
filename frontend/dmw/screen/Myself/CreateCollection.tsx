@@ -27,6 +27,7 @@ import Web3 from "web3";
 import chainIdmap from "../../../constans/chainIdMap.json";
 import VerfiySecretModal from "../../Components/VerfiySecretModal";
 import TxProccessingModal from "../../Components/TxProccessingModal";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const screenWidth = Dimensions.get("window").width;
 const scale = Dimensions.get("window").scale;
@@ -41,6 +42,9 @@ const TransferredIntoCollection = (props) => {
   const [screenloading, setscreenLoding] = useState(false);
   const [imgurlUp1, setimgurlUp1] = useState("");
   const [ipfsImgUrl, setIpfsImgUrl] = useState("");
+  const [mintAmount, setMintAmount] = useState("1"); //铸造数量
+
+  const [royaltyBps, setRoyaltyBps] = useState("0"); //版权费率 maxBps=10_000
   const { post, formData, Toast } = useDmwApi();
   const [uploadLoading, setUploadLoading] = useState(false);
   const [nativeBalance, setNativeBalance] = useState(0);
@@ -74,54 +78,22 @@ const TransferredIntoCollection = (props) => {
   const [listType, setListType] = useState([]);
   const [vfModalVisible, setVfModalVisible] = useState(false);
   const [txModalVisible, setTxModalVisible] = useState(false);
+  const [royaltyRecipient, setRoyaltyRecipient] = useState(
+    WalletInUse == 1 ? currentDmwWallet : currentWallet
+  ); //版权费接收地址
 
-  useEffect(() => {
-    // getBlockchain()
-    getCoType();
-  }, []);
-
-  useEffect(() => {
-    console.log(txHash, "txHash");
-    if (!txHash) {
-      return;
-    }
-    let param = formData({
-      iv: "aaaaaaaaaaaaaaaa",
-      param: JSON.stringify({
-        collection_id: activeType.id,
-        transaction_hash: txHash,
-      }),
-    });
-    post("/index/nft/set_nft_collection_by_create_nft", param)
-      .then((res) => {
-        console.log(res, "cvnsnjcn");
-        if (res.code == 200) {
-          Toast(t("创建成功！"));
-        } else {
-          Toast(res.message);
-        }
-      })
-      .catch((err) => {
-        Toast(err.message);
-      });
-  }, [txHash]);
-
-  useEffect(() => {
-    if (!dmwWalletList[0] && !currentWallet) {
-      Toast(t("请先登录钱包"));
-      setTimeout(() => {
-        props.navigation.goBack();
-      }, 1500);
-    } else {
-      const walletAddress = WalletInUse == 1 ? dmwWalletList[0] : currentWallet;
-      console.log("curren wallet address:", walletAddress);
-      walletAddress &&
-        getNativeBalance(walletAddress).then((res) => {
-          console.log("native balance:", res);
-          setNativeBalance(res);
-        });
-    }
-  }, [WalletInUse, dmwWalletList, currentWallet]);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [scrollX, setScrollX] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
+  const handleScroll = (event) => {
+    setScrollX(event.nativeEvent.contentOffset.x);
+    setScrollY(event.nativeEvent.contentOffset.y);
+  }
+  const handleBlur = () => {
+    setTimeout(() => {
+      scrollViewRef.current?.scrollTo({x: scrollX, y: scrollY + screenHeight/4});
+    }, 0);
+  }
 
   // 获取区块链
   // const getBlockchain = () => {
@@ -194,8 +166,10 @@ const TransferredIntoCollection = (props) => {
             body: JSON.stringify({
               metadataUri: res[0].path,
               mintTo: WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
-              mintAmount: 1,
+              mintAmount: mintAmount,
               network: chainIdmap[currentChainId].network.toLowerCase(),
+                  royaltyBps:Number(royaltyBps)*100,
+              royaltyRecipient: royaltyRecipient
             }),
             headers: {
               accept: "application/json",
@@ -292,6 +266,319 @@ const TransferredIntoCollection = (props) => {
     });
   };
 
+  const nftDescriptionInput = (
+    <View style={[styles.lis, { marginBottom: 20 }]}>
+      <Text style={styles.text}>{t("简介")}</Text>
+      <TextInput
+        placeholder={t("请输入简介")}
+        keyboardType="default"
+        style={[styles.input, { marginBottom: 20, height: 151 }]}
+        onChangeText={(e) => setExplain(e)}
+        value={explain}
+        multiline={true}
+        maxLength={200}
+        numberOfLines={5}
+        onBlur={handleBlur}
+      />
+    </View>
+  );
+
+  const nftNameInput = (
+    <View style={styles.lis}>
+      <Text style={styles.text}>{t("标题")}</Text>
+      <TextInput
+        maxLength={20}
+        placeholder={t("请输入藏品名")}
+        keyboardType="default"
+        style={[styles.input]}
+        onChangeText={(e) => setTitle(e)}
+        value={title}
+        onBlur={handleBlur}
+
+      />
+    </View>
+  );
+  const mintAmountInput = (
+    <View style={styles.lis}>
+      <Text style={styles.text}>{t("数量")}</Text>
+      <TextInput
+        maxLength={18}
+        placeholder={t("请输入铸造数量")}
+        keyboardType="number-pad"
+        style={[styles.input]}
+        onChangeText={(e) => {
+          if ((!isNaN(e) && e >= 1 && e % 1 === 0) || e == "") {
+            setMintAmount(e.replace(".", ""));
+          }
+        }}
+        value={mintAmount}
+        onBlur={handleBlur}
+      />
+    </View>
+  );
+
+  const royaltyBpsInput = (
+    <View style={styles.lis}>
+      <Text style={styles.text}>{t("版权费(%)")}</Text>
+      <TextInput
+        maxLength={18}
+        placeholder={t("请输入版权费")}
+        keyboardType="number-pad"
+        style={[styles.input]}
+        onChangeText={(e) => {
+          if ((!isNaN(e) && e >= 0 && e <= 100) || e == "") {
+            if (e.split(".")[1] && e.split(".")[1].length > 2) {
+              setRoyaltyBps(parseFloat(e).toFixed(2));
+            } else {
+              setRoyaltyBps(e);
+            }
+          }
+        }}
+        value={royaltyBps}
+        onBlur={handleBlur}
+      />
+    </View>
+  );
+  const royaltyRecipientInput = (
+    <View style={styles.lis}>
+      <View style={{flexDirection:"row",justifyContent:"space-between"}}>
+        <Text style={styles.text}>{t("版权费接收地址")}</Text>
+        <TouchableOpacity onPress={()=>{setRoyaltyRecipient(WalletInUse?currentDmwWallet:currentWallet)}}>
+          <Text style={{backgroundColor:"#897EF8",textAlign:"center",alignSelf:"center",paddingHorizontal:10,paddingVertical:5,borderRadius:15,marginBottom:5,color:"white"}}>
+            {t("当前钱包")}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <TextInput
+        maxLength={40}
+        placeholder={t("请输入区块链地址")}
+        keyboardType="default"
+        style={[styles.input, { fontSize: 12 }]}
+        onChangeText={(e) => {
+          setRoyaltyRecipient(e);
+        }}
+        onBlur={() => {
+          if (!Web3.utils.isAddress(royaltyRecipient)) {
+            setRoyaltyRecipient("");
+            Toast(t("请输入正确的区块链地址"));
+          }
+        }}
+        value={royaltyRecipient}
+      />
+    </View>
+  );
+
+  const nftImageUpload = loading ? (
+    <View style={styles.up}>
+      <Spinner />
+    </View>
+  ) : (
+    <TouchableWithoutFeedback onPress={() => uuup()}>
+      <View style={styles.up}>
+        {imgurlUp1 && imgurlUp1 ? (
+          <Image
+            style={{ width: "100%", height: "100%" }}
+            source={{ uri: `data:image/jpeg;base64,${imgurlUp1}` }}
+          ></Image>
+        ) : (
+          <>
+            <Image
+              style={{ width: 96 / 2, height: 96 / 2 }}
+              source={require("../../assets/img/my/3336.png")}
+            ></Image>
+            <Text>{t("上传图像、视频")}</Text>
+          </>
+        )}
+      </View>
+    </TouchableWithoutFeedback>
+  );
+
+  const costAndBalance =
+    WalletInUse == 1 ? (
+      <View>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginBottom: 20,
+          }}
+        >
+          <Text style={{ fontSize: 12, color: "#999999" }}>
+            {t("上链费")}：
+          </Text>
+          {currentGasPrice ? (
+            <Text style={{ fontSize: 16, color: "#897EF8" }}>
+              {Web3.utils
+                .fromWei(
+                  String(
+                    Number(GasMap["mintWithSignature"]) *
+                      Number(currentGasPrice)
+                  ),
+                  "ether"
+                )
+                .slice(0, 8)}{" "}
+              {chainIdmap[currentChainId].nativeToken}
+            </Text>
+          ) : (
+            <Text style={{ fontSize: 16, color: "#897EF8" }}>---</Text>
+          )}
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginBottom: 20,
+          }}
+        >
+          <Text style={{ fontSize: 12, color: "#999999" }}>{t("余额")}</Text>
+          {nativeBalance ? (
+            <Text style={{ fontSize: 16, color: "#897EF8" }}>
+              {String(nativeBalance).slice(0, 8)}{" "}
+              {chainIdmap[currentChainId].nativeToken}
+            </Text>
+          ) : (
+            <Text style={{ fontSize: 16, color: "#897EF8" }}>---</Text>
+          )}
+        </View>
+      </View>
+    ) : null;
+
+  const selectCollection = (
+    <View style={[styles.lis, { marginBottom: 20 }]}>
+      <Text style={{ fontSize: 16, marginBottom: 17 }}>{t("选择合集")}</Text>
+
+      <TouchableWithoutFeedback
+        onPress={() => {
+          setisShowType(!isShowType);
+        }}
+      >
+        <View
+          style={[
+            styles.input,
+            {
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            },
+          ]}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Image
+              source={{ uri: activeType.logo }}
+              style={{ width: 24, height: 24, borderRadius: 12 }}
+            ></Image>
+            <Text style={{ marginLeft: 10 }}>{activeType.name}</Text>
+          </View>
+          <FontAwesomeIcon icon={faAngleDown} color="#707070" size={16} />
+        </View>
+      </TouchableWithoutFeedback>
+      {isShowType ? (
+        <View
+          style={{
+            paddingTop: 20,
+            backgroundColor: "#fff",
+            marginBottom: 20,
+            marginTop: 2,
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: "#ccc",
+            paddingBottom: 20,
+          }}
+        >
+          {listType && listType.length
+            ? listType.map((item, index) => (
+                <Text
+                  onPress={() => {
+                    setactiveType({
+                      id: item.id,
+                      name: item.name,
+                      logo: item.logo_url,
+                    });
+                    console.log({
+                      id: item.id,
+                      name: item.name,
+                      logo: item.logo_url,
+                    });
+                    setisShowType(false);
+                  }}
+                  style={{
+                    color: activeType.id == item.id ? "blue" : "#333",
+                    paddingTop: 10,
+                    paddingBottom: 10,
+                    backgroundColor:
+                      activeType.id == item.id
+                        ? "rgba(40, 120, 255,0.1)"
+                        : "#fff",
+                    paddingLeft: 20,
+                  }}
+                >
+                  {item.name}
+                </Text>
+              ))
+            : null}
+        </View>
+      ) : null}
+    </View>
+  );
+
+  const payToMint = !uploadLoading ? (
+    <Text onPress={() => confirmToMint()} style={styles.btn}>
+      {t("创建并支付")}
+    </Text>
+  ) : (
+    <Text style={styles.btn}>{t("上传中")}...</Text>
+  );
+
+  useEffect(() => {
+    // getBlockchain()
+    getCoType();
+  }, []);
+
+  useEffect(() => {
+    console.log(txHash, "txHash");
+    if (!txHash) {
+      return;
+    }
+    let param = formData({
+      iv: "aaaaaaaaaaaaaaaa",
+      param: JSON.stringify({
+        collection_id: activeType.id,
+        transaction_hash: txHash,
+      }),
+    });
+    post("/index/nft/set_nft_collection_by_create_nft", param)
+      .then((res) => {
+        console.log(res, "cvnsnjcn");
+        if (res.code == 200) {
+          Toast(t("创建成功！"));
+        } else {
+          Toast(res.message);
+        }
+      })
+      .catch((err) => {
+        Toast(err.message);
+      });
+  }, [txHash]);
+
+  useEffect(() => {
+    if (!dmwWalletList[0] && !currentWallet) {
+      Toast(t("请先登录钱包"));
+      setTimeout(() => {
+        props.navigation.goBack();
+      }, 1500);
+    } else {
+      const walletAddress = WalletInUse == 1 ? dmwWalletList[0] : currentWallet;
+      console.log("curren wallet address:", walletAddress);
+      walletAddress &&
+        getNativeBalance(walletAddress).then((res) => {
+          console.log("native balance:", res);
+          setNativeBalance(res);
+        });
+    }
+  }, [WalletInUse, dmwWalletList, currentWallet]);
+
+
   useEffect(() => {
     setTimeout(() => {
       txHash && props.navigation.goBack();
@@ -355,8 +642,10 @@ const TransferredIntoCollection = (props) => {
                 body: JSON.stringify({
                   metadataUri: res[0].path,
                   mintTo: WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
-                  mintAmount: 1,
+                  mintAmount: mintAmount,
                   network: chainIdmap[currentChainId].network.toLowerCase(),
+                  royaltyBps:Number(royaltyBps)*100,
+                  royaltyRecipient: royaltyRecipient
                 }),
                 headers: {
                   accept: "application/json",
@@ -439,212 +728,34 @@ const TransferredIntoCollection = (props) => {
         </View>
       ) : (
         <>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {loading ? (
-              <View style={styles.up}>
-                <Spinner />
-              </View>
-            ) : (
-              <TouchableWithoutFeedback onPress={() => uuup()}>
-                <View style={styles.up}>
-                  {imgurlUp1 && imgurlUp1 ? (
-                    <Image
-                      style={{ width: "100%", height: "100%" }}
-                      source={{ uri: `data:image/jpeg;base64,${imgurlUp1}` }}
-                    ></Image>
-                  ) : (
-                    <>
-                      <Image
-                        style={{ width: 96 / 2, height: 96 / 2 }}
-                        source={require("../../assets/img/my/3336.png")}
-                      ></Image>
-                      <Text>{t("上传图像、视频")}</Text>
-                    </>
-                  )}
-                </View>
-              </TouchableWithoutFeedback>
-            )}
+          <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}  onScroll={handleScroll}>
+            {nftImageUpload}
 
             <Text style={{ fontSize: 10, color: "#999999", marginBottom: 27 }}>
               {t("支持的文件类型：")}JPG、SVG、PNG
             </Text>
-            <View style={styles.lis}>
-              <Text style={styles.text}>{t("标题")}</Text>
-              {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
-                       
-                    </TouchableWithoutFeedback> */}
-              <TextInput
-                maxLength={20}
-                placeholder={t("请输入藏品名")}
-                keyboardType="default"
-                style={[styles.input]}
-                onChangeText={(e) => setTitle(e)}
-                value={title}
-              />
-            </View>
 
-            <View style={[styles.lis, { marginBottom: 20 }]}>
-              <Text style={styles.text}>{t("简介")}</Text>
-              {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
-                       
-                    </TouchableWithoutFeedback> */}
-              <TextInput
-                placeholder={t("请输入简介")}
-                keyboardType="default"
-                style={[styles.input, { marginBottom: 20, height: 151 }]}
-                onChangeText={(e) => setExplain(e)}
-                value={explain}
-                multiline={true}
-                maxLength={200}
-                numberOfLines={5}
-              />
-            </View>
-            <View style={[styles.lis, { marginBottom: 20 }]}>
-              <Text style={{ fontSize: 16, marginBottom: 17 }}>
-                {t("选择合集")}
-              </Text>
+            {nftNameInput}
 
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  setisShowType(!isShowType);
-                }}
-              >
-                <View
-                  style={[
-                    styles.input,
-                    {
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    },
-                  ]}
-                >
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <Image
-                      source={{ uri: activeType.logo }}
-                      style={{ width: 24, height: 24, borderRadius: 12 }}
-                    ></Image>
-                    <Text style={{ marginLeft: 10 }}>{activeType.name}</Text>
-                  </View>
-                  <FontAwesomeIcon
-                    icon={faAngleDown}
-                    color="#707070"
-                    size={16}
-                  />
-                </View>
-              </TouchableWithoutFeedback>
-              {isShowType ? (
-                <View
-                  style={{
-                    paddingTop: 20,
-                    backgroundColor: "#fff",
-                    marginBottom: 20,
-                    marginTop: 2,
-                    borderRadius: 12,
-                    borderWidth: 1,
-                    borderColor: "#ccc",
-                    paddingBottom: 20,
-                  }}
-                >
-                  {listType && listType.length
-                    ? listType.map((item, index) => (
-                        <Text
-                          onPress={() => {
-                            setactiveType({
-                              id: item.id,
-                              name: item.name,
-                              logo: item.logo_url,
-                            });
-                            console.log({
-                              id: item.id,
-                              name: item.name,
-                              logo: item.logo_url,
-                            })
-                            setisShowType(false);
-                          }}
-                          style={{
-                            color: activeType.id == item.id ? "blue" : "#333",
-                            paddingTop: 10,
-                            paddingBottom: 10,
-                            backgroundColor:
-                              activeType.id == item.id
-                                ? "rgba(40, 120, 255,0.1)"
-                                : "#fff",
-                            paddingLeft: 20,
-                          }}
-                        >
-                          {item.name}
-                        </Text>
-                      ))
-                    : null}
-                </View>
-              ) : null}
-            </View>
+            {nftDescriptionInput}
+            {mintAmountInput}
+            {royaltyBpsInput}
+            {royaltyRecipientInput}
+            {selectCollection}
+
             <View style={[styles.lis, { marginBottom: 20 }]}>
               <Text style={{ fontSize: 16, marginBottom: 17 }}>
                 {t("区块链")}:{chainIdmap[currentChainId].network}
               </Text>
             </View>
-            {WalletInUse == 1 ? (
-              <View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginBottom: 20,
-                  }}
-                >
-                  <Text style={{ fontSize: 12, color: "#999999" }}>
-                    {t("上链费")}：
-                  </Text>
-                  {currentGasPrice ? (
-                    <Text style={{ fontSize: 16, color: "#897EF8" }}>
-                      {Web3.utils
-                        .fromWei(
-                          String(
-                            Number(GasMap["mintWithSignature"]) *
-                              Number(currentGasPrice)
-                          ),
-                          "ether"
-                        )
-                        .slice(0, 8)}{" "}
-                      {chainIdmap[currentChainId].nativeToken}
-                    </Text>
-                  ) : (
-                    <Text style={{ fontSize: 16, color: "#897EF8" }}>---</Text>
-                  )}
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginBottom: 20,
-                  }}
-                >
-                  <Text style={{ fontSize: 12, color: "#999999" }}>
-                    {t("余额")}
-                  </Text>
-                  {nativeBalance ? (
-                    <Text style={{ fontSize: 16, color: "#897EF8" }}>
-                      {String(nativeBalance).slice(0, 8)}{" "}
-                      {chainIdmap[currentChainId].nativeToken}
-                    </Text>
-                  ) : (
-                    <Text style={{ fontSize: 16, color: "#897EF8" }}>---</Text>
-                  )}
-                </View>
-              </View>
-            ) : null}
-            {!uploadLoading ? (
-              <Text onPress={() => confirmToMint()} style={styles.btn}>
-                {t("创建并支付")}
-              </Text>
-            ) : (
-              <Text style={styles.btn}>{t("上传中")}...</Text>
-            )}
+
+            {costAndBalance}
+
+            {payToMint}
           </ScrollView>
         </>
       )}
+
       {vfModalVisible && (
         <VerfiySecretModal
           setModalVisible={setVfModalVisible}

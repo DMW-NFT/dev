@@ -96,7 +96,7 @@ const QuotationDetails = (props) => {
     getErc20Balance,
     acceptOffer,
     currentChainId,
-    updateNetwork
+    updateNetwork,
   } = useDmwWeb3();
   const {
     dmwBuyNFT,
@@ -129,8 +129,10 @@ const QuotationDetails = (props) => {
         Toast(t(res.message));
         let newOrderList = { ...orderList };
         newOrderList.nft.is_like = !orderList.nft.is_like;
-        newOrderList.nft.is_like?newOrderList.nft.likes +=1:newOrderList.nft.likes-=1
-        console.log("likes:",newOrderList.nft.likes)
+        newOrderList.nft.is_like
+          ? (newOrderList.nft.likes += 1)
+          : (newOrderList.nft.likes -= 1);
+        console.log("likes:", newOrderList.nft.likes);
         setOrderList(newOrderList);
       }
       console.log("like nft result:", res);
@@ -166,7 +168,8 @@ const QuotationDetails = (props) => {
   };
   // 确认购买
   const confirmPurchase = () => {
-    setBuyNowVisible(false)
+    setBuyNowVisible(false);
+    // console.log(orderList.currency,erc20TokenList);
     if (WalletInUse == 1) {
       setVfModalVisible(true);
     } else {
@@ -174,7 +177,8 @@ const QuotationDetails = (props) => {
         String(orderList.listing_id),
         Number(BuyNumber),
         orderList.currency,
-        String(UnitPrice.UnitPrice * Number(BuyNumber))
+        orderList.currency=="0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"?18:erc20TokenList[orderList.currency.toLowerCase()].decimals,
+        String(UnitPrice.UnitPrice)
       );
       setTxModalVisible(true);
     }
@@ -255,11 +259,10 @@ const QuotationDetails = (props) => {
     }
     if (WalletInUse == 1 && NftInfo.network) {
       if (
-        currentChainId !=
-        chainNameMap[NftInfo.network.toLowerCase()].chainId
+        currentChainId != chainNameMap[NftInfo.network.toLowerCase()].chainId
       ) {
         updateNetwork(chainNameMap[NftInfo.network.toLowerCase()].chainId);
-        Toast(`Switch to network: ${NftInfo.network.toLowerCase()}`)
+        Toast(`Switch to network: ${NftInfo.network.toLowerCase()}`);
       }
     }
     setBuyNowVisible(true);
@@ -310,7 +313,9 @@ const QuotationDetails = (props) => {
                 marginRight: 5,
               }}
             >{`${Price}  ${
-              NftInfo && chainNameMap[NftInfo.network.toLowerCase()].nativeToken
+              orderCurrency == "ETH"
+                ? chainNameMap[NftInfo.network.toLowerCase()].nativeToken
+                : orderCurrency
             } `}</Text>
             {/* <Text style={{ fontSize: 10, lineHeight: 22 }}>Wfca</Text> */}
           </View>
@@ -336,7 +341,9 @@ const QuotationDetails = (props) => {
                 marginRight: 5,
               }}
             >{`${Price * BuyNumber}  ${
-              NftInfo && chainNameMap[NftInfo.network.toLowerCase()].nativeToken
+              NftInfo && orderCurrency == "ETH"
+                ? chainNameMap[NftInfo.network.toLowerCase()].nativeToken
+                : orderCurrency
             } `}</Text>
             {/* <Text style={{ fontSize: 10, lineHeight: 22 }}>Wfca</Text> */}
           </View>
@@ -401,6 +408,28 @@ const QuotationDetails = (props) => {
 
   // 报价弹窗的组件
   const offerPriceInput = () => {
+    const tokenSlect = erc20TokenList && (
+      <Select
+        style={{ width: 125 }}
+        placeholder={erc20TokenList[Object.keys(erc20TokenList)[0]].symbol}
+        value={
+          erc20TokenList[Object.keys(erc20TokenList)[selectedTokenIndex.row]]
+            .symbol
+        }
+        selectedIndex={selectedTokenIndex}
+        onSelect={(index) => {
+          setSelectTokenIndex(index);
+          console.log("selected", index);
+          setAllowanceAmount(0);
+          setAvailableBalance(0);
+          setNeedApprovalAmount(null);
+        }}
+      >
+        {Object.keys(erc20TokenList).map((key) => (
+          <SelectItem title={erc20TokenList[key].symbol} />
+        ))}
+      </Select>
+    );
     //购买数量
     return (
       <View style={{ flexDirection: "column", marginBottom: 20 }}>
@@ -428,31 +457,7 @@ const QuotationDetails = (props) => {
               setQuotationAmount(newValue);
             }}
           />
-          {erc20TokenList && (
-            <Select
-              style={{ width: 125 }}
-              placeholder={
-                erc20TokenList[Object.keys(erc20TokenList)[0]].symbol
-              }
-              value={
-                erc20TokenList[
-                  Object.keys(erc20TokenList)[selectedTokenIndex.row]
-                ].symbol
-              }
-              selectedIndex={selectedTokenIndex}
-              onSelect={(index) => {
-                setSelectTokenIndex(index);
-                console.log("selected", index);
-                setAllowanceAmount(0);
-                setAvailableBalance(0);
-                setNeedApprovalAmount(null);
-              }}
-            >
-              {Object.keys(erc20TokenList).map((key) => (
-                <SelectItem title={erc20TokenList[key].symbol} />
-              ))}
-            </Select>
-          )}
+          {tokenSlect}
         </View>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <View style={{ flexDirection: "column" }}>
@@ -756,7 +761,8 @@ const QuotationDetails = (props) => {
                   String(orderList.listing_id),
                   Number(BuyNumber),
                   orderList.currency,
-                  String(UnitPrice.UnitPrice * Number(BuyNumber))
+                  orderList.currency=="0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"?18:erc20TokenList[orderList.currency.toLowerCase()].decimals,
+                  String(UnitPrice.UnitPrice)
                 );
               }
             }
@@ -818,18 +824,24 @@ const QuotationDetails = (props) => {
             )}
 
             {/* 喜欢 */}
-            <TouchableWithoutFeedback onPress={()=>{likeNft()}}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                likeNft();
+              }}
+            >
               <View style={[styles.likeBox, styles.flexJBC]}>
                 <Text style={[styles.likeBoxName]}>
                   {collection ? collection.name : "--"}
                 </Text>
                 <View style={[styles.flex]}>
-                  {orderList.nft&&orderList.nft.is_like ? (
+                  {orderList.nft && orderList.nft.is_like ? (
                     <FontAwesomeIcon icon={faHeart} color="red" size={30} />
                   ) : (
                     <FontAwesomeIcon icon={faHeart} color="gray" size={30} />
                   )}
-                  <Text style={[styles.likenum]}>{orderList.nft&&orderList.nft.likes}</Text>
+                  <Text style={[styles.likenum]}>
+                    {orderList.nft && orderList.nft.likes}
+                  </Text>
                 </View>
               </View>
             </TouchableWithoutFeedback>
@@ -852,8 +864,9 @@ const QuotationDetails = (props) => {
                   ></Image>
                   <Text style={{ fontSize: 14, color: "#333" }}>
                     {Price}{" "}
-                    {NftInfo &&
-                      chainNameMap[NftInfo.network.toLowerCase()].nativeToken}
+                    {orderCurrency == "ETH"
+                      ? chainNameMap[NftInfo.network.toLowerCase()].nativeToken
+                      : orderCurrency}
                   </Text>
                 </View>
               </View>
@@ -996,8 +1009,9 @@ const QuotationDetails = (props) => {
               <Text style={[styles.bottomPrice]}>
                 {" "}
                 {Price}{" "}
-                {NftInfo &&
-                  chainNameMap[NftInfo.network.toLowerCase()].nativeToken}
+                {orderCurrency == "ETH"
+                  ? chainNameMap[NftInfo.network.toLowerCase()].nativeToken
+                  : orderCurrency}
               </Text>
               {/* <Text style={[styles.bottomcoinType]}> Wfca</Text> */}
             </View>

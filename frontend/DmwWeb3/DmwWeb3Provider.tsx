@@ -16,6 +16,7 @@ import ChainIdMap from "../constans/chainIdMap.json";
 import { ethers } from "ethers";
 import { resolve } from "path";
 import { rejects } from "assert";
+
 const DmwWeb3Provider = ({ children }) => {
   const connector = useWalletConnect();
   const [currentWallet, setCurrentWallet] = useState("");
@@ -416,8 +417,11 @@ const DmwWeb3Provider = ({ children }) => {
     listingId: number,
     quantityToBuy: number,
     currency: string,
-    totalPrice: string
+    decimals: number,
+    unitPrice:string,
+    
   ) => {
+    const totalPrice = String(Number(ethers.utils.parseUnits(unitPrice, decimals)) * quantityToBuy);
     web3.eth.setProvider(getProvider(currentChainId));
     console.log("buy with currency", currency, totalPrice);
     const contractAddress = contractMap()[currentChainId].market_contract;
@@ -428,7 +432,7 @@ const DmwWeb3Provider = ({ children }) => {
         currentWallet,
         quantityToBuy,
         currency,
-        web3.utils.toWei(totalPrice, "ether")
+        totalPrice
       )
       .encodeABI();
     console.log(rawdata);
@@ -440,7 +444,7 @@ const DmwWeb3Provider = ({ children }) => {
       // gasLimit: "0x9c40", // Optional
       value:
         currency == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-          ? web3.utils.toWei(totalPrice, "ether")
+          ? totalPrice
           : web3.utils.toWei("0", "ether"), // Optional
       // nonce: "0x0114", // Optional
     };
@@ -572,6 +576,8 @@ const DmwWeb3Provider = ({ children }) => {
     startTime: number,
     secondsUntilEndTime: number,
     quantityToList: number,
+    tokenAddress: string,
+    tokenDecimals: number,
     reservePricePerToken: string,
     buyoutPricePerToken: string,
     listingType: number
@@ -586,8 +592,9 @@ const DmwWeb3Provider = ({ children }) => {
       startTime,
       secondsUntilEndTime,
       quantityToList,
-      reservePricePerToken,
-      buyoutPricePerToken,
+      tokenAddress,
+      ethers.utils.parseUnits(reservePricePerToken, tokenDecimals),
+      ethers.utils.parseUnits(buyoutPricePerToken, tokenDecimals),
       listingType
     );
     const rawdata = contract.methods
@@ -597,9 +604,9 @@ const DmwWeb3Provider = ({ children }) => {
         startTime,
         secondsUntilEndTime,
         quantityToList,
-        "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
-        web3.utils.toWei(reservePricePerToken, "ether"),
-        web3.utils.toWei(buyoutPricePerToken, "ether"),
+        tokenAddress,
+        ethers.utils.parseUnits(reservePricePerToken, tokenDecimals),
+        ethers.utils.parseUnits(buyoutPricePerToken, tokenDecimals),
         listingType,
       ])
       .encodeABI();

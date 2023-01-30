@@ -18,7 +18,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import List from "../../Components/List";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
-import { Spinner } from "@ui-kitten/components";
+import { IndexPath, Select, SelectItem, Spinner } from "@ui-kitten/components";
+import supportErc20Token from "../../../constans/supportErc20Token.json";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import {
   Card,
@@ -75,12 +76,12 @@ const TradeHistoryCard = (props) => {
             {/* <Text style={{ fontSize: 12, color: "#999" }}>$455.32</Text> */}
           </View>
         </View>
-        <View style={{width:"100%"}}>
+        <View style={{ width: "100%" }}>
           <TouchableOpacity
             onPress={() => {
               setShow(!show);
             }}
-            style={{ alignSelf: "flex-end"}}
+            style={{ alignSelf: "flex-end" }}
           >
             <Text style={{ fontSize: 12, color: "#999" }}>
               {show ? "-less" : "+more"}
@@ -146,7 +147,8 @@ const GoodsDetail = (props) => {
   const [password, setPassword] = useState("");
   const [vfModalVisible, setVfModalVisible] = useState(false);
   const [txModalVisible, setTxModalVisible] = useState(false);
-
+  const [erc20TokenList, setErc20TokenList] = useState(null);
+  const [selectedTokenIndex, setSelectTokenIndex] = useState(new IndexPath(0));
   // Context 方法
   const { Toast, post, get, formData, shortenAddress } = useDmwApi();
   const { WalletInUse } = useDmwLogin();
@@ -321,6 +323,10 @@ const GoodsDetail = (props) => {
               sTime,
               "3153600000",
               sellNumber,
+              Object.keys(erc20TokenList)[selectedTokenIndex.row],
+              erc20TokenList[
+                Object.keys(erc20TokenList)[selectedTokenIndex.row]
+              ].decimals,
               sellPrice,
               sellPrice,
               "0"
@@ -331,6 +337,7 @@ const GoodsDetail = (props) => {
         }
       });
   }, [password]);
+
   const approvalNFT = () => {
     if (WalletInUse == 1) {
       console.log("dmw approval nft");
@@ -340,6 +347,7 @@ const GoodsDetail = (props) => {
       setTxModalVisible(true);
     }
   };
+
   const sellNFT = () => {
     if (WalletInUse == 1) {
       setSellOptionVisible(false);
@@ -352,6 +360,9 @@ const GoodsDetail = (props) => {
         sTime,
         "3153600000",
         sellNumber,
+        Object.keys(erc20TokenList)[selectedTokenIndex.row],
+        erc20TokenList[Object.keys(erc20TokenList)[selectedTokenIndex.row]]
+          .decimals,
         sellPrice,
         sellPrice,
         "0"
@@ -360,6 +371,26 @@ const GoodsDetail = (props) => {
       setSellOptionVisible(false);
     }
   };
+
+  const tokenSlect = erc20TokenList && (
+    <Select
+      style={{ width: 125 }}
+      placeholder={erc20TokenList[Object.keys(erc20TokenList)[0]].symbol}
+      value={
+        erc20TokenList[Object.keys(erc20TokenList)[selectedTokenIndex.row]]
+          .symbol
+      }
+      selectedIndex={selectedTokenIndex}
+      onSelect={(index) => {
+        setSelectTokenIndex(index);
+        console.log("selected", index);
+      }}
+    >
+      {Object.keys(erc20TokenList).map((key) => (
+        <SelectItem title={erc20TokenList[key].symbol} />
+      ))}
+    </Select>
+  );
 
   const getList = (data) => {
     setLoding(true);
@@ -399,9 +430,20 @@ const GoodsDetail = (props) => {
         userAvatarArr["shortenAddress"] = res.data.nft_data.creator_address
           ? shortenAddress(res.data.nft_data.creator_address)
           : "--";
+
         setUserInfo(userAvatarArr);
         setlisting(res.data.listing);
+        console.log(res.data.listing);
         sethistory(res.data.history);
+
+        setErc20TokenList({
+          "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": {
+            symbol:
+              chainNameMap[res.data.nft_data.network.toLowerCase()].nativeToken,
+            decimals: 18,
+          },
+          ...supportErc20Token[res.data.nft_data.network.toLowerCase()],
+        });
         console.log(res.data.history);
       })
       .catch((err) => {
@@ -444,6 +486,148 @@ const GoodsDetail = (props) => {
     });
   };
 
+  const listNftModal = (
+    <Modal
+      visible={sellOptionVisible}
+      backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+      onBackdropPress={() => {
+        setSellOptionVisible(false);
+      }}
+    >
+      <Card disabled={true} style={styles.CardBox}>
+        <View
+          style={{
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: 20,
+          }}
+        >
+          <Text
+            style={{
+              textAlign: "center",
+              fontSize: 16,
+              fontWeight: "700",
+              marginBottom: 30,
+            }}
+          >
+            {t("售卖")}
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: "column",
+
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            marginBottom: 20,
+          }}
+        >
+          <Text>{t("价格")}：</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <TextInput
+              caretHidden={true}
+              secureTextEntry={true}
+              onKeyPress={() => {}}
+              keyboardType="phone-pad"
+              style={styles.buyInput}
+              onChangeText={(text) => {
+                const newText =
+                  text
+                    .replace(/[^\d^\.?]+/g, "")
+                    .replace(/^0+(\d)/, "$1")
+                    .replace(/^\./, "0.")
+                    .match(/^\d*(\.?\d{0,18})/g)[0] || "";
+                setSellPrice(newText);
+              }}
+              value={sellPrice}
+            />
+            {tokenSlect}
+          </View>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 20,
+          }}
+        >
+          {Number(sellNumber) != 1 ? (
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setSellNumber(String(Number(sellNumber) - 1));
+              }}
+            >
+              <Image
+                style={styles.addImg}
+                source={require("../../assets/img/index/-.png")}
+              ></Image>
+            </TouchableWithoutFeedback>
+          ) : (
+            <Image
+              style={styles.addImg}
+              source={require("../../assets/img/index/no-.png")}
+            ></Image>
+          )}
+
+          <TextInput
+            caretHidden={true}
+            secureTextEntry={true}
+            onKeyPress={() => {}}
+            keyboardType="phone-pad"
+            style={styles.buyInput}
+            onChangeText={(e) => {
+              if (Number(e) > nftNumber) {
+                Toast(t("剩余数量不足！"));
+                setSellNumber(nftNumber);
+              } else {
+                const newText = e.replace(/^(0+)|[^\d]+/g, "");
+                setSellNumber(newText);
+              }
+            }}
+            value={sellNumber}
+          />
+          <TouchableWithoutFeedback
+            onPress={() => {
+              setSellNumber(String(Number(sellNumber) + 1));
+            }}
+          >
+            <Image
+              style={styles.addImg}
+              source={require("../../assets/img/index/+.png")}
+            ></Image>
+          </TouchableWithoutFeedback>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            marginTop: 30,
+            justifyContent: "space-between",
+          }}
+        >
+          <Text
+            style={[styles.BuyBtnC, {}]}
+            onPress={() => {
+              setSellOptionVisible(false);
+            }}
+          >
+            {t("取消")}
+          </Text>
+          <Text style={[styles.BuyBtnQ, {}]} onPress={() => sellNFT()}>
+            {t("确定")}
+          </Text>
+        </View>
+      </Card>
+    </Modal>
+  );
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
       {loading ? (
@@ -726,11 +910,14 @@ const GoodsDetail = (props) => {
                               ></Image>
                               {detailsObj.network && (
                                 <Text style={{ fontSize: 14, color: "#333" }}>
-                                  {item.buyout_price_per.number +
-                                    " " +
-                                    chainNameMap[
-                                      detailsObj.network.toLowerCase()
-                                    ].nativeToken}
+                                  {item.buyout_price_per.number} {" "}
+                                  {
+                                    item.buyout_price_per.currency_name ==
+                                  "ETH"
+                                    ? chainNameMap[
+                                        detailsObj.network.toLowerCase()
+                                      ].nativeToken
+                                    : item.buyout_price_per.currency_name}
                                 </Text>
                               )}
                             </View>
@@ -856,142 +1043,7 @@ const GoodsDetail = (props) => {
         </ScrollView>
       )}
 
-      <Modal
-        visible={sellOptionVisible}
-        backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-        onBackdropPress={() => {
-          setSellOptionVisible(false);
-        }}
-      >
-        <Card disabled={true} style={styles.CardBox}>
-          <View
-            style={{
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: 20,
-            }}
-          >
-            <Text
-              style={{
-                textAlign: "center",
-                fontSize: 16,
-                fontWeight: "700",
-                marginBottom: 30,
-              }}
-            >
-              {t("售卖")}
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 20,
-            }}
-          >
-            <Text>{t("价格")}：</Text>
-            <TextInput
-              caretHidden={true}
-              secureTextEntry={true}
-              onKeyPress={() => {}}
-              keyboardType="phone-pad"
-              style={styles.buyInput}
-              onChangeText={(text) => {
-                const newText =
-                  text
-                    .replace(/[^\d^\.?]+/g, "")
-                    .replace(/^0+(\d)/, "$1")
-                    .replace(/^\./, "0.")
-                    .match(/^\d*(\.?\d{0,18})/g)[0] || "";
-                setSellPrice(newText);
-              }}
-              value={sellPrice}
-            />
-            {detailsObj.network && (
-              <Text>
-                {chainNameMap[detailsObj.network.toLowerCase()].nativeToken}
-              </Text>
-            )}
-          </View>
-
-          {/* 购买数量 */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 20,
-            }}
-          >
-            {Number(sellNumber) != 1 ? (
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  setSellNumber(String(Number(sellNumber) - 1));
-                }}
-              >
-                <Image
-                  style={styles.addImg}
-                  source={require("../../assets/img/index/-.png")}
-                ></Image>
-              </TouchableWithoutFeedback>
-            ) : (
-              <Image
-                style={styles.addImg}
-                source={require("../../assets/img/index/no-.png")}
-              ></Image>
-            )}
-
-            <TextInput
-              caretHidden={true}
-              secureTextEntry={true}
-              onKeyPress={() => {}}
-              keyboardType="phone-pad"
-              style={styles.buyInput}
-              onChangeText={(e) => {
-                if (Number(e) > nftNumber) {
-                  Toast(t("剩余数量不足！"));
-                  setSellNumber(nftNumber);
-                } else {
-                  const newText = e.replace(/^(0+)|[^\d]+/g, "");
-                  setSellNumber(newText);
-                }
-              }}
-              value={sellNumber}
-            />
-            <TouchableWithoutFeedback
-              onPress={() => {
-                setSellNumber(String(Number(sellNumber) + 1));
-              }}
-            >
-              <Image
-                style={styles.addImg}
-                source={require("../../assets/img/index/+.png")}
-              ></Image>
-            </TouchableWithoutFeedback>
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              marginTop: 30,
-              justifyContent: "space-between",
-            }}
-          >
-            <Text
-              style={[styles.BuyBtnC, {}]}
-              onPress={() => {
-                setSellOptionVisible(false);
-              }}
-            >
-              {t("取消")}
-            </Text>
-            <Text style={[styles.BuyBtnQ, {}]} onPress={() => sellNFT()}>
-              {t("确定")}
-            </Text>
-          </View>
-        </Card>
-      </Modal>
+      {listNftModal}
 
       <Overlay
         isVisible={showOwnerList}
@@ -1068,7 +1120,7 @@ const styles = StyleSheet.create({
     borderColor: "#C2C2C2",
     borderWidth: 1,
     borderRadius: 10,
-    marginLeft: 20,
+    // marginLeft: 20,
     marginRight: 20,
     lineHeight: 40,
     textAlign: "center",
