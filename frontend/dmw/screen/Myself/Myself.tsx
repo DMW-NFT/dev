@@ -106,7 +106,7 @@ const Myself = (props) => {
   const getNftList = (typeName, data, isNextPage = false) => {
     const postUrl = typeRequestMap[typeName];
     console.log(postUrl, data, "请求参数");
-    if (isNextPage && typeName == "我的藏品" && currentCursor == "") {
+    if (isNextPage && typeName == "我的藏品" && !currentCursor) {
       return null;
     }
     let nftList = !isNextPage ? [] : [...myNftList];
@@ -137,7 +137,7 @@ const Myself = (props) => {
 
           setMyNftList([...nftList, ...strarr]);
           setLoding(false);
-          res.data.cursor && setCurrentCursor(res.data.cursor);
+          setCurrentCursor(res.data.cursor);
           res.data.page && setCurrentPage(res.data.page + 1);
           res.data.current_page && setCurrentPage(res.data.current_page + 1);
         } else {
