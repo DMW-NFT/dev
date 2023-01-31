@@ -180,7 +180,7 @@ const loginFn = () =>{
             <TextInput
               onStartShouldSetResponderCapture={(ev) => true}
               placeholder={t("请输入电话号码")}
-              keyboardType="decimal-pad"
+              keyboardType="phone-pad"
               onChangeText={(text) => onChangeText(text, 2)}
               value={phone}
             />

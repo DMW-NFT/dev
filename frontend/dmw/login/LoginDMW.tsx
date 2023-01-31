@@ -149,7 +149,7 @@ const LoginDMW = (props) => {
           ></Image>
           <TextInput
             placeholder={t("请输入邮箱")}
-            keyboardType="decimal-pad"
+            keyboardType="email-address"
             onChangeText={(text) => onChangeText(text, 1)}
             value={email}
           />
@@ -180,7 +180,7 @@ const LoginDMW = (props) => {
             <TextInput
               onStartShouldSetResponderCapture={(ev) => true}
               placeholder={t("请输入电话号码")}
-              keyboardType="decimal-pad"
+              keyboardType="phone-pad"
               onChangeText={(text) => onChangeText(text, 3)}
               value={phone}
             />
@@ -242,7 +242,7 @@ const LoginDMW = (props) => {
         <TextInput
           onStartShouldSetResponderCapture={() => true}
           placeholder={t("请输入密码")}
-          keyboardType="default"
+          keyboardType="ascii-capable"
           secureTextEntry={secureTextEntry}
           onChangeText={(text) => onChangeText(text, 2)}
           value={password}

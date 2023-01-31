@@ -47,7 +47,7 @@ export default class ModifyInfo extends Component {
           <TextInput
             maxLength={6}
             placeholder="请输入地址"
-            keyboardType="decimal-pad"
+            keyboardType="number-pad"
             style={[styles.input]}
             onChangeText={e => this.setState({address: e})}
             value={this.state.address}

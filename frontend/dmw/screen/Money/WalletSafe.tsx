@@ -7,10 +7,11 @@ import {
   TouchableWithoutFeedback,
   TextInput,
 } from "react-native";
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from "react-i18next";
 import React, { useContext, useEffect, useState } from "react";
 import StepComp from "./StepComp";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
+import { ScrollView } from "react-native-gesture-handler";
 const WalletSafe = (props) => {
   const { t, i18n } = useTranslation();
   const [password, setpassword] = useState(props.route.params.password);
@@ -21,74 +22,76 @@ const WalletSafe = (props) => {
     newMnemonic(password, true).then((res) => {
       console.log(res, "zhujici");
     });
-
   }, []);
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
-      <View style={[styles.container]}>
-        <StepComp type={2} />
-        <View>
-          <Text style={[styles.topInfo]}>{t("保护您的钱包安全")}</Text>
-          <Text style={[styles.topInfo1]}>
-          {t("保护您的钱包安全")} , 
-            {t("保护好您的钱包助记词。下一个界面将显示助记词，助记词是您钱包的唯一密钥。如果您的手机丢失或被盗，它将允许您恢复对您钱包的访问。")}
-            
-            <Text style={[styles.textcolor]}>{t("它为什么重要？")}</Text>
-          </Text>
-        </View>
-        <View style={[styles.blackBox]}>
-          <TouchableWithoutFeedback
-            onPress={() => {
-              props.navigation.navigate("walletSafeShow",{ password });
-            }}
-          >
-            <Image
-              style={[styles.imageshow]}
-              source={require("../../assets/img/login/nopass.png")}
-            ></Image>
-          </TouchableWithoutFeedback>
+      <ScrollView>
+        <View style={[styles.container]}>
+          <StepComp type={2} />
           <View>
-            <Text
-              style={{
-                color: "#fff",
-                textAlign: "center",
-                fontWeight: "bold",
-                fontSize: 14,
-              }}
-            >
-              {t("点按可显示助记词")}
-            </Text>
-            <Text
-              style={{
-                marginTop: 10,
-                color: "#fff",
-                textAlign: "center",
-                fontSize: 10,
-              }}
-            >
-              {t("确保没有人在看您的屏幕")} 
+            <Text style={[styles.topInfo]}>{t("保护您的钱包安全")}</Text>
+            <Text style={[styles.topInfo1]}>
+              {t("保护您的钱包安全")} ,
+              {t(
+                "保护好您的钱包助记词。下一个界面将显示助记词，助记词是您钱包的唯一密钥。如果您的手机丢失或被盗，它将允许您恢复对您钱包的访问。"
+              )}
+              <Text style={[styles.textcolor]}>{t("它为什么重要？")}</Text>
             </Text>
           </View>
+          <View style={[styles.blackBox]}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                props.navigation.navigate("walletSafeShow", { password });
+              }}
+            >
+              <Image
+                style={[styles.imageshow]}
+                source={require("../../assets/img/login/nopass.png")}
+              ></Image>
+            </TouchableWithoutFeedback>
+            <View>
+              <Text
+                style={{
+                  color: "#fff",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  fontSize: 14,
+                }}
+              >
+                {t("点按可显示助记词")}
+              </Text>
+              <Text
+                style={{
+                  marginTop: 10,
+                  color: "#fff",
+                  textAlign: "center",
+                  fontSize: 10,
+                }}
+              >
+                {t("确保没有人在看您的屏幕")}
+              </Text>
+            </View>
+            <Text
+              style={[styles.lookBtn]}
+              onPress={() => {
+                props.navigation.navigate("walletSafeShow", { password });
+              }}
+            >
+              {t("查看")}
+            </Text>
+          </View>
+
           <Text
-            style={[styles.lookBtn]}
+            style={[styles.import]}
             onPress={() => {
               props.navigation.navigate("walletSafeShow", { password });
             }}
           >
-           {t("查看")}  
+            {t("继续")}
           </Text>
         </View>
-
-        <Text
-          style={[styles.import]}
-          onPress={() => {
-            props.navigation.navigate("walletSafeShow", { password });
-          }}
-        >
-         {t("继续")}  
-        </Text>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

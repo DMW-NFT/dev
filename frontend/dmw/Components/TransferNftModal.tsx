@@ -231,9 +231,9 @@ export default function TransferNftModal(props) {
                 ></Image>
               )}
               <Input
-                caretHidden={true}
+
                 onKeyPress={() => {}}
-                keyboardType="numeric"
+                keyboardType="number-pad"
                 style={styles.buyInput}
                 onChangeText={(e) => {
                   setTxNftAmount(e.replace(/^(0+)|[^\d]+/g, ""));

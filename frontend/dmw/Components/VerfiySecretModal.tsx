@@ -48,7 +48,7 @@ export default function VerfiySecretModal(props) {
                     secureTextEntry={true}
                     onKeyPress={() => { }}
                     placeholder='123456'
-                    keyboardType="numeric"
+                    keyboardType="number-pad"
                     style={{ position: 'absolute', zIndex: 1, top: -40 }}
                     onChangeText={(e) => {
                         setPassword(e);

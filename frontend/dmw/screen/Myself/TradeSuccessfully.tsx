@@ -10,7 +10,7 @@ import {
 import React, { useState, useEffect } from "react";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { t } from "i18next";
-import chainNameMap from "../../../constans/chainNameMap.json"
+import chainNameMap from "../../../constans/chainNameMap.json";
 
 const TradeSuccessfully = (props) => {
   // state = {
@@ -32,6 +32,98 @@ const TradeSuccessfully = (props) => {
         : (props.navigation.navigate("sellOrder"), Toast(res.message));
     });
   }, [props]);
+
+  const PlatformFee = list && (
+    <View style={[styles.flexJBC, styles.mb30]}>
+      <Text style={[styles.ImageBoxName]}>
+        {t("服务费") + list.service * 100}%
+      </Text>
+      <Text style={[styles.ImageBoxColl]}>
+        {list.service_fee.number}{" "}
+        {list.service_fee.currency_name == "ETH"
+          ? chainNameMap[list.network].nativeToken
+          : list.service_fee.currency_name}
+      </Text>
+    </View>
+  );
+  const NftInfo = list && (
+    <View style={[styles.imageBox]}>
+      <View style={[styles.flex]}>
+        <Image
+          source={{ uri: list.image_attachment_url }}
+          style={[styles.imgBoxImage]}
+        ></Image>
+        <View style={{ flex: 1 }}>
+          <View style={[styles.flexJBC]}>
+            <Text style={[styles.ImageBoxName, { marginBottom: 23 }]}>
+              {list.nft_name}
+            </Text>
+            <Text style={[styles.ImageBoxName, { fontWeight: "bold" }]}>
+              {list.buyout_price_per.number}{" "}
+              {list.buyout_price_per.currency_name == "ETH"
+                ? chainNameMap[list.network].nativeToken
+                : list.buyout_price_per.currency_name}
+            </Text>
+          </View>
+          <Text style={[styles.ImageBoxColl]}>{list.collection_name}</Text>
+        </View>
+      </View>
+    </View>
+  );
+
+  const RoyaltiesFee = list && (
+    <View style={[styles.flexJBC, styles.mb30]}>
+      <Text style={[styles.ImageBoxName]}>
+        {t("版权费") + " " + list.royalties * 100}%
+      </Text>
+      <Text style={[styles.ImageBoxColl]}>
+        {list.royalties_fee.number}{" "}
+        {list.royalties_fee.currency_name == "ETH"
+          ? chainNameMap[list.network].nativeToken
+          : list.royalties_fee.currency_name}
+      </Text>
+    </View>
+  );
+  const PricePerToken = list && (
+    <View style={[styles.flexJBC, styles.mb30]}>
+      <Text style={[styles.ImageBoxName]}>
+        {t("价格/NFT") + " " }
+      </Text>
+      <Text style={[styles.ImageBoxColl]}>
+        {list.total_offer_amount_per.number}{" "}
+        {list.total_offer_amount_per.currency_name == "ETH"
+          ? chainNameMap[list.network].nativeToken
+          : list.total_offer_amount_per.currency_name}
+      </Text>
+    </View>
+  );
+  const QuantityWanted = list && (
+    <View style={[styles.flexJBC, styles.mb30]}>
+      <Text style={[styles.ImageBoxName]}>
+        {t("数量") + " " }
+      </Text>
+      <Text style={[styles.ImageBoxColl]}>
+        {list.quantity_wanted}{" "}
+      </Text>
+    </View>
+  );
+
+  const TotalPrice = list && (
+    <View style={[styles.flexJBC, styles.borderling]}>
+      <Text style={[styles.ImageBoxName]}>{t("成交价") + ""}</Text>
+      <Text
+        style={[
+          styles.ImageBoxColl,
+          { color: "#897EF8", fontSize: 16, fontWeight: "bold" },
+        ]}
+      >
+        {list.total_offer_amount.number}{" "}
+        {list.total_offer_amount.currency_name == "ETH"
+          ? chainNameMap[list.network].nativeToken
+          : list.total_offer_amount.currency_name}
+      </Text>
+    </View>
+  );
   return (
     list && (
       <SafeAreaView style={{ backgroundColor: "#fff" }}>
@@ -42,63 +134,14 @@ const TradeSuccessfully = (props) => {
               <Image source={require('../../assets/img/index/any3.jpg')} style={[styles.whiteImage]}></Image>
               <Text style={[styles.whiteImageText]}>Simon D</Text>
             </View> */}
-              <View style={[styles.imageBox]}>
-                <View style={[styles.flex]}>
-                  <Image
-                    source={{ uri: list.image_attachment_url }}
-                    style={[styles.imgBoxImage]}
-                  ></Image>
-                  <View style={{ flex: 1 }}>
-                    <View style={[styles.flexJBC]}>
-                      <Text style={[styles.ImageBoxName, { marginBottom: 23 }]}>
-                        {list.nft_name}
-                      </Text>
-                      <Text
-                        style={[styles.ImageBoxName, { fontWeight: "bold" }]}
-                      >
-                        {list.buyout_price_per.number}{" "}
-                        {list.buyout_price_per.currency_name=="ETH"? chainNameMap[list.network].nativeToken : list.buyout_price_per.currency_name}
-                      </Text>
-                    </View>
-                    <Text style={[styles.ImageBoxColl]}>
-                      {list.collection_name}
-                    </Text>
-                  </View>
-                </View>
-              </View>
+              {NftInfo}
               {type == 1 ? (
                 <View>
-                  <View style={[styles.flexJBC, styles.mb30]}>
-                    <Text style={[styles.ImageBoxName]}>
-                      {t("服务费") + list.service * 100}%
-                    </Text>
-                    <Text style={[styles.ImageBoxColl]}>
-                      {list.service_fee.number} {list.service_fee.currency_name =="ETH"?chainNameMap[list.network].nativeToken:list.service_fee.currency_name}
-                    </Text>
-                  </View>
-                  <View style={[styles.flexJBC, styles.mb30]}>
-                    <Text style={[styles.ImageBoxName]}>
-                      {t("版权费") + " " + list.royalties * 100}%
-                    </Text>
-                    <Text style={[styles.ImageBoxColl]}>
-                      {list.royalties_fee.number}{" "}
-                      {list.royalties_fee.currency_name=="ETH"?chainNameMap[list.network].nativeToken:list.royalties_fee.currency_name}
-                    </Text>
-                  </View>
-                  <View style={[styles.flexJBC, styles.borderling]}>
-                    <Text style={[styles.ImageBoxName]}>
-                      {t("成交价") + ""}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.ImageBoxColl,
-                        { color: "#897EF8", fontSize: 16, fontWeight: "bold" },
-                      ]}
-                    >
-                      {list.total_offer_amount.number}{" "}
-                      {list.total_offer_amount.currency_name=="ETH"?chainNameMap[list.network].nativeToken:list.total_offer_amount.currency_name}
-                    </Text>
-                  </View>
+                  {PlatformFee}
+                  {RoyaltiesFee}
+                  {PricePerToken}
+                  {QuantityWanted}
+                  {TotalPrice}
                 </View>
               ) : (
                 <View style={[styles.borderling, { paddingBottom: 0 }]}></View>

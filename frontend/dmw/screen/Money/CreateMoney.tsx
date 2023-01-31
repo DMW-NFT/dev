@@ -6,6 +6,7 @@ import {
   Image,
   Dimensions,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 // import * as Animatable from 'react-native-animatable'
@@ -13,7 +14,7 @@ import { Modal } from "react-native-paper";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from "react-i18next";
 const CreateMoney = (props) => {
   const { t, i18n } = useTranslation();
   const [visible, setvisible] = useState(false);
@@ -26,16 +27,16 @@ const CreateMoney = (props) => {
   };
 
   const clickWallet = () => {
-    connectWallet()
+    connectWallet();
   };
-  useEffect(()=>{
-    if(connected){
-          setMoneyRouteState("money");
-        }else{
-          setMoneyRouteState("createMoney");
-          // Toast( t("钱包已断开链接"));
-        }
-  },[connected])
+  useEffect(() => {
+    if (connected) {
+      setMoneyRouteState("money");
+    } else {
+      setMoneyRouteState("createMoney");
+      // Toast( t("钱包已断开链接"));
+    }
+  }, [connected]);
 
   useEffect(() => {
     console.log("====================================");
@@ -50,73 +51,75 @@ const CreateMoney = (props) => {
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff" }}>
-      <View style={[styles.container]}>
-        <Text style={[styles.title]}>Connect with Wallet</Text>
-        <TouchableWithoutFeedback onPress={() => clickWallet()}>
-          <View style={[styles.imgBox]}>
-            <Image
-              style={[styles.Image]}
-              source={require("../../assets/img/money/78.png")}
-            ></Image>
-            <Image
-              style={[styles.Image]}
-              source={require("../../assets/img/money/79.png")}
-            ></Image>
-            <Image
-              style={[styles.Image]}
-              source={require("../../assets/img/money/80.png")}
-            ></Image>
-            <Image
-              style={[styles.Image]}
-              source={require("../../assets/img/money/81.png")}
-            ></Image>
-            <Image
-              style={[styles.Image]}
-              source={require("../../assets/img/money/82.png")}
-            ></Image>
-            <Image
-              style={[styles.Image]}
-              source={require("../../assets/img/money/83.png")}
-            ></Image>
-          </View>
-        </TouchableWithoutFeedback>
-        <Text
-          style={[styles.createMoneyBtn]}
-          onPress={() => {
-            setvisible(true);
-          }}
-        >
-         {t("创建新钱包")} 
-        </Text>
+      <ScrollView>
+        <View style={[styles.container]}>
+          <Text style={[styles.title]}>{t("连接钱包")}</Text>
+          <TouchableWithoutFeedback onPress={() => clickWallet()}>
+            <View style={[styles.imgBox]}>
+              <Image
+                style={[styles.Image]}
+                source={require("../../assets/img/money/78.png")}
+              ></Image>
+              <Image
+                style={[styles.Image]}
+                source={require("../../assets/img/money/79.png")}
+              ></Image>
+              <Image
+                style={[styles.Image]}
+                source={require("../../assets/img/money/80.png")}
+              ></Image>
+              <Image
+                style={[styles.Image]}
+                source={require("../../assets/img/money/81.png")}
+              ></Image>
+              <Image
+                style={[styles.Image]}
+                source={require("../../assets/img/money/82.png")}
+              ></Image>
+              <Image
+                style={[styles.Image]}
+                source={require("../../assets/img/money/83.png")}
+              ></Image>
+            </View>
+          </TouchableWithoutFeedback>
+          <Text
+            style={[styles.createMoneyBtn]}
+            onPress={() => {
+              setvisible(true);
+            }}
+          >
+            {t("创建新钱包")}
+          </Text>
 
-        {/* <Animatable.View animation="fadeInUpBig" style={[styles.footer]}>
+          {/* <Animatable.View animation="fadeInUpBig" style={[styles.footer]}>
                         </Animatable.View> */}
-      </View>
-      <Modal
-        visible={visible}
-        onDismiss={() => {
-          setvisible(false);
-        }}
-        contentContainerStyle={[styles.footer]}
-      >
-        <View style={[styles.btnline]}></View>
-        <Text
-          style={[styles.createMoneyBtn]}
-          onPress={() => {
-            navigate("createWord");
+        </View>
+        <Modal
+          visible={visible}
+          onDismiss={() => {
+            setvisible(false);
           }}
+          contentContainerStyle={[styles.footer]}
         >
-         {t("暂无助记词，去新建")}  
-        </Text>
-        <Text
-          style={[styles.createMoneyBtn]}
-          onPress={() => {
-            navigate("importWord");
-          }}
-        >
-        {t("已有助记词，去导入")}   
-        </Text>
-      </Modal>
+          <View style={[styles.btnline]}></View>
+          <Text
+            style={[styles.createMoneyBtn]}
+            onPress={() => {
+              navigate("createWord");
+            }}
+          >
+            {t("暂无助记词，去新建")}
+          </Text>
+          <Text
+            style={[styles.createMoneyBtn]}
+            onPress={() => {
+              navigate("importWord");
+            }}
+          >
+            {t("已有助记词，去导入")}
+          </Text>
+        </Modal>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -173,10 +176,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   container: {
-    height: Dimensions.get("window").height,
+    height: Dimensions.get("window").height - 95,
     padding: 70 / 2,
     paddingTop: 10,
-    paddingBottom: 130,
+    // paddingBottom: 130,
     justifyContent: "space-between",
     alignItems: "center",
   },

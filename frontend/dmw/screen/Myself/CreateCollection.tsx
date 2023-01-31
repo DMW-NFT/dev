@@ -323,7 +323,7 @@ const TransferredIntoCollection = (props) => {
       <TextInput
         maxLength={18}
         placeholder={t("请输入版权费")}
-        keyboardType="number-pad"
+        keyboardType="decimal-pad"
         style={[styles.input]}
         onChangeText={(e) => {
           if ((!isNaN(e) && e >= 0 && e <= 100) || e == "") {

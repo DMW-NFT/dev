@@ -199,7 +199,7 @@ const EmailAndPhoneReginster = (props) => {
           ></Image>
           <TextInput
             placeholder={t("请输入邮箱")}
-            keyboardType="decimal-pad"
+            keyboardType="email-address"
             onChangeText={(text) => onChangeText(text, 1)}
             value={email}
           />
@@ -230,7 +230,7 @@ const EmailAndPhoneReginster = (props) => {
             <TextInput
               onStartShouldSetResponderCapture={(ev) => true}
               placeholder={t("请输入电话号码")}
-              keyboardType="decimal-pad"
+              keyboardType="phone-pad"
               onChangeText={(text) => onChangeText(text, 2)}
               value={phone}
             />
@@ -280,7 +280,7 @@ const EmailAndPhoneReginster = (props) => {
         <TextInput
           maxLength={6}
           placeholder={t("请输入验证码  ")}
-          keyboardType="decimal-pad"
+          keyboardType="number-pad"
           onChangeText={(text) => onChangeText(text, 3)}
           value={sancode}
         />
@@ -310,7 +310,7 @@ const EmailAndPhoneReginster = (props) => {
         <TextInput
           maxLength={20}
           placeholder={t("请输入密码")}
-          keyboardType="default"
+          keyboardType="ascii-capable"
           secureTextEntry={secureTextEntry}
           onChangeText={(text) => onChangeText(text, 4)}
           value={password}
@@ -324,7 +324,7 @@ const EmailAndPhoneReginster = (props) => {
         <TextInput
           maxLength={20}
           placeholder={t("请再次输入密码")}
-          keyboardType="default"
+          keyboardType="ascii-capable"
           secureTextEntry={secureTextEntry}
           numberOfLines={4}
           onChangeText={(text) => onChangeText(text, 5)}

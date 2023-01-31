@@ -21,7 +21,7 @@ const ImportWord = (props) => {
   //     password1:'',
   // }
   const { t, i18n } = useTranslation();
-  const [secureTextEntry, setsecureTextEntry] = useState(false);
+  const [secureTextEntry, setsecureTextEntry] = useState(true);
 
   const [word, setword] = useState("");
   const [password, setpassword] = useState("");
@@ -118,7 +118,7 @@ const ImportWord = (props) => {
               maxLength={6}
               secureTextEntry={secureTextEntry}
               placeholder={t("新密码")}
-              keyboardType="decimal-pad"
+              keyboardType="number-pad"
               style={[styles.input]}
               onChangeText={(e) => {
                 setpassword(e);
@@ -127,12 +127,12 @@ const ImportWord = (props) => {
             />
           </View>
           <View style={styles.lis}>
-            <Text style={styles.text}>{t("新密码")}</Text>
+            <Text style={styles.text}>{t("确认密码")}</Text>
             <TextInput
               maxLength={6}
               secureTextEntry={secureTextEntry}
               placeholder={t("确认密码")}
-              keyboardType="decimal-pad"
+              keyboardType="number-pad"
               style={[styles.input]}
               onChangeText={(e) => {
                 setpassword1(e);
@@ -146,10 +146,19 @@ const ImportWord = (props) => {
 
           {!loading ? (
             <TouchableOpacity
-              style={[styles.import,{justifyContent:"center"}]}
+              style={[styles.import, { justifyContent: "center" }]}
               onPress={() => introduce()}
             >
-              <Text style={{textAlign:"center",alignSelf:"center",color:"white",fontSize:20}}>{t("导入")}</Text>
+              <Text
+                style={{
+                  textAlign: "center",
+                  alignSelf: "center",
+                  color: "white",
+                  fontSize: 20,
+                }}
+              >
+                {t("导入")}
+              </Text>
             </TouchableOpacity>
           ) : (
             <Text style={[styles.import]}>{t("loading...")}</Text>

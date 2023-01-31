@@ -532,10 +532,9 @@ const GoodsDetail = (props) => {
             }}
           >
             <TextInput
-              caretHidden={true}
-              secureTextEntry={true}
+              // caretHidden={true}
               onKeyPress={() => {}}
-              keyboardType="phone-pad"
+              keyboardType="decimal-pad"
               style={styles.buyInput}
               onChangeText={(text) => {
                 const newText =
@@ -578,14 +577,13 @@ const GoodsDetail = (props) => {
           )}
 
           <TextInput
-            caretHidden={true}
-            secureTextEntry={true}
+            // caretHidden={true}
             onKeyPress={() => {}}
-            keyboardType="phone-pad"
+            keyboardType="number-pad"
             style={styles.buyInput}
             onChangeText={(e) => {
               if (Number(e) > nftNumber) {
-                Toast(t("剩余数量不足！"));
+                Toast(t("剩余数量不足"));
                 setSellNumber(nftNumber);
               } else {
                 const newText = e.replace(/^(0+)|[^\d]+/g, "");
@@ -870,6 +868,9 @@ const GoodsDetail = (props) => {
                           Toast(t("请先登录钱包"));
                           return;
                         } else if (WalletInUse == 2 && !currentWallet) {
+                          Toast(t("请先登录钱包"));
+                          return;
+                        } else if(!currentWallet&&!dmwWalletList[0]) {
                           Toast(t("请先登录钱包"));
                           return;
                         }

@@ -377,14 +377,12 @@ const QuotationDetails = (props) => {
           ></Image>
         )}
         <TextInput
-          caretHidden={true}
-          secureTextEntry={true}
           onKeyPress={() => {}}
-          keyboardType="phone-pad"
+          keyboardType="number-pad"
           style={styles.buyInput}
           onChangeText={(e) => {
             if (Number(e) > orderList.quantity) {
-              Toast("剩余数量不足！");
+              Toast("剩余数量不足");
               setBuyNumber(String(orderList.quantity));
             } else {
               setBuyNumber(e);
@@ -442,7 +440,6 @@ const QuotationDetails = (props) => {
           }}
         >
           <TextInput
-            caretHidden={true}
             onKeyPress={() => {}}
             keyboardType="decimal-pad"
             style={[styles.buyInput, { marginRight: 10, marginLeft: 0 }]}
@@ -578,7 +575,7 @@ const QuotationDetails = (props) => {
   useEffect(() => {
     let newBuyNumber = null;
     if (Number(BuyNumber) > orderList.quantity && orderList) {
-      Toast(t("剩余数量不足！"));
+      Toast(t("剩余数量不足"));
       newBuyNumber = String(orderList.quantity);
     } else if (Number(BuyNumber) < 0) {
       newBuyNumber = String(1);

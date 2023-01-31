@@ -1,4 +1,4 @@
-import { Text, StyleSheet, View, SafeAreaView } from "react-native";
+import { Text, StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
 import React, { useState, useEffect, useContext } from "react";
 import StepComp from "./StepComp";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
@@ -59,76 +59,79 @@ const DetermineWord = (props) => {
         props.navigation.navigate("completeBackup");
       });
     } else {
+      setLoading(false)
       Toast(t("助记词不正确"));
     }
   };
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
-      <View style={[styles.container]}>
-        <StepComp type={3} />
-        <View>
-          <Text style={[styles.topInfo]}>{t("确认助记词")}</Text>
-          <Text style={[styles.topInfo1, { marginBottom: 20 }]}>
-            {t("按照之前按呈现的顺序选择每个字词")}
-          </Text>
-        </View>
-        <View style={[styles.blackBox]}>
-          {checkdata.map((item, index) => {
-            return <Text style={[styles.checkdata]}>{item}</Text>;
-          })}
-        </View>
-        <View style={[styles.Box]}>
-          {MnemonicList.map((item, index) => {
-            return (
+      <ScrollView>
+        <View style={[styles.container]}>
+          <StepComp type={3} />
+          <View>
+            <Text style={[styles.topInfo]}>{t("确认助记词")}</Text>
+            <Text style={[styles.topInfo1, { marginBottom: 20 }]}>
+              {t("按照之前按呈现的顺序选择每个字词")}
+            </Text>
+          </View>
+          <View style={[styles.blackBox]}>
+            {checkdata.map((item, index) => {
+              return <Text style={[styles.checkdata]}>{item}</Text>;
+            })}
+          </View>
+          <View style={[styles.Box]}>
+            {MnemonicList.map((item, index) => {
+              return (
+                <Text
+                  style={[
+                    styles.lis,
+                    checkdata.includes(item) ? styles.active : null,
+                  ]}
+                  onPress={() => {
+                    checkList(item);
+                  }}
+                >
+                  {item}
+                </Text>
+              );
+            })}
+          </View>
+          {!loading ? (
+            <TouchableOpacity
+              style={[styles.import, { justifyContent: "center" }]}
+              onPress={() => Complete()}
+            >
               <Text
-                style={[
-                  styles.lis,
-                  checkdata.includes(item) ? styles.active : null,
-                ]}
-                onPress={() => {
-                  checkList(item);
+                style={{
+                  textAlign: "center",
+                  alignSelf: "center",
+                  color: "white",
+                  fontSize: 20,
                 }}
               >
-                {item}
+                {t("完成备份")}
               </Text>
-            );
-          })}
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={[styles.import, { justifyContent: "center" }]}
+              // onPress={() => Complete()}
+            >
+              <Text
+                style={{
+                  textAlign: "center",
+                  alignSelf: "center",
+                  color: "white",
+                  fontSize: 20,
+                }}
+              >
+                {t("loading...")}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
-        {!loading ? (
-          <TouchableOpacity
-            style={[styles.import, { justifyContent: "center" }]}
-            onPress={() => Complete()}
-          >
-            <Text
-              style={{
-                textAlign: "center",
-                alignSelf: "center",
-                color: "white",
-                fontSize: 20,
-              }}
-            >
-              {t("完成备份")}
-            </Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={[styles.import, { justifyContent: "center" }]}
-            // onPress={() => Complete()}
-          >
-            <Text
-              style={{
-                textAlign: "center",
-                alignSelf: "center",
-                color: "white",
-                fontSize: 20,
-              }}
-            >
-              {t("loading...")}
-            </Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

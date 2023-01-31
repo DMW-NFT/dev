@@ -358,5 +358,14 @@
   "暂无新消息": "No new messages",
   "数量":"Amount",
   "网络":"Network",
-  "版权费":"Copyright fee"
+  "版权费":"Copyright fee",
+  "请输入版权费": "Enter royalty fee",
+  "当前钱包": "Current wallet",
+  "请输入铸造数量": "Enter minting quantity",
+  "请输入区块链地址": "Enter blockchain address",
+  "版权费接收地址": "Royalty fee recipient address",
+  "总价": "Total price",
+  "助记词解析错误，请重新尝试": "Mnemonic analysis error, please try again",
+  "剩余数量不足": "Insufficient remaining quantity",
+  "连接钱包": "Connect Wallet"
 }
