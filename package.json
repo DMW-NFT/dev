@@ -102,7 +102,7 @@
     "postinstall": "node_modules/.bin/ts-node scripts/postinstall",
     "test": "npx hardhat test && jest",
     "web:deploy": "expo build:web && gh-pages -d web-build",
-    "releaseABB": "./android/gradlew bundleRelease"
+    "releaseABB": "cd android && ./gradlew bundleRelease"
   },
   "version": "1.0.1",
   "private": true,
