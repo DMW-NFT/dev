@@ -1,9 +1,6 @@
 name: Build up for bundle
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on:
-  push:
-    branches:
-      - buildBranch
+on: [push]
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
