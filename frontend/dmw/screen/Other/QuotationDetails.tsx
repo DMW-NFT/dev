@@ -78,7 +78,7 @@ const QuotationDetails = (props) => {
   const [readyToTakeOffer, setReadyToTakeOffer] = useState(false);
   const [offerToTake, setOfferToTake] = useState(null);
   const clearAllowance = false;
-  // Context 方法
+  // Context 方法 
   const { Toast, post, get, formData, shortenAddress } = useDmwApi();
   const {
     buyNFT,
