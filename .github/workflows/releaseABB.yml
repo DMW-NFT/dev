@@ -11,6 +11,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Build app
+        run: chmod +x ./android/gradlew
         run: ./android/gradlew bundleRelease
       - name: Deploy to GitHub
         uses: actions/upload-artifact@v1
