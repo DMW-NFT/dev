@@ -13,6 +13,7 @@ import ERC20ABI from "../contract/ERC20.json";
 import BigNumber from "bignumber.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ChainIdMap from "../constans/chainIdMap.json";
+import SupportErc20Token from "../constans/supportErc20Token.json";
 import { ethers } from "ethers";
 import { resolve } from "path";
 import { rejects } from "assert";
@@ -30,6 +31,7 @@ const DmwWeb3Provider = ({ children }) => {
   const [nativeToken, setNativeToken] = useState("ETH");
   const [globalError, setGlobalError] = useState([]);
   const [dmwConfig, setDmwConfig] = useState({});
+  const [supportErc20Token, setSupportErc20Token] = useState(SupportErc20Token);
   const GasMap = txGasMap;
   const web3 = new Web3();
 
@@ -59,9 +61,35 @@ const DmwWeb3Provider = ({ children }) => {
     });
   };
 
+  const getRoyaltyFee = async (contractAddress: string, tokenId: number) => {
+    web3.eth.setProvider(getProvider(currentChainId));
+    const contract = new web3.eth.Contract(NFT1155ABI, contractAddress);
+    return contract.methods
+      .getRoyaltyInfoForToken(tokenId)
+      .call()
+      .then((result) => {
+        return result;
+      });
+  };
+
   const contractMap = (): {} => {
     console.log(dmwConfig ? "using online config" : "usesing local config");
     return dmwConfig ? dmwConfig : ChainIdMap;
+  };
+
+  const getSupportErc20Token = () => {
+    console.log("getting support erc20 token");
+    fetch(`http://18.142.150.253/index/common/get_support_erc20_token`, {
+      method: "GET",
+    }).then((res) => {
+      res.json().then((result) => {
+        if (result && result.data) {
+          // let jsonConfig = convertArrayToJson(result.data);
+          console.log("got erc20config:", result.data);
+          setSupportErc20Token(result.data);
+        }
+      });
+    });
   };
 
   const throwTxError = (error) => {
@@ -88,6 +116,7 @@ const DmwWeb3Provider = ({ children }) => {
 
   useEffect(() => {
     getDmwConfig();
+    getSupportErc20Token();
     if (connector.connected) {
       setCurrentWallet(connector.accounts[0]);
       setConnected(true);
@@ -418,22 +447,17 @@ const DmwWeb3Provider = ({ children }) => {
     quantityToBuy: number,
     currency: string,
     decimals: number,
-    unitPrice:string,
-    
+    unitPrice: string
   ) => {
-    const totalPrice = String(Number(ethers.utils.parseUnits(unitPrice, decimals)) * quantityToBuy);
+    const totalPrice = String(
+      Number(ethers.utils.parseUnits(unitPrice, decimals)) * quantityToBuy
+    );
     web3.eth.setProvider(getProvider(currentChainId));
     console.log("buy with currency", currency, totalPrice);
     const contractAddress = contractMap()[currentChainId].market_contract;
     const contract = new web3.eth.Contract(marketplaceABI, contractAddress);
     const rawdata = contract.methods
-      .buy(
-        listingId,
-        currentWallet,
-        quantityToBuy,
-        currency,
-        totalPrice
-      )
+      .buy(listingId, currentWallet, quantityToBuy, currency, totalPrice)
       .encodeABI();
     console.log(rawdata);
     const tx = {
@@ -818,6 +842,8 @@ const DmwWeb3Provider = ({ children }) => {
         dmwConfig,
         contractMap,
         updateNetwork,
+        supportErc20Token,
+        getRoyaltyFee
       }}
     >
       {children}

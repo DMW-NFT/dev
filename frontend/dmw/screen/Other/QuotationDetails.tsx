@@ -36,7 +36,7 @@ import { ListItem, Avatar, Icon, Overlay } from "@rneui/themed";
 import VerfiySecretModal from "../../Components/VerfiySecretModal";
 import TxProccessingModal from "../../Components/TxProccessingModal";
 import chainNameMap from "../../../constans/chainNameMap.json";
-import supportErc20Token from "../../../constans/supportErc20Token.json";
+// import supportErc20Token from "../../../constans/supportErc20Token.json";
 import { State } from "react-native-gesture-handler";
 
 const QuotationDetails = (props) => {
@@ -97,6 +97,7 @@ const QuotationDetails = (props) => {
     acceptOffer,
     currentChainId,
     updateNetwork,
+    supportErc20Token
   } = useDmwWeb3();
   const {
     dmwBuyNFT,

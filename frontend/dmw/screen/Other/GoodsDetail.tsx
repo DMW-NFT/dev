@@ -19,7 +19,7 @@ import {
 import List from "../../Components/List";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { IndexPath, Select, SelectItem, Spinner } from "@ui-kitten/components";
-import supportErc20Token from "../../../constans/supportErc20Token.json";
+// import supportErc20Token from "../../../constans/supportErc20Token.json";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import {
   Card,
@@ -149,6 +149,7 @@ const GoodsDetail = (props) => {
   const [txModalVisible, setTxModalVisible] = useState(false);
   const [erc20TokenList, setErc20TokenList] = useState(null);
   const [selectedTokenIndex, setSelectTokenIndex] = useState(new IndexPath(0));
+  const [royaltyFee, setRoyaltyFee] = useState(0);
   // Context 方法
   const { Toast, post, get, formData, shortenAddress } = useDmwApi();
   const { WalletInUse } = useDmwLogin();
@@ -174,6 +175,8 @@ const GoodsDetail = (props) => {
     currentChainId,
     updateNetwork,
     connector,
+    supportErc20Token,
+    getRoyaltyFee,
   } = useDmwWeb3();
 
   // 获取nft详细数据
@@ -222,7 +225,14 @@ const GoodsDetail = (props) => {
 
   useEffect(() => {
     const walletAddress = WalletInUse == 1 ? dmwWalletList[0] : currentWallet;
-
+    detailsObj &&
+      detailsObj.contract_address &&
+      getRoyaltyFee(detailsObj.contract_address, detailsObj.token_id).then(
+        (res) => {
+          console.log("royalty fee: ", res);
+          res[1]&&setRoyaltyFee(res[1]);
+        }
+      );
     if (
       detailsObj &&
       detailsObj.contract_address &&
@@ -837,6 +847,12 @@ const GoodsDetail = (props) => {
                       {detailsObj.network}
                     </Text>
                   </View>
+                  <View style={[styles.flexJBC, { marginBottom: 20 }]}>
+                    <Text style={[styles.chainLeft]}>{t("版权费")}</Text>
+                    <Text style={[styles.chainRight, { color: " #897EF8" }]}>
+                      {(royaltyFee / 100).toFixed(2)}%
+                    </Text>
+                  </View>
                 </View>
               </View>
             </ListItem.Accordion>
@@ -870,7 +886,7 @@ const GoodsDetail = (props) => {
                         } else if (WalletInUse == 2 && !currentWallet) {
                           Toast(t("请先登录钱包"));
                           return;
-                        } else if(!currentWallet&&!dmwWalletList[0]) {
+                        } else if (!currentWallet && !dmwWalletList[0]) {
                           Toast(t("请先登录钱包"));
                           return;
                         }
@@ -911,10 +927,8 @@ const GoodsDetail = (props) => {
                               ></Image>
                               {detailsObj.network && (
                                 <Text style={{ fontSize: 14, color: "#333" }}>
-                                  {item.buyout_price_per.number} {" "}
-                                  {
-                                    item.buyout_price_per.currency_name ==
-                                  "ETH"
+                                  {item.buyout_price_per.number}{" "}
+                                  {item.buyout_price_per.currency_name == "ETH"
                                     ? chainNameMap[
                                         detailsObj.network.toLowerCase()
                                       ].nativeToken
