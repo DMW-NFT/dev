@@ -22,10 +22,10 @@ const NoticeDetails = (props) => {
   const [data, setdata] = useState({
     "conf_id": 2,
     "content": "",
-    "create_time": "2022-10-19 14:29:10",
+    "create_time": "",
     "id": 3, "status": 1,
-    "title": "1.2万圣节版本",
-    "type": "版本更新"
+    "title": "",
+    "type": ""
   })
   useEffect(() => {
     post("/index/message/get_message_system_details", formData({ id: props.route.params.id })).then(res => {

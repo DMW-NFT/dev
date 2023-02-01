@@ -84,7 +84,7 @@ const MyCollection = (props) => {
                 keyExtractor={(item, index) => index}
                 ListFooterComponent={() => {
                     // 声明尾部组件
-                    return list && list.length ? <Text style={{ textAlign: 'center' }}>{setList.length}</Text> : null
+                    return list && list.length ? <Text style={{ textAlign: 'center',marginTop:60 }}>{t("没有更多了")}</Text> : null
                 }}
                 // 下刷新
                 onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数

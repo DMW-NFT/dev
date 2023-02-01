@@ -1,6 +1,7 @@
 import { Text, StyleSheet, View, Dimensions } from 'react-native';
 import React, { useState, useEffect, Suspense } from 'react';
 import { Modal } from 'react-native-paper';
+import { t } from 'i18next';
 
 const scale = Dimensions.get('window').scale;
 const screenWidth = Dimensions.get('window').width;
@@ -13,7 +14,7 @@ const CreateMoney = (props) => {
   //   };
   // }
   const [datalist, setdatalist] = useState(props.datalist)
-  const [activeBtn, setActiveBtn] = useState({})
+  const [activeBtn, setActiveBtn] = useState(props.Fndetermine || {})
   const close = () => {
     props.close();
   }
@@ -21,9 +22,10 @@ const CreateMoney = (props) => {
   const determine = () => {
     props.determineFn(activeBtn)
   }
-  useEffect(() => {
-    // console.log(12);
-  }, [activeBtn])
+  // useEffect(() => {
+  //   console.log(props.Fndetermine, 'activeBtn');
+  //   setActiveBtn(props.Fndetermine)
+  // }, [props])
 
   const btnactive = (title, item) => {
     let arrs = JSON.stringify(activeBtn)
@@ -33,7 +35,12 @@ const CreateMoney = (props) => {
         arr[title.value].push(item.value)
         setActiveBtn(arr)
       } else {
-        arr[title.value] = item.value
+        if(arr[title.value] == item.value){
+          arr[title.value] = ''
+        }else{
+          arr[title.value] = item.value
+        }
+       
         setActiveBtn(arr)
       }
       // console.log(arr);
@@ -51,7 +58,7 @@ const CreateMoney = (props) => {
 
   let { visible } = props;
   return (
-    <View style={[props.style, { position: 'absolute', width: "100%" }]}>
+    <View style={[{ position: 'absolute', width: "100%" ,zIndex:100,bottom:0,height:"100%"}]}>
       <View style={styles.container}></View>
       <Modal
         visible={visible}
@@ -98,7 +105,7 @@ const CreateMoney = (props) => {
         </View>
 
         <Text style={[styles.sureMoneyBtn]} onPress={() => determine()}>
-          确定
+          {t('确定') + ''}
         </Text>
       </Modal>
     </View>
@@ -161,6 +168,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     paddingHorizontal: 20,
     paddingTop: 23,
+    minWidth:'50%'
     // paddingBottom: 48,
   },
   createMoneyBtn: {
@@ -188,7 +196,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 100,
+    marginBottom: 20,
   },
   container: {
     height: Dimensions.get('window').height,

@@ -7,65 +7,67 @@ import {
   TouchableWithoutFeedback,
   TextInput,
 } from "react-native";
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useContext, useState } from "react";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import StepComp from "./StepComp";
+import { ScrollView } from "react-native-gesture-handler";
 
 const WalletSafeShow = (props) => {
   const { t, i18n } = useTranslation();
   const { loadMnemonicFromStorage } = useDmwWallet();
   const [MnemonicList, SetMnemonicList] = useState([]);
   const [password, setpassword] = useState(props.route.params.password);
-
-        useEffect(() => {
-            loadMnemonicFromStorage(password).then((resp) => {
-            let arr = resp.split(" ");
-            SetMnemonicList(arr);
-            });
-            return () =>{
-                SetMnemonicList([]);
-            }
-        }, []);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    loadMnemonicFromStorage(password).then((resp) => {
+      let arr = resp.split(" ");
+      SetMnemonicList(arr);
+    });
+    return () => {
+      SetMnemonicList([]);
+    };
+  }, []);
   return (
-    <SafeAreaView style={{ backgroundColor: "#fff" ,flex:1}}>
-      <View style={[styles.container]}>
-        <StepComp type={2} />
-        <View>
-          <Text style={[styles.topInfo]}> {t("保护您的钱包安全")}</Text>
-          <Text style={[styles.topInfo1]}>
-          {t("这是您的助记词。将它写在纸上并存放在安全的地方。您将需要在下一步中重新输入此助记词（按顺序）。")}
-          </Text>
-          <Text style={[styles.topInfo1, { marginBottom: 72 / 2 }]}>
-            （按顺序）。
+    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
+      <ScrollView>
+        <View style={[styles.container]}>
+          <StepComp type={2} />
+          <View>
+            <Text style={[styles.topInfo]}> {t("保护您的钱包安全")}</Text>
+            <Text style={[styles.topInfo1]}>
+              {t(
+                "这是您的助记词。将它写在纸上并存放在安全的地方。您将需要在下一步中重新输入此助记词（按顺序）。"
+              )}
+            </Text>
+          </View>
+          <View style={[styles.blackBox]}>
+            {MnemonicList.map((item, index) => {
+              return (
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: "#333",
+                    width: "50%",
+                    textAlign: "left",
+                    marginBottom: 20,
+                  }}
+                >
+                  {index + 1} {item}
+                </Text>
+              );
+            })}
+          </View>
+          <Text
+            style={[styles.import]}
+            onPress={() => {
+              props.navigation.navigate("determineWord", { password });
+            }}
+          >
+            {t("继续")}
           </Text>
         </View>
-        <View style={[styles.blackBox]}>
-          {MnemonicList.map((item, index) => {
-            return (
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: "#333",
-                  width: "50%",
-                  textAlign: "left",
-                  marginBottom: 20,
-                }}
-              >
-                {index + 1} {item}
-              </Text>
-            );
-          })}
-        </View>
-        <Text
-        style={[styles.import]}
-          onPress={() => {
-            props.navigation.navigate("determineWord",{password});
-          }}
-        >
-        {t("继续")}  
-        </Text>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

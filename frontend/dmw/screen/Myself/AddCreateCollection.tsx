@@ -15,7 +15,7 @@ import {
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Spinner } from '@ui-kitten/components';
-import { Card, Layout, Modal } from '@ui-kitten/components';
+import { Card, Layout } from '@ui-kitten/components';
 import { Surface } from 'react-native-paper';
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
@@ -43,8 +43,8 @@ const AddCreateCollection = (props) => {
   const [upUrlid, setUpUrlid] = useState(null)
   const [upUrl2id, setUpUrl2id] = useState(null)
   const [upUrl3id, setUpUrl3id] = useState(null)
-  const [activeType, setactiveType] = useState({ value: '1', name: t('收藏品') })
-  const [activeEm, setactiveEm] = useState({ value: 'Ethereum', name: 'Ethereum' })
+  const [activeType, setactiveType] = useState({value:''})
+  const [activeEm, setactiveEm] = useState({ value: '',})
   const [isShowType, setisShowType] = useState(false)//是否展开类型选择框
   const [isShowE, setisShowE] = useState(false)//是否展开区块链选择框
 
@@ -66,6 +66,7 @@ const AddCreateCollection = (props) => {
     post('/index/common/get_network').then(res => {
       // console.log(res, '区块链类型');
       setlistE(res.data)
+      setactiveEm(res.data[0])
     })
   }
   // 获取type类型
@@ -73,10 +74,12 @@ const AddCreateCollection = (props) => {
     post('/index/common/get_categories').then(res => {
       // console.log(res, '合集类型');
       setListTtpe(res.data)
+      setactiveType(res.data[0])
     })
   }
 
   const Sure = () => {
+    // if()
     setCreating(true)
     let data = {
       name: title,
@@ -91,7 +94,7 @@ const AddCreateCollection = (props) => {
     post('/index/collection/add', params).then(res => {
       console.log(res, '创建各级');
       if (res.code == 200) {
-        Toast('创建成功！')
+        Toast(t('创建成功'))
         setCreating(false)
         props.navigation.navigate('myCollection',{isReload:true})
       }
@@ -296,9 +299,9 @@ const AddCreateCollection = (props) => {
               </Text>
 
               <TextInput
-                maxLength={6}
+                maxLength={12}
                 placeholder={t("请输入藏品名")}
-                keyboardType="decimal-pad"
+                keyboardType="default"
                 style={[styles.input]}
                 onChangeText={e => setTitle(e)}
                 value={title}
@@ -314,7 +317,7 @@ const AddCreateCollection = (props) => {
                     </TouchableWithoutFeedback> */}
               <TextInput
                 placeholder={t("请输入简介")}
-                keyboardType="decimal-pad"
+                keyboardType="default"
                 style={[styles.input, { marginBottom: 20, height: 151, }]}
                 onChangeText={e => setExplain(e)}
                 value={explain}

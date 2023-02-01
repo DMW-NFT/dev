@@ -7,6 +7,9 @@ import PrivacyPolicy_ZH from "../../login/Text/PrivacyPolicy_ZH";
 import UserAgreement_EN from "../../login/Text/UserAgreement_EN";
 import UserAgreement_JP from "../../login/Text/UserAgreement_JP";
 import UserAgreement_ZH from "../../login/Text/UserAgreement_ZH";
+import CommonProblem_EN from "../../login/Text/CommonProblem_EN";
+import CommonProblem_JP from "../../login/Text/CommonProblem_JP";
+import CommonProblem_ZH from "../../login/Text/CommonProblem_ZH";
 
 const WebViewModal = ({ route, navigation }) => {
   const { width } = useWindowDimensions();
@@ -21,6 +24,11 @@ const WebViewModal = ({ route, navigation }) => {
       zh: UserAgreement_ZH,
       jp: UserAgreement_JP,
       en: UserAgreement_EN,
+    },
+    commonProblem: {
+      zh: CommonProblem_ZH,
+      jp: CommonProblem_JP,
+      en: CommonProblem_EN,
     },
   };
 

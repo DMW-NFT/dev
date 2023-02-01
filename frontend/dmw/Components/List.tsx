@@ -10,7 +10,7 @@ import {
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import { Item } from "react-native-paper/lib/typescript/components/List/List";
+import { Icon } from "@rneui/themed";
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 import chainNameMap from "../../constans/chainNameMap.json";
 import { useTranslation } from "react-i18next";
@@ -25,17 +25,16 @@ const List = (props) => {
   const [imgs, setimgs] = useState(true);
   const [type, setype] = useState(props.type);
   const item = props.list;
-  const [imgurl, setImgurl] = useState(item.image_attachment_url);
+  const [imgurl, setImgurl] = useState(props.list.image_attachment_url);
   const [show, setshow] = useState(false);
   const { Copy } = useDmwApi();
 
-
-  const setNftToTransfer = ()=>{
-    props.setNftToTransfer(item)
-    props.setTxNftModalVisible(true)
+  const setNftToTransfer = () => {
+    props.setNftToTransfer(item);
+    props.setTxNftModalVisible(true);
     setshow(false);
-    console.log(item)
-  }
+    console.log(item);
+  };
 
   return (
     <TouchableWithoutFeedback
@@ -94,22 +93,23 @@ const List = (props) => {
                 >
                   {t("复制链接")}
                 </Text>
-                {props.showTransferNft&&<Text
-                  style={{
-                    paddingTop: 6,
-                    paddingBottom: 6,
-                    backgroundColor: "#fff",
-                    borderRadius: 15,
-                    textAlign: "center",
-                    marginBottom: 20,
-                  }}
-                  onPress={() => {
-                    setNftToTransfer()
-                   
-                  }}
-                >
-                  {t("转移/赠与")}
-                </Text>}
+                {props.showTransferNft && (
+                  <Text
+                    style={{
+                      paddingTop: 6,
+                      paddingBottom: 6,
+                      backgroundColor: "#fff",
+                      borderRadius: 15,
+                      textAlign: "center",
+                      marginBottom: 20,
+                    }}
+                    onPress={() => {
+                      setNftToTransfer();
+                    }}
+                  >
+                    {t("转移/赠与")}
+                  </Text>
+                )}
               </View>
             </View>
           </TouchableWithoutFeedback>
@@ -125,7 +125,7 @@ const List = (props) => {
                 }}
                 style={[styles.imageBox]}
                 resizeMode="cover"
-                source={{ uri: imgurl }}
+                source={{ uri: props.list.image_attachment_url }}
               >
                 {type != 4 ? (
                   <Text numberOfLines={2} style={[styles.network]}>
@@ -143,49 +143,22 @@ const List = (props) => {
                       setshow(true);
                     }}
                   >
-                    <View
-                      style={{
-                        width: 22,
-                        height: 22,
-                        backgroundColor: "rgba(255,255,255,0.2)",
-                        borderWidth: 1,
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        paddingLeft: 2,
-                        paddingRight: 2,
+                    <Icon
+                      name="more-horizontal"
+                      type="feather"
+                      color= "white"
+                      containerStyle={{
+                        width: 25,
+                        height: 25,
                         position: "absolute",
                         top: 10,
                         right: 10,
+                        backgroundColor: "#0003",
                         borderRadius: 6,
-                        borderColor: "#ccc",
+                        borderColor: "#fff5",
+                        borderWidth:1
                       }}
-                    >
-                      <Text
-                        style={{
-                          width: 4,
-                          height: 4,
-                          backgroundColor: "#ccc",
-                          borderRadius: 2,
-                        }}
-                      ></Text>
-                      <Text
-                        style={{
-                          width: 4,
-                          height: 4,
-                          backgroundColor: "#ccc",
-                          borderRadius: 2,
-                        }}
-                      ></Text>
-                      <Text
-                        style={{
-                          width: 4,
-                          height: 4,
-                          backgroundColor: "#ccc",
-                          borderRadius: 2,
-                        }}
-                      ></Text>
-                    </View>
+                    />
                   </TouchableWithoutFeedback>
                 ) : null}
               </ImageBackground>

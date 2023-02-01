@@ -1,5 +1,6 @@
 import { Text, StyleSheet, View, TextInput, FlatList, SafeAreaView, ScrollView, Image, Dimensions, TouchableWithoutFeedback } from 'react-native'
 import React, { useEffect, useState } from 'react'
+import { Modal } from "react-native-paper"
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faSearchMinus } from '@fortawesome/free-solid-svg-icons'
 import Screen from "../../Components/screen";
@@ -21,15 +22,31 @@ const Searchsc = (props) => {
     const { post, get, formData, Toast } = useDmwApi()
     const [total, settotal] = useState(null)
     const [loading, setLoding] = useState(false)
-
+    const [refreshing, setrefreshing] = useState(false)
+    const [selListParams, setselListParams] = useState({})
+    const [screenData, setscreenData] = useState([])
     useEffect(() => {
         getList(1)
+        post("/index/common/get_filter", formData({ type: 'home' })).then(res => {
+            // console.log(JSON.stringify(res.data), '筛选条件');
+            let a = {}
+            setscreenData(res.data)
+            res.data.map(item => {
+                a[item.title.value] = ''
+            })
+            setselListParams(a)
+        })
+    }, [props])
+
+
+    useEffect(() => {
+        getList(1, 1)
     }, [strText])
 
     const visibleFn = () => {
         setvisible(true);
-        console.log(456789);
-        
+        // console.log(456789);
+
     };
 
 
@@ -38,16 +55,24 @@ const Searchsc = (props) => {
     }
 
 
-    const getList = (page) => {
+    const getList = (page, type = 1) => {
         setLoding(true)
-        let params = formData({ page: page, limit: 6, type: 1, keyword: strText })
+        let params = formData({ page: page, limit: 6, type: 1, keyword: strText, ...selListParams })
+        console.log(params, '=selListParams');
 
         post("/index/nft/get_home_nft_by_search", params).then((res) => {
             if (res.code == 200) {
-                console.log(res, 'ressssssssssssssssssss11111111ssssssss')
-                setlist([...list, ...res.data.data])
+                if (type == 1) {
+                    setlist([...res.data.data])
+                } else {
+                    setlist([...list, ...res.data.data])
+                }
+
+                // console.log(list,'list');
+
                 settotal(res.data.total)
                 setLoding(false)
+                setrefreshing(false)
             }
         });
     }
@@ -55,14 +80,34 @@ const Searchsc = (props) => {
 
 
     const getListchudi = () => {
-        console.log('触底');
-        
+        setrefreshing(true)
         let a = Math.trunc(list.length / 6)
         console.log(list.length, total);
         if (list.length == total) {
+            setrefreshing(false)
         } else {
-            getList(a + 1)
+            getList(a + 1, 2)
         }
+    }
+
+    const hideModal = () => {
+        setvisible(false)
+    }
+
+
+    const setParams = (a) => {
+        setselListParams(a)
+    }
+    const searchFn = () => {
+        setvisible(false)
+        getList(1, 1)
+    }
+
+    const Refresh = () => {
+        setrefreshing(true)
+        setTimeout(() => {
+            getList(1)
+        }, 1000);
     }
     return (
         <SafeAreaView style={{ backgroundColor: '#fff', flex: 1 }}>
@@ -79,21 +124,20 @@ const Searchsc = (props) => {
                     </View>
 
                 </View>
-                <View style={{alignItems: loading ?'center' : null,justifyContent: loading ? 'center' : null,flex:1,padding:20,paddingTop:0}}>
-                {
+                <View style={{ alignItems: loading ? 'center' : null, justifyContent: loading ? 'center' : null, flex: 1, padding: 20, paddingTop: 0 }}>
+                    {
 
-                    loading ? <View>
-                        <Spinner />
-                    </View> :
                         <FlatList
-                            refreshing={false}
+                        showsVerticalScrollIndicator={false}
+                            refreshing={refreshing}
                             style={{ height: '55%', flex: 1, }}
                             ListEmptyComponent={() => {
                                 return <Text style={{ textAlign: 'center', marginTop: '50%' }}>{t("空空如也")}</Text>
                                 // 列表为空展示改组件
                             }}
                             // 一屏幕展示几个
-                            number={4}
+                            number={6}
+                            keyExtractor={(item, index) => index.toString()}
                             //  2列显示
                             numColumns={2}
                             data={list}
@@ -108,72 +152,67 @@ const Searchsc = (props) => {
                             // 下刷新
                             onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
                             onEndReached={getListchudi}
+                            onRefresh={Refresh}
                         >
                         </FlatList>
 
-                }
+                    }
                 </View>
             </View>
-            <Model visible={visible} changeVisible={(val) => changeVisible(val)} colose={()=>{setvisible(false)}}>
+            {/*  */}
+            <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.containerStyle}>
+                <View style={styles.ModalBOX}>
+                    <View style={styles.HlineBox}><View style={styles.Hline}></View></View>
+                    <Text style={styles.selectfilter}>Select Filter</Text>
 
-                <View style={styles.listBox}>
-                    <TouchableWithoutFeedback onPress={() => { setshow(!show) }}>
-                        <View style={styles.listTitle}>
-                            <Text style={{ fontSize: 14, fontWeight: '700' }}>{t("状态")}</Text>
-                            <FontAwesomeIcon
-                                icon={!show ? faChevronRight : faAngleDown}
-                                color="#707070"
-                                size={14}
-                            />
-                        </View>
-                    </TouchableWithoutFeedback>
                     {
-                        show ? <View style={{ flexDirection: 'row', marginTop: 20 }}>
-                            <Text style={{ paddingTop: 7, paddingBottom: 7, paddingLeft: 15, paddingRight: 15, borderColor: '#877EF0', borderWidth: 1, borderRadius: 20 }}>New</Text>
-                            <Text style={{ paddingTop: 7, paddingBottom: 7, paddingLeft: 15, paddingRight: 15, borderColor: '#877EF0', borderWidth: 1, borderRadius: 20, backgroundColor: '#877EF0', color: '#fff', marginLeft: 15 }}>On Sale</Text>
-                        </View> : null
-                    }
-                </View>
-
-
-
-                <View style={styles.listBox}>
-                    <TouchableWithoutFeedback onPress={() => { setshow(!show) }}>
-                        <View style={styles.listTitle}>
-                            <Text style={{ fontSize: 14, fontWeight: '700' }}>{t("区块链")}</Text>
-                            <FontAwesomeIcon
-                                icon={!show ? faChevronRight : faAngleDown}
-                                color="#707070"
-                                size={14}
-                            />
-                        </View>
-                    </TouchableWithoutFeedback>
-                    {
-                        show ?
-                            <View style={{ marginTop: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Image style={{ width: 30, height: 30, borderRadius: 15 }} source={require('../../assets/img/index/default.png')}></Image>
-                                    <Text style={{ marginLeft: 10 }}>Ethereum</Text>
-                                </View>
-                                <TouchableWithoutFeedback onPress={() => { setimg(!imgshow) }}>
+                        screenData.map((item, idnex) => {
+                            return <View>
+                                <Text style={styles.selTitle}>{item.title.name}</Text>
+                                <View style={styles.optionBox}>
                                     {
-                                        imgshow ?
-                                            <Image style={{ width: 24, height: 24 }}
-                                                source={require('../../assets/img/index/8a5f2ccbf5abd27e75e353c41d98b7c.png')}></Image>
-                                            :
-                                            <Image style={{ width: 24, height: 24 }}
-                                                source={require('../../assets/img/index/9e5e7d3f9f1048cf348c55d4286daff.png')}></Image>
+                                        item['tabs'].map((jitem, jindex) => {
 
+                                            return <>
+                                                <Text onPress={() => {
+                                                    // console.log(123);
+                                                    let a = { ...selListParams }
+                                                    if (a[item.title.value] == jitem.value) {
+                                                        a[item.title.value] = ''
+                                                    } else {
+                                                        a[item.title.value] = jitem.value
+                                                    }
+
+                                                    setParams(a)
+                                                }} style={selListParams[item.title.value] == jitem.value ? styles.btn_active : styles.btn_noactive}>{jitem.name}</Text>
+                                            </>
+                                        })
                                     }
 
-                                </TouchableWithoutFeedback>
-                            </View> : null
+                                </View>
+
+
+                                {
+                                    idnex == screenData.length - 1 ?
+                                        null : <View style={styles.btnline}></View>
+                                }
+
+
+
+
+                            </View>
+                        })
+
                     }
+
+
+                    <View style={styles.btnlinelang}></View>
+                    <View style={styles.sureBtn}>
+                        <Text style={styles.sureBtnText} onPress={searchFn}>{t('确定')}</Text>
+                    </View>
                 </View>
+            </Modal>
 
-
-                <Text style={styles.modelBtn}>{t("确定")}</Text>
-            </Model>
         </SafeAreaView>
     )
 }
@@ -181,6 +220,112 @@ const Searchsc = (props) => {
 export default Searchsc
 
 const styles = StyleSheet.create({
+    sureBtn: {
+        height: 50,
+        backgroundColor: '#897EF8',
+        borderRadius: 50,
+        // marginBottom:49
+    },
+    sureBtnText: {
+        fontSize: 16,
+        fontWeight: '700',
+        lineHeight: 50,
+        color: '#FFFFFF',
+        textAlign: 'center'
+    },
+    btnline: {
+        // border: 1px solid #CCCCCC;
+        borderWidth: 1 / 3,
+        borderColor: '#ccc',
+        marginBottom: 20
+    },
+    btnlinelang: {
+        borderWidth: 1 / 3,
+        borderColor: '#ccc',
+        marginBottom: 20,
+        marginRight: -20,
+        marginLeft: -20
+    },
+    btn_active: {
+        color: '#fff',
+        backgroundColor: '#ACA4FA',
+        height: 34,
+        paddingRight: 15,
+        paddingLeft: 15,
+        borderColor: '#877EF0',
+        borderWidth: 1,
+        lineHeight: 34,
+        borderRadius: 20,
+        marginBottom: 15,
+        marginRight: 15,
+    },
+    btn_noactive: {
+        height: 34,
+        paddingRight: 15,
+        paddingLeft: 15,
+        borderColor: '#877EF0',
+        borderWidth: 1,
+        lineHeight: 34,
+        borderRadius: 20,
+        marginBottom: 15,
+        marginRight: 15,
+        color: '#333',
+    },
+    optionBox: {
+        flexDirection: 'row',
+        // justifyContent: 'space-between',
+        marginBottom: 20,
+        flexWrap: 'wrap'
+
+    },
+
+    selTitle: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#333',
+        fontFamily: 'Source Han Sans CN',
+        marginBottom: 20
+    },
+    ModalBOX: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#fff',
+        fontFamily: 'Source Han Sans CN',
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingBottom: 49,
+    },
+    selectfilter: {
+        fontSize: 16,
+        fontFamily: 'Source Han Sans CN',
+        fontWeight: '700',
+        color: '#333',
+        marginTop: 20,
+        textAlign: 'center',
+        marginBottom: 30
+    },
+    HlineBox: {
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
+    Hline: {
+        width: 40,
+        height: 6,
+        backgroundColor: '#E0E0E0',
+        borderRadius: 50,
+        marginTop: 6
+    },
+    containerStyle: {
+        width: '100%',
+        minheight: 885 / 2,
+        backgroundColor: '#fff',
+        borderTopRightRadius: 40,
+        borderTopLeftRadius: 40,
+        position: 'absolute',
+        bottom: 0,
+        overflow: 'hidden'
+
+    },
     listTitle: {
         flexDirection: 'row', justifyContent: 'space-between'
     },
@@ -202,7 +347,7 @@ const styles = StyleSheet.create({
     },
     container: {
         padding: 20,
-        paddingBottom:0
+        paddingBottom: 0
         // marginTop:headerHeight,
     },
     input: {

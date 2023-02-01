@@ -101,7 +101,6 @@ const loginFn = () =>{
         // 手机修改密码登录
         url = "/index/forgot_password/reset_password_by_phone";
         data = { phone,phone_code:sancode,password,phone_prefix :areaCode};
-       
         fdata = formData(data);
     }
 
@@ -109,18 +108,24 @@ const loginFn = () =>{
         console.log(res,'+++++++++++++++++');
         
         if(res.code == 200){
-            storage.save({
-                key: "loginState", // 注意:请不要在key中使用_下划线符号!
-                data: {
-                  token: res.data.token,
-                },
-                // 如果不指定过期时间，则会使用defaultExpires参数
-                // 如果设为null，则永不过期
-                expires: null,
-              });
-              Toast(t('修改成功'))
-            login()
+            // storage.save({
+            //     key: "loginState", // 注意:请不要在key中使用_下划线符号!
+            //     data: {
+            //       token: res.data.token,
+            //     },
+            //     // 如果不指定过期时间，则会使用defaultExpires参数
+            //     // 如果设为null，则永不过期
+            //     expires: null,
+            //   });
+              Toast(t('重置成功'))
+            // login()
+            props.navigation.navigate('LoginDMW', { type: 2 })
+            
+        }else{
+          Toast(t(res.message))
         }
+    }).catch(err=>{
+      Toast(t(err.message))
     })
     
 }
@@ -175,7 +180,7 @@ const loginFn = () =>{
             <TextInput
               onStartShouldSetResponderCapture={(ev) => true}
               placeholder={t("请输入电话号码")}
-              keyboardType="decimal-pad"
+              keyboardType="phone-pad"
               onChangeText={(text) => onChangeText(text, 2)}
               value={phone}
             />

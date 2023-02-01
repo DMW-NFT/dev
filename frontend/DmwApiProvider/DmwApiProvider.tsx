@@ -49,8 +49,8 @@ const DmwApiProvider = ({ children }) => {
   // 查询语言
   const languageType = async () => {
     let str = await Getlanguage();
-    console.log(str, "语言");
-    setlanguage(str);
+    console.log(str, "读取上次语言");
+    str&&setlanguage(str);
   };
 
   // 地址切割

@@ -1,0 +1,10 @@
+{
+  "collection_id": 1,
+  "create_time": "2023-01-12 18:25:37",
+  "currency": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  "image_attachment_url": "https://ipfs.moralis.io:2053/ipfs/QmRwDQN8KQ6FUPrdXRZAUB71sivFEkk7ixJJDpAE9jHPf2/rn_image_picker_lib_temp_2c4bd10e-ce1c-42e9-99ab-5eeea5380a2e.png",
+  "listing_type": 0,
+  "name": "Cat气泡",
+  "network": "mumbai",
+  "total_offer_amount": { "currency_name": "ETH", "number": 0.001 }
+}

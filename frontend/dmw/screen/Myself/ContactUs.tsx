@@ -10,15 +10,27 @@ import {
 } from "react-native";
 import { SocialIcon, SocialIconProps, Icon } from "@rneui/themed";
 import { useTranslation } from "react-i18next";
+import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
+import { useEffect, useState } from "react";
 
 const ContactUs = () => {
   const { t, i18n } = useTranslation();
-  const contactInfo = {
+
+  const contactInfo_defalt = {
     email: "dev@wfca.io",
-    mobile: "+86 ",
+    mobile: null,
     discord: "https://discord.gg/ZJPPgcc4dq",
     youtuber: "https://www.youtube.com/",
     twitter: "https://twitter.com/DMW_offical",
+  };
+  const [contactInfo, setContactInfo] = useState(contactInfo_defalt);
+  const { get } = useDmwApi();
+
+  const getContactUs = () => {
+    get("/index/common/get_contact_us").then((res) => {
+      console.log(res);
+      res && res.code == 200 && res.data && setContactInfo(res.data);
+    });
   };
 
   const callSupportAgent = () => {
@@ -38,6 +50,9 @@ const ContactUs = () => {
     );
   };
 
+  useEffect(() => {
+    getContactUs();
+  }, []);
   return (
     <SafeAreaView>
       <ScrollView>
@@ -45,51 +60,12 @@ const ContactUs = () => {
           style={{
             margin: 20,
 
-            height: 500,
+            // height: 500,
             backgroundColor: "white",
 
             borderRadius: 15,
           }}
         >
-          <TouchableWithoutFeedback
-            onPress={() => {
-              callSupportAgent();
-            }}
-          >
-            <View
-              style={{
-                height: 100,
-                backgroundColor: "white",
-                borderTopStartRadius: 15,
-                borderTopEndRadius: 15,
-                borderBottomColor: "#F5F1F0",
-                borderBottomWidth: 4,
-                flexDirection: "row",
-                justifyContent: "flex-start",
-                alignItems: "center",
-                padding: 10,
-              }}
-            >
-              <Icon
-                name="support-agent"
-                type="material"
-                size={30}
-                reverse={true}
-                color={"green"}
-              />
-              <View style={{ flexDirection: "column", marginStart: 20 }}>
-                <Text style={{ marginBottom: 10, color: "gray", fontSize: 20 }}>
-                  24H {t("在线客服")}
-                </Text>
-                <Text
-                  style={{ marginBottom: 10, color: "green", fontSize: 20 }}
-                >
-                  {contactInfo.mobile}
-                </Text>
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-
           <TouchableWithoutFeedback
             onPress={() => {
               openEmail();
@@ -115,10 +91,10 @@ const ContactUs = () => {
                 color={"blue"}
               />
               <View style={{ flexDirection: "column", marginStart: 20 }}>
-                <Text style={{ marginBottom: 10, color: "gray", fontSize: 20 }}>
+                <Text style={{ marginBottom: 10, color: "gray", fontSize: 15 }}>
                   {t("联系邮箱")}
                 </Text>
-                <Text style={{ marginBottom: 10, color: "blue", fontSize: 20 }}>
+                <Text style={{ marginBottom: 10, color: "blue", fontSize: 15 }}>
                   {contactInfo.email}
                 </Text>
               </View>
@@ -150,7 +126,7 @@ const ContactUs = () => {
                 color={"#1d9bf0"}
               />
               <View style={{ flexDirection: "column", marginStart: 20 }}>
-                <Text style={{ marginBottom: 10, color: "gray", fontSize: 20 }}>
+                <Text style={{ marginBottom: 10, color: "gray", fontSize: 15 }}>
                   {t("Twitter")}
                 </Text>
                 <Text
@@ -187,7 +163,7 @@ const ContactUs = () => {
                 color={"#2962ff"}
               />
               <View style={{ flexDirection: "column", marginStart: 20 }}>
-                <Text style={{ marginBottom: 10, color: "gray", fontSize: 20 }}>
+                <Text style={{ marginBottom: 10, color: "gray", fontSize: 15 }}>
                   {t("Discord")}
                 </Text>
                 <Text
@@ -224,7 +200,7 @@ const ContactUs = () => {
                 color={"red"}
               />
               <View style={{ flexDirection: "column", marginStart: 20 }}>
-                <Text style={{ marginBottom: 10, color: "gray", fontSize: 20 }}>
+                <Text style={{ marginBottom: 10, color: "gray", fontSize: 15 }}>
                   {t("Youtube")}
                 </Text>
                 <Text style={{ marginBottom: 10, color: "red", fontSize: 15 }}>

@@ -43,14 +43,15 @@ const Home = () => {
         component={MyselfScreen}
         name="myself"
         options={{
-          headerMode: "none",
+          headerMode: "null",
+          headerTransparent: true
         }}
       ></Stack.Screen>
       <Stack.Screen
         component={Sell}
         name="sell"
         options={{
-          headerTitle: "卖出",
+          headerTitle: t("卖出"),
         }}
       ></Stack.Screen>
       <Stack.Screen
@@ -83,7 +84,7 @@ const Home = () => {
       ></Stack.Screen>
       <Stack.Screen
         component={TradeSuccessfully}
-        name="tradeSuccessfully"
+        name="TradeSuccessfully"
         options={{
           title: t("交易成功"),
         }}
@@ -109,7 +110,7 @@ const Home = () => {
         component={TransferNft}
         name="TransferNft"
         options={{
-          title: "转移藏品",
+          title: t("转移藏品"),
         }}
       ></Stack.Screen>
 

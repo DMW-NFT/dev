@@ -211,7 +211,7 @@ const SellOrder = (props) => {
                                                                     <Text style={[styles.moreBottom]}>{items.quantity_wanted}</Text>
                                                                 </View>
 
-                                                                <Text style={[styles.lisBottomLookBtn]} onPress={() => { props.navigation.navigate('tradeSuccessfully', { id: items.offer_id }) }}>查看</Text>
+                                                                <Text style={[styles.lisBottomLookBtn]} onPress={() => { props.navigation.navigate('TradeSuccessfully', { id: items.offer_id }) }}>查看</Text>
                                                             </View>
                                                         </View>
                                                     </TouchableWithoutFeedback>

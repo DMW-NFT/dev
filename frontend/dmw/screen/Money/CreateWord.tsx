@@ -6,8 +6,9 @@ import {
   Image,
   TouchableWithoutFeedback,
   TextInput,
+  ScrollView,
 } from "react-native";
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from "react-i18next";
 import React, { Component, useEffect, useState, useContext } from "react";
 
 import StepComp from "./StepComp";
@@ -15,92 +16,95 @@ import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 
 const ImportWord = (props) => {
   const { t, i18n } = useTranslation();
-  const [secureTextEntry, setsecureTextEntry] = useState(false);
+  const [secureTextEntry, setsecureTextEntry] = useState(true);
   const [word, setword] = useState("");
   const [password, setpassword] = useState("");
   const [password1, setpassword1] = useState("");
-const {Toast} = useDmwApi()
+  const { Toast } = useDmwApi();
 
- const CreatePassword = () => {
-  if(password != password1){
-    Toast(t('密码不一致'))
-  }else{
-    Toast(t('创建成功！'))
-    props.navigation.navigate("walletSafe",{password,password1});
-  }
- }
+  const CreatePassword = () => {
+    if (password != password1) {
+      Toast(t("密码不一致"));
+    } else {
+      Toast(t("创建成功"));
+      props.navigation.navigate("walletSafe", { password, password1 });
+    }
+  };
 
   return (
-    <SafeAreaView style={{ backgroundColor: "#fff",flex:1 }}>
-      <View style={[styles.container]}>
-        <StepComp type={1} />
-        <View>
-          <Text style={[styles.topInfo]}>{t("创建支付密码")}</Text>
-          <Text style={[styles.topInfo1]}>
-          {t("此密码将用在您签名资产或者您在支付代币时使用。")}
-          </Text>
-        </View>
-        <View style={styles.lis}>
-          <View
-            style={{
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexDirection: "row",
-            }}
-          >
-            <Text style={styles.text}>{t("密码")}</Text>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                setsecureTextEntry(!setsecureTextEntry);
+    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
+      <ScrollView>
+        <View style={[styles.container]}>
+          <StepComp type={1} />
+          <View>
+            <Text style={[styles.topInfo]}>{t("创建支付密码")}</Text>
+            <Text style={[styles.topInfo1]}>
+              {t("此密码将用在您签名资产或者您在支付代币时使用。")}
+            </Text>
+          </View>
+          <View style={styles.lis}>
+            <View
+              style={{
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexDirection: "row",
               }}
             >
-              {secureTextEntry ? (
-                <Image
-                  style={[styles.imageshow]}
-                  source={require("../../assets/img/login/nopass.png")}
-                ></Image>
-              ) : (
-                <Image
-                  style={[styles.imageshow]}
-                  source={require("../../assets/img/login/showpass.png")}
-                ></Image>
-              )}
-            </TouchableWithoutFeedback>
+              <Text style={styles.text}>{t("密码")}</Text>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setsecureTextEntry(!secureTextEntry);
+                  // console.log()
+                }}
+              >
+                {secureTextEntry ? (
+                  <Image
+                    style={[styles.imageshow]}
+                    source={require("../../assets/img/login/nopass.png")}
+                  ></Image>
+                ) : (
+                  <Image
+                    style={[styles.imageshow]}
+                    source={require("../../assets/img/login/showpass.png")}
+                  ></Image>
+                )}
+              </TouchableWithoutFeedback>
+            </View>
+            <TextInput
+              maxLength={6}
+              secureTextEntry={secureTextEntry}
+              placeholder={t("密码")}
+              keyboardType="number-pad"
+              style={[styles.input]}
+              onChangeText={(e) => setpassword(e)}
+              value={password}
+            />
           </View>
-          <TextInput
-            maxLength={6}
-            secureTextEntry={secureTextEntry}
-            placeholder={t("密码")}
-            keyboardType="decimal-pad"
-            style={[styles.input]}
-            onChangeText={(e) => setpassword(e)}
-            value={password}
-          />
-        </View>
-        <View style={styles.lis}>
-          <Text style={styles.text}>{t("确认密码")}</Text>
-          <TextInput
-            maxLength={6}
-            secureTextEntry={secureTextEntry}
-            placeholder={t("确认密码")}
-            keyboardType="decimal-pad"
-            style={[styles.input]}
-            onChangeText={(e) => setpassword1(e)}
-            value={password1}
-          />
-          <Text style={[styles.text, { marginTop: 10, marginBottom: 32 }]}>
-            {t("请输入6位数字")}
+          <View style={styles.lis}>
+            <Text style={styles.text}>{t("确认密码")}</Text>
+            <TextInput
+              maxLength={6}
+              secureTextEntry={secureTextEntry}
+              placeholder={t("确认密码")}
+              keyboardType="number-pad"
+              style={[styles.input]}
+              onChangeText={(e) => setpassword1(e)}
+              value={password1}
+            />
+            <Text style={[styles.text, { marginTop: 10, marginBottom: 32 }]}>
+              {t("请输入6位数字")}
+            </Text>
+          </View>
+          <Text
+            style={[styles.import]}
+            onPress={() => {
+              CreatePassword();
+            }}
+          >
+            {t("创建密码")}
           </Text>
         </View>
-        <Text
-          style={[styles.import]}
-          onPress={() => {
-            CreatePassword()
-          }}
-        >
-         {t("创建密码")} 
-        </Text>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

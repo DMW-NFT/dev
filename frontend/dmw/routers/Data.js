@@ -1,23 +1,42 @@
-import {StyleSheet} from 'react-native'
+import { StyleSheet } from 'react-native'
 import React, { Component } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import DataScreen from '../screen/Data/Data'
-const Stack=createStackNavigator()
-export default class Home extends Component {
-  render() {
-    return (
-      <Stack.Navigator screenOptions={{headerShadowVisible: false}}>
-        <Stack.Screen  
-            component={DataScreen} 
-            name='dataScreen'
-            options={{  
-              title:"stats"
-            }}
-          >  
-         </Stack.Screen>
-      </Stack.Navigator>
-    )
-  }
-}
 
+
+import CollectionDetails from "../screen/Other/CollectionDetails";
+import GoodsDetail from "../screen/Other/GoodsDetail";
+import { useTranslation } from 'react-i18next'
+const Stack = createStackNavigator()
+const Data = () => {
+  const { t, i18n } = useTranslation();
+  return (
+    <Stack.Navigator screenOptions={{ headerShadowVisible: false }}>
+      <Stack.Screen
+        component={DataScreen}
+        name='dataScreen'
+        options={{
+          title: "Stats"
+        }}
+      >
+      </Stack.Screen>
+
+      <Stack.Screen
+        component={CollectionDetails}
+        name="CollectionDetails"
+        options={{
+          headerTitle: t("合集"),
+        }}
+      ></Stack.Screen>
+      <Stack.Screen
+        component={GoodsDetail}
+        name="goodsDetail"
+        options={{
+          headerTitle: t("合集"),
+        }}
+      ></Stack.Screen>
+    </Stack.Navigator>
+  )
+}
+export default Data
 const styles = StyleSheet.create({})

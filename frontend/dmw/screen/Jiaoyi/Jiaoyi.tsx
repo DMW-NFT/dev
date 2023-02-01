@@ -26,21 +26,18 @@ const Jiaoyi = (props) => {
   const [refreshing, setrefreshing] = useState(false);
   const { post, get, formData, Toast } = useDmwApi();
   const [page, setpage] = useState(1);
-  const [loading, setLoding] = useState(false);
   const { currentWallet } = useDmwWeb3();
   const { dmwWalletList } = useDmwWallet();
   const { WalletInUse } = useDmwLogin();
 
   useEffect(() => {
-    setLoding(true);
+
     setConList([]);
     setAuctionList([]);
     getNftList(1);
   }, [type]);
 
   const reload = () => {
-
-    setLoding(true);
     setConList(null);
     setAuctionList(null)
     getNftList(2);
@@ -70,10 +67,10 @@ const Jiaoyi = (props) => {
 
   useEffect(() => {
     getNftList(1);
-    return () => {};
+    return () => { };
   }, []);
 
-  const getNftList = (page) => {
+  const getNftList = (page = 1) => {
     let nftDataObj = formData({
       listing_type: type == 2 ? 0 : 1,
       page,
@@ -84,11 +81,15 @@ const Jiaoyi = (props) => {
       if (res.code == 200) {
         // console.log(res.data, '寄售拍卖数据')
         if (type == 2) {
-          setConList([...ConList, ...res.data.data]);
-          setConListTotal(res.data.total);
-          setLoding(false);
+          if (page == 1) {
+            setConList(res.data.data)
+            setConListTotal(res.data.total);
+          } else {
+            setConList([...ConList, ...res.data.data]);
+            setConListTotal(res.data.total);
+          }
+
         } else {
-          setLoding(false);
           setAuctionList([...auctionList, ...res.data.data]);
           setauctionTotal(res.data.total);
         }
@@ -100,6 +101,10 @@ const Jiaoyi = (props) => {
     // this.props.navigation.navigate('goodsDetail',{id:id})
   };
 
+  const onRefresh = () => {
+    getNftList(1)
+  }
+
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
       {/* tab栏 -- start */}
@@ -109,7 +114,7 @@ const Jiaoyi = (props) => {
             type === 2 ? styles.daonghang_text_ative : styles.daonghang_text,
           ]}
           onPress={() => {
-            type != 2 ? changetype(2) : reload();
+            changetype(2) 
           }}
         >
           {t("寄售")}
@@ -125,14 +130,10 @@ const Jiaoyi = (props) => {
             padding: 20,
             paddingBottom: 0,
             backgroundColor: "#fff",
-            alignItems: loading ? "center" : null,
-            justifyContent: loading ? "center" : null,
           },
         ]}
       >
-        {loading ? (
-          <Spinner />
-        ) : (
+        {(
           <FlatList
             refreshing={refreshing}
             style={{ height: 50, paddingBottom: 20 }}
@@ -163,9 +164,9 @@ const Jiaoyi = (props) => {
                     if (!(currentWallet || dmwWalletList[0])) {
                       Toast(t("请先登录钱包"));
                       return;
-                    } 
+                    }
 
-                    
+
                     props.navigation.navigate("QuotationDetails", {
                       id: item.order_no,
                     });
@@ -192,6 +193,8 @@ const Jiaoyi = (props) => {
             // 下刷新
             onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
             onEndReached={getList}
+            onRefresh={onRefresh}
+
           ></FlatList>
         )}
       </View>

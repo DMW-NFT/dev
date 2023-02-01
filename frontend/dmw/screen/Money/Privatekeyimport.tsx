@@ -78,7 +78,7 @@ const Privatekeyimport = (props) => {
             placeholder={
               t("例如") + t("4d56sd46sd445d6s4d6544d56s4d656d4s65465")
             }
-            keyboardType="decimal-pad"
+            keyboardType="ascii-capable"
             style={{
               borderStyle: "dotted", // 虚线 效果
               borderWidth: 1, //虚线 线宽
@@ -122,7 +122,7 @@ const Privatekeyimport = (props) => {
               maxLength={6}
               secureTextEntry={secureTextEntry}
               placeholder={t("新密码")}
-              keyboardType="decimal-pad"
+              keyboardType="number-pad"
               style={[styles.input]}
               onChangeText={(e) => {
                 setpassword(e);
@@ -134,7 +134,7 @@ const Privatekeyimport = (props) => {
               maxLength={6}
               secureTextEntry={secureTextEntry}
               placeholder={t("确认密码")}
-              keyboardType="decimal-pad"
+              keyboardType="number-pad"
               style={[styles.input]}
               onChangeText={(e) => {
                 setpassword1(e);
