@@ -1,0 +1,22 @@
+name: Build up for bundle
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on:
+  push:
+    branches:
+      - buildBranch
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: yarn install
+      - name: Build app
+        run: ./android/gradlew bundleRelease
+      - name: Deploy to GitHub
+        uses: actions/upload-artifact@v1
+        with:
+          name: app-release.aab
+          path: android\app\build\outputs\bundle\release\app-release.aab
