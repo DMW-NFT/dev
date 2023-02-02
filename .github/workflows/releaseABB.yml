@@ -22,7 +22,7 @@ jobs:
         run: yarn releaseABB
       - name: Deploy to GitHub
         env:
-        TIME: "${{ steps.current-time.outputs.time }}"
+          TIME: "${{ steps.current-time.outputs.time }}"
         uses: actions/upload-artifact@v1
         with:
           name: dmw-${{ env.TIME }}.abb
