@@ -1,5 +1,5 @@
-name: Build up for APK
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: Release APK
+run-name: ${{ github.actor }} is Building APK 🚀
 on: [push]
 jobs:
   Explore-GitHub-Actions:
@@ -10,12 +10,16 @@ jobs:
         uses: actions/checkout@v2
       - name: Install dependencies
         run: yarn install
-      - name: Grande primission
+      - name: Grant primission
         run: chmod +x ./android/gradlew
       - name: Build app
         run: yarn releaseAPK
+      - name: Get current timestamp
+        run: echo "::set-env name=TIMESTAMP::$(date +%s)"
+      - name: Rename APK
+        run: mv android/app/build/outputs/apk/release/app-release.apk android/app/build/outputs/apk/release/dmw-${{ env.TIMESTAMP }}.apk
       - name: Deploy to GitHub
         uses: actions/upload-artifact@v1
         with:
-          name: app-release.apk
-          path: android/app/build/outputs/apk/release/app-release.apk
+          name: dmw-${{ env.TIMESTAMP }}.apk
+          path: android/app/build/outputs/apk/release/dmw-${{ env.TIMESTAMP }}.apk
