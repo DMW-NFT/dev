@@ -161,7 +161,7 @@ const AddCreateCollection = (props) => {
           setUpUrlid(res.data.id)
           setUpUrl(res.data.url)
           console.log(res, '标识');
-          Toast(t('上传成功!'))
+          Toast(t('上传成功'))
           setLoding1(false)
         })
       } else if (type == 2) {
@@ -176,7 +176,7 @@ const AddCreateCollection = (props) => {
           setUpUrl2id(res.data.id)
           setUpUrl2(res.data.url)
           console.log(res.data.url, '标识');
-          Toast(t('上传成功!'))
+          Toast(t('上传成功'))
           setLoding(false)
         })
       } else if (type == 3) {
@@ -191,7 +191,7 @@ const AddCreateCollection = (props) => {
           setUpUrl3id(res.data.id)
           setUpUrl3(res.data.url)
           console.log(res.data.url, '标识');
-          Toast(t('上传成功!'))
+          Toast(t('上传成功'))
           setLoding3(false)
         })
       }
@@ -209,8 +209,8 @@ const AddCreateCollection = (props) => {
         paddingLeft: 20,
         paddingRight: 20,
         position: 'relative',
-        height: Dimensions.get('window').height,
-        paddingBottom: 200,
+        // height: Dimensions.get('window').height,
+        // paddingBottom: 200,
         backgroundColor: '#fff'
       }}>
       {
@@ -397,7 +397,9 @@ const AddCreateCollection = (props) => {
                     color="#707070"
                     size={16}
                   />
+                  
                 </View>
+                
               </TouchableWithoutFeedback>
               {
                 isShowE ?
@@ -424,11 +426,12 @@ const AddCreateCollection = (props) => {
               }
 
             </View>
+            <Text onPress={() => Sure()} style={styles.btn}>{t("创建")}</Text>
           </ScrollView>
 
       }
 
-      <Text onPress={() => Sure()} style={styles.btn}>{t("创建")}</Text>
+
 
 
 
@@ -497,11 +500,12 @@ const styles = StyleSheet.create({
     height: 50,
     lineHeight: 50,
     textAlign: 'center',
-    marginRight: 20,
-    marginLeft: 20,
+    // marginRight: 20,
+    // marginLeft: 20,
     borderRadius: 50,
-    position: 'absolute',
-    bottom: 138,
+    marginBottom: 20,
+    // position: 'absolute',
+    // bottom: 138,
   },
   line: {
     borderColor: '#CCCCCC',

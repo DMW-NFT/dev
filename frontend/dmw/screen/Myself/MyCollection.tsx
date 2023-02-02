@@ -69,7 +69,7 @@ const MyCollection = (props) => {
                 data={list}
                 renderItem={({ item }) => {
                     return (
-                        <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('collectionDetails',{ID:item.id})}}>
+                        <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('CollectionDetails',{ID:item.id})}}>
                         <View style={[styles.lisBox]}>
                             <Image source={{uri:item.banner_url}} style={{ width: '100%', height: 254 / 2, borderRadius: 16 }}></Image>
                             <Image source={{uri:item.logo_url}} style={[styles.logo]}></Image>
