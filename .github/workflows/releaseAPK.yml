@@ -1,5 +1,5 @@
-name: Build up for APK
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: Release APK
+run-name: ${{ github.actor }} is Building APK 🚀
 on: [push]
 env:
   APK_NAME: dmw-$(date +%s).apk
