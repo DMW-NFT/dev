@@ -2,7 +2,7 @@ name: Release ABB
 run-name: ${{ github.actor }} is Building ABB 🚀
 on: [push]
 env:
-  APK_NAME: dmw-$(date +%s).apk
+  APK_NAME: dmw-$(date +%s).abb
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
