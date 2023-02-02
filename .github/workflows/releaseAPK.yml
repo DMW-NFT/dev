@@ -9,9 +9,9 @@ jobs:
         uses: josStorer/get-current-time@v2.0.2
         id: current-time
         with:
-          format: YYYYMMDD-HH
+          format: YYYYMMDD-HH-mm
           utcOffset: "+08:00"
-      - run: echo "release file will be:dmw-${{ steps.current-time.outputs.time }}.apk"
+      - run: echo "release file will be:dmw-${{ steps.current-time.outputs.formattedTime }}.apk"
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Install dependencies
@@ -22,7 +22,7 @@ jobs:
         run: yarn releaseAPK
       - name: Deploy to GitHub
         env:
-          TIME: "${{ steps.current-time.outputs.time }}"
+          TIME: "${{ steps.current-time.outputs.formattedTime }}"
         uses: actions/upload-artifact@v1
         with:
           name: dmw-${{ env.TIME }}.apk
