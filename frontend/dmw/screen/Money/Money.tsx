@@ -640,14 +640,14 @@ const Money = (props) => {
                             color:
                               item.to_address ==
                               (WalletInUse == 1
-                                ? dmwWalletList[0]
-                                : currentWallet)
+                                ? dmwWalletList[0].toLowerCase()
+                                : currentWallet.toLowerCase())
                                 ? "gray"
                                 : "#4ccb79",
                           }}
                         >
                           {item.to_address ==
-                          (WalletInUse == 1 ? dmwWalletList[0] : currentWallet)
+                          (WalletInUse == 1 ? dmwWalletList[0].toLowerCase() : currentWallet.toLowerCase())
                             ? "+"
                             : "-"}
                           {Web3.utils.fromWei(item.value, "ether")}{" "}

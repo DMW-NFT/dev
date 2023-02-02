@@ -2,7 +2,9 @@
     "ethereum": {
         "network": "Ethereum",
         "nativeToken": "ETH",
-        "chainId":1
+        "chainId":1,
+        "nft_contract":"0x7C064c820eBEE62DBbAe249F8CB793Ce8Fd9c8B8",
+        "market_contract":"0xab012FcaEE0dC25cd5c712909339805326247023",
 
     },
     "goerli": {
@@ -15,7 +17,9 @@
     "bsc": {
         "network": "BSC",
         "nativeToken": "BNB",
-        "chainId":56
+        "chainId":56,
+        "nft_contract":"0xB6dc45C4E16B8e80C62F5daEAb375E27F6ADe009",
+        "market_contract":"0x2Ea9C61eEb9968C6f68A687E851079519c28b609"
     },
     "polygon": {
         "network": "Polygon",
