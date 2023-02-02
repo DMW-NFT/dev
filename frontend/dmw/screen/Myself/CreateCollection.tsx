@@ -551,7 +551,7 @@ const TransferredIntoCollection = (props) => {
       .then((res) => {
         console.log(res, "cvnsnjcn");
         if (res.code == 200) {
-          Toast(t("创建成功！"));
+          Toast(t("创建成功"));
         } else {
           Toast(res.message);
         }
@@ -835,6 +835,7 @@ const styles = StyleSheet.create({
     // marginRight: 20,
     // marginLeft: 20,
     borderRadius: 50,
+    marginBottom: 20
     // position: "absolute",
     // bottom: 138,
   },
