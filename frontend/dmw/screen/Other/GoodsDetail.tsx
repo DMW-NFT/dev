@@ -230,7 +230,7 @@ const GoodsDetail = (props) => {
       getRoyaltyFee(detailsObj.contract_address, detailsObj.token_id).then(
         (res) => {
           console.log("royalty fee: ", res);
-          res[1]&&setRoyaltyFee(res[1]);
+          res[1] && setRoyaltyFee(res[1]);
         }
       );
     if (
@@ -353,6 +353,23 @@ const GoodsDetail = (props) => {
       console.log("dmw approval nft");
       setVfModalVisible(true);
     } else {
+      if (WalletInUse == 2 && detailsObj.network) {
+        if (
+          connector.chainId !=
+          chainNameMap[detailsObj.network.toLowerCase()].chainId
+        ) {
+          console.log(
+            connector.chainId,
+            chainNameMap[detailsObj.network.toLowerCase()].chainId
+          );
+          Toast(
+            t(
+              "该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！"
+            )
+          );
+          return null
+        }
+      }
       ApprovalForAll(detailsObj.contract_address, detailsObj.token_id);
       setTxModalVisible(true);
     }
@@ -735,6 +752,23 @@ const GoodsDetail = (props) => {
               {sellBtnVisible && (
                 <Text
                   onPress={() => {
+                    if (WalletInUse == 2 && detailsObj.network) {
+                      if (
+                        connector.chainId !=
+                        chainNameMap[detailsObj.network.toLowerCase()].chainId
+                      ) {
+                        console.log(
+                          connector.chainId,
+                          chainNameMap[detailsObj.network.toLowerCase()].chainId
+                        );
+                        Toast(
+                          t(
+                            "该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！"
+                          )
+                        );
+                        return null
+                      }
+                    }
                     setSellOptionVisible(true);
                   }}
                   style={[styles.buyBtn, { marginRight: 10, marginBottom: 40 }]}
