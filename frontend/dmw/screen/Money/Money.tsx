@@ -554,7 +554,7 @@ const Money = (props) => {
         {/* tab栏 -- end */}
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={{ maxHeight: screenHeight * 0.5, minHeight: "100%" }}
+          style={{ maxHeight: screenHeight * 0.5, minHeight: "100%" ,marginBottom:50}}
           nestedScrollEnabled={true}
         >
           <View style={[styles.listbox]}>
