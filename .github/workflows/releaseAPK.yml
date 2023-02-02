@@ -1,13 +1,17 @@
 name: Release APK
 run-name: ${{ github.actor }} is Building APK 🚀
 on: [push]
-env:
-  APK_NAME: dmw-$(date +%s).apk
 jobs:
-  Explore-GitHub-Actions:
+  Release APK:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - name: Get current time
+        uses: josStorer/get-current-time@v2.0.2
+        id: current-time
+        with:
+          format: YYYYMMDD-HH
+          utcOffset: "+08:00"
+      - run: echo "release file will be:dmw-${{ steps.current-time.outputs.time }}.apk"
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Install dependencies
@@ -17,7 +21,9 @@ jobs:
       - name: Build app
         run: yarn releaseAPK
       - name: Deploy to GitHub
+        env:
+        TIME: "${{ steps.current-time.outputs.time }}"
         uses: actions/upload-artifact@v1
         with:
-          name: ${{ env.APK_NAME }}
+          name: dmw-${{ env.TIME }}.apk
           path: android/app/build/outputs/apk/release/app-release.apk
