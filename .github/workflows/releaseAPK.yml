@@ -2,7 +2,7 @@ name: Release APK
 run-name: ${{ github.actor }} is Building APK 🚀
 on: [push]
 jobs:
-  Release APK:
+  Release-APK:
     runs-on: ubuntu-latest
     steps:
       - name: Get current time

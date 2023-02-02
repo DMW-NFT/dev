@@ -2,7 +2,7 @@ name: Release ABB
 run-name: ${{ github.actor }} is Building ABB 🚀
 on: [push]
 jobs:
-  Release ABB:
+  Release-ABB:
     runs-on: ubuntu-latest
     steps:
       - name: Get current time
