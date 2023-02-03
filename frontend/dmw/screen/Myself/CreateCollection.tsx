@@ -319,7 +319,7 @@ const TransferredIntoCollection = (props) => {
 
   const royaltyBpsInput = (
     <View style={styles.lis}>
-      <Text style={styles.text}>{t("版权费(%)")}</Text>
+      <Text style={styles.text}>{t("版权费")}(%)</Text>
       <TextInput
         maxLength={18}
         placeholder={t("请输入版权费")}
