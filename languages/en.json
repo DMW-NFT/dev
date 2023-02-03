@@ -359,6 +359,7 @@
   "数量":"Amount",
   "网络":"Network",
   "版权费":"Copyright fee",
+  "版权费(%)":"Copyright fee",
   "请输入版权费": "Enter royalty fee",
   "当前钱包": "Current wallet",
   "请输入铸造数量": "Enter minting quantity",
