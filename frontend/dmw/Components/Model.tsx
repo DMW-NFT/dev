@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 6,
     backgroundColor: '#E0E0E0',
-    borderRadius: 50,
+    borderRadius: 20,
   },
   footer: {
     zIndex: 999,

@@ -128,9 +128,9 @@ const List = (props) => {
                 source={{ uri: props.list.image_attachment_url }}
               >
                 {type != 4 ? (
-                  <Text numberOfLines={2} style={[styles.network]}>
-                    {item.network || ""}
-                  </Text>
+                  <View style={[styles.network]}>
+                    <Text style={{color:"white"}}>{item.network || ""}</Text>
+                  </View>
                 ) : null}
                 {type == 3 ? (
                   <Text style={[styles.time, styles.timeBox]}>4h 16m 27s</Text>
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ACA4FA",
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 40,
+    borderRadius:20,
     lineHeight: 15,
   },
   button: {

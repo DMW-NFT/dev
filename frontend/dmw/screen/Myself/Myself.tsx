@@ -481,7 +481,6 @@ const styles = StyleSheet.create({
     fontSize: 26,
     lineHeight: 52,
     fontWeight: "700",
-    fontFamily: "",
     display: "flex",
     justifyContent: "space-around",
     includeFontPadding: false,
@@ -508,7 +507,7 @@ const styles = StyleSheet.create({
   },
   nickname: {
     fontSize: 32 / 2,
-    fontFamily: "Source Han Sans CN",
+    
     fontWeight: "700",
     lineHeight: 24,
     color: "#333333",
@@ -520,7 +519,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#999999",
     fontSize: 12,
-    fontFamily: "Source Han Sans CN",
+    
     textAlign: "center",
   },
   TextInput_s: {

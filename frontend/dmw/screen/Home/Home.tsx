@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     lineHeight: 52,
     fontWeight: "700",
-    fontFamily: "",
+
     display: "flex",
     justifyContent: "space-around",
     includeFontPadding: false,
@@ -438,12 +438,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   slidebutton: {
-    fontFamily: "Source Han Sans CN",
+    
     fontSize: 14,
     fontWeight: "700",
     borderColor: "#877EF0",
     borderWidth: 1,
-    borderRadius: 50,
+    borderRadius: 20,
     marginLeft: 20,
     paddingLeft: 20,
     paddingRight: 20,
@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
   daonghang_text: {
     fontSize: 16,
     fontWeight: "700",
-    fontFamily: "Source Han Sans CN",
+    
     height: 56,
     lineHeight: 56,
     flex: 1,
@@ -488,7 +488,7 @@ const styles = StyleSheet.create({
   daonghang_text_ative: {
     fontSize: 16,
     fontWeight: "700",
-    fontFamily: "Source Han Sans CN",
+    
     height: 56,
     lineHeight: 56,
     flex: 1,

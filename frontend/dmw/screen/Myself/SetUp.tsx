@@ -178,14 +178,14 @@ const styles = StyleSheet.create({
   },
   textname: {
     fontSize: 14,
-    fontFamily: "Source Han Sans CN",
+    
     color: "#666666",
     flex: 1,
   },
   language: {
     fontSize: 12,
     color: "#999999",
-    fontFamily: "Source Han Sans CN",
+    
     alignItems: "center",
     marginRight: 5,
   },

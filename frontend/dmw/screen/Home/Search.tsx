@@ -283,21 +283,21 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '700',
         color: '#333',
-        fontFamily: 'Source Han Sans CN',
+        
         marginBottom: 20
     },
     ModalBOX: {
         width: '100%',
         height: '100%',
         backgroundColor: '#fff',
-        fontFamily: 'Source Han Sans CN',
+        
         paddingLeft: 20,
         paddingRight: 20,
         paddingBottom: 49,
     },
     selectfilter: {
         fontSize: 16,
-        fontFamily: 'Source Han Sans CN',
+        
         fontWeight: '700',
         color: '#333',
         marginTop: 20,

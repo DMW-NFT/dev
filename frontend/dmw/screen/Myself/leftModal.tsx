@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontFamily: "Source Han Sans CN",
+    
     fontWeight: "700",
     marginBottom: 20,
   },

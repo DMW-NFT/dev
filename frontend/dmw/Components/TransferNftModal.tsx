@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 40,
     backgroundColor: "#F5F5F5",
-    borderRadius: 50,
+    borderRadius: 20,
     lineHeight: 40,
     textAlign: "center",
     color: "#333",

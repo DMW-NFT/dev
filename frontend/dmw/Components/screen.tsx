@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   modal_text: {
     fontSize: 16,
     fontWeight: '700',
-    fontFamily: 'Source Han Sans CN',
+    
     textAlign: 'center',
     marginBottom: 30,
   },
