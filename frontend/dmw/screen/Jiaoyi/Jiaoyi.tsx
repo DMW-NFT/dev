@@ -135,6 +135,7 @@ const Jiaoyi = (props) => {
       >
         {(
           <FlatList
+            showsVerticalScrollIndicator={false}
             refreshing={refreshing}
             style={{ height: 50, paddingBottom: 20 }}
             ListEmptyComponent={() => {

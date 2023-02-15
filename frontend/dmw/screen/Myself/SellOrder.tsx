@@ -1,4 +1,4 @@
-import { Text, StyleSheet, View, SafeAreaView, ScrollView, Dimensions, Image, FlatList, TouchableWithoutFeedback } from 'react-native'
+import { Text, StyleSheet, View, SafeAreaView, ScrollView, Dimensions, Image, FlatList, TouchableWithoutFeedback, TouchableOpacity } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { Modal } from 'react-native-paper';
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
@@ -82,8 +82,13 @@ const SellOrder = (props) => {
             <View >
                 <View style={[styles.container, { backgroundColor: "#f5f5f5" }]}>
                     <View style={[styles.index_box, styles.daohang]}>
-                        <Text style={[typename != 1 ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging(1)}>{t("购买")}</Text>
-                        <Text style={[typename != 2 ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging(2)}>{t("售卖")}</Text>
+                        <TouchableOpacity style={[typename != 1 ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging(1)}>
+                            <Text >{t("购买")}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[typename != 2 ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging(2)}>
+                            <Text >{t("售卖")}</Text>
+                        </TouchableOpacity>
+
                     </View>
 
                 </View>
@@ -112,9 +117,9 @@ const SellOrder = (props) => {
                                 }
                                 if (item.status == 3) {
                                     let { nft_contract_address, nft_token_id, nft_network } = item
-                                    console.log(item.id, item.unique_id, item.contract_address, item.token_id, item.network,'-----------');
-                                    
-                                    props.navigation.navigate('goodsDetail', {  contract_address:nft_contract_address, token_id:nft_token_id, network:nft_network })
+                                    console.log(item.id, item.unique_id, item.contract_address, item.token_id, item.network, '-----------');
+
+                                    props.navigation.navigate('goodsDetail', { contract_address: nft_contract_address, token_id: nft_token_id, network: nft_network })
                                 }
                             }}>
                                 <View style={[styles.lis]}>
@@ -147,7 +152,7 @@ const SellOrder = (props) => {
                                                 // <Text style={[styles.finshingText, { color: "#F26377" }]}>4h 16m 27s后结束</Text>
                                                 <View style={{ alignItems: 'flex-end' }}>
                                                     <Text style={[styles.lisPriceText]}>{t("成交价")}</Text>
-                                                    <Text style={[styles.lisPrice]}>{item.total_offer_amount.number} {item.buyout_price_per.currency_name!="ETH"?item.buyout_price_per.currency_name:chainNameMap[item.nft_network.toLowerCase()].nativeToken}</Text>
+                                                    <Text style={[styles.lisPrice]}>{item.total_offer_amount.number} {item.buyout_price_per.currency_name != "ETH" ? item.buyout_price_per.currency_name : chainNameMap[item.nft_network.toLowerCase()].nativeToken}</Text>
                                                 </View>
                                         }
                                     </View>
@@ -157,7 +162,7 @@ const SellOrder = (props) => {
                                         </View>
                                         <View style={{ alignItems: "center" }}>
                                             <Text style={[styles.sellPriceText]}>{t('售卖价') + ''}</Text>
-                                            <Text style={[styles.sellPrice]}>{item.buyout_price_per.number } {item.buyout_price_per.currency_name!="ETH"?item.buyout_price_per.currency_name:chainNameMap[item.nft_network.toLowerCase()].nativeToken}</Text>
+                                            <Text style={[styles.sellPrice]}>{item.buyout_price_per.number} {item.buyout_price_per.currency_name != "ETH" ? item.buyout_price_per.currency_name : chainNameMap[item.nft_network.toLowerCase()].nativeToken}</Text>
                                         </View>
                                         <View>
                                             {
@@ -169,7 +174,7 @@ const SellOrder = (props) => {
                                                     :
                                                     <Text style={[styles.lisBottomLookBtn, { backgroundColor: "#fff", color: "#897EF8" }]}
                                                         onPress={() => { props.navigation.navigate('TradeSuccessfully', { id: item.offer_id }) }}
-                                                    >{t('查看') + ''}</Text>
+                                                    >{t('详情') + ''}</Text>
                                             }
 
 
@@ -205,7 +210,7 @@ const SellOrder = (props) => {
                                                                         <Text style={[styles.moreTop]}>offer</Text>
                                                                         <View style={[styles.flex, styles.moreBottom]}>
                                                                             <Image style={{ width: 15, height: 15 }} source={require('../../assets/img/money/offer.png')}></Image>
-                                                                            <Text style={{ fontSize: 14, color: "#333" }}>{items.total_offer_amount.number } {item.buyout_price_per.currency_name!="ETH"?item.buyout_price_per.currency_name:chainNameMap[item.nft_network.toLowerCase()].nativeToken}</Text>
+                                                                            <Text style={{ fontSize: 14, color: "#333" }}>{items.total_offer_amount.number} {item.buyout_price_per.currency_name != "ETH" ? item.buyout_price_per.currency_name : chainNameMap[item.nft_network.toLowerCase()].nativeToken}</Text>
                                                                         </View>
                                                                     </View>
                                                                     <View >
@@ -424,27 +429,29 @@ const styles = StyleSheet.create({
         paddingRight: 20,
         backgroundColor: '#fff',
     },
+    
     daonghang_text: {
         fontSize: 16,
         fontWeight: '700',
-        
+        color: '#666666',
+        textAlign: 'center',
         height: 56,
         lineHeight: 56,
         flex: 1,
-        color: '#666666',
-        textAlign: 'center',
+
     },
     daonghang_text_ative: {
         fontSize: 16,
         fontWeight: '700',
-        
+        textAlign: 'center',
+        color: '#897EF8',
         height: 56,
         lineHeight: 56,
         flex: 1,
-        textAlign: 'center',
+
         borderBottomColor: '#897EF8',
         borderBottomWidth: 3,
-        color: '#897EF8',
+
         borderRadius: 1,
     },
     container: {

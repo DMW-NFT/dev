@@ -393,7 +393,7 @@ const Myself = (props) => {
           </View>
 
           {/* tab栏 -- start */}
-          <View style={[styles.index_box, { paddingLeft: 40 }]}>
+          <View style={[]}>
             <Tabcolumn
               typename={typename}
               paging={(typename) => {
@@ -481,6 +481,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     lineHeight: 52,
     fontWeight: "700",
+
     display: "flex",
     justifyContent: "space-around",
     includeFontPadding: false,

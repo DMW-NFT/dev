@@ -1,4 +1,4 @@
-import { Text, StyleSheet, View, TextInput, FlatList, SafeAreaView, ScrollView, Image, Dimensions, TouchableWithoutFeedback } from 'react-native'
+import { Text, StyleSheet, View, TextInput, FlatList, SafeAreaView, ScrollView, Image, Dimensions, TouchableWithoutFeedback, TouchableOpacityComponent } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Modal } from "react-native-paper"
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
@@ -11,6 +11,7 @@ import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { faChevronRight, faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import { Spinner } from '@ui-kitten/components';
 import { useTranslation } from 'react-i18next'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 const scale = Dimensions.get('window').scale;
 const Searchsc = (props) => {
     const { t, i18n } = useTranslation();
@@ -128,7 +129,7 @@ const Searchsc = (props) => {
                     {
 
                         <FlatList
-                        showsVerticalScrollIndicator={false}
+                            showsVerticalScrollIndicator={false}
                             refreshing={refreshing}
                             style={{ height: '55%', flex: 1, }}
                             ListEmptyComponent={() => {
@@ -174,17 +175,23 @@ const Searchsc = (props) => {
                                         item['tabs'].map((jitem, jindex) => {
 
                                             return <>
-                                                <Text onPress={() => {
-                                                    // console.log(123);
-                                                    let a = { ...selListParams }
-                                                    if (a[item.title.value] == jitem.value) {
-                                                        a[item.title.value] = ''
-                                                    } else {
-                                                        a[item.title.value] = jitem.value
-                                                    }
 
-                                                    setParams(a)
-                                                }} style={selListParams[item.title.value] == jitem.value ? styles.btn_active : styles.btn_noactive}>{jitem.name}</Text>
+                                                <TouchableOpacity
+                                                    onPress={() => {
+                                                        // console.log(123);
+                                                        let a = { ...selListParams }
+                                                        if (a[item.title.value] == jitem.value) {
+                                                            a[item.title.value] = ''
+                                                        } else {
+                                                            a[item.title.value] = jitem.value
+                                                        }
+
+                                                        setParams(a)
+                                                    }} style={selListParams[item.title.value] == jitem.value ? styles.btn_active : styles.btn_noactive}
+                                                >
+                                                    <Text style={[styles.btn_text,selListParams[item.title.value] == jitem.value&&styles.btn_text_active]}>{jitem.name}</Text>
+                                                </TouchableOpacity>
+
                                             </>
                                         })
                                     }
@@ -246,18 +253,27 @@ const styles = StyleSheet.create({
         marginRight: -20,
         marginLeft: -20
     },
-    btn_active: {
+    btn_text: {
+        lineHeight: 34,
+        color: '#333',
+    },
+    btn_text_active: {
+
         color: '#fff',
+    },
+    btn_active: {
+
         backgroundColor: '#ACA4FA',
         height: 34,
         paddingRight: 15,
         paddingLeft: 15,
         borderColor: '#877EF0',
         borderWidth: 1,
-        lineHeight: 34,
         borderRadius: 20,
         marginBottom: 15,
         marginRight: 15,
+        justifyContent:"center",
+        // alignContent:"center"
     },
     btn_noactive: {
         height: 34,
@@ -265,11 +281,11 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         borderColor: '#877EF0',
         borderWidth: 1,
-        lineHeight: 34,
         borderRadius: 20,
         marginBottom: 15,
         marginRight: 15,
-        color: '#333',
+        justifyContent:"center",
+        // alignContent:"center"
     },
     optionBox: {
         flexDirection: 'row',
@@ -283,21 +299,21 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '700',
         color: '#333',
-        
+
         marginBottom: 20
     },
     ModalBOX: {
         width: '100%',
         height: '100%',
         backgroundColor: '#fff',
-        
+
         paddingLeft: 20,
         paddingRight: 20,
         paddingBottom: 49,
     },
     selectfilter: {
         fontSize: 16,
-        
+
         fontWeight: '700',
         color: '#333',
         marginTop: 20,
@@ -322,7 +338,7 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 40,
         borderTopLeftRadius: 40,
         position: 'absolute',
-        bottom: 0,
+        bottom: -50,
         overflow: 'hidden'
 
     },

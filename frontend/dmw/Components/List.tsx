@@ -6,6 +6,7 @@ import {
   FlatList,
   ImageBackground,
   TouchableWithoutFeedback,
+  TouchableOpacity,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -78,10 +79,9 @@ const List = (props) => {
               }}
             >
               <View>
-                <Text
-                  onPress={() => {
-                    Copy(`${item.contract_address}/${item.token_id}`);
-                  }}
+                <TouchableOpacity onPress={() => {
+                  Copy(`${item.contract_address}/${item.token_id}`);
+                }}
                   style={{
                     paddingTop: 6,
                     paddingBottom: 6,
@@ -89,26 +89,38 @@ const List = (props) => {
                     borderRadius: 15,
                     textAlign: "center",
                     marginBottom: 20,
-                  }}
-                >
-                  {t("复制链接")}
-                </Text>
-                {props.showTransferNft && (
+                  }}>
                   <Text
                     style={{
-                      paddingTop: 6,
-                      paddingBottom: 6,
-                      backgroundColor: "#fff",
-                      borderRadius: 15,
                       textAlign: "center",
-                      marginBottom: 20,
-                    }}
-                    onPress={() => {
-                      setNftToTransfer();
                     }}
                   >
-                    {t("转移/赠与")}
+                    {t("复制链接")}
                   </Text>
+                </TouchableOpacity>
+
+                {props.showTransferNft && (
+                  <TouchableOpacity style={{
+                    paddingTop: 6,
+                    paddingBottom: 6,
+                    backgroundColor: "#fff",
+                    borderRadius: 15,
+
+                    marginBottom: 20,
+                  }}>
+                    <Text
+                      style={{
+
+                        textAlign: "center",
+                      }}
+                      onPress={() => {
+                        setNftToTransfer();
+                      }}
+                    >
+                      {t("转移/赠与")}
+                    </Text>
+                  </TouchableOpacity>
+
                 )}
               </View>
             </View>
@@ -129,7 +141,7 @@ const List = (props) => {
               >
                 {type != 4 ? (
                   <View style={[styles.network]}>
-                    <Text style={{color:"white"}}>{item.network || ""}</Text>
+                    <Text style={{ color: "white" }}>{item.network || ""}</Text>
                   </View>
                 ) : null}
                 {type == 3 ? (
@@ -146,7 +158,7 @@ const List = (props) => {
                     <Icon
                       name="more-horizontal"
                       type="feather"
-                      color= "white"
+                      color="white"
                       containerStyle={{
                         width: 25,
                         height: 25,
@@ -156,7 +168,7 @@ const List = (props) => {
                         backgroundColor: "#0003",
                         borderRadius: 6,
                         borderColor: "#fff5",
-                        borderWidth:1
+                        borderWidth: 1
                       }}
                     />
                   </TouchableWithoutFeedback>
@@ -164,7 +176,7 @@ const List = (props) => {
               </ImageBackground>
             ) : (
               <ImageBackground
-                onError={() => {}}
+                onError={() => { }}
                 style={[styles.imageBox]}
                 resizeMode="cover"
                 source={require("../assets/img/index/default.png")}
@@ -265,7 +277,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ACA4FA",
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius:20,
+    borderRadius: 20,
     lineHeight: 15,
   },
   button: {

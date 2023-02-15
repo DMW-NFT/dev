@@ -339,6 +339,7 @@ const DmwWalletProvider = ({ children }) => {
     web3.eth.setProvider(getProvider(dmwChainId));
     const totalPrice = String(Number(ethers.utils.parseUnits(unitPrice, decimals)) * quantityToBuy);
     const contractAddress = contractMap()[dmwChainId].market_contract;
+    // console.log(dmwChainId,contractAddress,'buynft')
     const contract = new web3.eth.Contract(marketplaceABI, contractAddress);
     const rawdata = contract.methods
       .buy(

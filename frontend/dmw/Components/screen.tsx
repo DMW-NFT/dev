@@ -1,4 +1,4 @@
-import { Text, StyleSheet, View, Dimensions } from 'react-native';
+import { Text, StyleSheet, View, Dimensions, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect, Suspense } from 'react';
 import { Modal } from 'react-native-paper';
 import { t } from 'i18next';
@@ -35,12 +35,12 @@ const CreateMoney = (props) => {
         arr[title.value].push(item.value)
         setActiveBtn(arr)
       } else {
-        if(arr[title.value] == item.value){
+        if (arr[title.value] == item.value) {
           arr[title.value] = ''
-        }else{
+        } else {
           arr[title.value] = item.value
         }
-       
+
         setActiveBtn(arr)
       }
       // console.log(arr);
@@ -58,7 +58,7 @@ const CreateMoney = (props) => {
 
   let { visible } = props;
   return (
-    <View style={[{ position: 'absolute', width: "100%" ,zIndex:100,bottom:0,height:"100%"}]}>
+    <View style={[{ position: 'absolute', width: "100%", zIndex: 100, bottom: 0, height: "100%" }]}>
       <View style={styles.container}></View>
       <Modal
         visible={visible}
@@ -83,7 +83,7 @@ const CreateMoney = (props) => {
                 <View style={styles.btn_data}>
                   {item['tabs'].map((jitem, jindex) => {
                     return (
-                      <Text
+                      <TouchableOpacity
                         key={jindex}
                         style={[
                           (activeBtn[item.title.value] && item.title.multi_select && activeBtn[item.title.value].indexOf(jitem.value) > -1) || (!item.title.multi_select && activeBtn[item.title.value] == jitem.value)
@@ -93,8 +93,9 @@ const CreateMoney = (props) => {
                         onPress={() =>
                           btnactive(item.title, jitem)
                         }>
-                        {jitem.name}
-                      </Text>
+                       <Text style={[styles.btn_text,activeBtn[item.title.value] == jitem.value&&styles.btn_text_active]}>{jitem.name}</Text>
+                      </TouchableOpacity>
+
                     );
                   })}
                 </View>
@@ -104,9 +105,20 @@ const CreateMoney = (props) => {
           })}
         </View>
 
-        <Text style={[styles.sureMoneyBtn]} onPress={() => determine()}>
-          {t('确定') + ''}
-        </Text>
+        <TouchableOpacity style={[styles.sureMoneyBtn]} onPress={() => determine()}>
+
+          <Text style={{
+            lineHeight: 50,
+            textAlign: 'center',
+            color: '#fff',
+
+            fontSize: 16,
+            fontWeight: 'bold',
+          }}>
+            {t('确定') + ''}
+          </Text>
+        </TouchableOpacity>
+
       </Modal>
     </View>
   );
@@ -124,18 +136,25 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     marginRight: -15,
   },
-  btn_active: {
+  btn_text: {
+    lineHeight: 34,
+    color: '#333',
+  },
+  btn_text_active: {
+
     color: '#fff',
+  },
+  btn_active: {
     backgroundColor: '#ACA4FA',
     height: 34,
     paddingRight: 15,
     paddingLeft: 15,
     borderColor: '#877EF0',
     borderWidth: 1,
-    lineHeight: 34,
     borderRadius: 20,
     marginBottom: 15,
     marginRight: 10,
+    justifyContent:"center",
   },
   btn_noactive: {
     height: 34,
@@ -143,11 +162,10 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     borderColor: '#877EF0',
     borderWidth: 1,
-    lineHeight: 34,
     borderRadius: 20,
     marginBottom: 15,
     marginRight: 10,
-    color: '#333',
+    justifyContent:"center",
   },
   btnline: {
     position: 'absolute',
@@ -162,13 +180,13 @@ const styles = StyleSheet.create({
     zIndex: 999,
     width: Dimensions.get('window').width,
     position: 'absolute',
-    bottom: 0,
+    bottom: -20,
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 20,
     paddingTop: 23,
-    minWidth:'50%'
+    minWidth: '50%'
     // paddingBottom: 48,
   },
   createMoneyBtn: {
@@ -190,13 +208,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#897EF8',
     height: 50,
-    lineHeight: 50,
-    textAlign: 'center',
-    color: '#fff',
-    borderRadius: 25,
-    fontSize: 16,
-    fontWeight: 'bold',
+
     marginBottom: 20,
+    borderRadius: 25,
   },
   container: {
     height: Dimensions.get('window').height,
@@ -210,7 +224,7 @@ const styles = StyleSheet.create({
   modal_text: {
     fontSize: 16,
     fontWeight: '700',
-    
+
     textAlign: 'center',
     marginBottom: 30,
   },

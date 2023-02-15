@@ -6,6 +6,7 @@ import {
   Image,
   Dimensions,
   TouchableWithoutFeedback,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -31,13 +32,13 @@ const LoginHome = (props) => {
   const [SelectedObj, setSelectedObj] = useState(
     language == "en"
       ? {
-          name: "English",
-          id: "en",
-          url: require("../assets/img/login/en.png"),
-        }
+        name: "English",
+        id: "en",
+        url: require("../assets/img/login/en.png"),
+      }
       : language == "zh"
-      ? { name: "中文", id: "zh", url: require("../assets/img/login/zh.png") }
-      : {
+        ? { name: "中文", id: "zh", url: require("../assets/img/login/zh.png") }
+        : {
           name: "日本語",
           id: "jp",
           url: require("../assets/img/login/Japaneseflag.jpeg"),
@@ -71,9 +72,9 @@ const LoginHome = (props) => {
   };
 
   return (
-    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1,}}>
+    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1, }}>
       <View style={[styles.container]}>
-        <View style={{ flexDirection: "row", justifyContent: "space-between",elevation:10 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", elevation: 10,zIndex:99 }}>
           <View></View>
           <TouchableWithoutFeedback
             onPress={() => {
@@ -116,8 +117,10 @@ const LoginHome = (props) => {
                     borderWidth: 1,
                     overflow: "hidden",
                     borderColor: "#897EF8",
-                    elevation:10
-                    
+                    elevation: 10,
+                    // zIndex:99
+
+
                   }}
                 >
                   {localLIst.map((item, index) => (
@@ -130,13 +133,14 @@ const LoginHome = (props) => {
                           backgroundColor:
                             item.id == SelectedObj.id
                               ? "rgba(133, 122, 229,0.4)"
-                              : "#fff",
+                              : "rgba(133, 122, 229,0.1)",
                           marginLeft: -20,
                           marginRight: -10,
                           paddingLeft: 20,
                           paddingTop: 10,
                           paddingBottom: 10,
                           paddingRight: 10,
+
                         }}
                       >
                         <Text
@@ -166,12 +170,29 @@ const LoginHome = (props) => {
           ></Image>
         </View>
         <View style={{ paddingHorizontal: 50 }}>
-          <Text onPress={() => PhoneSignIn()} style={[styles.loginBtnBox]}>
-            {t("手机号登录")}
-          </Text>
-          <Text onPress={() => mailboxSignIn()} style={[styles.loginBtnBox]}>
+          <TouchableOpacity onPress={() => PhoneSignIn()} style={[styles.loginBtnBox]}  >
+            <Text style={{
+              lineHeight: 50,
+              textAlign: "center",
+              color: "#fff",
+              fontSize: 16,
+              fontWeight: "bold",
+            }} >
+              {t("手机号登录")}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity  onPress={() => mailboxSignIn()} style={[styles.loginBtnBox]}  >
+            <Text style={{
+              lineHeight: 50,
+              textAlign: "center",
+              color: "#fff",
+              fontSize: 16,
+              fontWeight: "bold",
+            }} >
             {t("邮箱号登录")}
-          </Text>
+            </Text>
+          </TouchableOpacity>
+
           <Text onPress={() => register()} style={[styles.regiset]}>
             {t("注册")}
           </Text>
@@ -197,17 +218,17 @@ const styles = StyleSheet.create({
     color: "#897EF8",
   },
   loginImgBox: {
-    marginTop:100,
+    marginTop: 100,
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-    elevation:1
-    
+    elevation: 1
+
   },
   loginImg: {
     width: 512 / 2,
     height: 512 / 2,
-    elevation:1
+    elevation: 1
   },
   loginBtnBox: {
     width: "100%",

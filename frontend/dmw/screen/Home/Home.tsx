@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   FlatList,
+  Touchable,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import Swiper from "react-native-swiper";
@@ -19,6 +20,7 @@ import { Card, Modal } from "@ui-kitten/components";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useTranslation } from "react-i18next";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -240,17 +242,24 @@ const Home = (props) => {
               showsHorizontalScrollIndicator={false}
             >
               {listType.map((item, index) => (
-                <Text
-                  style={styles.slidebutton}
-                  onPress={() => {
-                    props.navigation.navigate("categrayScreen", {
-                      categray: item.name,
-                      id: item.id,
-                    });
-                  }}
-                >
-                  {item.name}
-                </Text>
+                <TouchableOpacity style={styles.slidebutton} onPress={() => {
+                  props.navigation.navigate("categrayScreen", {
+                    categray: item.name,
+                    id: item.id,
+                  });
+                }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontWeight: "700",
+                      lineHeight: 40,
+                      color: "#666666",
+                    }}
+                  >
+                    {item.name}
+                  </Text>
+                </TouchableOpacity>
+
               ))}
             </ScrollView>
 
@@ -279,7 +288,7 @@ const Home = (props) => {
                             }}
                             source={
                               item.attachment_text ==
-                              "../../assets/img/index/default.png"
+                                "../../assets/img/index/default.png"
                                 ? require("../../assets/img/index/default.png")
                                 : { uri: item.attachment_text }
                             }
@@ -297,27 +306,31 @@ const Home = (props) => {
             <View style={styles.line}></View>
             {/* line -- end */}
             {/* tab栏 -- start */}
-            <View style={[styles.index_box, styles.daohang]}>
-              <Text
-                style={[
-                  typename != "nft"
-                    ? styles.daonghang_text
-                    : styles.daonghang_text_ative,
-                ]}
-                onPress={() => paging("nft")}
-              >
-                NFT
-              </Text>
-              <Text
-                style={[
-                  typename != "Blind"
-                    ? styles.daonghang_text
-                    : styles.daonghang_text_ative,
-                ]}
-                onPress={() => paging("Blind")}
-              >
-                Blind box
-              </Text>
+            <View style={{ width: "100%", flexDirection: "row" }}>
+
+              <View style={[styles.tab, typename == "nft" && styles.tab_active]}>
+                <TouchableOpacity onPress={() => paging("nft")}>
+
+                  <Text style={[styles.tab_text, typename == "nft" && styles.tab_text_ative]}>
+                    NFT
+                  </Text>
+
+
+                </TouchableOpacity>
+              </View>
+              <View style={[styles.tab, typename == "Blind" && styles.tab_active]}>
+                <TouchableOpacity onPress={() => paging("Blind")}>
+                  <Text
+                    style={[styles.tab_text, typename == "Blind" && styles.tab_text_ative]}
+                    onPress={() => paging("Blind")}
+                  >
+                    Blind box
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+
+
             </View>
             {/* tab栏 -- end */}
             {/* line -- start*/}
@@ -405,8 +418,11 @@ const Home = (props) => {
 export default Home;
 
 const styles = StyleSheet.create({
-  daohang: {
+  tab_container: {
     flexDirection: "row",
+    // width:"100%",
+    justifyContent: "space-around",
+    backgroundColor: "pink"
   },
   listbox: {
     paddingHorizontal: 20,
@@ -438,17 +454,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   slidebutton: {
-    
-    fontSize: 14,
-    fontWeight: "700",
+
     borderColor: "#877EF0",
     borderWidth: 1,
     borderRadius: 20,
     marginLeft: 20,
     paddingLeft: 20,
     paddingRight: 20,
-    lineHeight: 40,
-    color: "#666666",
+
   },
   shuipin: {
     marginLeft: 0,
@@ -467,35 +480,33 @@ const styles = StyleSheet.create({
     resizeMode: "stretch",
     borderRadius: 10,
   },
+
+  tab: {
+    height: 56,
+    width: "50%",
+  },
+  tab_active: {
+    borderBottomColor: "#897EF8",
+    borderBottomWidth: 3
+  },
+
   line: {
     borderColor: "#CCCCCC",
     width: screenWidth,
     height: 1,
     borderWidth: 1 / scale,
   },
-  daonghang_text: {
+  tab_text: {
+    lineHeight: 56,
     fontSize: 16,
     fontWeight: "700",
-    
-    height: 56,
-    lineHeight: 56,
-    flex: 1,
-    color: "#666666",
     textAlign: "center",
-    // borderBottomColor:'#897EF8',
-    // borderBottomWidth:3
   },
-  daonghang_text_ative: {
+  tab_text_ative: {
     fontSize: 16,
     fontWeight: "700",
-    
-    height: 56,
     lineHeight: 56,
-    flex: 1,
     textAlign: "center",
-    borderBottomColor: "#897EF8",
-    borderBottomWidth: 3,
     color: "#897EF8",
-    borderRadius: 1,
   },
 });
