@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   Dimensions,
+  TouchableOpacity,
 } from "react-native";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import React, { useEffect, useState } from "react";
@@ -81,10 +82,11 @@ const Privatekeyimport = (props) => {
             keyboardType="ascii-capable"
             style={{
               borderStyle: "dotted", // 虚线 效果
-              borderWidth: 1, //虚线 线宽
-              borderColor: "#e8e8e8", // 虚线颜色
+              borderWidth: 2, //虚线 线宽
+              borderColor: "#ccc", // 虚线颜色
               borderRadius: 10,
               padding: 20,
+              height: 100
             }}
             onChangeText={(e) => {
               setword(e);
@@ -143,10 +145,17 @@ const Privatekeyimport = (props) => {
             />
           </View>
         </View>
+        <TouchableOpacity style={styles.btn} onPress={() => introduce()}>
+          <Text style={{
+            color: "#fff",
+            textAlign: "center",
+            lineHeight: 50,
+            fontSize:20
+          }} >
+            导入
+          </Text>
+        </TouchableOpacity>
 
-        <Text style={styles.btn} onPress={() => introduce()}>
-          导入
-        </Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -191,16 +200,14 @@ const styles = StyleSheet.create({
   btn: {
     width: screenWidth - 40,
     backgroundColor: "#897EF8",
-    color: "#fff",
+
     height: 50,
-    lineHeight: 50,
-    textAlign: "center",
     marginRight: 20,
     marginLeft: 20,
     borderRadius: 50,
     // position: "absolute",
     bottom: 14,
-    marginTop:30
+    marginTop: 30
   },
   input: {
     height: 48,

@@ -82,11 +82,11 @@ const SellOrder = (props) => {
             <View >
                 <View style={[styles.container, { backgroundColor: "#f5f5f5" }]}>
                     <View style={[styles.index_box, styles.daohang]}>
-                        <TouchableOpacity style={[typename != 1 ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging(1)}>
-                            <Text >{t("购买")}</Text>
+                        <TouchableOpacity style={[styles.tab,typename == 1 &&styles.tab_active]} onPress={() => paging(1)}>
+                            <Text  style={[styles.tab_text,typename == 1 &&styles.tab_text_active]}  >{t("购买")}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[typename != 2 ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging(2)}>
-                            <Text >{t("售卖")}</Text>
+                        <TouchableOpacity style={[styles.tab,typename == 2 &&styles.tab_active]}onPress={() => paging(2)}>
+                            <Text  style={[styles.tab_text,typename == 2 &&styles.tab_text_active]} >{t("售卖")}</Text>
                         </TouchableOpacity>
 
                     </View>
@@ -429,31 +429,32 @@ const styles = StyleSheet.create({
         paddingRight: 20,
         backgroundColor: '#fff',
     },
-    
-    daonghang_text: {
+
+    tab: {
+        height: 56,
+        flex: 1,
+        justifyContent:"center",
+        alignContent:"center",
+        alignItems:"center"
+    },
+    tab_text: {
         fontSize: 16,
         fontWeight: '700',
         color: '#666666',
         textAlign: 'center',
-        height: 56,
         lineHeight: 56,
-        flex: 1,
-
     },
-    daonghang_text_ative: {
-        fontSize: 16,
-        fontWeight: '700',
-        textAlign: 'center',
-        color: '#897EF8',
+    tab_active: {
         height: 56,
-        lineHeight: 56,
         flex: 1,
-
         borderBottomColor: '#897EF8',
         borderBottomWidth: 3,
-
         borderRadius: 1,
     },
+    tab_text_active: {
+        color: '#897EF8',
+    },
+
     container: {
         backgroundColor: "#f5f5f5"
     },
