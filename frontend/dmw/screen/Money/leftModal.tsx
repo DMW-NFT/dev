@@ -65,6 +65,7 @@ const Lmodal = (props) => {
           Toast(t("密码错误"));
           setResetWallet(false)
           setVfModalVisible(false)
+          setPassword("");
         }
       })
       return null;
