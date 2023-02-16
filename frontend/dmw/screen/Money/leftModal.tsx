@@ -56,22 +56,20 @@ const Lmodal = (props) => {
     if (resetWallet && Array.from(password).length == 6) {
       getWalletListFromAccountStorage(password).then((res) => {
         if (res) {
-          setResetWallet(false)
+
           cleanSecret()
-          setVfModalVisible(false);
+
           Toast("Reset Success!")
-          return null
         }else{
           Toast(t("密码错误"));
-          setResetWallet(false)
-          setVfModalVisible(false)
-          setPassword("");
         }
       })
-      return null;
+      setResetWallet(false)
+      setPassword("");
+      setVfModalVisible(false)
     }
 
-    if (changePwdStep == 1 && Array.from(password).length == 6) {
+    if (!resetWallet&&changePwdStep == 1 && Array.from(password).length == 6) {
       getWalletListFromAccountStorage(password).then((res) => {
         if (res) {
           console.log(res.walletDict);
@@ -87,7 +85,7 @@ const Lmodal = (props) => {
 
     }
 
-    if (changePwdStep == 2 && Array.from(password).length == 6) {
+    if (!resetWallet&&changePwdStep == 2 && Array.from(password).length == 6) {
       originPassword &&
         changeSecretKey(originPassword, password).then((res) => {
           console.log("change pwd:", res);
@@ -106,9 +104,9 @@ const Lmodal = (props) => {
     setPassword("");
   }, [password]);
 
-  useEffect(() => {
-    !vfModalVisible && setResetWallet(false)
-  }, [vfModalVisible])
+  // useEffect(() => {
+  //   !vfModalVisible && setResetWallet(false)
+  // }, [vfModalVisible])
 
   return (
     <View style={{ position: "absolute" }}>
