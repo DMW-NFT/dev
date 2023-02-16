@@ -27,12 +27,13 @@ const Lmodal = (props) => {
     dmwWalletList,
     getWalletListFromAccountStorage,
     changeSecretKey,
+    cleanSecret
   } = useDmwWallet();
   const [vfModalVisible, setVfModalVisible] = useState(false);
   const [password, setPassword] = useState("");
   const [originPassword, setOriginPassword] = useState("");
   const [changePwdStep, setChangePwdStep] = useState(1);
-
+  const [resetWallet, setResetWallet] = useState(false)
   const close = () => {
     props.close();
   };
@@ -51,6 +52,24 @@ const Lmodal = (props) => {
   const { disconnectWallet, connectWallet } = useDmwWeb3();
 
   useEffect(() => {
+
+    if (resetWallet && Array.from(password).length == 6) {
+      getWalletListFromAccountStorage(password).then((res) => {
+        if (res) {
+          setResetWallet(false)
+          cleanSecret()
+          setVfModalVisible(false);
+          Toast("Reset Success!")
+          return null
+        }else{
+          Toast(t("密码错误"));
+          setResetWallet(false)
+          setVfModalVisible(false)
+        }
+      })
+      return null;
+    }
+
     if (changePwdStep == 1 && Array.from(password).length == 6) {
       getWalletListFromAccountStorage(password).then((res) => {
         if (res) {
@@ -64,6 +83,7 @@ const Lmodal = (props) => {
           Toast(t("密码错误"));
         }
       });
+
     }
 
     if (changePwdStep == 2 && Array.from(password).length == 6) {
@@ -84,6 +104,10 @@ const Lmodal = (props) => {
     }
     setPassword("");
   }, [password]);
+
+  useEffect(() => {
+    !vfModalVisible && setResetWallet(false)
+  }, [vfModalVisible])
 
   return (
     <View style={{ position: "absolute" }}>
@@ -132,7 +156,7 @@ const Lmodal = (props) => {
             </View>
           </TouchableWithoutFeedback>
 
-          <TouchableWithoutFeedback onPress={() => cilck("importWord")}>
+          {!dmwWalletList[0] && <TouchableWithoutFeedback onPress={() => cilck("importWord")}>
             <View style={styles.listBox}>
               <Image
                 style={styles.Limg}
@@ -140,7 +164,7 @@ const Lmodal = (props) => {
               ></Image>
               <Text>{t("导入助记词")}</Text>
             </View>
-          </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>}
 
           <TouchableWithoutFeedback
             onPress={() => {
@@ -170,7 +194,7 @@ const Lmodal = (props) => {
             </View>
           </TouchableWithoutFeedback>
 
-          <TouchableWithoutFeedback onPress={() => cilck("Privatekeyimport")}>
+          {!dmwWalletList[0] && <TouchableWithoutFeedback onPress={() => cilck("Privatekeyimport")}>
             <View style={styles.listBox}>
               <Image
                 style={styles.Limg}
@@ -178,7 +202,19 @@ const Lmodal = (props) => {
               ></Image>
               <Text>{t("从私钥导入钱包")}</Text>
             </View>
-          </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>}
+          {dmwWalletList[0] && <TouchableWithoutFeedback onPress={() => {
+            setResetWallet(true)
+            setVfModalVisible(true)
+          }}>
+            <View style={styles.listBox}>
+              <Image
+                style={styles.Limg}
+                source={require("../../assets/img/money/siyao.png")}
+              ></Image>
+              <Text>{t("Reset DMW Wallet")}</Text>
+            </View>
+          </TouchableWithoutFeedback>}
 
           {/* <TouchableWithoutFeedback onPress={() => cilck('TermsOfService')}>
             <View style={styles.listBox}>
@@ -233,7 +269,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    
+
     fontWeight: "700",
     marginBottom: 20,
   },

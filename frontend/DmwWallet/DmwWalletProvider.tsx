@@ -24,7 +24,7 @@ const DmwWalletProvider = ({ children }) => {
   const [dmwChainId, setDmwChainId] = useState(137);
   const [dmwTransactionMap, setDmwTransactionMap] = useState({});
   const [dmwTransactionList, setDmwTransactionList] = useState([]);
-  const { globalError, setGlobalError, throwTxError,contractMap } = useDmwWeb3();
+  const { globalError, setGlobalError, throwTxError, contractMap } = useDmwWeb3();
   const web3 = new Web3();
 
   const verifySecretKey = (
@@ -35,6 +35,27 @@ const DmwWalletProvider = ({ children }) => {
     var ciphertext = CryptoJS.AES.encrypt(storageKey, secretKey).toString();
     return ciphertext;
   };
+
+  const cleanSecret = async () => {
+    try {
+      await AsyncStorage.setItem(
+        "@dmw_mnemonic_storage",
+        ""
+      );
+      const WalletList = {
+        walletIndex: [],
+        walletDict: {},
+      };
+      await AsyncStorage.setItem(
+        "@dmw_wallet_list_storage",
+        JSON.stringify(WalletList)
+      );
+      setDmwWalletList([])
+      setcurrentDmwWallet("")
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   // 创建新的助记忆词，需要传入用户的支付密码，助记词将会用AES加密后储存到AsyncStorage的@dmw_mnemonic_storage中。
   const newMnemonic = async (secretKey, reset = false) => {
@@ -148,7 +169,7 @@ const DmwWalletProvider = ({ children }) => {
         await AsyncStorage.setItem(
           "@dmw_wallet_list_storage",
           JSON.stringify(currentWalletList)
-        ).then(() => {});
+        ).then(() => { });
       } catch (e) {
         console.log("error on add wallet to storage", e);
         // saving error
@@ -290,13 +311,13 @@ const DmwWalletProvider = ({ children }) => {
   ) => {
     contract
       ? dmwTransferERC20(secretKey, contract, to, amount, decimal).then(
-          (res) => {
-            return res;
-          }
-        )
-      : dmwTransferNavtive(secretKey, to, amount).then((res) => {
+        (res) => {
           return res;
-        });
+        }
+      )
+      : dmwTransferNavtive(secretKey, to, amount).then((res) => {
+        return res;
+      });
   };
 
   const dmwMintWithSignature = async (
@@ -334,7 +355,7 @@ const DmwWalletProvider = ({ children }) => {
     quantityToBuy: number,
     currency: string,
     decimals: number,
-    unitPrice:string,
+    unitPrice: string,
   ) => {
     web3.eth.setProvider(getProvider(dmwChainId));
     const totalPrice = String(Number(ethers.utils.parseUnits(unitPrice, decimals)) * quantityToBuy);
@@ -700,7 +721,7 @@ const DmwWalletProvider = ({ children }) => {
               "@dmw_wallet_list_storage",
               JSON.stringify(WalletList)
             );
-          } catch (e) {}
+          } catch (e) { }
         }
       }
     );
@@ -752,6 +773,7 @@ const DmwWalletProvider = ({ children }) => {
         addMnemonic,
         dmwTransferToken,
         changeSecretKey,
+        cleanSecret
       }}
     >
       {children}
