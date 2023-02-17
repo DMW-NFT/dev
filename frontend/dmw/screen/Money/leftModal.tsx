@@ -61,7 +61,7 @@ const Lmodal = (props) => {
 
           Toast("Reset Success!")
         }else{
-          Toast(t("密码错误"));
+          Toast(t("密码不一致"));
         }
       })
       setResetWallet(false)
@@ -79,7 +79,7 @@ const Lmodal = (props) => {
           setVfModalVisible(true);
           setChangePwdStep(2);
         } else {
-          Toast(t("密码错误"));
+          Toast(t("密码不一致"));
         }
       });
 
