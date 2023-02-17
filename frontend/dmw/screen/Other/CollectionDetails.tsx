@@ -205,8 +205,14 @@ const CollectionDetails = (props) => {
                         </View>
 
                         <View style={[styles.index_box, styles.daohang]}>
-                            <Text style={[typename != 'Items' ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging('Items')}>Items({DetailsInfo.items})</Text>
-                            <Text style={[typename != 'Activity' ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging('Activity')}>Activity</Text>
+                            <TouchableOpacity style={[typename != 'Items' ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging('Items')}>
+                                <Text  style={[typename != 'Items' ? styles.daonghang_text : styles.daonghang_text_ative]}>Items({DetailsInfo.items})</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity  style={[typename != 'Activity' ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging('Activity')}>
+                                <Text  style={[typename != 'Activity' ? styles.daonghang_text : styles.daonghang_text_ative]}>Activity</Text>
+                            </TouchableOpacity>
+
                         </View>
 
                     </View>
@@ -233,7 +239,7 @@ const CollectionDetails = (props) => {
                                 return typename == 'Activity' && ActivityList && ActivityList.length ?
                                     <View style={{ marginBottom: 20, paddingTop: 10, paddingBottom: 10, paddingLeft: 20, paddingRight: 20, borderBottomWidth: 1, borderBottomColor: '#ccc', }}>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                            <Image style={{ width: 80, height: 80 }} source={{ uri: item.image_attachment_url }}></Image>
+                                            <Image style={{ width: 80, height: 80,borderRadius:15}} source={{ uri: item.image_attachment_url }}></Image>
                                             <View style={{ flex: 1, }}>
                                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
                                                     <Text style={{ fontSize: 14, color: "#333", marginLeft: 20 }}>{item.name}</Text>
@@ -243,13 +249,13 @@ const CollectionDetails = (props) => {
                                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 20 }}>
                                                         <Text style={{ fontSize: 12, color: "#333", }}>{t("状态") + ''}</Text>
                                                         <Text style={{ fontSize: 12, color: "#333", }}>{t("成交价") + ''}</Text>
-                                                        <Text style={{ fontSize: 12, color: "#333", }}>to</Text>
+                                                        {/* <Text style={{ fontSize: 12, color: "#333", }}>to</Text> */}
                                                         {/* <Text style={{ fontSize: 12, color: "#333", }}>network</Text> */}
                                                     </View>
                                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 20, marginTop: 4 }}>
                                                         <Text style={{ fontSize: 12, color: "#999999", }}>{item.listing_type == 0 ? t('寄售') + '' : t('拍卖') + ''}</Text>
                                                         <Text style={{ fontSize: 12, color: "#999999", }}>{item.total_offer_amount && (item.total_offer_amount.number + item.total_offer_amount.currency_name)}</Text>
-                                                        <Text style={{ fontSize: 12, color: "#999999", }}>{item.currency && item.currency.slice(0, 4)}</Text>
+                                                        {/* <Text style={{ fontSize: 12, color: "#999999", }}>{item.currency && item.currency.slice(3, 7)}</Text> */}
                                                         {/* <Text style={{ fontSize: 12, color: "#999999", }}>network</Text> */}
                                                     </View>
                                                     {/* <Text style={{ fontSize: 12, color: '#999999' }}>{item.create_time}</Text> */}
@@ -313,7 +319,7 @@ const CollectionDetails = (props) => {
                                                             }
                                                             setParams(a)
                                                         }} style={selListParams[item.title.value] == jitem.value ? styles.btn_active : styles.btn_noactive}>
-                                                        <Text  style={selListParams[item.title.value] == jitem.value ? styles.btn_text_active : styles.btn_text} >{jitem.name}</Text>
+                                                        <Text style={selListParams[item.title.value] == jitem.value ? styles.btn_text_active : styles.btn_text} >{jitem.name}</Text>
                                                     </TouchableOpacity>
 
                                                 </>
@@ -392,13 +398,13 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginBottom: 15,
         marginRight: 15,
-        justifyContent:"center"
+        justifyContent: "center"
     },
-    btn_text:{
+    btn_text: {
         color: '#333',
         lineHeight: 34,
     },
-    btn_text_active:{
+    btn_text_active: {
         color: '#fff',
     },
     btn_noactive: {
@@ -410,10 +416,10 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginBottom: 15,
         marginRight: 15,
-        justifyContent:"center"
+        justifyContent: "center"
 
     },
-    
+
     optionBox: {
         flexDirection: 'row',
         // justifyContent: 'space-between',

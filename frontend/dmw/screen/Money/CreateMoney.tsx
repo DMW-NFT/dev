@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 // import * as Animatable from 'react-native-animatable'
@@ -82,14 +83,24 @@ const CreateMoney = (props) => {
               ></Image>
             </View>
           </TouchableWithoutFeedback>
-          <Text
-            style={[styles.createMoneyBtn]}
+          <TouchableOpacity style={[styles.createMoneyBtn]}
             onPress={() => {
               setvisible(true);
-            }}
-          >
-            {t("创建新钱包")}
-          </Text>
+            }}>
+            <Text
+              style={{
+                lineHeight: 50,
+                textAlign: "center",
+
+                fontSize: 16,
+                fontWeight: "bold",
+                color: "#897EF8",
+              }}
+            >
+              {t("创建新钱包")}
+            </Text>
+          </TouchableOpacity>
+
 
           {/* <Animatable.View animation="fadeInUpBig" style={[styles.footer]}>
                         </Animatable.View> */}
@@ -102,22 +113,41 @@ const CreateMoney = (props) => {
           contentContainerStyle={[styles.footer]}
         >
           <View style={[styles.btnline]}></View>
-          <Text
-            style={[styles.createMoneyBtn]}
+          <TouchableOpacity style={[styles.createMoneyBtn]}
             onPress={() => {
               navigate("createWord");
-            }}
-          >
-            {t("暂无助记词，去新建")}
-          </Text>
-          <Text
-            style={[styles.createMoneyBtn]}
+            }} >
+            <Text
+              style={{
+                lineHeight: 50,
+                textAlign: "center",
+
+                fontSize: 16,
+                fontWeight: "bold",
+                color: "#897EF8",
+              }}
+            >
+              {t("暂无助记词，去新建")}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.createMoneyBtn]}
             onPress={() => {
               navigate("importWord");
-            }}
-          >
-            {t("已有助记词，去导入")}
-          </Text>
+            }}>
+            <Text
+              style={{
+                lineHeight: 50,
+                textAlign: "center",
+
+                fontSize: 16,
+                fontWeight: "bold",
+                color: "#897EF8",
+              }}
+            >
+              {t("已有助记词，去导入")}
+            </Text>
+          </TouchableOpacity>
+
         </Modal>
       </ScrollView>
     </SafeAreaView>
@@ -152,12 +182,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#897EF8",
     height: 50,
-    lineHeight: 50,
-    textAlign: "center",
-    color: "#897EF8",
+
     borderRadius: 25,
-    fontSize: 16,
-    fontWeight: "bold",
     marginBottom: 30,
   },
   Image: {

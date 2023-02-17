@@ -6,6 +6,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useContext, useState } from "react";
@@ -58,14 +59,24 @@ const WalletSafeShow = (props) => {
               );
             })}
           </View>
-          <Text
-            style={[styles.import]}
+          <TouchableOpacity style={[styles.import]}
             onPress={() => {
               props.navigation.navigate("determineWord", { password });
-            }}
-          >
-            {t("继续")}
-          </Text>
+            }} >
+            <Text
+              style={{
+                lineHeight: 50,
+                textAlign: "center",
+                color: "#fff",
+
+                fontSize: 16,
+                fontWeight: "bold",
+              }}
+            >
+              {t("继续")}
+            </Text>
+          </TouchableOpacity>
+
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -107,12 +118,8 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#897EF8",
     height: 50,
-    lineHeight: 50,
-    textAlign: "center",
-    color: "#fff",
+
     borderRadius: 25,
-    fontSize: 16,
-    fontWeight: "bold",
   },
 
   container: {
