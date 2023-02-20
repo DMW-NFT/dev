@@ -32,10 +32,12 @@ const Home = () => {
         name="home"
         defaultNavigationOptions={{
           tabBarVisible: false,
+          
         }}
         options={{
           headerBackTitleVisible: false, //对于后退按钮标题是否应该可见
-          headerMode: "null",
+          title:null,
+          // headerMode: "null",
           headerTransparent: true
         }}
       ></Stack.Screen>
@@ -94,7 +96,7 @@ const Home = () => {
         name="categrayScreen"
         options={{
           // headerTransparent: true ,// 会将页面与标题重叠
-          title: "分类",
+          title: "",
         }}
       ></Stack.Screen>
 

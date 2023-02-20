@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider';
 import { useTranslation } from 'react-i18next'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 const screenHeight = Dimensions.get("window").height;
 
 const MyCollection = (props) => {
@@ -10,18 +11,18 @@ const MyCollection = (props) => {
     const [strText, setStrText] = useState('')
     const [list, setList] = useState([])
     const { post, formData } = useDmwApi()
-    const {username} = useDmwLogin()
+    const { username } = useDmwLogin()
 
     useEffect(() => {
         getCollection()
     }, [])
     useEffect(() => {
         getCollection()
-    }, [props,strText])
+    }, [props, strText])
 
 
     const getCollection = () => {
-        post('/index/collection/get_user_collection',formData({keyword:strText})).then(res => {
+        post('/index/collection/get_user_collection', formData({ keyword: strText })).then(res => {
             console.log(res.data.data, '合集列表');
             setList(res.data.data)
         })
@@ -50,7 +51,15 @@ const MyCollection = (props) => {
                                 onChangeText={(strText) => onChange(strText)}
                             />
                         </View>
-                        <Text onPress={() => { props.navigation.navigate('AddCreateCollection') }} style={[styles.TopAdd]}>+</Text>
+                        <TouchableOpacity onPress={() => { props.navigation.navigate('AddCreateCollection') }} style={[styles.TopAdd]}>
+                            <Text style={{
+                                fontSize: 30,
+                                textAlign: 'center',
+                                lineHeight: 40,
+                                color: "#897EF8",
+                            }}>+</Text>
+                        </TouchableOpacity>
+
                     </View>
                 </View>
 
@@ -69,22 +78,22 @@ const MyCollection = (props) => {
                 data={list}
                 renderItem={({ item }) => {
                     return (
-                        <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('CollectionDetails',{ID:item.id})}}>
-                        <View style={[styles.lisBox]}>
-                            <Image source={{uri:item.banner_url}} style={{ width: '100%', height: 254 / 2, borderRadius: 16 }}></Image>
-                            <Image source={{uri:item.logo_url}} style={[styles.logo]}></Image>
-                            <View>
-                                <Text style={[styles.collname]}>{item.name}</Text>
-                                <Text style={[styles.name]}>{username}</Text>
+                        <TouchableWithoutFeedback onPress={() => { props.navigation.navigate('CollectionDetails', { ID: item.id }) }}>
+                            <View style={[styles.lisBox]}>
+                                <Image source={{ uri: item.banner_url }} style={{ width: '100%', height: 254 / 2, borderRadius: 16 }}></Image>
+                                <Image source={{ uri: item.logo_url }} style={[styles.logo]}></Image>
+                                <View>
+                                    <Text style={[styles.collname]}>{item.name}</Text>
+                                    <Text style={[styles.name]}>{username}</Text>
+                                </View>
                             </View>
-                        </View>
                         </TouchableWithoutFeedback>
                     )
                 }}
                 keyExtractor={(item, index) => index}
                 ListFooterComponent={() => {
                     // 声明尾部组件
-                    return list && list.length ? <Text style={{ textAlign: 'center',marginTop:60 }}>{t("没有更多了")}</Text> : null
+                    return list && list.length ? <Text style={{ textAlign: 'center', marginTop: 60 }}>{t("没有更多了")}</Text> : null
                 }}
                 // 下刷新
                 onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
@@ -130,13 +139,11 @@ const styles = StyleSheet.create({
     TopAdd: {
         marginLeft: 20,
         backgroundColor: "#F0EFFE",
-        fontSize: 30,
-        color: "#897EF8",
+
         width: 40,
         height: 40,
         borderRadius: 20,
-        textAlign: 'center',
-        lineHeight: 40,
+
     },
     topIputBOx: {
         borderWidth: 1,

@@ -1,57 +1,47 @@
-import React, {Component,useState} from 'react';
-import {StyleSheet, View, Text, ScrollView} from 'react-native';
+import React, { Component, useRef, useState } from 'react';
+import { StyleSheet, View, Text, ScrollView, Touchable } from 'react-native';
 import { useTranslation } from 'react-i18next'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 const Tabcolumn = (props) => {
   // constructor(props) {
   //   super(props);
   // }
-
+  const scrollViewRef = useRef<ScrollView>(null);
   const { t, i18n } = useTranslation();
-const  paging = (typename) => {
+  const paging = (typename) => {
     props.paging(typename);
   }
-    return (
-      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-        <View style={[styles.daohang]}>
-          <Text
-            style={[
-              props.typename == '我的藏品'
-                ? styles.daonghang_text_ative
-                : styles.daonghang_text,
-            ]}
-            onPress={() => paging('我的藏品')}>
+  return (
+    <ScrollView ref={scrollViewRef} horizontal={true} showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 50 }}>
+      <View style={[styles.daohang]}>
+
+        <TouchableOpacity style={[styles.tab, props.typename == '我的藏品' && styles.tab_active
+
+        ]} onPress={() => paging('我的藏品')}>
+          <Text style={[styles.text, props.typename == '我的藏品' && styles.text_active]}>
             {t("我的藏品")}
           </Text>
-          <Text
-            style={[
-              props.typename == '我创建的'
-                ? styles.daonghang_text_ative
-                : styles.daonghang_text,
-            ]}
-            onPress={() => paging('我创建的')}>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.tab, props.typename == '我创建的' && styles.tab_active
+
+        ]} onPress={() => {
+          scrollViewRef.current?.scrollTo({x: 200});
+          paging('我创建的')}}>
+          <Text style={[styles.text, props.typename == '我创建的' && styles.text_active]}>
             {t("我创建的")}
           </Text>
-          {/* <Text
-            style={[
-              props.typename == '事件'
-                ? styles.daonghang_text_ative
-                : styles.daonghang_text,
-            ]}
-            onPress={() => paging('事件')}>
-           {t("事件")} 
-          </Text> */}
-          <Text
-            style={[
-              props.typename == '我喜欢的'
-                ? styles.daonghang_text_ative
-                : styles.daonghang_text,
-            ]}
-            onPress={() => paging('我喜欢的')}>
-           {t("我喜欢的")} 
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.tab, props.typename == '我喜欢的' && styles.tab_active
+
+        ]} onPress={() => paging('我喜欢的')}>
+          <Text style={[styles.text, props.typename == '我喜欢的' && styles.text_active]}>
+            {t("我喜欢的")}
           </Text>
-        </View>
-      </ScrollView>
-    );
+        </TouchableOpacity>
+
+      </View>
+    </ScrollView>
+  );
 }
 
 export default Tabcolumn
@@ -59,37 +49,28 @@ export default Tabcolumn
 const styles = StyleSheet.create({
   daohang: {
     height: 56,
+    // width:300,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginRight:-20,
-    marginLeft:-20
     // backgroundColor: 'pink',
+    marginRight:70
   },
-  daonghang_text: {
-    fontSize: 16,
-    fontWeight: '700',
-    fontFamily: 'Source Han Sans CN',
-    height: 56,
+
+  text: {
     lineHeight: 56,
     color: '#666666',
     textAlign: 'center',
-    paddingLeft: 25,
-    paddingRight: 25,
-    // borderBottomColor:'#897EF8',
-    // borderBottomWidth:3
   },
-  daonghang_text_ative: {
-    fontSize: 16,
-    fontWeight: '700',
-    fontFamily: 'Source Han Sans CN',
+  text_active: {
+    color: '#897EF8',
+  },
+  tab: {
+    paddingHorizontal: 25,
     height: 56,
-    lineHeight: 56,
-    textAlign: 'center',
+  },
+  tab_active: {
     borderBottomColor: '#897EF8',
     borderBottomWidth: 3,
-    color: '#897EF8',
-    borderRadius: 1,
-    paddingLeft: 25,
-    paddingRight: 25,
   },
+
 });

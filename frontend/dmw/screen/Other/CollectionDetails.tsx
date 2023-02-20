@@ -1,5 +1,5 @@
-import { Text, StyleSheet, ScrollView, SafeAreaView, View, StatusBar, ImageBackground, Image, Dimensions, FlatList } from 'react-native'
-import React, { useState, useContext, useEffect, Suspense,useRef } from 'react'
+import { Text, StyleSheet, ScrollView, SafeAreaView, View, StatusBar, ImageBackground, Image, Dimensions, FlatList, TouchableOpacity } from 'react-native'
+import React, { useState, useContext, useEffect, Suspense, useRef } from 'react'
 import Screen from '../../Components/screen';
 import Search from '../../Components/Searchbox';
 import List from '../../Components/List';
@@ -97,7 +97,7 @@ const CollectionDetails = (props) => {
         setvisible(true)
         if (scrollViewRef.current) {
             scrollViewRef.current.scrollToEnd({ animated: true });
-          }
+        }
     }
     // 筛选关闭
     const close = () => {
@@ -191,156 +191,165 @@ const CollectionDetails = (props) => {
     }
 
     return (
-        <ScrollView ref = {scrollViewRef}>
-        <SafeAreaView style={{ backgroundColor: '#fff', flex: 1, position: 'relative' }}>
-            <View style={{ flex: 1 }}>
-                {/* <StatusBar barStyle="dark-content" backgroundColor="#fff" /> */}
-                <View>
-                    <ImageBackground source={{ uri: DetailsInfo.banner_url }} style={{ width: "100%", height: 220, justifyContent: 'center', alignItems: 'center' }}>
-                        <Image source={{ uri: DetailsInfo.logo_url }} style={[styles.topImagelogo]}></Image>
-                    </ImageBackground>
-                    <View style={[styles.collDetailBox]}>
-                        <Text style={[styles.collName]}>{DetailsInfo.name}</Text>
-                        <Text style={[styles.detail]}>{DetailsInfo.details}</Text>
-                    </View>
+        <ScrollView ref={scrollViewRef}>
+            <SafeAreaView style={{ backgroundColor: '#fff', flex: 1, position: 'relative' }}>
+                <View style={{ flex: 1 }}>
+                    {/* <StatusBar barStyle="dark-content" backgroundColor="#fff" /> */}
+                    <View>
+                        <ImageBackground source={{ uri: DetailsInfo.banner_url }} style={{ width: "100%", height: 220, justifyContent: 'center', alignItems: 'center' }}>
+                            <Image source={{ uri: DetailsInfo.logo_url }} style={[styles.topImagelogo]}></Image>
+                        </ImageBackground>
+                        <View style={[styles.collDetailBox]}>
+                            <Text style={[styles.collName]}>{DetailsInfo.name}</Text>
+                            <Text style={[styles.detail]}>{DetailsInfo.details}</Text>
+                        </View>
 
-                    <View style={[styles.index_box, styles.daohang]}>
-                        <Text style={[typename != 'Items' ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging('Items')}>Items({DetailsInfo.items})</Text>
-                        <Text style={[typename != 'Activity' ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging('Activity')}>Activity</Text>
-                    </View>
+                        <View style={[styles.index_box, styles.daohang]}>
+                            <TouchableOpacity style={[typename != 'Items' ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging('Items')}>
+                                <Text  style={[typename != 'Items' ? styles.daonghang_text : styles.daonghang_text_ative]}>Items({DetailsInfo.items})</Text>
+                            </TouchableOpacity>
 
-                </View>
-                <View style={[styles.bottomSearch]}>
-                    {
-                        typename == 'Items' ?
-                            <Search onChange={(strText) => { setstrText(strText) }} visible={() => visibleFn()}></Search> : null
-                    }
-                    <FlatList
-                        style={{ marginTop: 20, flex: 1, minHeight: "100%",maxHeight:500 }}
-                        ListEmptyComponent={() => {
-                            return typename == 'Activity' && !ActivityList.length ? <Text style={{ textAlign: 'center', height: 100 }}>{t("空空如也")}</Text> :
-                                typename == 'Items' && list && list.length ? null : <Text style={{ textAlign: 'center', height: 100 }}>{t("空空如也")}</Text>
-                            // 列表为空展示改组件
-                        }}
-                        // 一屏幕展示几个
-                        //  2列显示
-                        number={4}
-                        numColumns={typename == 'Items' ? 2 : 1}
-                        key={typename == 'Items' ? 'hh' : 'nn'}
-                        data={typename == 'Activity' ? ActivityList : list}
-                        nestedScrollEnabled={true}
-                        renderItem={({ item }) => {
-                            return typename == 'Activity' && ActivityList && ActivityList.length ?
-                                <View style={{marginBottom:20, paddingTop: 10, paddingBottom: 10, paddingLeft: 20, paddingRight: 20, borderBottomWidth: 1, borderBottomColor: '#ccc', }}>
-                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                        <Image style={{ width: 80, height: 80 }} source={{ uri: item.image_attachment_url }}></Image>
-                                        <View style={{ flex: 1, }}>
-                                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                                                <Text style={{ fontSize: 14, color: "#333", marginLeft: 20 }}>{item.name}</Text>
-                                                <Text style={{ fontSize: 12, color: '#999999' }}>{item.create_time}</Text>
-                                            </View>
-                                            <View style={{ flexDirection: 'column', justifyContent: 'space-between', marginTop: 20 }}>
-                                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 20 }}>
-                                                    <Text style={{ fontSize: 12, color: "#333", }}>{t("状态") + ''}</Text>
-                                                    <Text style={{ fontSize: 12, color: "#333", }}>{t("成交价") + ''}</Text>
-                                                    <Text style={{ fontSize: 12, color: "#333", }}>to</Text>
-                                                    {/* <Text style={{ fontSize: 12, color: "#333", }}>network</Text> */}
+                            <TouchableOpacity  style={[typename != 'Activity' ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging('Activity')}>
+                                <Text  style={[typename != 'Activity' ? styles.daonghang_text : styles.daonghang_text_ative]}>Activity</Text>
+                            </TouchableOpacity>
+
+                        </View>
+
+                    </View>
+                    <View style={[styles.bottomSearch]}>
+                        {
+                            typename == 'Items' ?
+                                <Search onChange={(strText) => { setstrText(strText) }} visible={() => visibleFn()}></Search> : null
+                        }
+                        <FlatList
+                            style={{ marginTop: 20, flex: 1, minHeight: "100%", maxHeight: 500 }}
+                            ListEmptyComponent={() => {
+                                return typename == 'Activity' && !ActivityList.length ? <Text style={{ textAlign: 'center', height: 100 }}>{t("空空如也")}</Text> :
+                                    typename == 'Items' && list && list.length ? null : <Text style={{ textAlign: 'center', height: 100 }}>{t("空空如也")}</Text>
+                                // 列表为空展示改组件
+                            }}
+                            // 一屏幕展示几个
+                            //  2列显示
+                            number={4}
+                            numColumns={typename == 'Items' ? 2 : 1}
+                            key={typename == 'Items' ? 'hh' : 'nn'}
+                            data={typename == 'Activity' ? ActivityList : list}
+                            nestedScrollEnabled={true}
+                            renderItem={({ item }) => {
+                                return typename == 'Activity' && ActivityList && ActivityList.length ?
+                                    <View style={{ marginBottom: 20, paddingTop: 10, paddingBottom: 10, paddingLeft: 20, paddingRight: 20, borderBottomWidth: 1, borderBottomColor: '#ccc', }}>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <Image style={{ width: 80, height: 80,borderRadius:15}} source={{ uri: item.image_attachment_url }}></Image>
+                                            <View style={{ flex: 1, }}>
+                                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                                    <Text style={{ fontSize: 14, color: "#333", marginLeft: 20 }}>{item.name}</Text>
+                                                    <Text style={{ fontSize: 12, color: '#999999' }}>{item.create_time}</Text>
                                                 </View>
-                                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 20, marginTop: 4 }}>
-                                                    <Text style={{ fontSize: 12, color: "#999999", }}>{item.listing_type == 0 ? t('寄售') + '' : t('拍卖') + ''}</Text>
-                                                    <Text style={{ fontSize: 12, color: "#999999", }}>{item.total_offer_amount.number + item.total_offer_amount.currency_name}</Text>
-                                                    <Text style={{ fontSize: 12, color: "#999999", }}>{item.currency.slice(0, 4)}</Text>
-                                                    {/* <Text style={{ fontSize: 12, color: "#999999", }}>network</Text> */}
+                                                <View style={{ flexDirection: 'column', justifyContent: 'space-between', marginTop: 20 }}>
+                                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 20 }}>
+                                                        <Text style={{ fontSize: 12, color: "#333", }}>{t("状态") + ''}</Text>
+                                                        <Text style={{ fontSize: 12, color: "#333", }}>{t("成交价") + ''}</Text>
+                                                        {/* <Text style={{ fontSize: 12, color: "#333", }}>to</Text> */}
+                                                        {/* <Text style={{ fontSize: 12, color: "#333", }}>network</Text> */}
+                                                    </View>
+                                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 20, marginTop: 4 }}>
+                                                        <Text style={{ fontSize: 12, color: "#999999", }}>{item.listing_type == 0 ? t('寄售') + '' : t('拍卖') + ''}</Text>
+                                                        <Text style={{ fontSize: 12, color: "#999999", }}>{item.total_offer_amount && (item.total_offer_amount.number + item.total_offer_amount.currency_name)}</Text>
+                                                        {/* <Text style={{ fontSize: 12, color: "#999999", }}>{item.currency && item.currency.slice(3, 7)}</Text> */}
+                                                        {/* <Text style={{ fontSize: 12, color: "#999999", }}>network</Text> */}
+                                                    </View>
+                                                    {/* <Text style={{ fontSize: 12, color: '#999999' }}>{item.create_time}</Text> */}
                                                 </View>
-                                                {/* <Text style={{ fontSize: 12, color: '#999999' }}>{item.create_time}</Text> */}
                                             </View>
                                         </View>
                                     </View>
-                                </View>
-                                :
-                                typename == 'Items' && list && list.length ?
-                                    <List list={item} type={1} navigatetoDetail={(id, unique_id, contract_address, token_id, network) => { props.navigation.navigate('goodsDetail', { id: id, unique_id, contract_address, token_id, network }) }} />
-                                    : null
-                        }}
-                        keyExtractor={(item, index) => index.toString()}
-                        ListFooterComponent={() => {
+                                    :
+                                    typename == 'Items' && list && list.length ?
+                                        <List list={item} type={1} navigatetoDetail={(id, unique_id, contract_address, token_id, network) => { props.navigation.navigate('goodsDetail', { id: id, unique_id, contract_address, token_id, network }) }} />
+                                        : null
+                            }}
+                            keyExtractor={(item, index) => index.toString()}
+                            ListFooterComponent={() => {
 
-                            return null
-                            // 声明尾部组件  
-                            // return typename == 'Activity' && ActivityList && ActivityList.length && ActivityList.length == ActivityTotal ?
-                            //     <Text style={{ textAlign: 'center' }}>{t("没有更多了")}</Text> :
-                            //     typename == 'Items' && list && list.length && list.length == NftTotal ?
-                            //         <Text style={{ textAlign: 'center' }}>{t("没有更多了")}</Text> : null
-                        }}
-                        // 下刷新
-                        onEndReachedThreshold={0.2} //表示还有10% 的时候加载onRefresh 函数
-                        onEndReached={Bottoming}
-                        refreshing={refreshing}
-                        onRefresh={Refresh}
-                    >
-                    </FlatList>
+                                return null
+                                // 声明尾部组件  
+                                // return typename == 'Activity' && ActivityList && ActivityList.length && ActivityList.length == ActivityTotal ?
+                                //     <Text style={{ textAlign: 'center' }}>{t("没有更多了")}</Text> :
+                                //     typename == 'Items' && list && list.length && list.length == NftTotal ?
+                                //         <Text style={{ textAlign: 'center' }}>{t("没有更多了")}</Text> : null
+                            }}
+                            // 下刷新
+                            onEndReachedThreshold={0.2} //表示还有10% 的时候加载onRefresh 函数
+                            onEndReached={Bottoming}
+                            refreshing={refreshing}
+                            onRefresh={Refresh}
+                        >
+                        </FlatList>
+                    </View>
                 </View>
-            </View>
-            {/* <Screen
+                {/* <Screen
                 title="select filter"
                 visible={visible}
                 close={() => close()}
                 datalist={data}>
             </Screen> */}
-            {/* onDismiss={hideModal} contentContainerStyle={containerStyle} */}
-            <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.containerStyle}>
-                <View style={styles.ModalBOX}>
-                    <View style={styles.HlineBox}><View style={styles.Hline}></View></View>
-                    <Text style={styles.selectfilter}>Select Filter</Text>
+                {/* onDismiss={hideModal} contentContainerStyle={containerStyle} */}
+                <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.containerStyle}>
+                    <View style={styles.ModalBOX}>
+                        <View style={styles.HlineBox}><View style={styles.Hline}></View></View>
+                        <Text style={styles.selectfilter}>Select Filter</Text>
 
-                    {
-                        screenData.map((item, idnex) => {
-                            return <View>
-                                <Text style={styles.selTitle}>{item.title.name}</Text>
-                                <View style={styles.optionBox}>
+                        {
+                            screenData.map((item, idnex) => {
+                                return <View>
+                                    <Text style={styles.selTitle}>{item.title.name}</Text>
+                                    <View style={styles.optionBox}>
+                                        {
+                                            item['tabs'].map((jitem, jindex) => {
+
+                                                return <>
+                                                    <TouchableOpacity
+                                                        onPress={() => {
+                                                            console.log(123);
+                                                            let a = { ...selListParams }
+                                                            if (a[item.title.value] == jitem.value) {
+                                                                a[item.title.value] = ''
+                                                            } else {
+                                                                a[item.title.value] = jitem.value
+                                                            }
+                                                            setParams(a)
+                                                        }} style={selListParams[item.title.value] == jitem.value ? styles.btn_active : styles.btn_noactive}>
+                                                        <Text style={selListParams[item.title.value] == jitem.value ? styles.btn_text_active : styles.btn_text} >{jitem.name}</Text>
+                                                    </TouchableOpacity>
+
+                                                </>
+                                            })
+                                        }
+
+                                    </View>
+
+
                                     {
-                                        item['tabs'].map((jitem, jindex) => {
-
-                                            return <>
-                                                <Text onPress={() => {
-                                                    console.log(123);
-                                                    let a = { ...selListParams }
-                                                    if (a[item.title.value] == jitem.value) {
-                                                        a[item.title.value] = ''
-                                                    } else {
-                                                        a[item.title.value] = jitem.value
-                                                    }
-
-                                                    setParams(a)
-                                                }} style={selListParams[item.title.value] == jitem.value ? styles.btn_active : styles.btn_noactive}>{jitem.name}</Text>
-                                            </>
-                                        })
+                                        idnex == screenData.length - 1 ?
+                                            null : <View style={styles.btnline}></View>
                                     }
 
+
+
+
                                 </View>
+                            })
+
+                        }
 
 
-                                {
-                                    idnex == screenData.length - 1 ?
-                                        null : <View style={styles.btnline}></View>
-                                }
-
-
-
-
-                            </View>
-                        })
-
-                    }
-
-
-                    <View style={styles.btnlinelang}></View>
-                    <View style={styles.sureBtn}>
-                        <Text style={styles.sureBtnText} onPress={searchFn}>{t('确定')}</Text>
+                        <View style={styles.btnlinelang}></View>
+                        <View style={styles.sureBtn}>
+                            <Text style={styles.sureBtnText} onPress={searchFn}>{t('确定')}</Text>
+                        </View>
                     </View>
-                </View>
-            </Modal>
-        </SafeAreaView>
+                </Modal>
+            </SafeAreaView>
         </ScrollView>
 
 
@@ -378,7 +387,7 @@ const styles = StyleSheet.create({
         marginLeft: -20
     },
     btn_active: {
-        color: '#fff',
+
         backgroundColor: '#ACA4FA',
         height: 34,
         paddingRight: 15,
@@ -389,6 +398,14 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginBottom: 15,
         marginRight: 15,
+        justifyContent: "center"
+    },
+    btn_text: {
+        color: '#333',
+        lineHeight: 34,
+    },
+    btn_text_active: {
+        color: '#fff',
     },
     btn_noactive: {
         height: 34,
@@ -396,12 +413,13 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         borderColor: '#877EF0',
         borderWidth: 1,
-        lineHeight: 34,
         borderRadius: 20,
         marginBottom: 15,
         marginRight: 15,
-        color: '#333',
+        justifyContent: "center"
+
     },
+
     optionBox: {
         flexDirection: 'row',
         // justifyContent: 'space-between',
@@ -414,21 +432,21 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '700',
         color: '#333',
-        fontFamily: 'Source Han Sans CN',
+
         marginBottom: 20
     },
     ModalBOX: {
         width: '100%',
         height: '100%',
         backgroundColor: '#fff',
-        fontFamily: 'Source Han Sans CN',
+
         paddingLeft: 20,
         paddingRight: 20,
         paddingBottom: 49,
     },
     selectfilter: {
         fontSize: 16,
-        fontFamily: 'Source Han Sans CN',
+
         fontWeight: '700',
         color: '#333',
         marginTop: 20,
@@ -511,7 +529,7 @@ const styles = StyleSheet.create({
     daonghang_text: {
         fontSize: 16,
         fontWeight: '700',
-        fontFamily: 'Source Han Sans CN',
+
         height: 56,
         lineHeight: 56,
         flex: 1,
@@ -523,7 +541,7 @@ const styles = StyleSheet.create({
     daonghang_text_ative: {
         fontSize: 16,
         fontWeight: '700',
-        fontFamily: 'Source Han Sans CN',
+
         height: 56,
         lineHeight: 56,
         flex: 1,

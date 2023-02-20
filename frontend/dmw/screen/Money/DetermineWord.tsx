@@ -83,17 +83,22 @@ const DetermineWord = (props) => {
           <View style={[styles.Box]}>
             {MnemonicList.map((item, index) => {
               return (
-                <Text
+                <TouchableOpacity
                   style={[
                     styles.lis,
                     checkdata.includes(item) ? styles.active : null,
                   ]}
                   onPress={() => {
                     checkList(item);
-                  }}
-                >
-                  {item}
-                </Text>
+                  }}>
+                  <Text
+                  style={{lineHeight: 54 / 2,
+                  textAlign: "center",}}
+                  >
+                    {item}
+                  </Text>
+                </TouchableOpacity>
+
               );
             })}
           </View>
@@ -116,7 +121,7 @@ const DetermineWord = (props) => {
           ) : (
             <TouchableOpacity
               style={[styles.import, { justifyContent: "center" }]}
-              // onPress={() => Complete()}
+            // onPress={() => Complete()}
             >
               <Text
                 style={{
@@ -147,8 +152,7 @@ const styles = StyleSheet.create({
   lis: {
     width: 200 / 2,
     height: 54 / 2,
-    lineHeight: 54 / 2,
-    textAlign: "center",
+    
     borderWidth: 1,
     borderColor: "#897EF8",
     borderRadius: 54 / 2,

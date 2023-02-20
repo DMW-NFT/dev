@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 // import * as Animatable from 'react-native-animatable'
@@ -15,6 +16,8 @@ import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import { useTranslation } from "react-i18next";
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 const CreateMoney = (props) => {
   const { t, i18n } = useTranslation();
   const [visible, setvisible] = useState(false);
@@ -50,8 +53,8 @@ const CreateMoney = (props) => {
   }, []);
 
   return (
-    <SafeAreaView style={{ backgroundColor: "#fff" }}>
-      <ScrollView>
+    <SafeAreaView style={{ backgroundColor: "#fff"}}>
+      <ScrollView style={{maxHeight:screenHeight}}>
         <View style={[styles.container]}>
           <Text style={[styles.title]}>{t("连接钱包")}</Text>
           <TouchableWithoutFeedback onPress={() => clickWallet()}>
@@ -82,18 +85,29 @@ const CreateMoney = (props) => {
               ></Image>
             </View>
           </TouchableWithoutFeedback>
-          <Text
-            style={[styles.createMoneyBtn]}
+          <TouchableOpacity style={[styles.createMoneyBtn]}
             onPress={() => {
               setvisible(true);
-            }}
-          >
-            {t("创建新钱包")}
-          </Text>
+            }}>
+            <Text
+              style={{
+                lineHeight: 50,
+                textAlign: "center",
+
+                fontSize: 16,
+                fontWeight: "bold",
+                color: "#897EF8",
+              }}
+            >
+              {t("创建新钱包")}
+            </Text>
+          </TouchableOpacity>
+
 
           {/* <Animatable.View animation="fadeInUpBig" style={[styles.footer]}>
                         </Animatable.View> */}
         </View>
+
         <Modal
           visible={visible}
           onDismiss={() => {
@@ -102,22 +116,41 @@ const CreateMoney = (props) => {
           contentContainerStyle={[styles.footer]}
         >
           <View style={[styles.btnline]}></View>
-          <Text
-            style={[styles.createMoneyBtn]}
+          <TouchableOpacity style={[styles.createMoneyBtn]}
             onPress={() => {
               navigate("createWord");
-            }}
-          >
-            {t("暂无助记词，去新建")}
-          </Text>
-          <Text
-            style={[styles.createMoneyBtn]}
+            }} >
+            <Text
+              style={{
+                lineHeight: 50,
+                textAlign: "center",
+
+                fontSize: 16,
+                fontWeight: "bold",
+                color: "#897EF8",
+              }}
+            >
+              {t("暂无助记词，去新建")}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.createMoneyBtn]}
             onPress={() => {
               navigate("importWord");
-            }}
-          >
-            {t("已有助记词，去导入")}
-          </Text>
+            }}>
+            <Text
+              style={{
+                lineHeight: 50,
+                textAlign: "center",
+
+                fontSize: 16,
+                fontWeight: "bold",
+                color: "#897EF8",
+              }}
+            >
+              {t("已有助记词，去导入")}
+            </Text>
+          </TouchableOpacity>
+
         </Modal>
       </ScrollView>
     </SafeAreaView>
@@ -141,23 +174,20 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     height: "40%",
     position: "absolute",
-    bottom: 0,
+    bottom: -screenHeight*0.1,
     backgroundColor: "#fff",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingHorizontal: 20,
+    padding: 20,
+    marginBottom:20
   },
   createMoneyBtn: {
     width: "100%",
     borderWidth: 1,
     borderColor: "#897EF8",
     height: 50,
-    lineHeight: 50,
-    textAlign: "center",
-    color: "#897EF8",
+
     borderRadius: 25,
-    fontSize: 16,
-    fontWeight: "bold",
     marginBottom: 30,
   },
   Image: {
@@ -176,11 +206,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   container: {
-    height: Dimensions.get("window").height - 95,
-    padding: 70 / 2,
-    paddingTop: 10,
+    height: Dimensions.get("window").height*0.9,
+    paddingHorizontal: 70 / 2,
+    // paddingTop: 10,
     // paddingBottom: 130,
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     alignItems: "center",
   },
 });

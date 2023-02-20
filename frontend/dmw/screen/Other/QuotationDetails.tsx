@@ -8,6 +8,8 @@ import {
   TouchableWithoutFeedback,
   FlatList,
   TextInput,
+  TouchableOpacity,
+  Keyboard,
 } from "react-native";
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -169,6 +171,7 @@ const QuotationDetails = (props) => {
   };
   // 确认购买
   const confirmPurchase = () => {
+    // console.log(orderList.currency.toLowerCase(),erc20TokenList)
     setBuyNowVisible(false);
     // console.log(orderList.currency,erc20TokenList);
     if (WalletInUse == 1) {
@@ -178,12 +181,22 @@ const QuotationDetails = (props) => {
         String(orderList.listing_id),
         Number(BuyNumber),
         orderList.currency,
-        orderList.currency=="0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"?18:erc20TokenList[orderList.currency.toLowerCase()].decimals,
+        orderList.currency == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" ? 18 : erc20TokenList[orderList.currency.toLowerCase()].decimals,
         String(UnitPrice.UnitPrice)
       );
       setTxModalVisible(true);
     }
   };
+
+  function checkNetwork() {
+    if (WalletInUse == 1 && NftInfo.network) {
+
+      if (currentChainId != chainNameMap[NftInfo.network.toLowerCase()].chainId) {
+        updateNetwork(chainNameMap[NftInfo.network.toLowerCase()].chainId);
+        Toast(`Switch to network: ${NftInfo.network.toLowerCase()}`);
+      }
+    }
+  }
 
   // 批准额度
   const approveAllowance = () => {
@@ -202,6 +215,7 @@ const QuotationDetails = (props) => {
 
   // make offer
   const confrimMakerOffer = () => {
+
     if (WalletInUse == 2) {
       const tokenAddress = Object.keys(erc20TokenList)[selectedTokenIndex.row];
       const decimals =
@@ -258,32 +272,16 @@ const QuotationDetails = (props) => {
         return null;
       }
     }
-    if (WalletInUse == 1 && NftInfo.network) {
-      if (
-        currentChainId != chainNameMap[NftInfo.network.toLowerCase()].chainId
-      ) {
-        updateNetwork(chainNameMap[NftInfo.network.toLowerCase()].chainId);
-        Toast(`Switch to network: ${NftInfo.network.toLowerCase()}`);
-      }
-    }
+    checkNetwork();
     setBuyNowVisible(true);
     setIsOffer(false);
     setBuyNumber("1");
+
+
   };
   // 打开报价弹窗
   const openOfferNowModal = () => {
-    if (WalletInUse == 2) {
-      if (
-        connector.chainId != chainNameMap[NftInfo.network.toLowerCase()].chainId
-      ) {
-        Toast(
-          t(
-            "该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！"
-          )
-        );
-        return null;
-      }
-    }
+    checkNetwork()
 
     setOfferNowVisible(true);
     setIsOffer(true);
@@ -313,11 +311,10 @@ const QuotationDetails = (props) => {
                 fontWeight: "700",
                 marginRight: 5,
               }}
-            >{`${Price}  ${
-              orderCurrency == "ETH"
-                ? chainNameMap[NftInfo.network.toLowerCase()].nativeToken
-                : orderCurrency
-            } `}</Text>
+            >{`${Price}  ${orderCurrency == "ETH"
+              ? chainNameMap[NftInfo.network.toLowerCase()].nativeToken
+              : orderCurrency
+              } `}</Text>
             {/* <Text style={{ fontSize: 10, lineHeight: 22 }}>Wfca</Text> */}
           </View>
         </View>
@@ -341,11 +338,10 @@ const QuotationDetails = (props) => {
                 fontWeight: "700",
                 marginRight: 5,
               }}
-            >{`${Price * BuyNumber}  ${
-              NftInfo && orderCurrency == "ETH"
-                ? chainNameMap[NftInfo.network.toLowerCase()].nativeToken
-                : orderCurrency
-            } `}</Text>
+            >{`${Price * BuyNumber}  ${NftInfo && orderCurrency == "ETH"
+              ? chainNameMap[NftInfo.network.toLowerCase()].nativeToken
+              : orderCurrency
+              } `}</Text>
             {/* <Text style={{ fontSize: 10, lineHeight: 22 }}>Wfca</Text> */}
           </View>
         </View>
@@ -378,7 +374,7 @@ const QuotationDetails = (props) => {
           ></Image>
         )}
         <TextInput
-          onKeyPress={() => {}}
+          onKeyPress={() => { }}
           keyboardType="number-pad"
           style={styles.buyInput}
           onChangeText={(e) => {
@@ -390,6 +386,7 @@ const QuotationDetails = (props) => {
             }
           }}
           value={BuyNumber}
+          
         />
         <TouchableWithoutFeedback
           onPress={() => {
@@ -441,7 +438,7 @@ const QuotationDetails = (props) => {
           }}
         >
           <TextInput
-            onKeyPress={() => {}}
+            onKeyPress={() => { }}
             keyboardType="decimal-pad"
             style={[styles.buyInput, { marginRight: 10, marginLeft: 0 }]}
             value={String(QuotationAmount)}
@@ -463,10 +460,10 @@ const QuotationDetails = (props) => {
             <Text>
               {erc20TokenList &&
                 AvailableBalance /
-                  10 **
-                    erc20TokenList[
-                      Object.keys(erc20TokenList)[selectedTokenIndex.row]
-                    ].decimals}{" "}
+                10 **
+                erc20TokenList[
+                  Object.keys(erc20TokenList)[selectedTokenIndex.row]
+                ].decimals}{" "}
             </Text>
           </View>
           <View style={{ flexDirection: "column" }}>
@@ -474,10 +471,10 @@ const QuotationDetails = (props) => {
             <Text>
               {erc20TokenList &&
                 allowanceAmount /
-                  10 **
-                    erc20TokenList[
-                      Object.keys(erc20TokenList)[selectedTokenIndex.row]
-                    ].decimals}{" "}
+                10 **
+                erc20TokenList[
+                  Object.keys(erc20TokenList)[selectedTokenIndex.row]
+                ].decimals}{" "}
             </Text>
           </View>
         </View>
@@ -487,9 +484,9 @@ const QuotationDetails = (props) => {
               {t("仍需批准额度")}:
               {needApprovalAmount /
                 10 **
-                  erc20TokenList[
-                    Object.keys(erc20TokenList)[selectedTokenIndex.row]
-                  ].decimals}{" "}
+                erc20TokenList[
+                  Object.keys(erc20TokenList)[selectedTokenIndex.row]
+                ].decimals}{" "}
             </Text>
           )}
         </View>
@@ -509,18 +506,36 @@ const QuotationDetails = (props) => {
           justifyContent: "space-between",
         }}
       >
-        <Text
+        <TouchableOpacity
           style={[styles.BuyBtnC, {}]}
           onPress={() => {
             setBuyNowVisible(false);
           }}
         >
-          {t("取消")}
-        </Text>
+          <Text style={{
+            lineHeight: 40,
+            textAlign: "center",
+            color: "#333",
+            fontSize: 16,
+            fontWeight: "700",
+          }}>
+            {t("取消")}
+          </Text>
+        </TouchableOpacity>
 
-        <Text style={[styles.BuyBtnQ, {}]} onPress={() => confirmPurchase()}>
-          {t("确定")}
-        </Text>
+        <TouchableOpacity style={[styles.BuyBtnQ, {}]} onPress={() => confirmPurchase()}>
+          <Text style={{
+            lineHeight: 40,
+            textAlign: "center",
+            color: "#FFFFFF",
+            fontSize: 16,
+            fontWeight: "700",
+          }}>
+            {t("确定")}
+          </Text>
+        </TouchableOpacity>
+
+
       </View>
     );
   };
@@ -623,11 +638,11 @@ const QuotationDetails = (props) => {
       AvailableBalance &&
       setNeedApprovalAmount(
         Number(BuyNumber) *
-          Number(QuotationAmount) *
-          10 **
-            erc20TokenList[Object.keys(erc20TokenList)[selectedTokenIndex.row]]
-              .decimals -
-          allowanceAmount
+        Number(QuotationAmount) *
+        10 **
+        erc20TokenList[Object.keys(erc20TokenList)[selectedTokenIndex.row]]
+          .decimals -
+        allowanceAmount
       );
   }, [
     QuotationAmount,
@@ -644,12 +659,12 @@ const QuotationDetails = (props) => {
       if (
         needApprovalAmount <= 0 &&
         AvailableBalance >=
-          Number(BuyNumber) *
-            Number(QuotationAmount) *
-            10 **
-              erc20TokenList[
-                Object.keys(erc20TokenList)[selectedTokenIndex.row]
-              ].decimals
+        Number(BuyNumber) *
+        Number(QuotationAmount) *
+        10 **
+        erc20TokenList[
+          Object.keys(erc20TokenList)[selectedTokenIndex.row]
+        ].decimals
       ) {
         setOfferState(2);
       }
@@ -657,12 +672,12 @@ const QuotationDetails = (props) => {
       if (
         needApprovalAmount > 0 &&
         AvailableBalance >
-          Number(BuyNumber) *
-            Number(QuotationAmount) *
-            10 **
-              erc20TokenList[
-                Object.keys(erc20TokenList)[selectedTokenIndex.row]
-              ].decimals
+        Number(BuyNumber) *
+        Number(QuotationAmount) *
+        10 **
+        erc20TokenList[
+          Object.keys(erc20TokenList)[selectedTokenIndex.row]
+        ].decimals
       ) {
         setOfferState(1);
       }
@@ -759,7 +774,7 @@ const QuotationDetails = (props) => {
                   String(orderList.listing_id),
                   Number(BuyNumber),
                   orderList.currency,
-                  orderList.currency=="0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"?18:erc20TokenList[orderList.currency.toLowerCase()].decimals,
+                  orderList.currency == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" ? 18 : erc20TokenList[orderList.currency.toLowerCase()].decimals,
                   String(UnitPrice.UnitPrice)
                 );
               }
@@ -900,7 +915,10 @@ const QuotationDetails = (props) => {
               <Text style={[styles.createAndByuerName]}>
                 {userInfo.shortenAddress}
               </Text>
-              <Text style={[styles.FromOrByuer]}>From</Text>
+              <View style={[styles.FromOrByuer]}>
+                <Text style={[styles.FromOrByuer]}>From</Text>
+              </View>
+
             </View>
           </View>
 
@@ -986,7 +1004,10 @@ const QuotationDetails = (props) => {
                       </Text>
                     </View>
                     <View>
-                      <Text style={[styles.moreTop]}>From</Text>
+                      <View>
+                        <Text style={[styles.moreTop]}>From</Text>
+                      </View>
+
                       <Text style={[styles.moreBottom]}>
                         {item.offeror.slice(2, 7)}
                       </Text>
@@ -1017,7 +1038,7 @@ const QuotationDetails = (props) => {
               <View
                 style={{
                   flexDirection: "row",
-                  backgroundColor: "pink",
+                  backgroundColor: "#897EF8",
                   borderRadius: 25,
                   flex: 1,
                   marginLeft: 25,
@@ -1025,8 +1046,7 @@ const QuotationDetails = (props) => {
                   alignItems: "center",
                 }}
               >
-                <Text
-                  onPress={() => openBuyNowModal()}
+                <TouchableOpacity onPress={() => openBuyNowModal()}
                   style={[
                     styles.bottomBtn,
                     {
@@ -1034,18 +1054,30 @@ const QuotationDetails = (props) => {
                       borderTopLeftRadius: 25,
                       borderBottomLeftRadius: 25,
                     },
-                  ]}
-                >
-                  Buy now
-                </Text>
-                <Text
+                  ]}>
+                  <Text
+
+                    style={{
+                      textAlign: "center",
+                      height: 50,
+                      lineHeight: 50,
+                      // borderRadius: 25,
+
+                      color: "#fff",
+                      fontWeight: "bold",
+                      fontSize: 16,
+                    }}
+                  >
+                    Buy now
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
                   onPress={() => openOfferNowModal()}
                   style={[
                     styles.bottomBtn,
                     {
                       flex: 1,
                       backgroundColor: "#fff",
-                      color: "#333",
                       borderColor: "#897EF8",
                       borderWidth: 1,
                       borderTopRightRadius: 25,
@@ -1053,23 +1085,32 @@ const QuotationDetails = (props) => {
                     },
                   ]}
                 >
-                  Offer
-                </Text>
+                  <Text style={[{
+                    color: "#333", textAlign: "center",
+                    height: 50,
+                    lineHeight: 50,
+                    fontWeight: "bold"
+                  }]}>
+                    Offer
+                  </Text>
+                </TouchableOpacity>
+
               </View>
             ) : (
-              <View
+              <TouchableOpacity
                 style={{
                   flexDirection: "row",
-                  backgroundColor: "pink",
+                  backgroundColor: "#897EF8",
                   borderRadius: 25,
                   flex: 1,
                   marginLeft: 25,
                   height: 50,
                   alignItems: "center",
                 }}
+                onPress={() => cancelListing()}
               >
                 <Text
-                  onPress={() => cancelListing()}
+
                   style={[
                     styles.bottomBtn,
                     {
@@ -1080,7 +1121,7 @@ const QuotationDetails = (props) => {
                 >
                   Cancel Listing
                 </Text>
-              </View>
+              </TouchableOpacity>
             )}
           </View>
         </ScrollView>
@@ -1093,8 +1134,10 @@ const QuotationDetails = (props) => {
         onBackdropPress={() => {
           setBuyNowVisible(false);
         }}
+        
       >
-        <Card disabled={true} style={styles.CardBox}>
+        {/* <TouchableWithoutFeedback></TouchableWithoutFeedback> */}
+        <Card disabled={false} style={styles.CardBox} onPress={()=>{Keyboard.dismiss()}}>
           <View
             style={{
               justifyContent: "flex-end",
@@ -1142,7 +1185,7 @@ const QuotationDetails = (props) => {
           setNeedApprovalAmount(null);
         }}
       >
-        <Card disabled={true} style={styles.CardBox}>
+        <Card disabled={false} style={styles.CardBox}  onPress={()=>{Keyboard.dismiss()}}>
           <View
             style={{
               justifyContent: "flex-end",
@@ -1180,14 +1223,23 @@ const QuotationDetails = (props) => {
               justifyContent: "space-between",
             }}
           >
-            <Text
+            <TouchableOpacity
               style={[styles.BuyBtnC, {}]}
               onPress={() => {
                 setOfferNowVisible(false);
               }}
             >
-              {t("取消")}
-            </Text>
+              <Text style={{
+                lineHeight: 40,
+                textAlign: "center",
+                color: "#000",
+                fontSize: 16,
+                fontWeight: "700",
+              }}>
+                {t("取消")}
+              </Text>
+            </TouchableOpacity>
+
             {offerState == 2 && (
               <Text
                 style={[styles.BuyBtnQ, {}]}
@@ -1197,14 +1249,23 @@ const QuotationDetails = (props) => {
               </Text>
             )}
             {offerState == 0 && (
-              <Text
-                style={[styles.BuyBtnQ, { backgroundColor: "gray" }]}
-                onPress={() => {
-                  Toast(t("已批准额度不足"));
-                }}
-              >
-                {t("确定")}
-              </Text>
+              <TouchableOpacity style={[styles.BuyBtnQ, { backgroundColor: "gray" }]} onPress={() => {
+                Toast(t("已批准额度不足"));
+              }}>
+                <Text
+                  style={{
+                    lineHeight: 40,
+                    textAlign: "center",
+                    color: "#000",
+                    fontSize: 16,
+                    fontWeight: "700",
+                  }}
+
+                >
+                  {t("确定")}
+                </Text>
+              </TouchableOpacity>
+
             )}
             {offerState == 1 && (
               <Text
@@ -1267,7 +1328,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginLeft: 20,
     marginRight: 20,
-    lineHeight: 40,
+    // lineHeight: 40,
     textAlign: "center",
   },
   BuyBtnQ: {
@@ -1275,22 +1336,14 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: "#897EF8",
     borderRadius: 50,
-    lineHeight: 40,
-    textAlign: "center",
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
+
   },
   BuyBtnC: {
     width: 120,
     height: 40,
     backgroundColor: "#F5F5F5",
     borderRadius: 50,
-    lineHeight: 40,
-    textAlign: "center",
-    color: "#333",
-    fontSize: 16,
-    fontWeight: "700",
+
   },
   nameBox: {
     backgroundColor: "#F0EFFE",
@@ -1423,7 +1476,7 @@ const styles = StyleSheet.create({
     height: 50,
     lineHeight: 50,
     // borderRadius: 25,
-    backgroundColor: "#897EF8",
+    // backgroundColor: "#897EF8",
     color: "#fff",
     fontWeight: "bold",
     fontSize: 16,

@@ -217,6 +217,7 @@ const DmwApiProvider = ({ children }) => {
     } else {
       wallet_address = currentWallet;
     }
+
     let str = JSON.stringify({ wallet_address: wallet_address });
     let data = formData({ iv: iv, param: str });
     post("/index/login/login_by_wallet", data)
@@ -248,6 +249,11 @@ const DmwApiProvider = ({ children }) => {
     if (currentWallet && dmwWalletList[0]) {
       Switchwallet(1);
     }
+
+    if (!currentWallet&&!dmwWalletList[0]){
+      Switchwallet(0)
+    }
+
   }, [currentWallet, dmwWalletList, connected, isLogin]);
 
   return (

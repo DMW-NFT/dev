@@ -193,6 +193,7 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     paddingTop: 15,
+    height:150
   },
   input: {
     height: 48,

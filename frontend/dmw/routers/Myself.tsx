@@ -44,6 +44,7 @@ const Home = () => {
         name="myself"
         options={{
           headerMode: "null",
+          title:null,
           headerTransparent: true
         }}
       ></Stack.Screen>

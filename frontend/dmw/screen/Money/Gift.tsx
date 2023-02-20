@@ -7,6 +7,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Modal } from "react-native-paper";
@@ -126,23 +127,25 @@ const Gift = (props) => {
   }, [password]);
 
   return (
-    <ScrollView style={{minHeight:"100%",maxHeight:screenHeight}}>
+    <ScrollView style={{
+      minHeight: "100%", maxHeight: screenHeight, backgroundColor: "#fff",
+      flex: 1,
+      paddingTop: 30,
+      paddingRight: 20,
+      paddingLeft: 20,
+    }}>
       <SafeAreaView
         style={[
           {
             position: "relative",
-            backgroundColor: "#fff",
-            flex: 1,
-            paddingTop: 30,
-            paddingRight: 20,
-            paddingLeft: 20,
+
             // height:screenHeight
           },
         ]}
       >
         <View>
           <View style={{ paddingLeft: 15, marginBottom: 10 }}>
-            <Text style={{ fontSize: 12, fontWeight: "700" }}>Token:</Text>
+            <Text style={{ fontSize: 12, fontWeight: "700" }}>Token</Text>
           </View>
 
           <Select
@@ -210,7 +213,7 @@ const Gift = (props) => {
 
           {true ? (
             <>
-              <View style={styles.userlist}>
+              <View style={{ flexDirection: "column" }}>
                 <View style={{ flex: 1, marginLeft: 10 }}>
                   <Text>{t("数量")}</Text>
                 </View>
@@ -218,7 +221,7 @@ const Gift = (props) => {
                 <TextInput
                   textAlignVertical="top"
                   placeholder={`0 ${selectedToken.symbol}`}
-                  style={[styles.textarea, { flex: 1, marginTop: 10 }]}
+                  style={[styles.textarea, { flex: 1, marginTop: 10, height: 50 }]}
                   onChangeText={(text) => {
                     const newText =
                       text
@@ -253,10 +256,16 @@ const Gift = (props) => {
         />
 
         {/* <View style={styles.container}></View> */}
+        <TouchableOpacity style={styles.btn} onPress={() => sendout()}>
+          <Text style={{
+            color: "#fff",
+            lineHeight: 50,
+            textAlign: "center",
+          }}>
+            {t("发送")}
+          </Text>
 
-        <Text style={styles.btn} onPress={() => sendout()}>
-          {t("发送")}
-        </Text>
+        </TouchableOpacity>
 
         {vfModalVisible && (
           <VerfiySecretModal
@@ -302,20 +311,20 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     marginBottom: 9,
+    height: 100
   },
 
   btn: {
     width: screenWidth - 40,
     backgroundColor: "#897EF8",
-    color: "#fff",
+
     height: 50,
-    lineHeight: 50,
-    textAlign: "center",
-    marginVertical:40,
+
+    marginVertical: 40,
     // marginRight: 20,
     // marginLeft: 20,
     borderRadius: 50,
-    position:"relative",
+    position: "relative",
     // bottom: 14
   },
   Ethimg: {
@@ -413,7 +422,7 @@ const styles = StyleSheet.create({
   modal_text: {
     fontSize: 16,
     fontWeight: "700",
-    fontFamily: "Source Han Sans CN",
+
     textAlign: "center",
     marginBottom: 30,
   },

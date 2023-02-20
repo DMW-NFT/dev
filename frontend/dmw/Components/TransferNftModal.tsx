@@ -19,6 +19,7 @@ import {
   FlatList,
   TextInput,
   Keyboard,
+  TouchableOpacity,
 } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -48,10 +49,10 @@ export default function TransferNftModal(props) {
     transfer721NFT
   } = useDmwWeb3();
   const { WalletInUse } = useDmwLogin();
-  const { dmwWalletList,getWalletListFromAccountStorage,dmwTransfer721NFT,dmwTransfer1155NFT } = useDmwWallet();
+  const { dmwWalletList, getWalletListFromAccountStorage, dmwTransfer721NFT, dmwTransfer1155NFT } = useDmwWallet();
   const { Toast, post, get, formData, shortenAddress } = useDmwApi();
 
-  const cleanTempData = ()=>{
+  const cleanTempData = () => {
     setPassword('')
     setReceiptAddress('')
     setTxNftAmount(0)
@@ -69,7 +70,7 @@ export default function TransferNftModal(props) {
         console.log("blancew of nft: ", res);
         setBalanceOfNft(res);
       });
-    }else{
+    } else {
       setBalanceOfNft(1);
     }
   };
@@ -90,11 +91,11 @@ export default function TransferNftModal(props) {
       console.log("open vf");
     } else {
       setTxModalVisible(true);
-      
-      if (nftData.contract_type=="ERC1155"){
-        transfer1155NFT(nftData.contract_address,nftData.token_id,receiptAddress,txNftAmount)
-      }else{
-        transfer721NFT(nftData.contract_address,nftData.token_id,receiptAddress)
+
+      if (nftData.contract_type == "ERC1155") {
+        transfer1155NFT(nftData.contract_address, nftData.token_id, receiptAddress, txNftAmount)
+      } else {
+        transfer721NFT(nftData.contract_address, nftData.token_id, receiptAddress)
       }
       cleanTempData()
 
@@ -120,17 +121,19 @@ export default function TransferNftModal(props) {
       getWalletListFromAccountStorage(password).then((res) => {
         if (res) {
           console.log(res.walletDict[dmwWalletList[0]].privateKey);
-          if (nftData.contract_type=="ERC1155"){
-            dmwTransfer1155NFT(res.walletDict[dmwWalletList[0]].privateKey,nftData.contract_address,nftData.token_id,receiptAddress,txNftAmount)
-          }else{
-            dmwTransfer721NFT(res.walletDict[dmwWalletList[0]].privateKey,nftData.contract_address,nftData.token_id,receiptAddress)
+          if (nftData.contract_type == "ERC1155") {
+            dmwTransfer1155NFT(res.walletDict[dmwWalletList[0]].privateKey, nftData.contract_address, nftData.token_id, receiptAddress, txNftAmount)
+          } else {
+            dmwTransfer721NFT(res.walletDict[dmwWalletList[0]].privateKey, nftData.contract_address, nftData.token_id, receiptAddress)
           }
           cleanTempData()
           setVfModalVisible(false);
           setTxModalVisible(true);
-          setPassword("");} else {
-            Toast(t("密码错误"));
-          }})
+          setPassword("");
+        } else {
+          Toast(t("密码错误"));
+        }
+      })
   }, [password]);
 
   const ModalTitle = () => {
@@ -169,15 +172,28 @@ export default function TransferNftModal(props) {
           paddingTop: 20,
         }}
       >
-        <Text style={styles.BuyBtnC} onPress={()=>{props.setModalVisible(false)}}>{t("取消")}</Text>
-        <Text
-          style={styles.BuyBtnQ}
-          onPress={() => {
+        <TouchableOpacity style={styles.BuyBtnC} onPress={() => { props.setModalVisible(false) }}>
+          <Text style={{
+            textAlign: "center", lineHeight: 40,
+            color: "#333",
+            fontSize: 16,
+            fontWeight: "700",
+          }}>{t("取消")}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity           style={styles.BuyBtnQ} onPress={() => {
             confirmTransferNft();
-          }}
-        >
+          }}>
+       <Text style={{
+            textAlign: "center", lineHeight: 40,
+            color: "white",
+            fontSize: 16,
+            fontWeight: "700",
+          }}>
           {t("确定")}
         </Text>
+        </TouchableOpacity>
+
       </View>
     );
   };
@@ -191,7 +207,7 @@ export default function TransferNftModal(props) {
           props.setModalVisible(false);
         }}
       >
-        <Card disabled={true} style={styles.CardBox}>
+        <Card disabled={false} style={styles.CardBox}   onPress={()=>{Keyboard.dismiss()}}>
           <ModalTitle />
           <NftCard />
           <View>
@@ -232,7 +248,7 @@ export default function TransferNftModal(props) {
               )}
               <Input
 
-                onKeyPress={() => {}}
+                onKeyPress={() => { }}
                 keyboardType="number-pad"
                 style={styles.buyInput}
                 onChangeText={(e) => {
@@ -319,12 +335,8 @@ const styles = StyleSheet.create({
     width: 120,
     height: 40,
     backgroundColor: "#F5F5F5",
-    borderRadius: 50,
-    lineHeight: 40,
-    textAlign: "center",
-    color: "#333",
-    fontSize: 16,
-    fontWeight: "700",
+    borderRadius: 20,
+
   },
   BuyNowImg: {
     width: 100,
