@@ -207,7 +207,7 @@ export default function TransferNftModal(props) {
           props.setModalVisible(false);
         }}
       >
-        <Card disabled={true} style={styles.CardBox}>
+        <Card disabled={false} style={styles.CardBox}   onPress={()=>{Keyboard.dismiss()}}>
           <ModalTitle />
           <NftCard />
           <View>

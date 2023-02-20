@@ -16,6 +16,8 @@ import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import { useTranslation } from "react-i18next";
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 const CreateMoney = (props) => {
   const { t, i18n } = useTranslation();
   const [visible, setvisible] = useState(false);
@@ -51,8 +53,8 @@ const CreateMoney = (props) => {
   }, []);
 
   return (
-    <SafeAreaView style={{ backgroundColor: "#fff" }}>
-      <ScrollView>
+    <SafeAreaView style={{ backgroundColor: "#fff"}}>
+      <ScrollView style={{maxHeight:screenHeight}}>
         <View style={[styles.container]}>
           <Text style={[styles.title]}>{t("连接钱包")}</Text>
           <TouchableWithoutFeedback onPress={() => clickWallet()}>
@@ -105,6 +107,7 @@ const CreateMoney = (props) => {
           {/* <Animatable.View animation="fadeInUpBig" style={[styles.footer]}>
                         </Animatable.View> */}
         </View>
+
         <Modal
           visible={visible}
           onDismiss={() => {
@@ -171,11 +174,12 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     height: "40%",
     position: "absolute",
-    bottom: 0,
+    bottom: -screenHeight*0.1,
     backgroundColor: "#fff",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingHorizontal: 20,
+    padding: 20,
+    marginBottom:20
   },
   createMoneyBtn: {
     width: "100%",
@@ -202,11 +206,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   container: {
-    height: Dimensions.get("window").height - 95,
-    padding: 70 / 2,
-    paddingTop: 10,
+    height: Dimensions.get("window").height*0.9,
+    paddingHorizontal: 70 / 2,
+    // paddingTop: 10,
     // paddingBottom: 130,
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     alignItems: "center",
   },
 });

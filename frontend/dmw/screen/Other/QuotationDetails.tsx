@@ -9,6 +9,7 @@ import {
   FlatList,
   TextInput,
   TouchableOpacity,
+  Keyboard,
 } from "react-native";
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -385,6 +386,7 @@ const QuotationDetails = (props) => {
             }
           }}
           value={BuyNumber}
+          
         />
         <TouchableWithoutFeedback
           onPress={() => {
@@ -1132,8 +1134,10 @@ const QuotationDetails = (props) => {
         onBackdropPress={() => {
           setBuyNowVisible(false);
         }}
+        
       >
-        <Card disabled={true} style={styles.CardBox}>
+        {/* <TouchableWithoutFeedback></TouchableWithoutFeedback> */}
+        <Card disabled={false} style={styles.CardBox} onPress={()=>{Keyboard.dismiss()}}>
           <View
             style={{
               justifyContent: "flex-end",
@@ -1181,7 +1185,7 @@ const QuotationDetails = (props) => {
           setNeedApprovalAmount(null);
         }}
       >
-        <Card disabled={true} style={styles.CardBox}>
+        <Card disabled={false} style={styles.CardBox}  onPress={()=>{Keyboard.dismiss()}}>
           <View
             style={{
               justifyContent: "flex-end",

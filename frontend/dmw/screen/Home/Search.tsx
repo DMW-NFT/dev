@@ -125,13 +125,14 @@ const Searchsc = (props) => {
                     </View>
 
                 </View>
-                <View style={{ alignItems: loading ? 'center' : null, justifyContent: loading ? 'center' : null, flex: 1, padding: 20, paddingTop: 0 }}>
+                <View style={{ alignItems: loading ? 'center' : null, justifyContent: loading ? 'center' : null, flex: 1, paddingHorizontal: 20 }}>
                     {
 
                         <FlatList
                             showsVerticalScrollIndicator={false}
                             refreshing={refreshing}
-                            style={{ height: '55%', flex: 1, }}
+                            style={{ height: '55%', width:"100%",paddingBottom:30}}
+                            
                             ListEmptyComponent={() => {
                                 return <Text style={{ textAlign: 'center', marginTop: '50%' }}>{t("空空如也")}</Text>
                                 // 列表为空展示改组件
@@ -148,7 +149,7 @@ const Searchsc = (props) => {
                             // keyExtractor={(item, index) => item.id}
                             ListFooterComponent={() => {
                                 // 声明尾部组件
-                                return list.length == total ? <Text style={{ textAlign: 'center' }}>{t("没有更多了")}</Text> : null
+                                return list.length == total ? <Text style={{ textAlign: 'center',paddingBottom:30 }}>{t("没有更多了")}</Text> : null
                             }}
                             // 下刷新
                             onEndReachedThreshold={0.1} //表示还有10% 的时候加载onRefresh 函数
@@ -214,9 +215,9 @@ const Searchsc = (props) => {
 
 
                     <View style={styles.btnlinelang}></View>
-                    <View style={styles.sureBtn}>
-                        <Text style={styles.sureBtnText} onPress={searchFn}>{t('确定')}</Text>
-                    </View>
+                    <TouchableOpacity style={styles.sureBtn} onPress={searchFn}>
+                        <Text style={styles.sureBtnText} >{t('确定')}</Text>
+                    </TouchableOpacity>
                 </View>
             </Modal>
 

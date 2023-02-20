@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   FlatList,
   TextInput,
+  Keyboard,
 } from "react-native";
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -524,7 +525,7 @@ const GoodsDetail = (props) => {
         setSellOptionVisible(false);
       }}
     >
-      <Card disabled={true} style={styles.CardBox}>
+      <Card disabled={false} style={styles.CardBox} onPress={() => { Keyboard.dismiss() }} >
         <View
           style={{
             flexDirection: "column",

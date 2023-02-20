@@ -325,9 +325,9 @@ const Myself = (props) => {
   );
 
   return (
-    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
+    <SafeAreaView style={{flex: 1 ,backgroundColor: "#fff" }}>
       <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
-        <View style={{ backgroundColor: "#fff" }}>
+        <View style={{ }}>
           <View style={styles.index_box}>
             {/* title -- start*/}
             <View
@@ -423,7 +423,9 @@ const Myself = (props) => {
               paddingLeft: 20,
               paddingTop: 20,
               // marginBottom:100,
-              zIndex: 1,
+              // zIndex: 1,
+              // backgroundColor:"pink",
+              minHeight:"50%"
             }}
           >
             {/*  navigatetoDetail={(id, unique_id, contract_address, token_id, network)
@@ -437,7 +439,7 @@ const Myself = (props) => {
       {visible ? (
         <Screen
           title="select filter"
-          style={[styles.Screen]}
+          // style={[styles.Screen]}
           visible={visible}
           close={() => close()}
           datalist={screenData}
@@ -470,6 +472,7 @@ const styles = StyleSheet.create({
     width: screenWidth,
     position: "absolute",
     zIndex: 100,
+
   },
   index_box: {
     paddingLeft: 20,

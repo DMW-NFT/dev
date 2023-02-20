@@ -2,9 +2,11 @@ import { Text, StyleSheet, View, Dimensions, TouchableOpacity } from 'react-nati
 import React, { useState, useEffect, Suspense } from 'react';
 import { Modal } from 'react-native-paper';
 import { t } from 'i18next';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const scale = Dimensions.get('window').scale;
 const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 const CreateMoney = (props) => {
   // constructor(props) {
@@ -58,8 +60,8 @@ const CreateMoney = (props) => {
 
   let { visible } = props;
   return (
-    <View style={[{ position: 'absolute', width: "100%", zIndex: 100, bottom: 0, height: "100%" }]}>
-      <View style={styles.container}></View>
+    <SafeAreaView style={{width: "100%", zIndex: 100, height: screenHeight,position:"absolute", }}>
+      {/* <View style={styles.container}></View> */}
       <Modal
         visible={visible}
         onDismiss={() => close()}
@@ -120,7 +122,7 @@ const CreateMoney = (props) => {
         </TouchableOpacity>
 
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -177,17 +179,18 @@ const styles = StyleSheet.create({
     left: '50%',
   },
   footer: {
+    // height:"100%",
     zIndex: 999,
     width: Dimensions.get('window').width,
-    position: 'absolute',
-    bottom: -20,
+    position: "absolute",
+    bottom: 0,
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 20,
     paddingTop: 23,
-    minWidth: '50%'
-    // paddingBottom: 48,
+    minWidth: '50%',
+    paddingBottom: 48,
   },
   createMoneyBtn: {
     width: '100%',

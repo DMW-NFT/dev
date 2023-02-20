@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   Button,
+  TouchableOpacity,
 } from "react-native";
 import DocumentPicker from "react-native-document-picker";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
@@ -92,7 +93,7 @@ const ModifyInfo = (props) => {
     getUserInfo();
 
     console.log(userInfo["avatar_url"], "、、、、、、、");
-    return () => {};
+    return () => { };
   }, []);
 
   return (
@@ -147,9 +148,16 @@ const ModifyInfo = (props) => {
             value={username}
           />
         </View>
-        <Text style={styles.btn} onPress={() => sava()}>
-          {t("保存")}
-        </Text>
+        <TouchableOpacity style={styles.btn} onPress={() => sava()}>
+          <Text style={{
+            lineHeight: 50,
+            color: "#fff",
+            textAlign: "center",
+          }} >
+            {t("保存")}
+          </Text>
+        </TouchableOpacity>
+
       </ScrollView>
 
       <DialogToast
@@ -175,10 +183,9 @@ const styles = StyleSheet.create({
   btn: {
     width: screenWidth - 40,
     backgroundColor: "#897EF8",
-    color: "#fff",
+
     height: 50,
-    lineHeight: 50,
-    textAlign: "center",
+
     marginRight: 20,
     marginLeft: 20,
     marginTop: 100,
