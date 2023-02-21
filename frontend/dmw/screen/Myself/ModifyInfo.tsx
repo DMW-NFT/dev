@@ -32,7 +32,7 @@ const ModifyInfo = (props) => {
   const { t, i18n } = useTranslation();
   const [userInfo, setUserInfo] = useState({});
   const [visible, setVisible] = useState(false);
-  const [message, setMessage] = useState("温馨提示");
+  const [message, setMessage] = useState("提示");
   const { username, setUsername } = useDmwLogin();
   const { avatarUrl, setAvatarUrl } = useDmwLogin();
   const { post, formData, Toast } = useDmwApi();
@@ -164,7 +164,7 @@ const ModifyInfo = (props) => {
         visible={visible}
         isClose={true}
         value={message}
-        title={t("温馨提示")}
+        title={t("提示")}
         Size="18"
         textAlign="left"
         close={() => {

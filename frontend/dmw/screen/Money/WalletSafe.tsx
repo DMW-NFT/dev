@@ -37,7 +37,7 @@ const WalletSafe = (props) => {
               {t(
                 "保护好您的钱包助记词。下一个界面将显示助记词，助记词是您钱包的唯一密钥。如果您的手机丢失或被盗，它将允许您恢复对您钱包的访问。"
               )}
-              <Text style={[styles.textcolor]}>{t("它为什么重要？")}</Text>
+              <Text style={[styles.textcolor]}>{t("它为什么重要")}？</Text>
             </Text>
           </View>
           <View style={[styles.blackBox]}>

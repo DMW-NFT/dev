@@ -40,7 +40,7 @@ const ImportWord = (props) => {
           <View>
             <Text style={[styles.topInfo]}>{t("创建支付密码")}</Text>
             <Text style={[styles.topInfo1]}>
-              {t("此密码将用在您签名资产或者您在支付代币时使用。")}
+              {t("此密码将用在您签名资产或者您在支付代币时使用")}
             </Text>
           </View>
           <View style={styles.lis}>

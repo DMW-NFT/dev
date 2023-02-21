@@ -478,7 +478,7 @@ const GoodsDetail = (props) => {
         console.log(res.data.history);
       })
       .catch((err) => {
-        Toast(err.message);
+        Toast(t(err.message));
       });
   };
 

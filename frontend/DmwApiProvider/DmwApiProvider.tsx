@@ -25,7 +25,7 @@ const DmwApiProvider = ({ children }) => {
 
   const [show, setShow] = useState(false);
   const [time, setTime] = useState(2000);
-  const [toastVal, setToastVal] = useState(t("温馨提示"));
+  const [toastVal, setToastVal] = useState(t("提示"));
   const [MoneyRouteState, setMoneyRouteState] = useState("createMoney");
   const [gerrorTemp, setGErrorTmep] = useState(globalError);
 
@@ -211,7 +211,7 @@ const DmwApiProvider = ({ children }) => {
       if (dmwWalletList[0]) {
         wallet_address = dmwWalletList[0];
       } else {
-        Toast("请先创建DMW钱包");
+        Toast(t("请先创建DMW钱包"));
         return;
       }
     } else {
@@ -228,7 +228,7 @@ const DmwApiProvider = ({ children }) => {
         }
       })
       .catch((err) => {
-        Toast(err.message);
+        Toast(t(err.message));
       });
   };
 

@@ -141,7 +141,7 @@ const Myself = (props) => {
           res.data.page && setCurrentPage(res.data.page + 1);
           res.data.current_page && setCurrentPage(res.data.current_page + 1);
         } else {
-          Toast(res.message);
+          Toast(t(res.message));
           setLoding(false);
         }
       })

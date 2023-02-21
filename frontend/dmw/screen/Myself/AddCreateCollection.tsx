@@ -155,7 +155,7 @@ const AddCreateCollection = (props) => {
         // setIpfsImgUrl1({ base64: response.assets[0].base64, url: '' })
         post('/index/collection/upload_logo', formData).then(res => {
           if (res.code != 200) {
-            Toast(res.message)
+            Toast(t(res.message))
             setLoding1(false)
             return
           }
@@ -170,7 +170,7 @@ const AddCreateCollection = (props) => {
         // setIpfsImgUrl1({ base64: response.assets[0].base64, url: '' })
         post('/index/collection/upload_cover', formData).then(res => {
           if (res.code != 200) {
-            Toast(res.message)
+            Toast(t(res.message))
             setLoding(false)
             return
           }
@@ -185,7 +185,7 @@ const AddCreateCollection = (props) => {
         // setIpfsImgUrl1({ base64: response.assets[0].base64, url: '' })
         post('/index/collection/upload_banner', formData).then(res => {
           if (res.code != 200) {
-            Toast(res.message)
+            Toast(t(res.message))
             setLoding3(false)
             return
           }
@@ -384,7 +384,7 @@ const AddCreateCollection = (props) => {
 
                 <TouchableWithoutFeedback onPress={() => {
                   if (!listE) {
-                    Toast('未加载到其他')
+                    Toast(t('未加载到其他'))
                     return
                   } setisShowE(!isShowE)
                 }}>

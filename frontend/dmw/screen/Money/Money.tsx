@@ -106,7 +106,7 @@ const Money = (props) => {
       })
       .catch((err) => {
         // console.log("err",err)
-        Toast(err.message);
+        Toast(t(err.message));
         // setTxHistory([])
       });
   };
@@ -137,7 +137,7 @@ const Money = (props) => {
       if (dmwWalletList[0]) {
         wallet_address = dmwWalletList[0];
       } else {
-        Toast("请先创建DMW钱包");
+        Toast(t("请先创建DMW钱包"));
         return;
       }
     } else {
@@ -153,7 +153,7 @@ const Money = (props) => {
         }
       })
       .catch((err) => {
-        Toast(err.message);
+        Toast(t(err.message));
       });
   };
 
@@ -191,7 +191,7 @@ const Money = (props) => {
       })
       .catch((err) => {
         // console.log("err",err)
-        Toast(err.message);
+        Toast(t(err.message));
         // setTxHistory([])
       });
   };

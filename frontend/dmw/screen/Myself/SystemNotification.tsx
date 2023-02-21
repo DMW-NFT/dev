@@ -163,7 +163,7 @@ const SystemNotification = (props) => {
               paddingBottom: 10,
             }}
           >
-            <Text>{t("查看详情")}</Text>
+            <Text>{t("详情")}</Text>
             <FontAwesomeIcon icon={faChevronRight} color="#707070" size={16} />
           </View>
         </TouchableWithoutFeedback>
@@ -198,7 +198,7 @@ const SystemNotification = (props) => {
               marginStart: 10,
             }}
           >
-            <Text>{t("查看详情")}</Text>
+            <Text>{t("详情")}</Text>
             <FontAwesomeIcon icon={faChevronRight} color="#707070" size={16} />
           </View>
         </TouchableWithoutFeedback>
@@ -246,7 +246,7 @@ const SystemNotification = (props) => {
               paddingBottom: 10,
             }}
           >
-            <Text>{t("查看详情")}</Text>
+            <Text>{t("详情")}</Text>
             <FontAwesomeIcon icon={faChevronRight} color="#707070" size={16} />
           </View>
         </TouchableWithoutFeedback>

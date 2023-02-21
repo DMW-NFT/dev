@@ -566,11 +566,11 @@ const TransferredIntoCollection = (props) => {
         if (res.code == 200) {
           Toast(t("创建成功"));
         } else {
-          Toast(res.message);
+          Toast(t(res.message));
         }
       })
       .catch((err) => {
-        Toast(err.message);
+        Toast(t(err.message));
       });
   }, [txHash]);
 
@@ -746,7 +746,7 @@ const TransferredIntoCollection = (props) => {
               {nftImageUpload}
 
               <Text style={{ fontSize: 10, color: "#999999", marginBottom: 27 }}>
-                {t("支持的文件类型：")}JPG、SVG、PNG
+                {t("支持的文件类型")}：JPG、SVG、PNG
               </Text>
 
               {nftNameInput}

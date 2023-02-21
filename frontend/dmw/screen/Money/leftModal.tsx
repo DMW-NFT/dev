@@ -45,7 +45,7 @@ const Lmodal = (props) => {
       props.openModal();
     } else {
       // props.navigation.navigate("Exchange");
-      Toast("请先导入助记词或登录DMW！");
+      Toast(t("请先导入助记词或登录DMW"));
     }
   };
 
@@ -59,7 +59,7 @@ const Lmodal = (props) => {
 
           cleanSecret()
 
-          Toast("Reset Success!")
+          Toast(t("Reset Success"))
         }else{
           Toast(t("密码不一致"));
         }

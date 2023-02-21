@@ -379,7 +379,7 @@ const QuotationDetails = (props) => {
           style={styles.buyInput}
           onChangeText={(e) => {
             if (Number(e) > orderList.quantity) {
-              Toast("剩余数量不足");
+              Toast(t("剩余数量不足"));
               setBuyNumber(String(orderList.quantity));
             } else {
               setBuyNumber(e);
