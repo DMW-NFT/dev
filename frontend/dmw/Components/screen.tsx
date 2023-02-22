@@ -60,7 +60,7 @@ const CreateMoney = (props) => {
 
   let { visible } = props;
   return (
-    <SafeAreaView style={{width: "100%", zIndex: 100, height:"100%",position:"absolute", }}>
+    <SafeAreaView style={{width: "100%", zIndex: 100,position:"absolute",bottom:0,height:screenHeight}}>
       {/* <View style={styles.container}></View> */}
       <Modal
         visible={visible}

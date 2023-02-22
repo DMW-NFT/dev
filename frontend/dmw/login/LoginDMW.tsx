@@ -107,7 +107,7 @@ const LoginDMW = (props) => {
           Toast(t(res.message));
           return;
         }
-        Toast(t("切换成功"));
+        // Toast(t("切换成功"));
         console.log(res.data.token);
 
         storage.save({
