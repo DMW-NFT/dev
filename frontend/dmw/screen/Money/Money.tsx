@@ -149,7 +149,7 @@ const Money = (props) => {
       .then((res) => {
         console.log(res, wallet_address, "qianbao denglu");
         if (res.code == 200) {
-          Toast(t("登录成功"));
+          // Toast(t("切换成功"));
         }
       })
       .catch((err) => {
@@ -548,7 +548,7 @@ const Money = (props) => {
             onPress={() => setContenType("nft")}
           >
             <Text style = {contenType == "nft" &&styles.tapTextActive}>
-              Tx {t("记录") + ""}
+              {t("Tx 记录") + ""}
             </Text>
           </TouchableOpacity>
 
@@ -717,7 +717,7 @@ const Money = (props) => {
                   marginBottom: 30,
                 }}
               >
-                请输入支付密码
+                {t("请输入支付密码")}
               </Text>
               <View
                 style={{

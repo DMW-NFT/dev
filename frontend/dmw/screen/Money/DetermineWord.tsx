@@ -1,10 +1,10 @@
-import { Text, StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
+import { Text,TouchableOpacity, StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
 import React, { useState, useEffect, useContext } from "react";
 import StepComp from "./StepComp";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 const DetermineWord = (props) => {
   const { t, i18n } = useTranslation();
   const [checkdata, setCheckdata] = useState([]);

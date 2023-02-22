@@ -8,6 +8,7 @@ import {
   TextInput,
   Dimensions,
   TouchableOpacity,
+  ScrollView
 } from "react-native";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import React, { useEffect, useState } from "react";
@@ -15,7 +16,7 @@ const screenWidth = Dimensions.get("window").width;
 import { useTranslation } from "react-i18next";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import Web3 from "web3";
-import { ScrollView } from "react-native-gesture-handler";
+
 const Privatekeyimport = (props) => {
   const web3 = new Web3();
   const { addWalletToAccountStorage } = useDmwWallet();

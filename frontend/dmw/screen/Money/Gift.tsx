@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   TouchableOpacity,
+  ScrollView
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Modal } from "react-native-paper";
@@ -22,7 +23,7 @@ import VerfiySecretModal from "../../Components/VerfiySecretModal";
 import TxProccessingModal from "../../Components/TxProccessingModal";
 import { useTranslation } from "react-i18next";
 import Web3 from "web3";
-import { ScrollView } from "react-native-gesture-handler";
+
 const scale = Dimensions.get("window").scale;
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;

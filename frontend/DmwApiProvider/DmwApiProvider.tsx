@@ -40,7 +40,7 @@ const DmwApiProvider = ({ children }) => {
     });
   };
   useEffect(() => {
-    getTranslationJson();
+    // getTranslationJson();
     languageType();
     i18n.changeLanguage(language);
   }, [language]);
@@ -224,7 +224,7 @@ const DmwApiProvider = ({ children }) => {
       .then((res) => {
         console.log(res, wallet_address, "qianbao denglu");
         if (res.code == 200) {
-          Toast(t("登录成功"));
+          // Toast(t("切换成功"));
         }
       })
       .catch((err) => {

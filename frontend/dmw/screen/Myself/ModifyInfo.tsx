@@ -10,13 +10,14 @@ import {
   TextInput,
   Button,
   TouchableOpacity,
+  ScrollView
 } from "react-native";
 import DocumentPicker from "react-native-document-picker";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
 import DialogToast from "../../Components/DialogToast.js";
 import { useTranslation } from "react-i18next";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
-import { ScrollView } from "react-native-gesture-handler";
+
 
 const screenWidth = Dimensions.get("window").width;
 const scale = Dimensions.get("window").scale;

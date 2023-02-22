@@ -7,12 +7,13 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   TouchableOpacity,
+  ScrollView
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useContext, useState } from "react";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import StepComp from "./StepComp";
-import { ScrollView } from "react-native-gesture-handler";
+
 
 const WalletSafeShow = (props) => {
   const { t, i18n } = useTranslation();

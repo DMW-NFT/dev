@@ -11,6 +11,7 @@ import {
   TextInput,
   Button,
   ScrollView,
+  TouchableOpacity
 } from "react-native";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
@@ -27,7 +28,7 @@ import Web3 from "web3";
 import chainIdmap from "../../../constans/chainIdMap.json";
 import VerfiySecretModal from "../../Components/VerfiySecretModal";
 import TxProccessingModal from "../../Components/TxProccessingModal";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 
 const screenWidth = Dimensions.get("window").width;
 const scale = Dimensions.get("window").scale;

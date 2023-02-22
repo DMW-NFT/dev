@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   SafeAreaView,
+  TouchableOpacity
 } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -17,7 +18,7 @@ import storage from "../Storage/storage";
 import { useDmwLogin } from "../../loginProvider/constans/DmwLoginProvider";
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 const api = new Api();
 const LoginDMW = (props) => {
   const { t, i18n } = useTranslation();
@@ -106,7 +107,7 @@ const LoginDMW = (props) => {
           Toast(t(res.message));
           return;
         }
-        Toast(t("登录成功"));
+        Toast(t("切换成功"));
         console.log(res.data.token);
 
         storage.save({

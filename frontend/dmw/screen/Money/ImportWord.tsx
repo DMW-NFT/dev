@@ -6,12 +6,14 @@ import {
   Image,
   TouchableWithoutFeedback,
   TextInput,
+  ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+
 import { Spinner } from "@ui-kitten/components";
 const ImportWord = (props) => {
   // state={
@@ -193,7 +195,7 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     paddingTop: 15,
-    height:150
+    height: 150,
   },
   input: {
     height: 48,

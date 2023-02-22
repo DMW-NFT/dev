@@ -60,7 +60,7 @@ const CreateMoney = (props) => {
 
   let { visible } = props;
   return (
-    <SafeAreaView style={{width: "100%", zIndex: 100, height: screenHeight,position:"absolute", }}>
+    <SafeAreaView style={{width: "100%", zIndex: 100, height:"100%",position:"absolute", }}>
       {/* <View style={styles.container}></View> */}
       <Modal
         visible={visible}
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 23,
     minWidth: '50%',
-    paddingBottom: 48,
+    // paddingBottom: 100,
   },
   createMoneyBtn: {
     width: '100%',

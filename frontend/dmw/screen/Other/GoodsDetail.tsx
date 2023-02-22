@@ -9,6 +9,7 @@ import {
   FlatList,
   TextInput,
   Keyboard,
+  TouchableOpacity
 } from "react-native";
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -38,7 +39,7 @@ import VerfiySecretModal from "../../Components/VerfiySecretModal";
 import TxProccessingModal from "../../Components/TxProccessingModal";
 import chainNameMap from "../../../constans/chainNameMap.json";
 import chainIdMap from "../../../constans/chainIdMap.json";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 
 const TradeHistoryCard = (props) => {
   const [show, setShow] = useState(false);

@@ -7,11 +7,12 @@ import {
   Text,
   SafeAreaView,
   TouchableWithoutFeedback,
+  ScrollView
 } from "react-native";
 import { Switch } from "react-native-paper";
 import { useTranslation } from "react-i18next";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
-import { ScrollView } from "react-native-gesture-handler";
+
 
 const SetUp = (props) => {
   const { t, i18n } = useTranslation();
