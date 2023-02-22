@@ -40,7 +40,7 @@ const DmwApiProvider = ({ children }) => {
     });
   };
   useEffect(() => {
-    // getTranslationJson();
+    getTranslationJson();
     languageType();
     i18n.changeLanguage(language);
   }, [language]);
