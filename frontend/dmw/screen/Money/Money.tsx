@@ -106,7 +106,7 @@ const Money = (props) => {
       })
       .catch((err) => {
         // console.log("err",err)
-        Toast(err.message);
+        Toast(t(err.message));
         // setTxHistory([])
       });
   };
@@ -137,7 +137,7 @@ const Money = (props) => {
       if (dmwWalletList[0]) {
         wallet_address = dmwWalletList[0];
       } else {
-        Toast("请先创建DMW钱包");
+        Toast(t("请先创建DMW钱包"));
         return;
       }
     } else {
@@ -149,11 +149,11 @@ const Money = (props) => {
       .then((res) => {
         console.log(res, wallet_address, "qianbao denglu");
         if (res.code == 200) {
-          Toast(t("登录成功"));
+          // Toast(t("切换成功"));
         }
       })
       .catch((err) => {
-        Toast(err.message);
+        Toast(t(err.message));
       });
   };
 
@@ -191,7 +191,7 @@ const Money = (props) => {
       })
       .catch((err) => {
         // console.log("err",err)
-        Toast(err.message);
+        Toast(t(err.message));
         // setTxHistory([])
       });
   };
@@ -548,7 +548,7 @@ const Money = (props) => {
             onPress={() => setContenType("nft")}
           >
             <Text style = {contenType == "nft" &&styles.tapTextActive}>
-              Tx {t("记录") + ""}
+              {t("Tx 记录") + ""}
             </Text>
           </TouchableOpacity>
 
@@ -717,7 +717,7 @@ const Money = (props) => {
                   marginBottom: 30,
                 }}
               >
-                请输入支付密码
+                {t("请输入支付密码")}
               </Text>
               <View
                 style={{

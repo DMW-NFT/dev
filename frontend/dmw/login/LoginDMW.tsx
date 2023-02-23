@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   SafeAreaView,
+  TouchableOpacity
 } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -16,8 +17,8 @@ import Api from "../Request/http";
 import storage from "../Storage/storage";
 import { useDmwLogin } from "../../loginProvider/constans/DmwLoginProvider";
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
-import { useTranslation } from 'react-i18next'
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { useTranslation } from "react-i18next";
+
 const api = new Api();
 const LoginDMW = (props) => {
   const { t, i18n } = useTranslation();
@@ -47,7 +48,7 @@ const LoginDMW = (props) => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [agree, setAgree] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [message, setMessage] = useState(t("温馨提示"));
+  const [message, setMessage] = useState(t("提示"));
   const { post, formData, Toast, setlanguageType } = useDmwApi();
   const onChangeText = (e, num) => {
     if (num == 1) {
@@ -64,9 +65,9 @@ const LoginDMW = (props) => {
 
   const changeCloca = (item) => {
     setLocal(item);
-    i18n.changeLanguage(item.id)
-    setlanguage(item.id)
-    setlanguageType(item.id)
+    i18n.changeLanguage(item.id);
+    setlanguage(item.id);
+    setlanguageType(item.id);
     setShowlocal(false);
   };
   const changeAreaCode = (item) => {
@@ -82,8 +83,8 @@ const LoginDMW = (props) => {
   // 登录按钮
   const loginFn = () => {
     if (!agree) {
-      Toast(t('请勾选用户协议'))
-      return
+      Toast(t("请勾选用户协议"));
+      return;
     }
     let data = {};
     let Fdata = {};
@@ -103,17 +104,17 @@ const LoginDMW = (props) => {
       .then((res) => {
         console.log(res, "res");
         if (res.code == 202) {
-          Toast(res.message);
+          Toast(t(res.message));
           return;
         }
-        Toast(t("登录成功"));
+        // Toast(t("切换成功"));
         console.log(res.data.token);
 
         storage.save({
           key: "loginState", // 注意:请不要在key中使用_下划线符号!
           data: {
             token: res.data.token,
-            languageType: local.id
+            languageType: local.id,
           },
           // 如果不指定过期时间，则会使用defaultExpires参数
           // 如果设为null，则永不过期
@@ -121,16 +122,18 @@ const LoginDMW = (props) => {
         });
         setTimeout(() => {
           login();
-          // props.navigation.navigate("FaceLogin") 
+          // props.navigation.navigate("FaceLogin")
         }, 2000);
       })
       .catch((err) => {
-        Toast(err.message);
+        Toast(t(err.message));
       });
   };
 
   return (
-    <SafeAreaView style={{ width: "100%", backgroundColor: "#fff", height: "100%" }}>
+    <SafeAreaView
+      style={{ width: "100%", backgroundColor: "#fff", height: "100%" }}
+    >
       <View style={{ paddingHorizontal: 20 }}>
         <View style={[styles.TopBox]}>
           <Text style={[styles.topText]}>{t("欢迎登录DMW")}</Text>
@@ -138,7 +141,7 @@ const LoginDMW = (props) => {
         {/* 邮箱 */}
         {type == 1 ? (
           <View style={{ zIndex: 99 }}>
-            <View style={[styles.inputBox,{justifyContent:"center"}]}>
+            <View style={[styles.inputBox, { justifyContent: "center" }]}>
               <Image
                 style={[styles.imageInput]}
                 source={require("../assets/img/login/email.png")}
@@ -148,13 +151,17 @@ const LoginDMW = (props) => {
                 keyboardType="email-address"
                 onChangeText={(text) => onChangeText(text, 1)}
                 value={email}
-                
               />
             </View>
           </View>
         ) : (
           <View style={{ zIndex: 99 }}>
-            <View style={[styles.inputBox, { paddingLeft: 100, zIndex: 90, justifyContent: "center" }]}>
+            <View
+              style={[
+                styles.inputBox,
+                { paddingLeft: 100, zIndex: 90, justifyContent: "center" },
+              ]}
+            >
               <TouchableWithoutFeedback
                 onPress={() => {
                   setShowareaCode(true);
@@ -172,7 +179,11 @@ const LoginDMW = (props) => {
                 >
                   <FontAwesomeIcon icon={faPhone} color="#707070" size={20} />
                   <Text>{areaCode}</Text>
-                  <FontAwesomeIcon icon={faAngleDown} color="#707070" size={20} />
+                  <FontAwesomeIcon
+                    icon={faAngleDown}
+                    color="#707070"
+                    size={20}
+                  />
                 </View>
               </TouchableWithoutFeedback>
               <TextInput
@@ -217,14 +228,24 @@ const LoginDMW = (props) => {
           </View>
         )}
 
-        <View style={[styles.inputBox, { display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }]}>
+        <View
+          style={[
+            styles.inputBox,
+            {
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            },
+          ]}
+        >
           <Image
             style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
             source={require("../assets/img/login/password.png")}
           ></Image>
 
           <TextInput
-            style={{ flex: 1, }}
+            style={{ flex: 1 }}
             onStartShouldSetResponderCapture={() => true}
             placeholder={t("请输入密码")}
             keyboardType="ascii-capable"
@@ -232,7 +253,14 @@ const LoginDMW = (props) => {
             onChangeText={(text) => onChangeText(text, 2)}
             value={password}
           />
-          <TouchableOpacity onPress={() => setSecureTextEntry(!secureTextEntry)} style={{ marginLeft: 5, justifyContent: "center", alignSelf: "center", }}>
+          <TouchableOpacity
+            onPress={() => setSecureTextEntry(!secureTextEntry)}
+            style={{
+              marginLeft: 5,
+              justifyContent: "center",
+              alignSelf: "center",
+            }}
+          >
             {secureTextEntry ? (
               <Image
                 style={[styles.imageshow]}
@@ -245,13 +273,7 @@ const LoginDMW = (props) => {
               ></Image>
             )}
           </TouchableOpacity>
-
-
-
-
         </View>
-
-
 
         <Text
           style={[styles.forget]}
@@ -261,43 +283,100 @@ const LoginDMW = (props) => {
         >
           {t("忘记密码")}
         </Text>
-        <TouchableOpacity onPress={() => loginFn()} style={[styles.loginBtnBox]}>
-          <Text style={{
-            lineHeight: 50,
-            textAlign: "center",
-            color: "#fff",
+        <TouchableOpacity
+          onPress={() => loginFn()}
+          style={[styles.loginBtnBox]}
+        >
+          <Text
+            style={{
+              lineHeight: 50,
+              textAlign: "center",
+              color: "#fff",
 
-            fontSize: 16,
-            fontWeight: "bold",
-          }}  >
+              fontSize: 16,
+              fontWeight: "bold",
+            }}
+          >
             {t("登录")}
           </Text>
         </TouchableOpacity>
 
         <View style={[styles.agren]}>
-          <TouchableOpacity onPress={() => {
-            setAgree(!agree);
-          }} style={[styles.checkbox,{backgroundColor: agree ? "#897EF8" : "#fff", justifyContent:"center"}]}>
-            <Text
-              style={[
-                { color: "white", textAlign: "center" },
-              ]}
-
-            >
+          <TouchableOpacity
+            onPress={() => {
+              setAgree(!agree);
+            }}
+            style={[
+              styles.checkbox,
+              {
+                backgroundColor: agree ? "#897EF8" : "#fff",
+                justifyContent: "center",
+              },
+            ]}
+          >
+            <Text style={[{ color: "white", textAlign: "center" }]}>
               {agree && "✓"}
             </Text>
           </TouchableOpacity>
 
+          {language != "jp" && (
+            <Text>
+              <Text style={[styles.textinfo]}>{t("我已阅读并同意")}</Text>
+              <Text
+                style={[styles.text]}
+                onPress={() => {
+                  props.navigation.navigate(
+                    language == "en"
+                      ? "yhen"
+                      : language == "zh"
+                      ? "yhzh"
+                      : "yhjp"
+                  );
+                }}
+              >
+                {t("《用户协议》")}
+              </Text>
+              <Text style={[styles.textinfo]}>{t("及")}</Text>
+              <Text
+                style={[styles.text]}
+                onPress={() => {
+                  props.navigation.navigate(
+                    language == "en"
+                      ? "stren"
+                      : language == "zh"
+                      ? "str"
+                      : "strjp"
+                  );
+                }}
+              >
+                {t("《隐私政策》")}
+              </Text>
+              {/* <Text> {t("我已阅读并同意《用户协议》及《隐私政策》")}</Text> */}
+            </Text>
+          )}
 
-          <Text>
-            <Text style={[styles.textinfo]}>{t("我已阅读并同意")}</Text>
-            <Text style={[styles.text]} onPress={() => { props.navigation.navigate(language == 'en' ? 'yhen' : language == 'zh' ? "yhzh" : 'yhjp') }}>{t("《用户协议》")}</Text>
-            <Text style={[styles.textinfo]}>{t("及")}</Text>
-            <Text style={[styles.text]} onPress={() => { props.navigation.navigate(language == 'en' ? 'stren' : language == 'zh' ? "str" : 'strjp') }}>{t("《隐私政策》")}</Text>
-            {/* <Text> {t("我已阅读并同意《用户协议》及《隐私政策》")}</Text> */}
-          </Text>
-
-
+          {language == "jp" && (
+            <Text>
+              <Text style={[styles.textinfo]}>{t("我已阅读并同意《用户协议》及《隐私政策》")}</Text>
+              <Text
+                style={[styles.text]}
+                onPress={() => {
+                  props.navigation.navigate("yhjp");
+                }}
+              >
+                {"\n("+t("《用户协议》")+" "}
+              </Text>
+              <Text
+                style={[styles.text]}
+                onPress={() => {
+                  props.navigation.navigate("strjp");
+                }}
+              >
+                {t("《隐私政策》")+")"}
+              </Text>
+              {/* <Text> {t("我已阅读并同意《用户协议》及《隐私政策》")}</Text> */}
+            </Text>
+          )}
         </View>
       </View>
     </SafeAreaView>
@@ -333,8 +412,6 @@ const styles = StyleSheet.create({
     color: "#0F172C",
     marginBottom: 40,
     fontSize: 16,
-
-
   },
   checkColac: {
     position: "absolute",
@@ -388,19 +465,17 @@ const styles = StyleSheet.create({
     height: 24,
     // position: "absolute",
     // backgroundColor: "red",
-
   },
   forget: {
     textAlign: "right",
     fontSize: 12,
     color: "#0F172C",
-
   },
   agren: {
     flexDirection: "row",
     marginTop: 21,
     alignItems: "center",
-    borderRadius: 15
+    borderRadius: 15,
   },
   textinfo: {
     fontSize: 12,
@@ -418,6 +493,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 15,
     marginRight: 5,
-    
   },
 });

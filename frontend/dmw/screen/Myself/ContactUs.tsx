@@ -1,4 +1,4 @@
-import { ScrollView } from "react-native-gesture-handler";
+
 import {
   StyleSheet,
   View,
@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   Linking,
   Clipboard,
+  ScrollView
 } from "react-native";
 import { SocialIcon, SocialIconProps, Icon } from "@rneui/themed";
 import { useTranslation } from "react-i18next";

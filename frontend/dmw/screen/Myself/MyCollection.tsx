@@ -1,9 +1,9 @@
-import { Text, StyleSheet, View, SafeAreaView, ScrollView, Image, TextInput, FlatList, Dimensions, TouchableWithoutFeedback } from 'react-native'
+import { Text,TouchableOpacity, StyleSheet, View, SafeAreaView, ScrollView, Image, TextInput, FlatList, Dimensions, TouchableWithoutFeedback } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { useDmwLogin } from '../../../loginProvider/constans/DmwLoginProvider';
 import { useTranslation } from 'react-i18next'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+
 const screenHeight = Dimensions.get("window").height;
 
 const MyCollection = (props) => {

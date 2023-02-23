@@ -9,6 +9,7 @@
       "android",
       "web"
     ],
+    "orientation": "portrait",
     "android": {
       "package": "dde.dmw.kh",
       "versionCode": 2

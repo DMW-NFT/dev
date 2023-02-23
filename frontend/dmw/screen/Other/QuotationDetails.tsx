@@ -39,7 +39,7 @@ import VerfiySecretModal from "../../Components/VerfiySecretModal";
 import TxProccessingModal from "../../Components/TxProccessingModal";
 import chainNameMap from "../../../constans/chainNameMap.json";
 // import supportErc20Token from "../../../constans/supportErc20Token.json";
-import { State } from "react-native-gesture-handler";
+
 
 const QuotationDetails = (props) => {
   const { t, i18n } = useTranslation();
@@ -379,7 +379,7 @@ const QuotationDetails = (props) => {
           style={styles.buyInput}
           onChangeText={(e) => {
             if (Number(e) > orderList.quantity) {
-              Toast("剩余数量不足");
+              Toast(t("剩余数量不足"));
               setBuyNumber(String(orderList.quantity));
             } else {
               setBuyNumber(e);
@@ -429,7 +429,7 @@ const QuotationDetails = (props) => {
     //购买数量
     return (
       <View style={{ flexDirection: "column", marginBottom: 20 }}>
-        <Text>{t("价格/NFT")}</Text>
+        <Text>{t("价格")}/NFT</Text>
         <View
           style={{
             flexDirection: "row",

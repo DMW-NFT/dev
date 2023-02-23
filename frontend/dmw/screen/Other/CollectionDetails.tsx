@@ -205,12 +205,12 @@ const CollectionDetails = (props) => {
                         </View>
 
                         <View style={[styles.index_box, styles.daohang]}>
-                            <TouchableOpacity style={[typename != 'Items' ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging('Items')}>
-                                <Text  style={[typename != 'Items' ? styles.daonghang_text : styles.daonghang_text_ative]}>Items({DetailsInfo.items})</Text>
+                            <TouchableOpacity style={[styles.tab,typename == 'Items' && styles.tab_ative]} onPress={() => paging('Items')}>
+                                <Text  style={[styles.tab_text,typename == 'Items'&&styles.tab_text_ative]}>Items({DetailsInfo.items})</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity  style={[typename != 'Activity' ? styles.daonghang_text : styles.daonghang_text_ative]} onPress={() => paging('Activity')}>
-                                <Text  style={[typename != 'Activity' ? styles.daonghang_text : styles.daonghang_text_ative]}>Activity</Text>
+                            <TouchableOpacity  style={[styles.tab,typename == 'Activity' && styles.tab_ative]} onPress={() => paging('Activity')}>
+                                <Text  style={[styles.tab_text,typename == 'Activity'&&styles.tab_text_ative]}>Activity</Text>
                             </TouchableOpacity>
 
                         </View>
@@ -526,29 +526,24 @@ const styles = StyleSheet.create({
         borderRadius: 80,
         marginTop: 210,
     },
-    daonghang_text: {
-        fontSize: 16,
-        fontWeight: '700',
-
+    tab: {
         height: 56,
-        lineHeight: 56,
         flex: 1,
-        color: '#666666',
-        textAlign: 'center',
-        // borderBottomColor:'#897EF8',
-        // borderBottomWidth:3
     },
-    daonghang_text_ative: {
-        fontSize: 16,
-        fontWeight: '700',
-
-        height: 56,
-        lineHeight: 56,
-        flex: 1,
-        textAlign: 'center',
+    tab_ative: {
         borderBottomColor: '#897EF8',
         borderBottomWidth: 3,
-        color: '#897EF8',
         borderRadius: 1,
+    },
+    tab_text: {
+        fontSize: 16,
+        fontWeight: '700',
+        lineHeight: 56,
+        color: '#666666',
+        textAlign: 'center',
+    },
+    tab_text_ative: {
+        color: '#897EF8',
+
     }
 })

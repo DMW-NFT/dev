@@ -20,10 +20,10 @@ const CompleteBackup = (props) => {
                     <Image style={[styles.Image]} source={require('../../assets/img/money/CompleteBackup.png')}></Image>
                     <Text style={[styles.topInfo]}>{t("恭喜")}</Text>
                     <Text style={[styles.topInfo1]}>
-                        {t("恭喜您已成功保护自己的钱包。")}
-                        {t("记住妥善保管您的助记词，这是您的责任！")}</Text>
+                        {/* {t("恭喜您已成功保护自己的钱包。")} */}
+                        {t("恭喜您已成功保护自己的钱包。记住妥善保管您的助记词，这是您的责任")}</Text>
                     <Text style={[styles.topInfo1, { marginTop: 20, }]}>
-                        {t("您可在“设置”-“助记词”中找到助记词。")}
+                        {t("您可在“设置”-“助记词”中找到助记词")}
                     </Text>
                 </View>
                 <TouchableOpacity style={[styles.import]} onPress={() => { CreateWalletFinish() }} >

@@ -7,12 +7,13 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   TouchableOpacity,
+  ScrollView
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useContext, useState } from "react";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import StepComp from "./StepComp";
-import { ScrollView } from "react-native-gesture-handler";
+
 
 const WalletSafeShow = (props) => {
   const { t, i18n } = useTranslation();
@@ -38,7 +39,7 @@ const WalletSafeShow = (props) => {
             <Text style={[styles.topInfo]}> {t("保护您的钱包安全")}</Text>
             <Text style={[styles.topInfo1]}>
               {t(
-                "这是您的助记词。将它写在纸上并存放在安全的地方。您将需要在下一步中重新输入此助记词（按顺序）。"
+                "这是您的助记词，将它写在纸上并存放在安全的地方。您将需要在下一步中重新输入此助记词（按顺序）"
               )}
             </Text>
           </View>

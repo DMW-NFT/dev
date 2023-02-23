@@ -11,6 +11,7 @@ import {
   TextInput,
   Button,
   ScrollView,
+  TouchableOpacity
 } from 'react-native';
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
@@ -20,7 +21,7 @@ import { Surface } from 'react-native-paper';
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from 'react-i18next'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
 const screenHeight = Dimensions.get('window').height;
@@ -155,7 +156,7 @@ const AddCreateCollection = (props) => {
         // setIpfsImgUrl1({ base64: response.assets[0].base64, url: '' })
         post('/index/collection/upload_logo', formData).then(res => {
           if (res.code != 200) {
-            Toast(res.message)
+            Toast(t(res.message))
             setLoding1(false)
             return
           }
@@ -170,7 +171,7 @@ const AddCreateCollection = (props) => {
         // setIpfsImgUrl1({ base64: response.assets[0].base64, url: '' })
         post('/index/collection/upload_cover', formData).then(res => {
           if (res.code != 200) {
-            Toast(res.message)
+            Toast(t(res.message))
             setLoding(false)
             return
           }
@@ -185,7 +186,7 @@ const AddCreateCollection = (props) => {
         // setIpfsImgUrl1({ base64: response.assets[0].base64, url: '' })
         post('/index/collection/upload_banner', formData).then(res => {
           if (res.code != 200) {
-            Toast(res.message)
+            Toast(t(res.message))
             setLoding3(false)
             return
           }
@@ -384,7 +385,7 @@ const AddCreateCollection = (props) => {
 
                 <TouchableWithoutFeedback onPress={() => {
                   if (!listE) {
-                    Toast('未加载到其他')
+                    Toast(t('未加载到其他'))
                     return
                   } setisShowE(!isShowE)
                 }}>

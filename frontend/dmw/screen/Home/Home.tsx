@@ -10,6 +10,7 @@ import {
   TextInput,
   FlatList,
   Touchable,
+  TouchableOpacity
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import Swiper from "react-native-swiper";
@@ -20,7 +21,7 @@ import { Card, Modal } from "@ui-kitten/components";
 import { useDmwWeb3 } from "../../../DmwWeb3/DmwWeb3Provider";
 import { useTranslation } from "react-i18next";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;

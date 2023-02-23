@@ -10,13 +10,15 @@ import {
   TextInput,
   Button,
   TouchableOpacity,
+  ScrollView
 } from "react-native";
 import DocumentPicker from "react-native-document-picker";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
 import DialogToast from "../../Components/DialogToast.js";
 import { useTranslation } from "react-i18next";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
-import { ScrollView } from "react-native-gesture-handler";
+import { launchImageLibrary } from "react-native-image-picker";
+
 
 const screenWidth = Dimensions.get("window").width;
 const scale = Dimensions.get("window").scale;
@@ -32,7 +34,7 @@ const ModifyInfo = (props) => {
   const { t, i18n } = useTranslation();
   const [userInfo, setUserInfo] = useState({});
   const [visible, setVisible] = useState(false);
-  const [message, setMessage] = useState("温馨提示");
+  const [message, setMessage] = useState("提示");
   const { username, setUsername } = useDmwLogin();
   const { avatarUrl, setAvatarUrl } = useDmwLogin();
   const { post, formData, Toast } = useDmwApi();
@@ -50,23 +52,48 @@ const ModifyInfo = (props) => {
     console.log(123);
 
     try {
-      const file = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images],
-      });
-      console.log(file, "文件");
+      let options = {
+        maxWidth: 300,
+        maxHeight: 550,
+        quality: 1,
+        mediaType: 'photo',
+      };
+      launchImageLibrary(options, ((response) => {
+        if (response.didCancel) {
+          return;
+        } else if (response.errorCode == 'camera_unavailable') {
 
-      let formData = new FormData();
-      formData.append("file", file[0]);
-      formData.append("type", "1");
-      post("/index/user/upload_avatar", formData).then((res) => {
-        console.log(res, "上传");
-        if (res.code == 200) {
-          getUserInfo();
-        } else {
-          Toast("Error:" + res.message);
-          console.log(res);
+          return;
+        } else if (response.errorCode == 'permission') {
+
+          return;
+        } else if (response.errorCode == 'others') {
+
+          return;
         }
-      });
+
+        console.log(response.assets[0], '4578');
+        let formData = new FormData();
+        let data = {
+          "fileCopyUri": null,
+          "name": response.assets[0].fileName,
+          "size": response.assets[0].fileSize,
+          "type": "image/jpeg",
+          "uri": response.assets[0].uri
+        }
+        formData.append("file", data);
+
+        post("/index/user/upload_avatar", formData).then((res) => {
+          console.log(res, "上传");
+          if (res.code == 200) {
+            getUserInfo();
+          } else {
+            Toast("Error:" + res.message);
+            console.log(res);
+          }
+        });
+      }))
+
     } catch (err) {
       // 在文件上传过程中出现错误
       if (DocumentPicker.isCancel(err)) {
@@ -76,6 +103,36 @@ const ModifyInfo = (props) => {
       }
     }
   };
+  // const up = async () => {
+  //   console.log(123);
+
+  //   try {
+  //     const file = await DocumentPicker.pick({
+  //       type: [DocumentPicker.types.images],
+  //     });
+  //     console.log(file, "文件");
+
+  //     let formData = new FormData();
+  //     formData.append("file", file[0]);
+  //     formData.append("type", "1");
+  //     post("/index/user/upload_avatar", formData).then((res) => {
+  //       console.log(res, "上传");
+  //       if (res.code == 200) {
+  //         getUserInfo();
+  //       } else {
+  //         Toast("Error:" + res.message);
+  //         console.log(res);
+  //       }
+  //     });
+  //   } catch (err) {
+  //     // 在文件上传过程中出现错误
+  //     if (DocumentPicker.isCancel(err)) {
+  //       // User cancelled the picker, exit any dialogs or menus and move on
+  //     } else {
+  //       throw err;
+  //     }
+  //   }
+  // };
 
   const getUserInfo = () => {
     console.log("用户信息");
@@ -164,7 +221,7 @@ const ModifyInfo = (props) => {
         visible={visible}
         isClose={true}
         value={message}
-        title={t("温馨提示")}
+        title={t("提示")}
         Size="18"
         textAlign="left"
         close={() => {

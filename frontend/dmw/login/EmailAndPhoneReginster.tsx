@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   SafeAreaView,
+  TouchableOpacity
 } from "react-native";
 import React, { Component, useEffect, useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -16,7 +17,7 @@ import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 import { useDmwLogin } from "../../loginProvider/constans/DmwLoginProvider";
 import storage from "../Storage/storage";
 import { useTranslation } from 'react-i18next'
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 const EmailAndPhoneReginster = (props) => {
   const { t, i18n } = useTranslation();
   const [type, Settype] = useState(props.route.params["type"]);
@@ -38,7 +39,7 @@ const EmailAndPhoneReginster = (props) => {
   const [showareaCode, SetshowareaCode] = useState(false);
   const [secureTextEntry, SetsecureTextEntry] = useState(true);
   const [visible, Setvisible] = useState(false);
-  const [message, Setmessage] = useState(t("温馨提示"));
+  const [message, Setmessage] = useState(t("提示"));
   const { post, get, formData } = useDmwApi();
   const { login } = useDmwLogin();
 
@@ -280,10 +281,11 @@ const EmailAndPhoneReginster = (props) => {
           </TouchableWithoutFeedback>
           <TextInput
             maxLength={6}
-            placeholder={t("请输入验证码  ")}
+            placeholder={t("请输入验证码")}
             keyboardType="number-pad"
             onChangeText={(text) => onChangeText(text, 3)}
             value={sancode}
+            style={{fontSize: 10}}
           />
         </View>
         <View style={[styles.inputBox, { paddingRight: 40 }]}>
@@ -349,7 +351,7 @@ const EmailAndPhoneReginster = (props) => {
             fontSize: 16,
             fontWeight: "bold",
           }} >
-            注册
+            {t("注册")}
           </Text>
         </TouchableOpacity>
 
@@ -358,7 +360,7 @@ const EmailAndPhoneReginster = (props) => {
           visible={visible}
           isClose={true}
           value={message}
-          title={t("温馨提示")}
+          title={t("提示")}
           Size="18"
           textAlign="left"
           close={() => {

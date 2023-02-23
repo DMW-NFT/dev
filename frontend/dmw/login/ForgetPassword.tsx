@@ -8,6 +8,7 @@ import {
   ScrollView,
   SafeAreaView,
   Touchable,
+  TouchableOpacity
 } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -17,7 +18,7 @@ import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 import { useDmwLogin } from "../../loginProvider/constans/DmwLoginProvider";
 import Toast from "../Components/Toast.js"
 import { useTranslation } from 'react-i18next'
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 const ForgetPassword = (props) => {
   const { t, i18n } = useTranslation();
   const [type, Settype] = useState(props.route.params["type"]);
@@ -39,7 +40,7 @@ const ForgetPassword = (props) => {
   const [showareaCode, SetshowareaCode] = useState(false);
   const [secureTextEntry, SetsecureTextEntry] = useState(true);
   const [visible, Setvisible] = useState(false);
-  const [message, Setmessage] = useState("温馨提示");
+  const [message, Setmessage] = useState("提示");
   const { post, get, formData, Toast } = useDmwApi();
   const { login } = useDmwLogin();
 
@@ -84,7 +85,7 @@ const ForgetPassword = (props) => {
       fdata = formData(data);
     }
     post(url, fdata).then((res) => {
-      Toast(res.message)
+      Toast(t(res.message))
       console.log(res, "忘记密码验证码");
     });
   };
@@ -231,7 +232,7 @@ const ForgetPassword = (props) => {
           </TouchableWithoutFeedback>
           <TextInput
             maxLength={6}
-            placeholder={t("请输入验证码  ")}
+            placeholder={t("请输入验证码")}
             keyboardType="number-pad"
             onChangeText={(text) => onChangeText(text, 3)}
             value={sancode}

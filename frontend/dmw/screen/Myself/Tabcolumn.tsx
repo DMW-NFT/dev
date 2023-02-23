@@ -1,7 +1,7 @@
 import React, { Component, useRef, useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, Touchable } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Touchable,TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+
 const Tabcolumn = (props) => {
   // constructor(props) {
   //   super(props);

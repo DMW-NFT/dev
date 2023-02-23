@@ -7,12 +7,13 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   TouchableOpacity,
+  ScrollView
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import React, { useContext, useEffect, useState } from "react";
 import StepComp from "./StepComp";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
-import { ScrollView } from "react-native-gesture-handler";
+
 const WalletSafe = (props) => {
   const { t, i18n } = useTranslation();
   const [password, setpassword] = useState(props.route.params.password);
@@ -37,7 +38,7 @@ const WalletSafe = (props) => {
               {t(
                 "保护好您的钱包助记词。下一个界面将显示助记词，助记词是您钱包的唯一密钥。如果您的手机丢失或被盗，它将允许您恢复对您钱包的访问。"
               )}
-              <Text style={[styles.textcolor]}>{t("它为什么重要？")}</Text>
+              <Text style={[styles.textcolor]}>{t("它为什么重要")}？</Text>
             </Text>
           </View>
           <View style={[styles.blackBox]}>
