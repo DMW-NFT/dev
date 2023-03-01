@@ -157,7 +157,7 @@ const GoodsDetail = (props) => {
   const [royaltyFee, setRoyaltyFee] = useState(0);
   // Context 方法
   const { Toast, post, get, formData, shortenAddress } = useDmwApi();
-  const { WalletInUse } = useDmwLogin();
+  const { WalletInUse,tradeControl } = useDmwLogin();
   const {
     dmwWalletList,
     dmwApprovalForAll,
@@ -769,7 +769,7 @@ const GoodsDetail = (props) => {
                 </Text>
               )}
 
-              {sellBtnVisible && (
+              {tradeControl&&sellBtnVisible && (
                 <TouchableWithoutFeedback onPress={() => {
                   if (WalletInUse == 2 && detailsObj.network) {
                     if (
@@ -798,7 +798,7 @@ const GoodsDetail = (props) => {
                 </TouchableWithoutFeedback>
               )}
 
-              {approvalVisible && (
+              {tradeControl&&approvalVisible && (
                 <Text
                   onPress={() => {
                     approvalNFT();
@@ -916,7 +916,7 @@ const GoodsDetail = (props) => {
               </View>
             </ListItem.Accordion>
 
-            <ListItem.Accordion
+            {tradeControl&&<ListItem.Accordion
               content={
                 <ListItem.Content>
                   <ListItem.Title>{t("挂单列表")}</ListItem.Title>
@@ -1019,7 +1019,7 @@ const GoodsDetail = (props) => {
                   </View>
                 ))}
               </View>
-            </ListItem.Accordion>
+            </ListItem.Accordion>}
 
             <ListItem.Accordion
               content={

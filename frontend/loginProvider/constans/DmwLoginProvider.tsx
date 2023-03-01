@@ -10,6 +10,7 @@ const DmwLoginProvider = ({ children }) => {
   const [avatarUrl, setAvatarUrl] = useState(); //用户名
   const [WalletInUse, setWalletInUse] = useState(null)
   const [language, setlanguage] = useState('jp')
+  const [tradeControl,setTradeControl] = useState(false)
   const { connected,currentWallet } = useDmwWeb3()
   const { dmwWalletList } = useDmwWallet()
   
@@ -52,7 +53,8 @@ const DmwLoginProvider = ({ children }) => {
         WalletInUse,
         setWalletInUse,
         setlanguage,
-        language
+        language,
+        tradeControl
       }}
     >
       {children}
