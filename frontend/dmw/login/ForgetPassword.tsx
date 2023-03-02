@@ -8,7 +8,8 @@ import {
   ScrollView,
   SafeAreaView,
   Touchable,
-  TouchableOpacity
+  TouchableOpacity,
+  Keyboard
 } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -28,14 +29,12 @@ const ForgetPassword = (props) => {
   const [password, Setpassword] = useState("");
   const [password1, Setpassword1] = useState("");
   const [numend, Setnumend] = useState(60);
-  const [areaCode, SetareaCode] = useState("86");
+  const [areaCode, SetareaCode] = useState("+86");
   const [areaCodeList, SetareaCodeList] = useState([
-    "86",
-    "81",
-    "1",
-    "86",
-    "81",
-    "1",
+    "+86",
+    "+81",
+    "+1",
+
   ]);
   const [showareaCode, SetshowareaCode] = useState(false);
   const [secureTextEntry, SetsecureTextEntry] = useState(true);
@@ -140,165 +139,170 @@ const ForgetPassword = (props) => {
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}
     >
-      <View style={[styles.container,]}>
-        <Text style={[styles.topText]}>{t("忘记密码")}</Text>
-        {/* 邮箱/电话号码 */}
-        {type == 1 ? (
-          <View style={[styles.inputBox]}>
-            <Image
-              style={[styles.imageInput]}
-              source={require("../assets/img/login/email.png")}
-            ></Image>
-            <TextInput
-              placeholder={t("请输入邮箱")}
-              keyboardType="email-address"
-              onChangeText={(text) => onChangeText(text, 1)}
-              value={email}
-            />
-          </View>
-        ) : (
-          <View style={{ zIndex: 99 }}>
-            <View style={[styles.inputBox, { paddingLeft: 100 }]}>
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  SetshowareaCode(true);
-                }}
-              >
-                <View
-                  style={[
-                    styles.imageInput,
-                    {
-                      flexDirection: "row",
-                      width: 80,
-                      justifyContent: "space-between",
-                    },
-                  ]}
-                >
-                  <FontAwesomeIcon icon={faPhone} color="#707070" size={20} />
-                  <Text>{areaCode}</Text>
-
-                  <FontAwesomeIcon icon={faAngleDown} color="#707070" size={20} />
-                </View>
-              </TouchableWithoutFeedback>
-
+      <TouchableWithoutFeedback onPress={()=>{Keyboard.dismiss()}}>
+        <View style={[styles.container,]}>
+          <Text style={[styles.topText]}>{t("忘记密码")}</Text>
+          {/* 邮箱/电话号码 */}
+          {type == 1 ? (
+            <View style={[styles.inputBox]}>
+              <Image
+                style={[styles.imageInput]}
+                source={require("../assets/img/login/email.png")}
+              ></Image>
               <TextInput
-                onStartShouldSetResponderCapture={(ev) => true}
-                placeholder={t("请输入电话号码")}
-                keyboardType="phone-pad"
-                onChangeText={(text) => onChangeText(text, 2)}
-                value={phone}
+                placeholder={t("请输入邮箱")}
+                keyboardType="email-address"
+                onChangeText={(text) => onChangeText(text, 1)}
+                value={email}
               />
             </View>
-            {/* <View> */}
-            {showareaCode ? (
-              <ScrollView
-                style={[styles.checkColac, { left: 0, top: 50 }]}
-                showsVerticalScrollIndicator={false}
-              >
-                {areaCodeList.map((item, index) => {
-                  return (
-                    <TouchableWithoutFeedback
-                      key={index}
-                      onPress={() => {
-                        changeAreaCode(item);
-                      }}
-                    >
-                      <Text
-                        style={[
-                          styles.liscloca,
-                          { borderBottomColor: "#ccc", borderBottomWidth: 1 },
-                        ]}
-                      >
-                        {item}
-                      </Text>
-                    </TouchableWithoutFeedback>
-                  );
-                })}
-              </ScrollView>
-            ) : (
-              <View></View>
-            )}
-            {/* </View> */}
-          </View>
-        )}
-        {/* 验证码 */}
-        <View style={[styles.inputBox, { paddingRight: 80 }]}>
-          <Image
-            style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
-            source={require("../assets/img/login/forgetpass.png")}
-          ></Image>
-          <TouchableWithoutFeedback onPress={() => getsancode()}>
-            <Text style={[styles.getsancode]}>{t("获取验证码")}</Text>
-          </TouchableWithoutFeedback>
-          <TextInput
-            maxLength={6}
-            placeholder={t("请输入验证码")}
-            keyboardType="number-pad"
-            onChangeText={(text) => onChangeText(text, 3)}
-            value={sancode}
-          />
-        </View>
-        <View style={[styles.inputBox, { paddingRight: 40 }]}>
-          <Image
-            style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
-            source={require("../assets/img/login/password.png")}
-          ></Image>
-          <TouchableWithoutFeedback
-            onPress={() => {
-              SetsecureTextEntry(!secureTextEntry);
-            }}
-          >
-            {secureTextEntry ? (
-              <Image
-                style={[styles.imageshow]}
-                source={require("../assets/img/login/nopass.png")}
-              ></Image>
-            ) : (
-              <Image
-                style={[styles.imageshow]}
-                source={require("../assets/img/login/showpass.png")}
-              ></Image>
-            )}
-          </TouchableWithoutFeedback>
-          <TextInput
-            maxLength={20}
-            secureTextEntry={secureTextEntry}
-            placeholder={t("请输入密码")}
-            keyboardType="ascii-capable"
-            onChangeText={(text) => onChangeText(text, 4)}
-            value={password}
-          />
-        </View>
-        <View style={[styles.inputBox]}>
-          <Image
-            style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
-            source={require("../assets/img/login/password.png")}
-          ></Image>
-          <TextInput
-            maxLength={20}
-            secureTextEntry={secureTextEntry}
-            placeholder={t("请再次输入密码")}
-            keyboardType="ascii-capable"
-            numberOfLines={4}
-            onChangeText={(text) => onChangeText(text, 5)}
-            value={password1}
-          />
-        </View>
-        <TouchableOpacity onPress={() => loginFn()} style={[styles.loginBtnBox]}>
-          <Text style={{
-            fontSize: 16,
-            fontWeight: "bold",
-            lineHeight: 50,
-            textAlign: "center",
-            color: "#fff",
-          }}>{t("登录")}</Text>
-        </TouchableOpacity>
+          ) : (
+            <View style={{ zIndex: 99 }}>
+              <View style={[styles.inputBox, { paddingLeft: 100 }]}>
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    SetshowareaCode(true);
+                  }}
+                >
+                  <View
+                    style={[
+                      styles.imageInput,
+                      {
+                        flexDirection: "row",
+                        width: 80,
+                        justifyContent: "space-between",
+                      },
+                    ]}
+                  >
+                    <FontAwesomeIcon icon={faPhone} color="#707070" size={20} />
+                    <Text>{areaCode}</Text>
 
-        {/* <Toast
+                    <FontAwesomeIcon icon={faAngleDown} color="#707070" size={20} />
+                  </View>
+                </TouchableWithoutFeedback>
+
+                <TextInput
+                  onStartShouldSetResponderCapture={(ev) => true}
+                  placeholder={t("请输入电话号码")}
+                  keyboardType="phone-pad"
+                  onChangeText={(text) => onChangeText(text, 2)}
+                  value={phone}
+                />
+              </View>
+              {/* <View> */}
+              {showareaCode ? (
+                <ScrollView
+                  style={[styles.checkColac, { left: 0, top: 50 }]}
+                  showsVerticalScrollIndicator={false}
+                >
+                  {areaCodeList.map((item, index) => {
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => {
+                          changeAreaCode(item);
+                        }}
+                      >
+                        <Text
+                          style={[
+                            styles.liscloca,
+                            { borderBottomColor: "#ccc", borderBottomWidth: 1 },
+                          ]}
+                        >
+                          {item}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+              ) : (
+                <View></View>
+              )}
+              {/* </View> */}
+            </View>
+          )}
+          {/* 验证码 */}
+          <View style={[styles.inputBox, { flexDirection: "row", justifyContent: "space-between" }]}>
+            <Image
+              style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
+              source={require("../assets/img/login/forgetpass.png")}
+            ></Image>
+
+            <TextInput
+              style={{ fontSize: 11 }}
+              maxLength={6}
+              placeholder={t("请输入验证码")}
+              keyboardType="number-pad"
+              onChangeText={(text) => onChangeText(text, 3)}
+              value={sancode}
+            />
+            <TouchableOpacity style={{ justifyContent: "center", alignContent: "center" }} onPress={() => getsancode()}>
+              <Text style={[styles.getsancode, { alignItems: "center", textAlign: "center" }]}>{t("获取验证码")}</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={[styles.inputBox, { paddingRight: 40 }]}>
+            <Image
+              style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
+              source={require("../assets/img/login/password.png")}
+            ></Image>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                SetsecureTextEntry(!secureTextEntry);
+              }}
+            >
+              {secureTextEntry ? (
+                <Image
+                  style={[styles.imageshow]}
+                  source={require("../assets/img/login/nopass.png")}
+                ></Image>
+              ) : (
+                <Image
+                  style={[styles.imageshow]}
+                  source={require("../assets/img/login/showpass.png")}
+                ></Image>
+              )}
+            </TouchableWithoutFeedback>
+            <TextInput
+              maxLength={20}
+              secureTextEntry={secureTextEntry}
+              placeholder={t("请输入密码")}
+              keyboardType="ascii-capable"
+              onChangeText={(text) => onChangeText(text, 4)}
+              value={password}
+            />
+          </View>
+          <View style={[styles.inputBox]}>
+            <Image
+              style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
+              source={require("../assets/img/login/password.png")}
+            ></Image>
+            <TextInput
+              maxLength={20}
+              secureTextEntry={secureTextEntry}
+              placeholder={t("请再次输入密码")}
+              keyboardType="ascii-capable"
+              numberOfLines={4}
+              onChangeText={(text) => onChangeText(text, 5)}
+              value={password1}
+            />
+          </View>
+          <TouchableOpacity onPress={() => loginFn()} style={[styles.loginBtnBox]}>
+            <Text style={{
+              fontSize: 16,
+              fontWeight: "bold",
+              lineHeight: 50,
+              textAlign: "center",
+              color: "#fff",
+            }}>{t("登录")}</Text>
+          </TouchableOpacity>
+
+          {/* <Toast
         visible={visible}
         value={message}>
       </Toast> */}
-      </View>
+        </View>
+      </TouchableWithoutFeedback>
+
 
     </SafeAreaView>
   );
@@ -334,9 +338,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   getsancode: {
-    position: "absolute",
-    right: 18,
-    top: 16,
+    // position: "absolute",
+    // right: 0,
+    // top: 16,
     fontSize: 12,
     color: "#897EF8",
   },

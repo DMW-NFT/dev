@@ -7,7 +7,8 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   SafeAreaView,
-  TouchableOpacity
+  TouchableOpacity,
+  Keyboard
 } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -30,9 +31,7 @@ const LoginDMW = (props) => {
     "+86",
     "+81",
     "+1",
-    "+86",
-    "+81",
-    "+1",
+
   ]);
   const [showareaCode, setShowareaCode] = useState(false);
   const [showlocal, setShowlocal] = useState(false);
@@ -134,251 +133,262 @@ const LoginDMW = (props) => {
     <SafeAreaView
       style={{ width: "100%", backgroundColor: "#fff", height: "100%" }}
     >
-      <View style={{ paddingHorizontal: 20 }}>
-        <View style={[styles.TopBox]}>
-          <Text style={[styles.topText]}>{t("欢迎登录DMW")}</Text>
-        </View>
-        {/* 邮箱 */}
-        {type == 1 ? (
-          <View style={{ zIndex: 99 }}>
-            <View style={[styles.inputBox, { justifyContent: "center" }]}>
-              <Image
-                style={[styles.imageInput]}
-                source={require("../assets/img/login/email.png")}
-              ></Image>
-              <TextInput
-                placeholder={t("请输入邮箱")}
-                keyboardType="email-address"
-                onChangeText={(text) => onChangeText(text, 1)}
-                value={email}
-              />
-            </View>
+      <TouchableWithoutFeedback onPress={()=>{Keyboard.dismiss()}}>
+        <View style={{ paddingHorizontal: 20 }}>
+          <View style={[styles.TopBox]}>
+            <Text style={[styles.topText]}>{t("欢迎登录DMW")}</Text>
           </View>
-        ) : (
-          <View style={{ zIndex: 99 }}>
-            <View
-              style={[
-                styles.inputBox,
-                { paddingLeft: 100, zIndex: 90, justifyContent: "center" },
-              ]}
-            >
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  setShowareaCode(true);
-                }}
+          {/* 邮箱 */}
+          {type == 1 ? (
+            <View style={{ zIndex: 99 }}>
+              <View style={[styles.inputBox, { justifyContent: "center" }]}>
+                <Image
+                  style={[styles.imageInput]}
+                  source={require("../assets/img/login/email.png")}
+                ></Image>
+                <TextInput
+                  placeholder={t("请输入邮箱")}
+                  keyboardType="email-address"
+                  onChangeText={(text) => onChangeText(text, 1)}
+                  value={email}
+                />
+              </View>
+            </View>
+          ) : (
+            <View style={{ zIndex: 99 }}>
+              <View
+                style={[
+                  styles.inputBox,
+                  { paddingLeft: 100, zIndex: 90, justifyContent: "center" },
+                ]}
               >
-                <View
-                  style={[
-                    styles.imageInput,
-                    {
-                      flexDirection: "row",
-                      width: 80,
-                      justifyContent: "space-between",
-                    },
-                  ]}
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    setShowareaCode(true);
+                  }}
                 >
-                  <FontAwesomeIcon icon={faPhone} color="#707070" size={20} />
-                  <Text>{areaCode}</Text>
-                  <FontAwesomeIcon
-                    icon={faAngleDown}
-                    color="#707070"
-                    size={20}
-                  />
-                </View>
-              </TouchableWithoutFeedback>
-              <TextInput
-                onStartShouldSetResponderCapture={(ev) => true}
-                placeholder={t("请输入电话号码")}
-                keyboardType="phone-pad"
-                onChangeText={(text) => onChangeText(text, 3)}
-                value={phone}
-                style={{}}
-              />
-            </View>
-            {/* <View> */}
-            {showareaCode ? (
-              <ScrollView
-                style={[styles.checkColac, { left: 20, top: 50, height: 200 }]}
-                showsVerticalScrollIndicator={false}
-              >
-                {areaCodeList.map((item, index) => {
-                  return (
-                    <TouchableWithoutFeedback
-                      key={index}
-                      onPress={() => {
-                        changeAreaCode(item);
-                      }}
-                    >
-                      <Text
-                        style={[
-                          styles.liscloca,
-                          { borderBottomColor: "#ccc", borderBottomWidth: 1 },
-                        ]}
+                  <View
+                    style={[
+                      styles.imageInput,
+                      {
+                        flexDirection: "row",
+                        width: 80,
+                        justifyContent: "space-between",
+                      },
+                    ]}
+                  >
+                    <FontAwesomeIcon icon={faPhone} color="#707070" size={20} />
+                    <Text>{areaCode}</Text>
+                    <FontAwesomeIcon
+                      icon={faAngleDown}
+                      color="#707070"
+                      size={20}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+                <TextInput
+                  onStartShouldSetResponderCapture={(ev) => true}
+                  placeholder={t("请输入电话号码")}
+                  keyboardType="phone-pad"
+                  onChangeText={(text) => onChangeText(text, 3)}
+                  value={phone}
+                  style={{}}
+                />
+              </View>
+              {/* <View> */}
+              {showareaCode ? (
+                <ScrollView
+                  style={[styles.checkColac, { left: 20, top: 50, height: 200 }]}
+                  showsVerticalScrollIndicator={false}
+                >
+                  {areaCodeList.map((item, index) => {
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => {
+                          changeAreaCode(item);
+                        }}
                       >
-                        {item}
-                      </Text>
-                    </TouchableWithoutFeedback>
-                  );
-                })}
-              </ScrollView>
-            ) : (
-              <View></View>
-            )}
-            {/* </View> */}
-          </View>
-        )}
+                        <Text
+                          style={[
+                            styles.liscloca,
+                            { borderBottomColor: "#ccc", borderBottomWidth: 1 },
+                          ]}
+                        >
+                          {item}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+              ) : (
+                <View></View>
+              )}
+              {/* </View> */}
+            </View>
+          )}
 
-        <View
-          style={[
-            styles.inputBox,
-            {
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            },
-          ]}
-        >
-          <Image
-            style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
-            source={require("../assets/img/login/password.png")}
-          ></Image>
-
-          <TextInput
-            style={{ flex: 1 }}
-            onStartShouldSetResponderCapture={() => true}
-            placeholder={t("请输入密码")}
-            keyboardType="ascii-capable"
-            secureTextEntry={secureTextEntry}
-            onChangeText={(text) => onChangeText(text, 2)}
-            value={password}
-          />
-          <TouchableOpacity
-            onPress={() => setSecureTextEntry(!secureTextEntry)}
-            style={{
-              marginLeft: 5,
-              justifyContent: "center",
-              alignSelf: "center",
-            }}
-          >
-            {secureTextEntry ? (
-              <Image
-                style={[styles.imageshow]}
-                source={require("../assets/img/login/nopass.png")}
-              ></Image>
-            ) : (
-              <Image
-                style={[styles.imageshow]}
-                source={require("../assets/img/login/showpass.png")}
-              ></Image>
-            )}
-          </TouchableOpacity>
-        </View>
-
-        <Text
-          style={[styles.forget]}
-          onPress={() => {
-            props.navigation.navigate("ForgetPassword", { type: type });
-          }}
-        >
-          {t("忘记密码")}
-        </Text>
-        <TouchableOpacity
-          onPress={() => loginFn()}
-          style={[styles.loginBtnBox]}
-        >
-          <Text
-            style={{
-              lineHeight: 50,
-              textAlign: "center",
-              color: "#fff",
-
-              fontSize: 16,
-              fontWeight: "bold",
-            }}
-          >
-            {t("登录")}
-          </Text>
-        </TouchableOpacity>
-
-        <View style={[styles.agren]}>
-          <TouchableOpacity
-            onPress={() => {
-              setAgree(!agree);
-            }}
+          <View
             style={[
-              styles.checkbox,
+              styles.inputBox,
               {
-                backgroundColor: agree ? "#897EF8" : "#fff",
-                justifyContent: "center",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
               },
             ]}
           >
-            <Text style={[{ color: "white", textAlign: "center" }]}>
-              {agree && "✓"}
+            <Image
+              style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
+              source={require("../assets/img/login/password.png")}
+            ></Image>
+
+            <TextInput
+              style={{ flex: 1 }}
+              onStartShouldSetResponderCapture={() => true}
+              placeholder={t("请输入密码")}
+              keyboardType="ascii-capable"
+              secureTextEntry={secureTextEntry}
+              onChangeText={(text) => onChangeText(text, 2)}
+              value={password}
+            />
+            <TouchableOpacity
+              onPress={() => setSecureTextEntry(!secureTextEntry)}
+              style={{
+                marginLeft: 5,
+                justifyContent: "center",
+                alignSelf: "center",
+              }}
+            >
+              {secureTextEntry ? (
+                <Image
+                  style={[styles.imageshow]}
+                  source={require("../assets/img/login/nopass.png")}
+                ></Image>
+              ) : (
+                <Image
+                  style={[styles.imageshow]}
+                  source={require("../assets/img/login/showpass.png")}
+                ></Image>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+            <TouchableOpacity
+              onPress={() => {
+                props.navigation.navigate("ForgetPassword", { type: type });
+              }}
+              style={{  width: "auto", padding: 5 }}
+            >
+              <Text
+                style={[styles.forget]}
+              >
+                {t("忘记密码")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+
+          <TouchableOpacity
+            onPress={() => loginFn()}
+            style={[styles.loginBtnBox]}
+          >
+            <Text
+              style={{
+                lineHeight: 50,
+                textAlign: "center",
+                color: "#fff",
+
+                fontSize: 16,
+                fontWeight: "bold",
+              }}
+            >
+              {t("登录")}
             </Text>
           </TouchableOpacity>
 
-          {language != "jp" && (
-            <Text>
-              <Text style={[styles.textinfo]}>{t("我已阅读并同意")}</Text>
-              <Text
-                style={[styles.text]}
-                onPress={() => {
-                  props.navigation.navigate(
-                    language == "en"
-                      ? "yhen"
-                      : language == "zh"
-                      ? "yhzh"
-                      : "yhjp"
-                  );
-                }}
-              >
-                {t("《用户协议》")}
+          <View style={[styles.agren]}>
+            <TouchableOpacity
+              onPress={() => {
+                setAgree(!agree);
+              }}
+              style={[
+                styles.checkbox,
+                {
+                  backgroundColor: agree ? "#897EF8" : "#fff",
+                  justifyContent: "center",
+                },
+              ]}
+            >
+              <Text style={[{ color: "white", textAlign: "center" }]}>
+                {agree && "✓"}
               </Text>
-              <Text style={[styles.textinfo]}>{t("及")}</Text>
-              <Text
-                style={[styles.text]}
-                onPress={() => {
-                  props.navigation.navigate(
-                    language == "en"
-                      ? "stren"
-                      : language == "zh"
-                      ? "str"
-                      : "strjp"
-                  );
-                }}
-              >
-                {t("《隐私政策》")}
-              </Text>
-              {/* <Text> {t("我已阅读并同意《用户协议》及《隐私政策》")}</Text> */}
-            </Text>
-          )}
+            </TouchableOpacity>
 
-          {language == "jp" && (
-            <Text>
-              <Text style={[styles.textinfo]}>{t("我已阅读并同意《用户协议》及《隐私政策》")}</Text>
-              <Text
-                style={[styles.text]}
-                onPress={() => {
-                  props.navigation.navigate("yhjp");
-                }}
-              >
-                {"\n("+t("《用户协议》")+" "}
+            {language != "jp" && (
+              <Text>
+                <Text style={[styles.textinfo]}>{t("我已阅读并同意")}</Text>
+                <Text
+                  style={[styles.text]}
+                  onPress={() => {
+                    props.navigation.navigate(
+                      language == "en"
+                        ? "yhen"
+                        : language == "zh"
+                          ? "yhzh"
+                          : "yhjp"
+                    );
+                  }}
+                >
+                  {t("《用户协议》")}
+                </Text>
+                <Text style={[styles.textinfo]}>{t("及")}</Text>
+                <Text
+                  style={[styles.text]}
+                  onPress={() => {
+                    props.navigation.navigate(
+                      language == "en"
+                        ? "stren"
+                        : language == "zh"
+                          ? "str"
+                          : "strjp"
+                    );
+                  }}
+                >
+                  {t("《隐私政策》")}
+                </Text>
+                {/* <Text> {t("我已阅读并同意《用户协议》及《隐私政策》")}</Text> */}
               </Text>
-              <Text
-                style={[styles.text]}
-                onPress={() => {
-                  props.navigation.navigate("strjp");
-                }}
-              >
-                {t("《隐私政策》")+")"}
+            )}
+
+            {language == "jp" && (
+              <Text>
+                <Text style={[styles.textinfo]}>{t("我已阅读并同意《用户协议》及《隐私政策》")}</Text>
+                <Text
+                  style={[styles.text]}
+                  onPress={() => {
+                    props.navigation.navigate("yhjp");
+                  }}
+                >
+                  {"\n(" + t("《用户协议》") + " "}
+                </Text>
+                <Text
+                  style={[styles.text]}
+                  onPress={() => {
+                    props.navigation.navigate("strjp");
+                  }}
+                >
+                  {t("《隐私政策》") + ")"}
+                </Text>
+                {/* <Text> {t("我已阅读并同意《用户协议》及《隐私政策》")}</Text> */}
               </Text>
-              {/* <Text> {t("我已阅读并同意《用户协议》及《隐私政策》")}</Text> */}
-            </Text>
-          )}
+            )}
+          </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
+
     </SafeAreaView>
   );
 };

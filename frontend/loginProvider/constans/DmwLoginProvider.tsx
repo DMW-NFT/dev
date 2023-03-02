@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { Platform } from 'react-native';
 import DmwLoginContext from "./DmwLoginContext";
 import { useTranslation } from 'react-i18next'
 import { useDmwWeb3 } from '../../DmwWeb3/DmwWeb3Provider'
 import { useDmwWallet } from "../../DmwWallet/DmwWalletProvider";
+import packageJson from "../../../package.json"
 const DmwLoginProvider = ({ children }) => {
   const { t, i18n } = useTranslation();
   const [isLogin, setIsLogin] = useState(true); //登录状态
@@ -10,10 +12,10 @@ const DmwLoginProvider = ({ children }) => {
   const [avatarUrl, setAvatarUrl] = useState(); //用户名
   const [WalletInUse, setWalletInUse] = useState(null)
   const [language, setlanguage] = useState('jp')
-  const [tradeControl,setTradeControl] = useState(false)
-  const { connected,currentWallet } = useDmwWeb3()
+  const [tradeControl, setTradeControl] = useState(false)
+  const { connected, currentWallet } = useDmwWeb3()
   const { dmwWalletList } = useDmwWallet()
-  
+
   const login = () => {
     setIsLogin(true);
   };
@@ -25,19 +27,39 @@ const DmwLoginProvider = ({ children }) => {
 
   useEffect(() => {
     console.log("using dmwlogin provider");
+
+    Platform.OS === 'ios'?checkVersion():setTradeControl(true)
   }, []);
 
   useEffect(() => {
     console.log("someone call login");
   }, [isLogin]);
 
-  
+
   useEffect(() => {
-    console.log("current wallet in use :",WalletInUse)
+    console.log("current wallet in use :", WalletInUse)
   }, [WalletInUse])
 
+  const checkVersion = () => {
+    fetch("http://18.142.150.253/index/common/get_page_status", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      console.log("page status")
+      res.json().then(finalResult => {
+        // console.log(finalResult)
+        let pageStatus = finalResult.data
+        console.log(pageStatus)
+        if (packageJson.releaseVersion == "ios-testFlight" && pageStatus.ios_dev) {
+          setTradeControl(true)
+        }
+      })
+    })
 
-
+  }
 
   return (
     <DmwLoginContext.Provider

@@ -323,7 +323,6 @@ const Home = (props) => {
                 <TouchableOpacity onPress={() => paging("Blind")}>
                   <Text
                     style={[styles.tab_text, typename == "Blind" && styles.tab_text_ative]}
-                    onPress={() => paging("Blind")}
                   >
                     Blind box
                   </Text>
