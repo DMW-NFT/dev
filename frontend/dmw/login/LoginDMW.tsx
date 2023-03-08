@@ -33,6 +33,12 @@ const LoginDMW = (props) => {
     "+1",
 
   ]);
+  const flagMap = {
+    "+86":require("../assets/img/login/zh.png"),
+    "+81":require("../assets/img/login/Japaneseflag.jpeg"),
+    "+1":require("../assets/img/login/us_flag.png"),
+
+  }
   const [showareaCode, setShowareaCode] = useState(false);
   const [showlocal, setShowlocal] = useState(false);
   const [local, setLocal] = useState({ name: "日文", id: "jp" });
@@ -208,11 +214,22 @@ const LoginDMW = (props) => {
                         onPress={() => {
                           changeAreaCode(item);
                         }}
+                        style={{flexDirection:"row",justifyContent: "center",alignItems: "center",marginTop:20}}
                       >
+                        <Image
+                          style={{
+                            width: 50,
+                            height: 30,
+                            borderRadius: 5,
+                            borderWidth: 1,
+                            borderColor: "#f5f5f5",
+                          }}
+                          source={flagMap[item]}
+                        ></Image>
                         <Text
                           style={[
                             styles.liscloca,
-                            { borderBottomColor: "#ccc", borderBottomWidth: 1 },
+                            {paddingLeft:10 },
                           ]}
                         >
                           {item}
@@ -425,9 +442,7 @@ const styles = StyleSheet.create({
   },
   checkColac: {
     position: "absolute",
-    width: 100,
-    paddingHorizontal: 20,
-    // height:160,
+    width: 120,
     borderWidth: 1,
     backgroundColor: "white",
     top: 40,

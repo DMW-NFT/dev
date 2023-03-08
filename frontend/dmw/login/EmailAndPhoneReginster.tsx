@@ -8,7 +8,7 @@ import {
   ScrollView,
   SafeAreaView,
   TouchableOpacity,
-  Keyboard
+  Keyboard,
 } from "react-native";
 import React, { Component, useEffect, useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -17,7 +17,7 @@ import DialogToast from "../Components/DialogToast";
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 import { useDmwLogin } from "../../loginProvider/constans/DmwLoginProvider";
 import storage from "../Storage/storage";
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from "react-i18next";
 
 const EmailAndPhoneReginster = (props) => {
   const { t, i18n } = useTranslation();
@@ -29,19 +29,19 @@ const EmailAndPhoneReginster = (props) => {
   const [password1, Setpassword1] = useState("");
   const [numend, Setnumend] = useState(60);
   const [areaCode, SetareaCode] = useState("+86");
-  const [areaCodeList, SetareaCodeList] = useState([
-    "+86",
-    "+81",
-    "+1",
-
-  ]);
+  const [areaCodeList, SetareaCodeList] = useState(["+86", "+81", "+1"]);
   const [showareaCode, SetshowareaCode] = useState(false);
   const [secureTextEntry, SetsecureTextEntry] = useState(true);
   const [visible, Setvisible] = useState(false);
   const [message, Setmessage] = useState(t("提示"));
   const { post, get, formData } = useDmwApi();
   const { login } = useDmwLogin();
+  const flagMap = {
+    "+86":require("../assets/img/login/zh.png"),
+    "+81":require("../assets/img/login/Japaneseflag.jpeg"),
+    "+1":require("../assets/img/login/us_flag.png"),
 
+  }
   const onChangeText = (e, num) => {
     if (num == 1) {
       Setemail(e);
@@ -188,12 +188,15 @@ const EmailAndPhoneReginster = (props) => {
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: "#fff", flex: 1 }]}>
-      <TouchableWithoutFeedback onPress={()=>{
-        Keyboard.dismiss()
-      }}>
+      style={[styles.container, { backgroundColor: "#fff", flex: 1 }]}
+    >
+      <TouchableWithoutFeedback
+        onPress={() => {
+          Keyboard.dismiss();
+        }}
+      >
         <View style={{ paddingHorizontal: 20 }}>
-          <Text style={[styles.topText]}>{t('注册一个新账号')}</Text>
+          <Text style={[styles.topText]}>{t("注册一个新账号")}</Text>
           {/* 邮箱/电话号码 */}
           {type == 1 ? (
             <View style={[styles.inputBox]}>
@@ -228,7 +231,11 @@ const EmailAndPhoneReginster = (props) => {
                   >
                     <FontAwesomeIcon icon={faPhone} color="#707070" size={20} />
                     <Text>{areaCode}</Text>
-                    <FontAwesomeIcon icon={faAngleDown} color="#707070" size={20} />
+                    <FontAwesomeIcon
+                      icon={faAngleDown}
+                      color="#707070"
+                      size={20}
+                    />
                   </View>
                 </TouchableWithoutFeedback>
                 <TextInput
@@ -242,7 +249,10 @@ const EmailAndPhoneReginster = (props) => {
               {/* <View> */}
               {showareaCode ? (
                 <ScrollView
-                  style={[styles.checkColac, { left: 20, top: 50, height: 200 }]}
+                  style={[
+                    styles.checkColac,
+                    { left: 20, top: 50, height: 200 },
+                  ]}
                   showsVerticalScrollIndicator={false}
                 >
                   {areaCodeList.map((item, index) => {
@@ -252,11 +262,22 @@ const EmailAndPhoneReginster = (props) => {
                         onPress={() => {
                           changeAreaCode(item);
                         }}
+                        style={{flexDirection:"row",justifyContent: "center",alignItems: "center",marginTop:20}}
                       >
+                        <Image
+                          style={{
+                            width: 50,
+                            height: 30,
+                            borderRadius: 5,
+                            borderWidth: 1,
+                            borderColor: "#f5f5f5",
+                          }}
+                          source={flagMap[item]}
+                        ></Image>
                         <Text
                           style={[
                             styles.liscloca,
-                            { borderBottomColor: "#ccc", borderBottomWidth: 1 },
+                            {paddingLeft:10 },
                           ]}
                         >
                           {item}
@@ -277,9 +298,12 @@ const EmailAndPhoneReginster = (props) => {
               style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
               source={require("../assets/img/login/forgetpass.png")}
             ></Image>
-            <TouchableOpacity style={[styles.getsancode]} onPress={() => getPhoneCode()}>
+            <TouchableOpacity
+              style={[styles.getsancode]}
+              onPress={() => getPhoneCode()}
+            >
               {/* {numend == 60 ? '获取验证码' : numend} */}
-              <Text style={[styles.getsancode]}>{t('获取验证码')}</Text>
+              <Text style={[styles.getsancode]}>{t("获取验证码")}</Text>
             </TouchableOpacity>
             <TextInput
               maxLength={6}
@@ -344,19 +368,23 @@ const EmailAndPhoneReginster = (props) => {
           >
             {type == 1 ? t("手机号注册") : t("邮箱注册")}
           </Text>
-          <TouchableOpacity onPress={() => registerFn()} style={[styles.loginBtnBox]}>
-            <Text style={{
-              lineHeight: 50,
-              textAlign: "center",
-              color: "#fff",
+          <TouchableOpacity
+            onPress={() => registerFn()}
+            style={[styles.loginBtnBox]}
+          >
+            <Text
+              style={{
+                lineHeight: 50,
+                textAlign: "center",
+                color: "#fff",
 
-              fontSize: 16,
-              fontWeight: "bold",
-            }} >
+                fontSize: 16,
+                fontWeight: "bold",
+              }}
+            >
               {t("注册")}
             </Text>
           </TouchableOpacity>
-
 
           <DialogToast
             visible={visible}
@@ -373,8 +401,6 @@ const EmailAndPhoneReginster = (props) => {
           </DialogToast>
         </View>
       </TouchableWithoutFeedback>
-
-
     </SafeAreaView>
   );
 };
@@ -389,8 +415,8 @@ const styles = StyleSheet.create({
   },
   checkColac: {
     position: "absolute",
-    width: 100,
-    paddingHorizontal: 20,
+    width: 120,
+    // paddingHorizontal: 20,
     // height:160,
     borderWidth: 1,
     backgroundColor: "white",
@@ -399,6 +425,7 @@ const styles = StyleSheet.create({
     zIndex: 999,
     borderColor: "#ccc",
     borderRadius: 10,
+    // flexDirection: "column"
   },
   container: {
     padding: 20,
@@ -423,7 +450,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#897EF8",
     height: 50,
     borderRadius: 25,
-
   },
   inputBox: {
     height: 48,

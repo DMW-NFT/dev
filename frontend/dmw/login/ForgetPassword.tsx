@@ -34,7 +34,6 @@ const ForgetPassword = (props) => {
     "+86",
     "+81",
     "+1",
-
   ]);
   const [showareaCode, SetshowareaCode] = useState(false);
   const [secureTextEntry, SetsecureTextEntry] = useState(true);
@@ -42,7 +41,12 @@ const ForgetPassword = (props) => {
   const [message, Setmessage] = useState("提示");
   const { post, get, formData, Toast } = useDmwApi();
   const { login } = useDmwLogin();
+  const flagMap = {
+    "+86":require("../assets/img/login/zh.png"),
+    "+81":require("../assets/img/login/Japaneseflag.jpeg"),
+    "+1":require("../assets/img/login/us_flag.png"),
 
+  }
   const onChangeText = (e, num) => {
     if (num == 1) {
       Setemail(e);
@@ -192,7 +196,7 @@ const ForgetPassword = (props) => {
               {/* <View> */}
               {showareaCode ? (
                 <ScrollView
-                  style={[styles.checkColac, { left: 0, top: 50 }]}
+                  style={[styles.checkColac, { left: 20, top: 50, height: 200 },]}
                   showsVerticalScrollIndicator={false}
                 >
                   {areaCodeList.map((item, index) => {
@@ -202,11 +206,22 @@ const ForgetPassword = (props) => {
                         onPress={() => {
                           changeAreaCode(item);
                         }}
+                        style={{flexDirection:"row",justifyContent: "center",alignItems: "center",marginTop:20}}
                       >
+                        <Image
+                          style={{
+                            width: 50,
+                            height: 30,
+                            borderRadius: 5,
+                            borderWidth: 1,
+                            borderColor: "#f5f5f5",
+                          }}
+                          source={flagMap[item]}
+                        ></Image>
                         <Text
                           style={[
                             styles.liscloca,
-                            { borderBottomColor: "#ccc", borderBottomWidth: 1 },
+                            {paddingLeft:10 },
                           ]}
                         >
                           {item}
@@ -318,14 +333,12 @@ const styles = StyleSheet.create({
   },
   checkColac: {
     position: "absolute",
-    width: 100,
-    paddingHorizontal: 20,
-    height: 160,
+    width: 120,
     borderWidth: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     top: 40,
     right: 0,
-    zIndex: 99,
+    zIndex: 999,
     borderColor: "#ccc",
     borderRadius: 10,
   },
