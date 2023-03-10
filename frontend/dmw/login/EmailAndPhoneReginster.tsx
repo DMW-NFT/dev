@@ -7,6 +7,8 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   SafeAreaView,
+  TouchableOpacity,
+  Keyboard,
 } from "react-native";
 import React, { Component, useEffect, useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -15,7 +17,8 @@ import DialogToast from "../Components/DialogToast";
 import { useDmwApi } from "../../DmwApiProvider/DmwApiProvider";
 import { useDmwLogin } from "../../loginProvider/constans/DmwLoginProvider";
 import storage from "../Storage/storage";
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from "react-i18next";
+
 const EmailAndPhoneReginster = (props) => {
   const { t, i18n } = useTranslation();
   const [type, Settype] = useState(props.route.params["type"]);
@@ -25,22 +28,20 @@ const EmailAndPhoneReginster = (props) => {
   const [password, Setpassword] = useState("");
   const [password1, Setpassword1] = useState("");
   const [numend, Setnumend] = useState(60);
-  const [areaCode, SetareaCode] = useState("86");
-  const [areaCodeList, SetareaCodeList] = useState([
-    "86",
-    "81",
-    "1",
-    "86",
-    "81",
-    "1",
-  ]);
+  const [areaCode, SetareaCode] = useState("+86");
+  const [areaCodeList, SetareaCodeList] = useState(["+86", "+81", "+1"]);
   const [showareaCode, SetshowareaCode] = useState(false);
   const [secureTextEntry, SetsecureTextEntry] = useState(true);
   const [visible, Setvisible] = useState(false);
-  const [message, Setmessage] = useState(t("温馨提示"));
+  const [message, Setmessage] = useState(t("提示"));
   const { post, get, formData } = useDmwApi();
   const { login } = useDmwLogin();
+  const flagMap = {
+    "+86":require("../assets/img/login/zh.png"),
+    "+81":require("../assets/img/login/Japaneseflag.jpeg"),
+    "+1":require("../assets/img/login/us_flag.png"),
 
+  }
   const onChangeText = (e, num) => {
     if (num == 1) {
       Setemail(e);
@@ -189,173 +190,217 @@ const EmailAndPhoneReginster = (props) => {
     <SafeAreaView
       style={[styles.container, { backgroundColor: "#fff", flex: 1 }]}
     >
-      <Text style={[styles.topText]}>{t('注册一个新账号')}</Text>
-      {/* 邮箱/电话号码 */}
-      {type == 1 ? (
-        <View style={[styles.inputBox]}>
-          <Image
-            style={[styles.imageInput]}
-            source={require("../assets/img/login/email.png")}
-          ></Image>
-          <TextInput
-            placeholder={t("请输入邮箱")}
-            keyboardType="email-address"
-            onChangeText={(text) => onChangeText(text, 1)}
-            value={email}
-          />
-        </View>
-      ) : (
-        <View>
-          <View style={[styles.inputBox, { paddingLeft: 100 }]}>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                SetshowareaCode(true);
-              }}
-            >
-              <View
-                style={[
-                  styles.imageInput,
-                  {
-                    flexDirection: "row",
-                    width: 80,
-                    justifyContent: "space-between",
-                  },
-                ]}
-              >
-                <FontAwesomeIcon icon={faPhone} color="#707070" size={20} />
-                <Text>{areaCode}</Text>
-                <FontAwesomeIcon icon={faAngleDown} color="#707070" size={20} />
+      <TouchableWithoutFeedback
+        onPress={() => {
+          Keyboard.dismiss();
+        }}
+      >
+        <View style={{ paddingHorizontal: 20 }}>
+          <Text style={[styles.topText]}>{t("注册一个新账号")}</Text>
+          {/* 邮箱/电话号码 */}
+          {type == 1 ? (
+            <View style={[styles.inputBox]}>
+              <Image
+                style={[styles.imageInput]}
+                source={require("../assets/img/login/email.png")}
+              ></Image>
+              <TextInput
+                placeholder={t("请输入邮箱")}
+                keyboardType="email-address"
+                onChangeText={(text) => onChangeText(text, 1)}
+                value={email}
+              />
+            </View>
+          ) : (
+            <View style={{ zIndex: 999 }}>
+              <View style={[styles.inputBox, { paddingLeft: 100, zIndex: 99 }]}>
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    SetshowareaCode(true);
+                  }}
+                >
+                  <View
+                    style={[
+                      styles.imageInput,
+                      {
+                        flexDirection: "row",
+                        width: 80,
+                        justifyContent: "space-between",
+                      },
+                    ]}
+                  >
+                    <FontAwesomeIcon icon={faPhone} color="#707070" size={20} />
+                    <Text>{areaCode}</Text>
+                    <FontAwesomeIcon
+                      icon={faAngleDown}
+                      color="#707070"
+                      size={20}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+                <TextInput
+                  onStartShouldSetResponderCapture={(ev) => true}
+                  placeholder={t("请输入电话号码")}
+                  keyboardType="phone-pad"
+                  onChangeText={(text) => onChangeText(text, 2)}
+                  value={phone}
+                />
               </View>
-            </TouchableWithoutFeedback>
+              {/* <View> */}
+              {showareaCode ? (
+                <ScrollView
+                  style={[
+                    styles.checkColac,
+                    { left: 20, top: 50, height: 200 },
+                  ]}
+                  showsVerticalScrollIndicator={false}
+                >
+                  {areaCodeList.map((item, index) => {
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => {
+                          changeAreaCode(item);
+                        }}
+                        style={{flexDirection:"row",justifyContent: "center",alignItems: "center",marginTop:20}}
+                      >
+                        <Image
+                          style={{
+                            width: 50,
+                            height: 30,
+                            borderRadius: 5,
+                            borderWidth: 1,
+                            borderColor: "#f5f5f5",
+                          }}
+                          source={flagMap[item]}
+                        ></Image>
+                        <Text
+                          style={[
+                            styles.liscloca,
+                            {paddingLeft:10 },
+                          ]}
+                        >
+                          {item}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+              ) : (
+                <View></View>
+              )}
+              {/* </View> */}
+            </View>
+          )}
+          {/* 验证码 */}
+          <View style={[styles.inputBox, { paddingRight: 80 }]}>
+            <Image
+              style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
+              source={require("../assets/img/login/forgetpass.png")}
+            ></Image>
+            <TouchableOpacity
+              style={[styles.getsancode]}
+              onPress={() => getPhoneCode()}
+            >
+              {/* {numend == 60 ? '获取验证码' : numend} */}
+              <Text style={[styles.getsancode]}>{t("获取验证码")}</Text>
+            </TouchableOpacity>
             <TextInput
-              onStartShouldSetResponderCapture={(ev) => true}
-              placeholder={t("请输入电话号码")}
-              keyboardType="phone-pad"
-              onChangeText={(text) => onChangeText(text, 2)}
-              value={phone}
+              maxLength={6}
+              placeholder={t("请输入验证码")}
+              keyboardType="number-pad"
+              onChangeText={(text) => onChangeText(text, 3)}
+              value={sancode}
+              style={{ fontSize: 10 }}
             />
           </View>
-          {/* <View> */}
-          {showareaCode ? (
-            <ScrollView
-              style={[styles.checkColac, { left: 0, top: 50 }]}
-              showsVerticalScrollIndicator={false}
+          <View style={[styles.inputBox, { paddingRight: 40 }]}>
+            <Image
+              style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
+              source={require("../assets/img/login/password.png")}
+            ></Image>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                SetsecureTextEntry(!secureTextEntry);
+              }}
             >
-              {areaCodeList.map((item, index) => {
-                return (
-                  <TouchableWithoutFeedback
-                    key={index}
-                    onPress={() => {
-                      changeAreaCode(item);
-                    }}
-                  >
-                    <Text
-                      style={[
-                        styles.liscloca,
-                        { borderBottomColor: "#ccc", borderBottomWidth: 1 },
-                      ]}
-                    >
-                      {item}
-                    </Text>
-                  </TouchableWithoutFeedback>
-                );
-              })}
-            </ScrollView>
-          ) : (
-            <View></View>
-          )}
-          {/* </View> */}
-        </View>
-      )}
-      {/* 验证码 */}
-      <View style={[styles.inputBox, { paddingRight: 80 }]}>
-        <Image
-          style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
-          source={require("../assets/img/login/forgetpass.png")}
-        ></Image>
-        <TouchableWithoutFeedback onPress={() => getPhoneCode()}>
-          {/* {numend == 60 ? '获取验证码' : numend} */}
-          <Text style={[styles.getsancode]}>{t('获取验证码')}</Text>
-        </TouchableWithoutFeedback>
-        <TextInput
-          maxLength={6}
-          placeholder={t("请输入验证码  ")}
-          keyboardType="number-pad"
-          onChangeText={(text) => onChangeText(text, 3)}
-          value={sancode}
-        />
-      </View>
-      <View style={[styles.inputBox, { paddingRight: 40 }]}>
-        <Image
-          style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
-          source={require("../assets/img/login/password.png")}
-        ></Image>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            SetsecureTextEntry(!secureTextEntry);
-          }}
-        >
-          {secureTextEntry ? (
+              {secureTextEntry ? (
+                <Image
+                  style={[styles.imageshow]}
+                  source={require("../assets/img/login/nopass.png")}
+                ></Image>
+              ) : (
+                <Image
+                  style={[styles.imageshow]}
+                  source={require("../assets/img/login/showpass.png")}
+                ></Image>
+              )}
+            </TouchableWithoutFeedback>
+            <TextInput
+              maxLength={20}
+              placeholder={t("请输入密码")}
+              keyboardType="ascii-capable"
+              secureTextEntry={secureTextEntry}
+              onChangeText={(text) => onChangeText(text, 4)}
+              value={password}
+            />
+          </View>
+          <View style={[styles.inputBox]}>
             <Image
-              style={[styles.imageshow]}
-              source={require("../assets/img/login/nopass.png")}
+              style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
+              source={require("../assets/img/login/password.png")}
             ></Image>
-          ) : (
-            <Image
-              style={[styles.imageshow]}
-              source={require("../assets/img/login/showpass.png")}
-            ></Image>
-          )}
-        </TouchableWithoutFeedback>
-        <TextInput
-          maxLength={20}
-          placeholder={t("请输入密码")}
-          keyboardType="ascii-capable"
-          secureTextEntry={secureTextEntry}
-          onChangeText={(text) => onChangeText(text, 4)}
-          value={password}
-        />
-      </View>
-      <View style={[styles.inputBox]}>
-        <Image
-          style={[styles.imageInput, { width: 37 / 2, height: 20 }]}
-          source={require("../assets/img/login/password.png")}
-        ></Image>
-        <TextInput
-          maxLength={20}
-          placeholder={t("请再次输入密码")}
-          keyboardType="ascii-capable"
-          secureTextEntry={secureTextEntry}
-          numberOfLines={4}
-          onChangeText={(text) => onChangeText(text, 5)}
-          value={password1}
-        />
-      </View>
-      <Text
-        style={{ marginTop: -15 }}
-        onPress={() => {
-          Settype(type == 1 ? 2 : 1);
-        }}
-      >
-        {type == 1 ? t("手机号注册") : t("邮箱注册")}
-      </Text>
-      <Text onPress={() => registerFn()} style={[styles.loginBtnBox]}>
-        注册
-      </Text>
+            <TextInput
+              maxLength={20}
+              placeholder={t("请再次输入密码")}
+              keyboardType="ascii-capable"
+              secureTextEntry={secureTextEntry}
+              numberOfLines={4}
+              onChangeText={(text) => onChangeText(text, 5)}
+              value={password1}
+            />
+          </View>
+          <Text
+            style={{ marginTop: -15 }}
+            onPress={() => {
+              Settype(type == 1 ? 2 : 1);
+            }}
+          >
+            {type == 1 ? t("手机号注册") : t("邮箱注册")}
+          </Text>
+          <TouchableOpacity
+            onPress={() => registerFn()}
+            style={[styles.loginBtnBox]}
+          >
+            <Text
+              style={{
+                lineHeight: 50,
+                textAlign: "center",
+                color: "#fff",
 
-      <DialogToast
-        visible={visible}
-        isClose={true}
-        value={message}
-        title={t("温馨提示")}
-        Size="18"
-        textAlign="left"
-        close={() => {
-          Setvisible(false);
-        }}
-      >
-        <Text style={{ fontSize: 16 }}>OK</Text>
-      </DialogToast>
+                fontSize: 16,
+                fontWeight: "bold",
+              }}
+            >
+              {t("注册")}
+            </Text>
+          </TouchableOpacity>
+
+          <DialogToast
+            visible={visible}
+            isClose={true}
+            value={message}
+            title={t("提示")}
+            Size="18"
+            textAlign="left"
+            close={() => {
+              Setvisible(false);
+            }}
+          >
+            <Text style={{ fontSize: 16 }}>OK</Text>
+          </DialogToast>
+        </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };
@@ -370,16 +415,17 @@ const styles = StyleSheet.create({
   },
   checkColac: {
     position: "absolute",
-    width: 100,
-    paddingHorizontal: 20,
-    height: 160,
+    width: 120,
+    // paddingHorizontal: 20,
+    // height:160,
     borderWidth: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     top: 40,
     right: 0,
-    zIndex: 99,
+    zIndex: 999,
     borderColor: "#ccc",
     borderRadius: 10,
+    // flexDirection: "column"
   },
   container: {
     padding: 20,
@@ -403,19 +449,14 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#897EF8",
     height: 50,
-    lineHeight: 50,
-    textAlign: "center",
-    color: "#fff",
     borderRadius: 25,
-    fontSize: 16,
-    fontWeight: "bold",
   },
   inputBox: {
     height: 48,
     lineHeight: 48,
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 20,
+    borderRadius: 25,
     paddingLeft: 46,
     paddingRight: 15,
     marginBottom: 30,
@@ -430,10 +471,10 @@ const styles = StyleSheet.create({
     marginTop: -17 / 2,
   },
   imageshow: {
-    width: 16,
-    height: 16,
+    width: 24,
+    height: 24,
     position: "absolute",
-    right: 18,
-    top: 14,
+    right: 12,
+    top: 12,
   },
 });

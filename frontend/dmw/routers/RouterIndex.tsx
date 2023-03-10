@@ -76,17 +76,19 @@ const styles = StyleSheet.create({
     position: "relative",
     top: "40%",
     left: "25%",
-  },
-  text: {
     width: 200,
     backgroundColor: "rgba(0,0,0,0.5)",
     paddingLeft: 10,
     paddingRight: 10,
     paddingTop: 10,
     paddingBottom: 10,
-    textAlign: "center",
+
     borderRadius: 20,
+
+  },
+  text: {
     color: "#fff",
+    textAlign: "center",
   },
   errText: {
     width: 200,

@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import React, { Component, useEffect, useState, useContext } from "react";
@@ -39,7 +40,7 @@ const ImportWord = (props) => {
           <View>
             <Text style={[styles.topInfo]}>{t("创建支付密码")}</Text>
             <Text style={[styles.topInfo1]}>
-              {t("此密码将用在您签名资产或者您在支付代币时使用。")}
+              {t("此密码将用在您签名资产或者您在支付代币时使用")}
             </Text>
           </View>
           <View style={styles.lis}>
@@ -50,7 +51,7 @@ const ImportWord = (props) => {
                 flexDirection: "row",
               }}
             >
-              <Text style={styles.text}>{t("密码")}</Text>
+              <Text style={styles.text}>{t("支付密码")}</Text>
               <TouchableWithoutFeedback
                 onPress={() => {
                   setsecureTextEntry(!secureTextEntry);
@@ -73,7 +74,7 @@ const ImportWord = (props) => {
             <TextInput
               maxLength={6}
               secureTextEntry={secureTextEntry}
-              placeholder={t("密码")}
+              placeholder={t("支付密码")}
               keyboardType="number-pad"
               style={[styles.input]}
               onChangeText={(e) => setpassword(e)}
@@ -81,11 +82,11 @@ const ImportWord = (props) => {
             />
           </View>
           <View style={styles.lis}>
-            <Text style={styles.text}>{t("确认密码")}</Text>
+            <Text style={styles.text}>{t("确认支付密码")}</Text>
             <TextInput
               maxLength={6}
               secureTextEntry={secureTextEntry}
-              placeholder={t("确认密码")}
+              placeholder={t("确认支付密码")}
               keyboardType="number-pad"
               style={[styles.input]}
               onChangeText={(e) => setpassword1(e)}
@@ -95,14 +96,23 @@ const ImportWord = (props) => {
               {t("请输入6位数字")}
             </Text>
           </View>
-          <Text
-            style={[styles.import]}
+          <TouchableOpacity style={[styles.import]}
             onPress={() => {
               CreatePassword();
-            }}
-          >
-            {t("创建密码")}
-          </Text>
+            }} >
+            <Text
+              style={{
+                textAlign: "center",
+                color: "#fff",
+                fontSize: 16,
+                fontWeight: "bold",
+                lineHeight: 50,
+              }}
+            >
+              {t("创建密码")}
+            </Text>
+          </TouchableOpacity>
+
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -130,12 +140,10 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#897EF8",
     height: 50,
-    lineHeight: 50,
-    textAlign: "center",
-    color: "#fff",
+
+
     borderRadius: 25,
-    fontSize: 16,
-    fontWeight: "bold",
+
   },
 
   input: {

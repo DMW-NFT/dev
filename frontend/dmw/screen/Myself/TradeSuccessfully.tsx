@@ -29,7 +29,7 @@ const TradeSuccessfully = (props) => {
       console.log(res, "交易成功！");
       res.code == 200
         ? setList(res.data)
-        : (props.navigation.navigate("sellOrder"), Toast(res.message));
+        : (props.navigation.navigate("sellOrder"), Toast(t(res.message)));
     });
   }, [props]);
 
@@ -87,7 +87,7 @@ const TradeSuccessfully = (props) => {
   const PricePerToken = list && (
     <View style={[styles.flexJBC, styles.mb30]}>
       <Text style={[styles.ImageBoxName]}>
-        {t("价格/NFT") + " " }
+        {t("价格") + "/NFT " }
       </Text>
       <Text style={[styles.ImageBoxColl]}>
         {list.total_offer_amount_per.number}{" "}

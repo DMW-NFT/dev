@@ -6,12 +6,14 @@ import {
   Image,
   TouchableWithoutFeedback,
   TextInput,
+  ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDmwWallet } from "../../../DmwWallet/DmwWalletProvider";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+
 import { Spinner } from "@ui-kitten/components";
 const ImportWord = (props) => {
   // state={
@@ -95,7 +97,7 @@ const ImportWord = (props) => {
                 flexDirection: "row",
               }}
             >
-              <Text style={styles.text}>{t("新密码")}</Text>
+              <Text style={styles.text}>{t("支付密码")}</Text>
               <TouchableWithoutFeedback
                 onPress={() => {
                   setsecureTextEntry(!secureTextEntry);
@@ -117,7 +119,7 @@ const ImportWord = (props) => {
             <TextInput
               maxLength={6}
               secureTextEntry={secureTextEntry}
-              placeholder={t("新密码")}
+              placeholder={t("支付密码")}
               keyboardType="number-pad"
               style={[styles.input]}
               onChangeText={(e) => {
@@ -127,11 +129,11 @@ const ImportWord = (props) => {
             />
           </View>
           <View style={styles.lis}>
-            <Text style={styles.text}>{t("确认密码")}</Text>
+            <Text style={styles.text}>{t("确认支付密码")}</Text>
             <TextInput
               maxLength={6}
               secureTextEntry={secureTextEntry}
-              placeholder={t("确认密码")}
+              placeholder={t("确认支付密码")}
               keyboardType="number-pad"
               style={[styles.input]}
               onChangeText={(e) => {
@@ -193,6 +195,7 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     paddingTop: 15,
+    height: 150,
   },
   input: {
     height: 48,

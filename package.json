@@ -19,7 +19,7 @@
     "buffer": "^6.0.3",
     "crypto-js": "^4.1.1",
     "ethers": "^5.7.1",
-    "expo": "~46.0.16",
+    "expo": "~46.0.19",
     "expo-splash-screen": "~0.16.2",
     "expo-status-bar": "~1.4.0",
     "i18next": "^22.0.2",
@@ -101,7 +101,9 @@
     "audit": "npx yarn-audit-fix",
     "postinstall": "node_modules/.bin/ts-node scripts/postinstall",
     "test": "npx hardhat test && jest",
-    "web:deploy": "expo build:web && gh-pages -d web-build"
+    "web:deploy": "expo build:web && gh-pages -d web-build",
+    "releaseABB": "cd android && ./gradlew bundleRelease",
+    "releaseAPK": "cd android && ./gradlew assembleRelease"
   },
   "version": "1.0.1",
   "private": true,
@@ -153,5 +155,6 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": "eslint --fix --ext '.ts,.tsx,.js,.jsx' -c .eslintrc.json"
-  }
+  },
+  "releaseVersion":"ios-appleStore" 
 }

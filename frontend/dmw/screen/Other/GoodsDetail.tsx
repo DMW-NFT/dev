@@ -8,6 +8,8 @@ import {
   TouchableWithoutFeedback,
   FlatList,
   TextInput,
+  Keyboard,
+  TouchableOpacity
 } from "react-native";
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -37,7 +39,7 @@ import VerfiySecretModal from "../../Components/VerfiySecretModal";
 import TxProccessingModal from "../../Components/TxProccessingModal";
 import chainNameMap from "../../../constans/chainNameMap.json";
 import chainIdMap from "../../../constans/chainIdMap.json";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 
 const TradeHistoryCard = (props) => {
   const [show, setShow] = useState(false);
@@ -96,7 +98,10 @@ const TradeHistoryCard = (props) => {
             <Text style={[styles.moreBottom]}>{item.quantity_wanted}</Text>
           </View>
           <View>
-            <Text style={[styles.moreTop]}>From</Text>
+            <View style={[styles.moreTop]}>
+              <Text >From</Text>
+            </View>
+
             <Text style={[styles.moreBottom]}>
               {item.wallet_address.slice(2, 7)}
             </Text>
@@ -152,7 +157,7 @@ const GoodsDetail = (props) => {
   const [royaltyFee, setRoyaltyFee] = useState(0);
   // Context 方法
   const { Toast, post, get, formData, shortenAddress } = useDmwApi();
-  const { WalletInUse } = useDmwLogin();
+  const { WalletInUse,tradeControl } = useDmwLogin();
   const {
     dmwWalletList,
     dmwApprovalForAll,
@@ -230,7 +235,7 @@ const GoodsDetail = (props) => {
       getRoyaltyFee(detailsObj.contract_address, detailsObj.token_id).then(
         (res) => {
           console.log("royalty fee: ", res);
-          res[1]&&setRoyaltyFee(res[1]);
+          res[1] && setRoyaltyFee(res[1]);
         }
       );
     if (
@@ -289,21 +294,21 @@ const GoodsDetail = (props) => {
   useEffect(() => {
     nftNumber > 0
       ? checkIsApproveForAll(
-          detailsObj.contract_address,
-          WalletInUse == 1 ? dmwWalletList[0] : currentWallet
-        ).then((isApproved) => {
-          // console.log("isApproved:", isApproved)
-          if (isApproved) {
-            setApprovalVsity(false);
-            setIsApproved(isApproved);
-          } else {
-            setApprovalVsity(true);
-          }
-        })
-      : () => {
+        detailsObj.contract_address,
+        WalletInUse == 1 ? dmwWalletList[0] : currentWallet
+      ).then((isApproved) => {
+        // console.log("isApproved:", isApproved)
+        if (isApproved) {
           setApprovalVsity(false);
-          setIsApproved(false);
-        };
+          setIsApproved(isApproved);
+        } else {
+          setApprovalVsity(true);
+        }
+      })
+      : () => {
+        setApprovalVsity(false);
+        setIsApproved(false);
+      };
   }, [nftNumber, txModalVisible]);
 
   useEffect(() => {
@@ -353,6 +358,23 @@ const GoodsDetail = (props) => {
       console.log("dmw approval nft");
       setVfModalVisible(true);
     } else {
+      if (WalletInUse == 2 && detailsObj.network) {
+        if (
+          connector.chainId !=
+          chainNameMap[detailsObj.network.toLowerCase()].chainId
+        ) {
+          console.log(
+            connector.chainId,
+            chainNameMap[detailsObj.network.toLowerCase()].chainId
+          );
+          Toast(
+            t(
+              "该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！"
+            )
+          );
+          return null
+        }
+      }
       ApprovalForAll(detailsObj.contract_address, detailsObj.token_id);
       setTxModalVisible(true);
     }
@@ -457,7 +479,7 @@ const GoodsDetail = (props) => {
         console.log(res.data.history);
       })
       .catch((err) => {
-        Toast(err.message);
+        Toast(t(err.message));
       });
   };
 
@@ -504,7 +526,7 @@ const GoodsDetail = (props) => {
         setSellOptionVisible(false);
       }}
     >
-      <Card disabled={true} style={styles.CardBox}>
+      <Card disabled={false} style={styles.CardBox} onPress={() => { Keyboard.dismiss() }} >
         <View
           style={{
             flexDirection: "column",
@@ -543,7 +565,7 @@ const GoodsDetail = (props) => {
           >
             <TextInput
               // caretHidden={true}
-              onKeyPress={() => {}}
+              onKeyPress={() => { }}
               keyboardType="decimal-pad"
               style={styles.buyInput}
               onChangeText={(text) => {
@@ -588,7 +610,7 @@ const GoodsDetail = (props) => {
 
           <TextInput
             // caretHidden={true}
-            onKeyPress={() => {}}
+            onKeyPress={() => { }}
             keyboardType="number-pad"
             style={styles.buyInput}
             onChangeText={(e) => {
@@ -621,17 +643,32 @@ const GoodsDetail = (props) => {
             justifyContent: "space-between",
           }}
         >
-          <Text
-            style={[styles.BuyBtnC, {}]}
+          <TouchableOpacity style={[styles.BuyBtnC, {}]}
             onPress={() => {
               setSellOptionVisible(false);
-            }}
-          >
-            {t("取消")}
-          </Text>
-          <Text style={[styles.BuyBtnQ, {}]} onPress={() => sellNFT()}>
-            {t("确定")}
-          </Text>
+            }}>
+            <Text style={{
+              lineHeight: 40,
+              textAlign: "center",
+              color: "#333",
+              fontSize: 16,
+              fontWeight: "700",
+            }}>
+              {t("取消")}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.BuyBtnQ, {}]} onPress={() => sellNFT()}>
+            <Text style={{
+              lineHeight: 40,
+              textAlign: "center",
+              color: "#FFFFFF",
+              fontSize: 16,
+              fontWeight: "700",
+            }}>
+              {t("确定")}
+            </Text>
+          </TouchableOpacity>
+
         </View>
       </Card>
     </Modal>
@@ -732,18 +769,36 @@ const GoodsDetail = (props) => {
                 </Text>
               )}
 
-              {sellBtnVisible && (
-                <Text
-                  onPress={() => {
-                    setSellOptionVisible(true);
-                  }}
-                  style={[styles.buyBtn, { marginRight: 10, marginBottom: 40 }]}
-                >
-                  {t("定价出售")}
-                </Text>
+              {tradeControl&&sellBtnVisible && (
+                <TouchableWithoutFeedback onPress={() => {
+                  if (WalletInUse == 2 && detailsObj.network) {
+                    if (
+                      connector.chainId !=
+                      chainNameMap[detailsObj.network.toLowerCase()].chainId
+                    ) {
+                      console.log(
+                        connector.chainId,
+                        chainNameMap[detailsObj.network.toLowerCase()].chainId
+                      );
+                      Toast(
+                        t(
+                          "该NFT与外部钱包连接网络不一致，请切换外部钱包网络后再进行购买操作！"
+                        )
+                      );
+                      return null
+                    }
+                  }
+                  setSellOptionVisible(true);
+                }}>
+                  <View style={[styles.buyBtn, { marginRight: 10, marginBottom: 40 }]}>
+                    <Text style={{ color: "white" }}>
+                      {t("定价出售")}
+                    </Text>
+                  </View>
+                </TouchableWithoutFeedback>
               )}
 
-              {approvalVisible && (
+              {tradeControl&&approvalVisible && (
                 <Text
                   onPress={() => {
                     approvalNFT();
@@ -770,7 +825,10 @@ const GoodsDetail = (props) => {
               <Text style={[styles.createAndByuerName]}>
                 {userInfo.shortenAddress}
               </Text>
-              <Text style={[styles.FromOrByuer]}>From</Text>
+              <View style={[styles.FromOrByuer]}>
+                <Text style={[styles.FromOrByuer]}>From</Text>
+              </View>
+
             </View>
             <View
               style={[
@@ -787,17 +845,18 @@ const GoodsDetail = (props) => {
                 <Text style={[styles.createAndByuerName]}>Owners:</Text>
                 <Text>{ownersArr.length}</Text>
               </View>
-              <Text
-                style={[
-                  styles.FromOrByuer,
-                  { paddingHorizontal: 10, paddingVertical: 0 },
-                ]}
+              <TouchableOpacity style={[
+                styles.FromOrByuer,
+                { paddingHorizontal: 10, paddingVertical: 2 },
+              ]}
                 onPress={() => {
                   setShowOwnerlist(true);
-                }}
-              >
-                All
-              </Text>
+                }}>
+                <Text style={{ color: "#897EF8" }}>
+                  All
+                </Text>
+              </TouchableOpacity>
+
             </View>
           </View>
 
@@ -857,7 +916,7 @@ const GoodsDetail = (props) => {
               </View>
             </ListItem.Accordion>
 
-            <ListItem.Accordion
+            {tradeControl&&<ListItem.Accordion
               content={
                 <ListItem.Content>
                   <ListItem.Title>{t("挂单列表")}</ListItem.Title>
@@ -930,8 +989,8 @@ const GoodsDetail = (props) => {
                                   {item.buyout_price_per.number}{" "}
                                   {item.buyout_price_per.currency_name == "ETH"
                                     ? chainNameMap[
-                                        detailsObj.network.toLowerCase()
-                                      ].nativeToken
+                                      detailsObj.network.toLowerCase()
+                                    ].nativeToken
                                     : item.buyout_price_per.currency_name}
                                 </Text>
                               )}
@@ -960,7 +1019,7 @@ const GoodsDetail = (props) => {
                   </View>
                 ))}
               </View>
-            </ListItem.Accordion>
+            </ListItem.Accordion>}
 
             <ListItem.Accordion
               content={
@@ -1137,7 +1196,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     // marginLeft: 20,
     marginRight: 20,
-    lineHeight: 40,
+    // lineHeight: 40,
     textAlign: "center",
   },
   BuyBtnQ: {
@@ -1145,22 +1204,14 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: "#897EF8",
     borderRadius: 50,
-    lineHeight: 40,
-    textAlign: "center",
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
+
   },
   BuyBtnC: {
     width: 120,
     height: 40,
     backgroundColor: "#F5F5F5",
     borderRadius: 50,
-    lineHeight: 40,
-    textAlign: "center",
-    color: "#333",
-    fontSize: 16,
-    fontWeight: "700",
+
   },
   BuyNowImg: {
     width: 100,
@@ -1201,13 +1252,13 @@ const styles = StyleSheet.create({
   buyBtn: {
     // position: 'absolute', bottom: 0,
     // right: 20,
-    // height: 40,
+    // height: 20,
     backgroundColor: "#897EF8",
-    paddingLeft: 20,
-    paddingRight: 20,
+    padding: 10,
+    // paddingRight: 20,
     lineHeight: 40,
     color: "#fff",
-    borderRadius: 10,
+    borderRadius: 20,
   },
   // offer 列表结束
   offercolse: {

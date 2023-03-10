@@ -13,7 +13,8 @@ export default class Home extends Component {
           name="jiaoyi"
           options={{
             headerMode: "null",
-            headerTransparent: true
+            headerTransparent: true,
+            title: "",
           }}
         ></Stack.Screen>
         <Stack.Screen

@@ -38,17 +38,19 @@ const styles = StyleSheet.create({
     box: {
         position: 'relative',
         top: '50%',
-        left: '25%'
-    },
-    text: {
-        width: 200,
+        left: '25%',
+        borderRadius: 20,
+        width: 500,
         backgroundColor: 'rgba(0,0,0,0.5)',
         paddingLeft: 10,
         paddingRight: 10,
         paddingTop: 10,
         paddingBottom: 10,
         textAlign: 'center',
-        borderRadius: 20,
+
+    },
+    text: {
+
         color: '#fff'
     }
 });

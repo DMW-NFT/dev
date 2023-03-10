@@ -8,10 +8,12 @@ import JiaoyiScreen from './Jiaoyi'
 import MyselfScreen from './Myself'
 import MoneyScreen from './Money'
 import { useTranslation } from 'react-i18next'
+import { useDmwLogin } from '../../loginProvider/constans/DmwLoginProvider'
 
 
 const Tab = createBottomTabNavigator()
 const router = () => {
+  const {tradeControl}  = useDmwLogin()
   const { t, i18n } = useTranslation();
   return (
     <Tab.Navigator
@@ -40,7 +42,7 @@ const router = () => {
 
       <Tab.Screen name="Home" component={HomeScreen} options={{ title: t('首页') ,unmountOnBlur: true,}} ></Tab.Screen>
       <Tab.Screen name="Data" component={DateScreen} options={{ title: t('数据'),unmountOnBlur: true}}></Tab.Screen>
-      <Tab.Screen name="Jiaoyi" component={JiaoyiScreen} options={{ title: t('交易') ,unmountOnBlur: true}}></Tab.Screen>
+      {tradeControl&&<Tab.Screen name="Jiaoyi" component={JiaoyiScreen} options={{ title: t('交易') ,unmountOnBlur: true}}></Tab.Screen>}
       <Tab.Screen name="Money" component={MoneyScreen} options={{ title: t('钱包'),unmountOnBlur: true }}></Tab.Screen>
       <Tab.Screen name="Myself" component={MyselfScreen} options={{ title: t('我的'),unmountOnBlur: true }}></Tab.Screen>
     </Tab.Navigator>

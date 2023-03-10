@@ -12,12 +12,13 @@ import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import storage from "../../Storage/storage";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
 import { useTranslation } from 'react-i18next'
+import { SafeAreaView } from "react-native-safe-area-context";
 const scale = Dimensions.get("window").scale;
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const Lmodal = (props) => {
-  const {logOut} = useDmwLogin()
+  const {logOut,tradeControl} = useDmwLogin()
   const { t, i18n } = useTranslation();
   const close = () => {
     props.close();
@@ -48,9 +49,9 @@ const Lmodal = (props) => {
       ></Text>
 
       {visible ? (
-        <View style={styles.Lm_box}>
-          <Text style={styles.title}>{t("常用功能")}</Text>
-          <View
+        <SafeAreaView style={styles.Lm_box}>
+          {tradeControl&&<Text style={styles.title}>{t("常用功能")}</Text>}
+          {tradeControl&&<View
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
@@ -77,7 +78,7 @@ const Lmodal = (props) => {
             >
               <View style={{ flexDirection: "column" }}>
                 <Image
-                  style={{ width: 96 / 2, height: 96 / 2 }}
+                    style={{ width: 60, height: 60 }}
                   source={require("../../assets/img/my/3338.png")}
                 ></Image>
                 <Text style={styles.img_bottom_text}>{t("售卖订单")}</Text>
@@ -91,7 +92,7 @@ const Lmodal = (props) => {
             >
               <View style={{ flexDirection: "column" }}>
                 <Image
-                  style={{ width: 96 / 2, height: 96 / 2 }}
+                    style={{ width: 60, height: 60 }}
                   source={require("../../assets/img/my/3337.png")}
                 ></Image>
                 <Text style={styles.img_bottom_text}>{t("合集")}</Text>
@@ -102,14 +103,14 @@ const Lmodal = (props) => {
               {
                 <View style={{ flexDirection: "column" }}>
                   <Image
-                    style={{ width: 96 / 2, height: 96 / 2 }}
+                    style={{ width: 60, height: 60 }}
                     source={require("../../assets/img/my/3336.png")}
                   ></Image>
                   <Text style={styles.img_bottom_text}>{t("创建")}</Text>
                 </View>
               }
             </TouchableWithoutFeedback>
-          </View>
+          </View>}
           <Text style={styles.title}>{t("更多功能")}</Text>
           <View>
             {/* <TouchableWithoutFeedback
@@ -201,7 +202,7 @@ const Lmodal = (props) => {
               }
             </TouchableWithoutFeedback>
           </View>
-        </View>
+        </SafeAreaView>
       ) : null}
     </View>
   );
@@ -227,13 +228,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontFamily: "Source Han Sans CN",
+    
     fontWeight: "700",
     marginBottom: 20,
   },
   img_bottom_text: {
-    fontSize: 8,
+    fontSize: 12,
     textAlign: "center",
+    fontWeight:"300"
   },
   moreimg: {
     width: 45,

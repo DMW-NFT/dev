@@ -135,6 +135,7 @@ const Jiaoyi = (props) => {
       >
         {(
           <FlatList
+            showsVerticalScrollIndicator={false}
             refreshing={refreshing}
             style={{ height: 50, paddingBottom: 20 }}
             ListEmptyComponent={() => {
@@ -224,7 +225,7 @@ const styles = StyleSheet.create({
   daonghang_text: {
     fontSize: 16,
     fontWeight: "700",
-    fontFamily: "Source Han Sans CN",
+    
     height: 56,
     lineHeight: 56,
     flex: 1,
@@ -236,7 +237,7 @@ const styles = StyleSheet.create({
   daonghang_text_ative: {
     fontSize: 16,
     fontWeight: "700",
-    fontFamily: "Source Han Sans CN",
+    
     height: 56,
     lineHeight: 56,
     flex: 1,

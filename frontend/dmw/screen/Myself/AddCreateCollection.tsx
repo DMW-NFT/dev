@@ -11,6 +11,7 @@ import {
   TextInput,
   Button,
   ScrollView,
+  TouchableOpacity
 } from 'react-native';
 import { useDmwApi } from '../../../DmwApiProvider/DmwApiProvider';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
@@ -20,6 +21,7 @@ import { Surface } from 'react-native-paper';
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from 'react-i18next'
+
 const screenWidth = Dimensions.get('window').width;
 const scale = Dimensions.get('window').scale;
 const screenHeight = Dimensions.get('window').height;
@@ -43,8 +45,8 @@ const AddCreateCollection = (props) => {
   const [upUrlid, setUpUrlid] = useState(null)
   const [upUrl2id, setUpUrl2id] = useState(null)
   const [upUrl3id, setUpUrl3id] = useState(null)
-  const [activeType, setactiveType] = useState({value:''})
-  const [activeEm, setactiveEm] = useState({ value: '',})
+  const [activeType, setactiveType] = useState({ value: '' })
+  const [activeEm, setactiveEm] = useState({ value: '', })
   const [isShowType, setisShowType] = useState(false)//是否展开类型选择框
   const [isShowE, setisShowE] = useState(false)//是否展开区块链选择框
 
@@ -96,7 +98,7 @@ const AddCreateCollection = (props) => {
       if (res.code == 200) {
         Toast(t('创建成功'))
         setCreating(false)
-        props.navigation.navigate('myCollection',{isReload:true})
+        props.navigation.navigate('myCollection', { isReload: true })
       }
     })
   }
@@ -154,14 +156,14 @@ const AddCreateCollection = (props) => {
         // setIpfsImgUrl1({ base64: response.assets[0].base64, url: '' })
         post('/index/collection/upload_logo', formData).then(res => {
           if (res.code != 200) {
-            Toast(res.message)
+            Toast(t(res.message))
             setLoding1(false)
             return
           }
           setUpUrlid(res.data.id)
           setUpUrl(res.data.url)
           console.log(res, '标识');
-          Toast(t('上传成功!'))
+          Toast(t('上传成功'))
           setLoding1(false)
         })
       } else if (type == 2) {
@@ -169,14 +171,14 @@ const AddCreateCollection = (props) => {
         // setIpfsImgUrl1({ base64: response.assets[0].base64, url: '' })
         post('/index/collection/upload_cover', formData).then(res => {
           if (res.code != 200) {
-            Toast(res.message)
+            Toast(t(res.message))
             setLoding(false)
             return
           }
           setUpUrl2id(res.data.id)
           setUpUrl2(res.data.url)
           console.log(res.data.url, '标识');
-          Toast(t('上传成功!'))
+          Toast(t('上传成功'))
           setLoding(false)
         })
       } else if (type == 3) {
@@ -184,14 +186,14 @@ const AddCreateCollection = (props) => {
         // setIpfsImgUrl1({ base64: response.assets[0].base64, url: '' })
         post('/index/collection/upload_banner', formData).then(res => {
           if (res.code != 200) {
-            Toast(res.message)
+            Toast(t(res.message))
             setLoding3(false)
             return
           }
           setUpUrl3id(res.data.id)
           setUpUrl3(res.data.url)
           console.log(res.data.url, '标识');
-          Toast(t('上传成功!'))
+          Toast(t('上传成功'))
           setLoding3(false)
         })
       }
@@ -205,230 +207,247 @@ const AddCreateCollection = (props) => {
   return (
     <SafeAreaView
       style={{
+
+      }}>
+      <View style={{
         paddingTop: 20,
         paddingLeft: 20,
         paddingRight: 20,
         position: 'relative',
-        height: Dimensions.get('window').height,
-        paddingBottom: 200,
+        // height: Dimensions.get('window').height,
+        // paddingBottom: 200,
         backgroundColor: '#fff'
       }}>
-      {
-        Creating ? <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-          <Spinner />
-          <Text style={{ marginTop: 10 }}>{t("正在创建中")}...</Text>
-        </View> :
+        {
+          Creating ? <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+            <Spinner />
+            <Text style={{ marginTop: 10 }}>{t("正在创建中")}...</Text>
+          </View> :
 
-          <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false}>
 
-            <Text style={{ fontSize: 16, marginBottom: 17 }}>
-              {t("形象标识")}
-            </Text>
-            {
-              loading1 ? <View style={styles.up1}><Spinner /></View> : <TouchableWithoutFeedback onPress={() => uuup(1)}>
-                <View style={styles.up1}>
-                  {
-                    upUrl ?
-                      <Image
-                        style={{ width: '100%', height: '100%' }}
-                        source={{ uri: upUrl }}></Image>
-                      :
-                      <>
-                        <Image
-                          style={{ width: 96 / 2, height: 96 / 2 }}
-                          source={require('../../assets/img/my/3336.png')}></Image>
-                        <Text>{t("上传图像")}</Text>
-                      </>
-                  }
-
-                </View>
-              </TouchableWithoutFeedback>
-            }
-
-
-            <Text style={{ fontSize: 16, marginBottom: 17 }}>
-              {t("特色图片")}
-            </Text>
-            {
-              loading ? <View style={styles.up}><Spinner /></View> : <TouchableWithoutFeedback onPress={() => uuup(2)}>
-                <View style={styles.up}>
-                  {
-                    upUrl2 ?
-                      <Image
-                        style={{ width: '100%', height: '100%' }}
-                        source={{ uri: upUrl2 }}></Image>
-                      :
-                      <>
-                        <Image
-                          style={{ width: 96 / 2, height: 96 / 2 }}
-                          source={require('../../assets/img/my/3336.png')}></Image>
-                        <Text>{t("上传图像、视频")}</Text>
-                      </>
-                  }
-
-
-                </View>
-              </TouchableWithoutFeedback>
-            }
-            <Text style={{ fontSize: 16, marginBottom: 17 }}>
-              {t("横幅")}
-            </Text>
-
-            {
-              loading3 ? <View style={styles.up3}><Spinner /></View> : <TouchableWithoutFeedback onPress={() => uuup(3)}>
-                <View style={styles.up3}>
-                  {
-                    upUrl3 ?
-                      <Image
-                        style={{ width: '100%', height: '100%' }}
-                        source={{ uri: upUrl3 }}></Image> :
-                      <>
-                        <Image
-                          style={{ width: 96 / 2, height: 96 / 2 }}
-                          source={require('../../assets/img/my/3336.png')}></Image>
-                        <Text>{t("上传图像、视频")}</Text></>
-                  }
-
-                </View>
-              </TouchableWithoutFeedback>
-            }
-
-            <View style={styles.lis}>
               <Text style={{ fontSize: 16, marginBottom: 17 }}>
-                {t("集合名称")}
+                {t("形象标识")}
+              </Text>
+              {
+                loading1 ? <View style={styles.up1}><Spinner /></View> : <TouchableWithoutFeedback onPress={() => uuup(1)}>
+                  <View style={styles.up1}>
+                    {
+                      upUrl ?
+                        <Image
+                          style={{ width: '100%', height: '100%' }}
+                          source={{ uri: upUrl }}></Image>
+                        :
+                        <>
+                          <Image
+                            style={{ width: 96 / 2, height: 96 / 2 }}
+                            source={require('../../assets/img/my/3336.png')}></Image>
+                          <Text>{t("上传图像")}</Text>
+                        </>
+                    }
+
+                  </View>
+                </TouchableWithoutFeedback>
+              }
+
+
+              <Text style={{ fontSize: 16, marginBottom: 17 }}>
+                {t("特色图片")}
+              </Text>
+              {
+                loading ? <View style={styles.up}><Spinner /></View> : <TouchableWithoutFeedback onPress={() => uuup(2)}>
+                  <View style={styles.up}>
+                    {
+                      upUrl2 ?
+                        <Image
+                          style={{ width: '100%', height: '100%' }}
+                          source={{ uri: upUrl2 }}></Image>
+                        :
+                        <>
+                          <Image
+                            style={{ width: 96 / 2, height: 96 / 2 }}
+                            source={require('../../assets/img/my/3336.png')}></Image>
+                          <Text>{t("上传图像、视频")}</Text>
+                        </>
+                    }
+
+
+                  </View>
+                </TouchableWithoutFeedback>
+              }
+              <Text style={{ fontSize: 16, marginBottom: 17 }}>
+                {t("横幅")}
               </Text>
 
-              <TextInput
-                maxLength={12}
-                placeholder={t("请输入藏品名")}
-                keyboardType="default"
-                style={[styles.input]}
-                onChangeText={e => setTitle(e)}
-                value={title}
-              />
-            </View>
+              {
+                loading3 ? <View style={styles.up3}><Spinner /></View> : <TouchableWithoutFeedback onPress={() => uuup(3)}>
+                  <View style={styles.up3}>
+                    {
+                      upUrl3 ?
+                        <Image
+                          style={{ width: '100%', height: '100%' }}
+                          source={{ uri: upUrl3 }}></Image> :
+                        <>
+                          <Image
+                            style={{ width: 96 / 2, height: 96 / 2 }}
+                            source={require('../../assets/img/my/3336.png')}></Image>
+                          <Text>{t("上传图像、视频")}</Text></>
+                    }
 
-            <View style={[styles.lis, { marginBottom: 20 }]}>
-              <Text style={{ fontSize: 16, marginBottom: 17 }}>
-                {t("简介")}
-              </Text>
-              {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
+                  </View>
+                </TouchableWithoutFeedback>
+              }
+
+              <View style={styles.lis}>
+                <Text style={{ fontSize: 16, marginBottom: 17 }}>
+                  {t("集合名称")}
+                </Text>
+
+                <TextInput
+                  maxLength={12}
+                  placeholder={t("请输入藏品名")}
+                  keyboardType="default"
+                  style={[styles.input]}
+                  onChangeText={e => setTitle(e)}
+                  value={title}
+                />
+              </View>
+
+              <View style={[styles.lis, { marginBottom: 20 }]}>
+                <Text style={{ fontSize: 16, marginBottom: 17 }}>
+                  {t("简介")}
+                </Text>
+                {/* <TouchableWithoutFeedback onPress={()=>{}} onStartShouldSetResponderCapture={()=>true} >
                        
                     </TouchableWithoutFeedback> */}
-              <TextInput
-                placeholder={t("请输入简介")}
-                keyboardType="default"
-                style={[styles.input, { marginBottom: 20, height: 151, }]}
-                onChangeText={e => setExplain(e)}
-                value={explain}
-                multiline={true}
-                maxLength={200}
-                numberOfLines={5}
-              />
-            </View>
+                <TextInput
+                  placeholder={t("请输入简介")}
+                  keyboardType="default"
+                  style={[styles.input, { marginBottom: 20, height: 151, }]}
+                  onChangeText={e => setExplain(e)}
+                  value={explain}
+                  multiline={true}
+                  maxLength={200}
+                  numberOfLines={5}
+                />
+              </View>
 
-            <View style={[styles.lis, { marginBottom: 20 }]}>
-              <Text style={{ fontSize: 16, marginBottom: 17 }}>
-                {t("选择合集")}
-              </Text>
+              <View style={[styles.lis, { marginBottom: 20 }]}>
+                <Text style={{ fontSize: 16, marginBottom: 17 }}>
+                  {t("选择合集")}
+                </Text>
 
-              <TouchableWithoutFeedback onPress={() => { setisShowType(!isShowType) }}>
-                <View style={[styles.input, {
-                  flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
-                }]}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Image source={require('../../assets/img/index/default.png')} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
-                    <Text style={{ marginLeft: 10 }}>
-                      {activeType.name}
-                    </Text></View>
-                  <FontAwesomeIcon
-                    icon={faAngleDown}
-                    color="#707070"
-                    size={16}
-                  />
-                </View>
-              </TouchableWithoutFeedback>
-              {
-                isShowType ?
-                  <View style={{
-                    paddingTop: 20, backgroundColor: '#fff', marginBottom: 20, marginTop: 2, borderRadius: 12, borderWidth: 1, borderColor: '#ccc', paddingBottom: 20
-                  }}>
+                <TouchableWithoutFeedback onPress={() => { setisShowType(!isShowType) }}>
+                  <View style={[styles.input, {
+                    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
+                  }]}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Image source={require('../../assets/img/index/default.png')} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
+                      <Text style={{ marginLeft: 10 }}>
+                        {activeType.name}
+                      </Text></View>
+                    <FontAwesomeIcon
+                      icon={faAngleDown}
+                      color="#707070"
+                      size={16}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+                {
+                  isShowType ?
+                    <View style={{
+                      paddingTop: 20, backgroundColor: '#fff', marginBottom: 20, marginTop: 2, borderRadius: 12, borderWidth: 1, borderColor: '#ccc', paddingBottom: 20
+                    }}>
 
-                    {
-                      listType && listType.length ?
-                        listType.map((item, index) => (
-                          <Text onPress={() => { setactiveType({ value: item.value, name: item.name }); setisShowType(false) }}
-                            style={{
-                              color: activeType.value == item.value ? 'blue' : '#333',
-                              paddingTop: 10, paddingBottom: 10,
-                              backgroundColor: activeType.value == item.value ? 'rgba(40, 120, 255,0.1)' : '#fff',
-                              paddingLeft: 20
-                            }}>{item.name}</Text>
-                        )) : null
-                    }
-
-
-                  </View> : null
-              }
-
-            </View>
-
-            <View style={[styles.lis, { marginBottom: 20 }]}>
-              <Text style={{ fontSize: 16, marginBottom: 17 }}>
-                {t("选择区块链")}
-              </Text>
-
-              <TouchableWithoutFeedback onPress={() => {
-                if (!listE) {
-                  Toast('未加载到其他')
-                  return
-                } setisShowE(!isShowE)
-              }}>
-                <View style={[styles.input, {
-                  flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
-                }]}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Image source={require('../../assets/img/index/default.png')} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
-                    <Text style={{ marginLeft: 10 }}>
-                      {activeEm.name}
-                    </Text></View>
-                  <FontAwesomeIcon
-                    icon={faAngleDown}
-                    color="#707070"
-                    size={16}
-                  />
-                </View>
-              </TouchableWithoutFeedback>
-              {
-                isShowE ?
-                  <View style={{
-                    paddingTop: 20, backgroundColor: '#fff', marginBottom: 20, marginTop: 2, borderRadius: 12, borderWidth: 1, borderColor: '#ccc', paddingBottom: 20
-                  }}>
-
-                    {
-                      listE && listE.length ?
-                        listE.map((item, index) => (
-                          <Text onPress={() => { setactiveEm({ value: item.value, name: item.name }); setisShowE(false) }}
-                            style={{
-                              color: activeEm.value == item.value ? 'blue' : '#333',
-                              paddingTop: 10, paddingBottom: 10,
-                              backgroundColor: activeEm.value == item.value ? 'rgba(40, 120, 255,0.1)' : '#fff',
-                              paddingLeft: 20
-                            }}>{item.name}</Text>
-
-                        )) : null
-                    }
+                      {
+                        listType && listType.length ?
+                          listType.map((item, index) => (
+                            <Text onPress={() => { setactiveType({ value: item.value, name: item.name }); setisShowType(false) }}
+                              style={{
+                                color: activeType.value == item.value ? 'blue' : '#333',
+                                paddingTop: 10, paddingBottom: 10,
+                                backgroundColor: activeType.value == item.value ? 'rgba(40, 120, 255,0.1)' : '#fff',
+                                paddingLeft: 20
+                              }}>{item.name}</Text>
+                          )) : null
+                      }
 
 
-                  </View> : null
-              }
+                    </View> : null
+                }
 
-            </View>
-          </ScrollView>
+              </View>
 
-      }
+              <View style={[styles.lis, { marginBottom: 20 }]}>
+                <Text style={{ fontSize: 16, marginBottom: 17 }}>
+                  {t("选择区块链")}
+                </Text>
 
-      <Text onPress={() => Sure()} style={styles.btn}>{t("创建")}</Text>
+                <TouchableWithoutFeedback onPress={() => {
+                  if (!listE) {
+                    Toast(t('未加载到其他'))
+                    return
+                  } setisShowE(!isShowE)
+                }}>
+                  <View style={[styles.input, {
+                    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
+                  }]}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Image source={require('../../assets/img/index/default.png')} style={{ width: 24, height: 24, borderRadius: 12 }}></Image>
+                      <Text style={{ marginLeft: 10 }}>
+                        {activeEm.name}
+                      </Text></View>
+                    <FontAwesomeIcon
+                      icon={faAngleDown}
+                      color="#707070"
+                      size={16}
+                    />
+
+                  </View>
+
+                </TouchableWithoutFeedback>
+                {
+                  isShowE ?
+                    <View style={{
+                      paddingTop: 20, backgroundColor: '#fff', marginBottom: 20, marginTop: 2, borderRadius: 12, borderWidth: 1, borderColor: '#ccc', paddingBottom: 20
+                    }}>
+
+                      {
+                        listE && listE.length ?
+                          listE.map((item, index) => (
+                            <Text onPress={() => { setactiveEm({ value: item.value, name: item.name }); setisShowE(false) }}
+                              style={{
+                                color: activeEm.value == item.value ? 'blue' : '#333',
+                                paddingTop: 10, paddingBottom: 10,
+                                backgroundColor: activeEm.value == item.value ? 'rgba(40, 120, 255,0.1)' : '#fff',
+                                paddingLeft: 20
+                              }}>{item.name}</Text>
+
+                          )) : null
+                      }
+
+
+                    </View> : null
+                }
+
+              </View>
+              <TouchableOpacity onPress={() => Sure()} style={styles.btn}>
+                <Text style={{
+                  color: '#fff',
+                  height: 50,
+                  lineHeight: 50,
+                  textAlign: 'center',
+                  fontSize:20
+                }}>{t("创建")}</Text>
+              </TouchableOpacity>
+
+            </ScrollView>
+
+        }
+      </View>
+
+
+
 
 
 
@@ -493,15 +512,13 @@ const styles = StyleSheet.create({
   btn: {
     width: screenWidth - 40,
     backgroundColor: '#897EF8',
-    color: '#fff',
-    height: 50,
-    lineHeight: 50,
-    textAlign: 'center',
-    marginRight: 20,
-    marginLeft: 20,
+
+    // marginRight: 20,
+    // marginLeft: 20,
     borderRadius: 50,
-    position: 'absolute',
-    bottom: 138,
+    marginBottom: 20,
+    // position: 'absolute',
+    // bottom: 138,
   },
   line: {
     borderColor: '#CCCCCC',

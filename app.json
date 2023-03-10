@@ -9,9 +9,13 @@
       "android",
       "web"
     ],
+    "orientation": "portrait",
     "android": {
       "package": "dde.dmw.kh",
-      "versionCode":2
+      "versionCode": 2
+    },
+    "ios": {
+      "bundleIdentifier": "dde.dmw.kh"
     }
   }
 }

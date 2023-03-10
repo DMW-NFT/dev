@@ -44,7 +44,8 @@ const Home = (props) => {
         name="createMoney"
         options={{
           headerMode: "null",
-          headerTransparent: true
+          headerTransparent: true,
+          title:null
         }}
       ></Stack.Screen>
       <Stack.Screen

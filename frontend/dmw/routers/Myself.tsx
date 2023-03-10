@@ -44,6 +44,7 @@ const Home = () => {
         name="myself"
         options={{
           headerMode: "null",
+          title:null,
           headerTransparent: true
         }}
       ></Stack.Screen>
@@ -140,7 +141,7 @@ const Home = () => {
       {/* 合集详情 */}
       <Stack.Screen
         component={CollectionDetails}
-        name="collectionDetails"
+        name="CollectionDetails"
         options={{
           headerTransparent: true, // 会将页面与标题重叠
           title: "",

@@ -27,12 +27,13 @@ const Lmodal = (props) => {
     dmwWalletList,
     getWalletListFromAccountStorage,
     changeSecretKey,
+    cleanSecret
   } = useDmwWallet();
   const [vfModalVisible, setVfModalVisible] = useState(false);
   const [password, setPassword] = useState("");
   const [originPassword, setOriginPassword] = useState("");
   const [changePwdStep, setChangePwdStep] = useState(1);
-
+  const [resetWallet, setResetWallet] = useState(false)
   const close = () => {
     props.close();
   };
@@ -44,14 +45,31 @@ const Lmodal = (props) => {
       props.openModal();
     } else {
       // props.navigation.navigate("Exchange");
-      Toast("请先导入助记词或登录DMW！");
+      Toast(t("请先导入助记词或登录DMW"));
     }
   };
 
   const { disconnectWallet, connectWallet } = useDmwWeb3();
 
   useEffect(() => {
-    if (changePwdStep == 1 && Array.from(password).length == 6) {
+
+    if (resetWallet && Array.from(password).length == 6) {
+      getWalletListFromAccountStorage(password).then((res) => {
+        if (res) {
+
+          cleanSecret()
+
+          Toast(t("Reset Success"))
+        }else{
+          Toast(t("密码不一致"));
+        }
+      })
+      setResetWallet(false)
+      setPassword("");
+      setVfModalVisible(false)
+    }
+
+    if (!resetWallet&&changePwdStep == 1 && Array.from(password).length == 6) {
       getWalletListFromAccountStorage(password).then((res) => {
         if (res) {
           console.log(res.walletDict);
@@ -61,12 +79,13 @@ const Lmodal = (props) => {
           setVfModalVisible(true);
           setChangePwdStep(2);
         } else {
-          Toast(t("密码错误"));
+          Toast(t("密码不一致"));
         }
       });
+
     }
 
-    if (changePwdStep == 2 && Array.from(password).length == 6) {
+    if (!resetWallet&&changePwdStep == 2 && Array.from(password).length == 6) {
       originPassword &&
         changeSecretKey(originPassword, password).then((res) => {
           console.log("change pwd:", res);
@@ -84,6 +103,10 @@ const Lmodal = (props) => {
     }
     setPassword("");
   }, [password]);
+
+  // useEffect(() => {
+  //   !vfModalVisible && setResetWallet(false)
+  // }, [vfModalVisible])
 
   return (
     <View style={{ position: "absolute" }}>
@@ -132,7 +155,7 @@ const Lmodal = (props) => {
             </View>
           </TouchableWithoutFeedback>
 
-          <TouchableWithoutFeedback onPress={() => cilck("importWord")}>
+          {!dmwWalletList[0] && <TouchableWithoutFeedback onPress={() => cilck("importWord")}>
             <View style={styles.listBox}>
               <Image
                 style={styles.Limg}
@@ -140,7 +163,7 @@ const Lmodal = (props) => {
               ></Image>
               <Text>{t("导入助记词")}</Text>
             </View>
-          </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>}
 
           <TouchableWithoutFeedback
             onPress={() => {
@@ -170,7 +193,7 @@ const Lmodal = (props) => {
             </View>
           </TouchableWithoutFeedback>
 
-          <TouchableWithoutFeedback onPress={() => cilck("Privatekeyimport")}>
+          {!dmwWalletList[0] && <TouchableWithoutFeedback onPress={() => cilck("Privatekeyimport")}>
             <View style={styles.listBox}>
               <Image
                 style={styles.Limg}
@@ -178,7 +201,19 @@ const Lmodal = (props) => {
               ></Image>
               <Text>{t("从私钥导入钱包")}</Text>
             </View>
-          </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>}
+          {dmwWalletList[0] && <TouchableWithoutFeedback onPress={() => {
+            setResetWallet(true)
+            setVfModalVisible(true)
+          }}>
+            <View style={styles.listBox}>
+              <Image
+                style={styles.Limg}
+                source={require("../../assets/img/money/siyao.png")}
+              ></Image>
+              <Text>{t("Reset DMW Wallet")}</Text>
+            </View>
+          </TouchableWithoutFeedback>}
 
           {/* <TouchableWithoutFeedback onPress={() => cilck('TermsOfService')}>
             <View style={styles.listBox}>
@@ -233,7 +268,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontFamily: "Source Han Sans CN",
+
     fontWeight: "700",
     marginBottom: 20,
   },

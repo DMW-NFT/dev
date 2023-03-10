@@ -11,6 +11,7 @@ import {
   Button,
   Linking,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 
@@ -95,14 +96,21 @@ const BlockchainQuery = (props) => {
           <Text style={{ color: "#999999", fontSize: 10 }}>
             {t("支持藏品、账户相关区块链信息查询")}
           </Text>
-          <Text
-            style={styles.btn}
+          <TouchableOpacity style={styles.btn}
             onPress={() => {
               queryData();
-            }}
-          >
-            {t("查询")}
-          </Text>
+            }}>
+            <Text
+              style={{
+                color: "#fff",
+                lineHeight: 50,
+                textAlign: "center",
+              }}
+            >
+              {t("查询")}
+            </Text>
+          </TouchableOpacity>
+
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -115,10 +123,9 @@ const styles = StyleSheet.create({
   btn: {
     width: screenWidth - 40,
     backgroundColor: "#897EF8",
-    color: "#fff",
+
     height: 50,
-    lineHeight: 50,
-    textAlign: "center",
+
     // marginRight: 20,
     // marginLeft: 20,
     borderRadius: 50,
@@ -139,5 +146,6 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     marginBottom: 9,
+    height: 100
   },
 });

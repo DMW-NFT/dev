@@ -9,8 +9,15 @@ import { useDmwWallet } from "../DmwWallet/DmwWalletProvider";
 import { useDmwWeb3 } from "../DmwWeb3/DmwWeb3Provider";
 import { Wallet } from "ethers";
 const DmwApiProvider = ({ children }) => {
-  const { logOut, language, setlanguage, setWalletInUse,WalletInUse,isLogin } = useDmwLogin();
-  const { connected, currentWallet,globalError } = useDmwWeb3();
+  const {
+    logOut,
+    language,
+    setlanguage,
+    setWalletInUse,
+    WalletInUse,
+    isLogin,
+  } = useDmwLogin();
+  const { connected, currentWallet, globalError } = useDmwWeb3();
   const { dmwWalletList } = useDmwWallet();
 
   const { t, i18n } = useTranslation();
@@ -18,18 +25,30 @@ const DmwApiProvider = ({ children }) => {
 
   const [show, setShow] = useState(false);
   const [time, setTime] = useState(2000);
-  const [toastVal, setToastVal] = useState(t("温馨提示"));
+  const [toastVal, setToastVal] = useState(t("提示"));
   const [MoneyRouteState, setMoneyRouteState] = useState("createMoney");
-  const [gerrorTemp,setGErrorTmep] = useState(globalError)
+  const [gerrorTemp, setGErrorTmep] = useState(globalError);
+
+  const getTranslationJson = () => {
+    console.log("getting translation json");
+
+    get("/index/common/get_translate_json").then((res) => {
+      console.log("translation:", Object.keys(res.data));
+      Object.keys(res.data).map((key) => {
+        i18n.addResourceBundle(key,'translation', res.data[key]);
+      });
+    });
+  };
   useEffect(() => {
+    getTranslationJson();
     languageType();
     i18n.changeLanguage(language);
   }, [language]);
 
-  useEffect(()=>{
-    globalError!=gerrorTemp&&Toast(globalError[globalError.length-1])
-    setGErrorTmep(globalError)
-  },[globalError])
+  useEffect(() => {
+    globalError != gerrorTemp && Toast(globalError[globalError.length - 1]);
+    setGErrorTmep(globalError);
+  }, [globalError]);
 
   // 设置语言
   const setlanguageType = async (type) => {
@@ -50,7 +69,7 @@ const DmwApiProvider = ({ children }) => {
   const languageType = async () => {
     let str = await Getlanguage();
     console.log(str, "读取上次语言");
-    str&&setlanguage(str);
+    str && setlanguage(str);
   };
 
   // 地址切割
@@ -81,6 +100,7 @@ const DmwApiProvider = ({ children }) => {
   const post = async (url, data) => {
     // console.log(language,'yuya');
     let token = await GetStorage();
+    console.log(BaseUrl+url)
     return fetch(BaseUrl + url, {
       method: "POST",
       body: data,
@@ -91,7 +111,7 @@ const DmwApiProvider = ({ children }) => {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log(res)
+        console.log(res);
         if (res.code == 204) {
           setTimeout(() => {
             Toast(t("登录失效，请重新登录"));
@@ -192,23 +212,24 @@ const DmwApiProvider = ({ children }) => {
       if (dmwWalletList[0]) {
         wallet_address = dmwWalletList[0];
       } else {
-        Toast("请先创建DMW钱包");
+        Toast(t("请先创建DMW钱包"));
         return;
       }
     } else {
       wallet_address = currentWallet;
     }
+
     let str = JSON.stringify({ wallet_address: wallet_address });
     let data = formData({ iv: iv, param: str });
     post("/index/login/login_by_wallet", data)
       .then((res) => {
         console.log(res, wallet_address, "qianbao denglu");
         if (res.code == 200) {
-          Toast(t("登录成功"));
+          // Toast(t("切换成功"));
         }
       })
       .catch((err) => {
-        Toast(err.message);
+        Toast(t(err.message));
       });
   };
 
@@ -217,20 +238,24 @@ const DmwApiProvider = ({ children }) => {
   }, []);
 
   //自动登录钱包
-  useEffect(()=>{
-    if(currentWallet&&!dmwWalletList[0]){
-      Switchwallet(2)
+  useEffect(() => {
+    if (currentWallet && !dmwWalletList[0]) {
+      Switchwallet(2);
     }
 
-    if (!currentWallet&&dmwWalletList[0]){
-      Switchwallet(1)
+    if (!currentWallet && dmwWalletList[0]) {
+      Switchwallet(1);
     }
 
-    if (currentWallet&&dmwWalletList[0]){
-      Switchwallet(1)
+    if (currentWallet && dmwWalletList[0]) {
+      Switchwallet(1);
     }
 
-  },[currentWallet,dmwWalletList,connected,isLogin])
+    if (!currentWallet&&!dmwWalletList[0]){
+      Switchwallet(0)
+    }
+
+  }, [currentWallet, dmwWalletList, connected, isLogin]);
 
   return (
     <DmwApiContext.Provider

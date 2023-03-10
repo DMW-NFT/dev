@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import DmwWeb3Context from "./DmwWeb3context";
 import Web3 from "web3";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
-import getProvider from "../../frontend/constans/rpcProvider";
+import getLocalProvider from "../../frontend/constans/rpcProvider";
 import NFT1155ABI from "../../frontend/contract/NFT1155.json";
 import NFT721ABI from "../../frontend/contract/NFT721.json";
 import chainIdMap from "../constans/chainIdMap.json";
@@ -60,6 +60,11 @@ const DmwWeb3Provider = ({ children }) => {
       });
     });
   };
+
+  const getProvider=(chainId)=>{
+    const providerUrl = dmwConfig?dmwConfig[chainId].providerUri:getLocalProvider(chainId);
+    return providerUrl
+  }
 
   const getRoyaltyFee = async (contractAddress: string, tokenId: number) => {
     web3.eth.setProvider(getProvider(currentChainId));

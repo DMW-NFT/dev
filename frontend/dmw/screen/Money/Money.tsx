@@ -11,6 +11,7 @@ import {
   TextInput,
   FlatList,
   Animated,
+  TouchableOpacity,
 } from "react-native";
 import React, {
   useContext,
@@ -105,7 +106,7 @@ const Money = (props) => {
       })
       .catch((err) => {
         // console.log("err",err)
-        Toast(err.message);
+        Toast(t(err.message));
         // setTxHistory([])
       });
   };
@@ -136,7 +137,7 @@ const Money = (props) => {
       if (dmwWalletList[0]) {
         wallet_address = dmwWalletList[0];
       } else {
-        Toast("请先创建DMW钱包");
+        Toast(t("请先创建DMW钱包"));
         return;
       }
     } else {
@@ -148,11 +149,11 @@ const Money = (props) => {
       .then((res) => {
         console.log(res, wallet_address, "qianbao denglu");
         if (res.code == 200) {
-          Toast(t("登录成功"));
+          // Toast(t("切换成功"));
         }
       })
       .catch((err) => {
-        Toast(err.message);
+        Toast(t(err.message));
       });
   };
 
@@ -190,7 +191,7 @@ const Money = (props) => {
       })
       .catch((err) => {
         // console.log("err",err)
-        Toast(err.message);
+        Toast(t(err.message));
         // setTxHistory([])
       });
   };
@@ -287,8 +288,8 @@ const Money = (props) => {
             placement={"bottom"}
             onBackdropPress={() => setChainMenuVisible(false)}
           >
-            {dmwConfig&&dmwConfig ? (
-               Object.entries(dmwConfig).map(([key, value]) => (
+            {dmwConfig && dmwConfig ? (
+              Object.entries(dmwConfig).map(([key, value]) => (
                 <MenuItem
                   onPress={() => {
                     setSelectedChain(value.name.toLowerCase())
@@ -341,7 +342,8 @@ const Money = (props) => {
             {dmwWalletList && dmwWalletList[0] ? (
               <View style={styles.USDT}>
                 {WalletInUse == 1 ? (
-                  <Text style={styles.active}>{t("当前登录")}</Text>
+                  <View style={styles.active}><Text style={{ color: "white" }}>{t("当前登录")}</Text></View>
+
                 ) : (
                   <TouchableWithoutFeedback onPress={() => Switchwallet(1)}>
                     <Image
@@ -529,134 +531,134 @@ const Money = (props) => {
         </View>
 
         {/* tab栏 -- start */}
-        <View style={[styles.daohang]}>
-          <Text
-            style={[
-              contenType == "token"
-                ? styles.daonghang_text_ative
-                : styles.daonghang_text,
-            ]}
-            onPress={() => setContenType("token")}
-          >
-            {t("代币")}
-          </Text>
-          <Text
-            style={[
-              contenType == "nft"
-                ? styles.daonghang_text_ative
-                : styles.daonghang_text,
+        <View style={[styles.tab_container]}>
+          <TouchableOpacity style={[styles.tab,
+          contenType == "token" && styles.tab_active
+          ]}
+            onPress={() => setContenType("token")}>
+            <Text style={contenType == "token"&&styles.tapTextActive}>
+              {t("代币")}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.tab,
+            contenType == "nft" && styles.tab_active
             ]}
             onPress={() => setContenType("nft")}
           >
-            Tx {t("记录") + ""}
-          </Text>
+            <Text style = {contenType == "nft" &&styles.tapTextActive}>
+              {t("Tx 记录") + ""}
+            </Text>
+          </TouchableOpacity>
+
         </View>
         {/* tab栏 -- end */}
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={{ maxHeight: screenHeight * 0.5, minHeight: "100%" }}
+          style={{ maxHeight: screenHeight * 0.5, minHeight: "100%", marginBottom: 50 }}
           nestedScrollEnabled={true}
         >
           <View style={[styles.listbox]}>
             {contenType == "token"
               ? erc20Balance[0] &&
-                erc20Balance.map((item, index) => (
-                  <View style={styles.ListLi}>
-                    <Image
-                      style={{ width: 40, height: 40 }}
-                      source={require("../../assets/img/money/list4.png")}
-                    ></Image>
-                    <View style={styles.ListLeftText}>
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: "700",
-                          lineHeight: 40,
-                        }}
-                      >
-                        {Number(item.balance) / 10 ** item.decimals +
-                          " " +
-                          item.symbol}
-                      </Text>
-                      {/* <Text style={{ fontSize: 12 }}>$10.000</Text> */}
-                    </View>
+              erc20Balance.map((item, index) => (
+                <View style={styles.ListLi}>
+                  <Image
+                    style={{ width: 40, height: 40 }}
+                    source={require("../../assets/img/money/list4.png")}
+                  ></Image>
+                  <View style={styles.ListLeftText}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "700",
+                        lineHeight: 40,
+                      }}
+                    >
+                      {Number(item.balance) / 10 ** item.decimals +
+                        " " +
+                        item.symbol}
+                    </Text>
+                    {/* <Text style={{ fontSize: 12 }}>$10.000</Text> */}
                   </View>
-                ))
+                </View>
+              ))
               : txHistory &&
-                txHistory[0] &&
-                txHistory.map((item) => (
-                  <TouchableWithoutFeedback
-                    onPress={() => {
-                      props.navigation.navigate("TransactionDetail", {
-                        detail: item,
-                        token: chainIdMap[currentChainId].nativeToken,
-                      });
+              txHistory[0] &&
+              txHistory.map((item) => (
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    props.navigation.navigate("TransactionDetail", {
+                      detail: item,
+                      token: chainIdMap[currentChainId].nativeToken,
+                    });
+                  }}
+                >
+                  <SafeAreaView
+                    style={{
+                      marginBottom: 10,
+                      justifyContent: "space-around",
+                      borderColor: "#cfcde18c",
+                      borderWidth: 1,
+                      borderRadius: 15,
+                      // alignContent:"center",
+                      // height:50
                     }}
                   >
-                    <SafeAreaView
+                    <View
                       style={{
-                        marginBottom: 10,
-                        justifyContent: "space-around",
-                        borderColor: "#cfcde18c",
-                        borderWidth: 1,
-                        borderRadius: 15,
-                        // alignContent:"center",
-                        // height:50
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        // backgroundColor: "pink",
                       }}
                     >
                       <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <Icon
+                          reverse
+                          name="retweet"
+                          type="antdesign"
+                          color="#8a7ef6"
+                          size={15}
+                        />
+                        <View style={{ flexDirection: "column" }}>
+                          <Text>
+                            {item.hash.slice(0, 7)}...{item.hash.slice(-7)}
+                          </Text>
+                          <Text style={{ fontSize: 10, color: "gray" }}>
+                            {item.block_timestamp
+                              .replace("T", " ")
+                              .replace(".000Z", "")}
+                          </Text>
+                        </View>
+                      </View>
+
+                      <Text
                         style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          // backgroundColor: "pink",
+                          paddingEnd: 20,
+                          color:
+                            item.to_address ==
+                              (WalletInUse == 1
+                                ? dmwWalletList[0].toLowerCase()
+                                : currentWallet.toLowerCase())
+                              ? "gray"
+                              : "#4ccb79",
                         }}
                       >
-                        <View
-                          style={{ flexDirection: "row", alignItems: "center" }}
-                        >
-                          <Icon
-                            reverse
-                            name="retweet"
-                            type="antdesign"
-                            color="#8a7ef6"
-                            size={15}
-                          />
-                          <View style={{ flexDirection: "column" }}>
-                            <Text>
-                              {item.hash.slice(0, 7)}...{item.hash.slice(-7)}
-                            </Text>
-                            <Text style={{ fontSize: 10, color: "gray" }}>
-                              {item.block_timestamp
-                                .replace("T", " ")
-                                .replace(".000Z", "")}
-                            </Text>
-                          </View>
-                        </View>
-
-                        <Text
-                          style={{
-                            paddingEnd: 20,
-                            color:
-                              item.to_address ==
-                              (WalletInUse == 1
-                                ? dmwWalletList[0]
-                                : currentWallet)
-                                ? "gray"
-                                : "#4ccb79",
-                          }}
-                        >
-                          {item.to_address ==
-                          (WalletInUse == 1 ? dmwWalletList[0] : currentWallet)
-                            ? "+"
-                            : "-"}
-                          {Web3.utils.fromWei(item.value, "ether")}{" "}
-                          {chainIdMap[currentChainId].nativeToken}
-                        </Text>
-                      </View>
-                    </SafeAreaView>
-                  </TouchableWithoutFeedback>
-                ))}
+                        {item.to_address ==
+                          (WalletInUse == 1 ? dmwWalletList[0].toLowerCase() : currentWallet.toLowerCase())
+                          ? "+"
+                          : "-"}
+                        {Web3.utils.fromWei(item.value, "ether")}{" "}
+                        {chainIdMap[currentChainId].nativeToken}
+                      </Text>
+                    </View>
+                  </SafeAreaView>
+                </TouchableWithoutFeedback>
+              ))}
           </View>
         </ScrollView>
       </ScrollView>
@@ -675,7 +677,7 @@ const Money = (props) => {
               maxLength={6}
               caretHidden={true}
               secureTextEntry={true}
-              onKeyPress={() => {}}
+              onKeyPress={() => { }}
               placeholder="123456"
               keyboardType="number-pad"
               style={{ position: "absolute", zIndex: 1, top: -40 }}
@@ -715,7 +717,7 @@ const Money = (props) => {
                   marginBottom: 30,
                 }}
               >
-                请输入支付密码
+                {t("请输入支付密码")}
               </Text>
               <View
                 style={{
@@ -891,7 +893,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "700",
     color: "#FFFFFF",
-    fontFamily: "Source Han Sans CN",
+
     lineHeight: 24,
   },
   CurrencyName: {
@@ -925,37 +927,29 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
   },
-  listbox: {
-    marginVertical: 20,
-    marginHorizontal: 20,
-  },
-  daohang: {
+  tab_container: {
     flexDirection: "row",
     justifyContent: "space-between",
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
-  daonghang_text: {
-    fontSize: 16,
-    fontWeight: "700",
-    fontFamily: "Source Han Sans CN",
+  tab: {
     height: 56,
-    lineHeight: 56,
-    flex: 1,
-    color: "#666666",
-    textAlign: "center",
+    width: "50%",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 1,
   },
-  daonghang_text_ative: {
-    fontSize: 16,
-    fontWeight: "700",
-    fontFamily: "Source Han Sans CN",
-    height: 56,
-    lineHeight: 56,
-    flex: 1,
-    textAlign: "center",
+  tab_active: {
+
     borderBottomColor: "#897EF8",
     borderBottomWidth: 3,
+
+  },
+  tapTextActive: {
+    fontSize: 16,
+    fontWeight: "700",
+    textAlign: "center",
     color: "#897EF8",
-    borderRadius: 1,
   },
 });

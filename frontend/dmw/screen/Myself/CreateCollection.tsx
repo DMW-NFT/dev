@@ -11,6 +11,7 @@ import {
   TextInput,
   Button,
   ScrollView,
+  TouchableOpacity
 } from "react-native";
 import { useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
@@ -27,7 +28,7 @@ import Web3 from "web3";
 import chainIdmap from "../../../constans/chainIdMap.json";
 import VerfiySecretModal from "../../Components/VerfiySecretModal";
 import TxProccessingModal from "../../Components/TxProccessingModal";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 
 const screenWidth = Dimensions.get("window").width;
 const scale = Dimensions.get("window").scale;
@@ -91,7 +92,7 @@ const TransferredIntoCollection = (props) => {
   }
   const handleBlur = () => {
     setTimeout(() => {
-      scrollViewRef.current?.scrollTo({x: scrollX, y: scrollY + screenHeight/4});
+      scrollViewRef.current?.scrollTo({ x: scrollX, y: scrollY + screenHeight / 4 });
     }, 0);
   }
 
@@ -125,14 +126,14 @@ const TransferredIntoCollection = (props) => {
       !nativeBalance ||
       nativeBalance == 0 ||
       nativeBalance <
-        Number(
-          Web3.utils.fromWei(
-            String(
-              Number(GasMap["mintWithSignature"]) * Number(currentGasPrice)
-            ),
-            "ether"
-          )
+      Number(
+        Web3.utils.fromWei(
+          String(
+            Number(GasMap["mintWithSignature"]) * Number(currentGasPrice)
+          ),
+          "ether"
         )
+      )
     ) {
       Toast(t("余额不足"));
       return null;
@@ -168,7 +169,7 @@ const TransferredIntoCollection = (props) => {
               mintTo: WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
               mintAmount: mintAmount,
               network: chainIdmap[currentChainId].network.toLowerCase(),
-                  royaltyBps:Number(royaltyBps)*100,
+              royaltyBps: Number(royaltyBps) * 100,
               royaltyRecipient: royaltyRecipient
             }),
             headers: {
@@ -184,7 +185,7 @@ const TransferredIntoCollection = (props) => {
                 mintNftWithSignature(
                   resp.result.SignedPayload[0],
                   resp.result.SignedPayload[
-                    resp.result.SignedPayload.length - 1
+                  resp.result.SignedPayload.length - 1
                   ]
                 );
                 setTxModalVisible(true);
@@ -319,7 +320,7 @@ const TransferredIntoCollection = (props) => {
 
   const royaltyBpsInput = (
     <View style={styles.lis}>
-      <Text style={styles.text}>{t("版权费(%)")}</Text>
+      <Text style={styles.text}>{t("版权费")}(%)</Text>
       <TextInput
         maxLength={18}
         placeholder={t("请输入版权费")}
@@ -341,10 +342,10 @@ const TransferredIntoCollection = (props) => {
   );
   const royaltyRecipientInput = (
     <View style={styles.lis}>
-      <View style={{flexDirection:"row",justifyContent:"space-between"}}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <Text style={styles.text}>{t("版权费接收地址")}</Text>
-        <TouchableOpacity onPress={()=>{setRoyaltyRecipient(WalletInUse?currentDmwWallet:currentWallet)}}>
-          <Text style={{backgroundColor:"#897EF8",textAlign:"center",alignSelf:"center",paddingHorizontal:10,paddingVertical:5,borderRadius:15,marginBottom:5,color:"white"}}>
+        <TouchableOpacity style={{ backgroundColor: "#897EF8", textAlign: "center", alignSelf: "center", paddingHorizontal: 10, paddingVertical: 5, borderRadius: 15, marginBottom: 5, color: "white" }} onPress={() => { setRoyaltyRecipient(WalletInUse ? currentDmwWallet : currentWallet) }}>
+          <Text style={{ color: "white" }}>
             {t("当前钱包")}
           </Text>
         </TouchableOpacity>
@@ -413,7 +414,7 @@ const TransferredIntoCollection = (props) => {
                 .fromWei(
                   String(
                     Number(GasMap["mintWithSignature"]) *
-                      Number(currentGasPrice)
+                    Number(currentGasPrice)
                   ),
                   "ether"
                 )
@@ -488,34 +489,34 @@ const TransferredIntoCollection = (props) => {
         >
           {listType && listType.length
             ? listType.map((item, index) => (
-                <Text
-                  onPress={() => {
-                    setactiveType({
-                      id: item.id,
-                      name: item.name,
-                      logo: item.logo_url,
-                    });
-                    console.log({
-                      id: item.id,
-                      name: item.name,
-                      logo: item.logo_url,
-                    });
-                    setisShowType(false);
-                  }}
-                  style={{
-                    color: activeType.id == item.id ? "blue" : "#333",
-                    paddingTop: 10,
-                    paddingBottom: 10,
-                    backgroundColor:
-                      activeType.id == item.id
-                        ? "rgba(40, 120, 255,0.1)"
-                        : "#fff",
-                    paddingLeft: 20,
-                  }}
-                >
-                  {item.name}
-                </Text>
-              ))
+              <Text
+                onPress={() => {
+                  setactiveType({
+                    id: item.id,
+                    name: item.name,
+                    logo: item.logo_url,
+                  });
+                  console.log({
+                    id: item.id,
+                    name: item.name,
+                    logo: item.logo_url,
+                  });
+                  setisShowType(false);
+                }}
+                style={{
+                  color: activeType.id == item.id ? "blue" : "#333",
+                  paddingTop: 10,
+                  paddingBottom: 10,
+                  backgroundColor:
+                    activeType.id == item.id
+                      ? "rgba(40, 120, 255,0.1)"
+                      : "#fff",
+                  paddingLeft: 20,
+                }}
+              >
+                {item.name}
+              </Text>
+            ))
             : null}
         </View>
       ) : null}
@@ -523,11 +524,24 @@ const TransferredIntoCollection = (props) => {
   );
 
   const payToMint = !uploadLoading ? (
-    <Text onPress={() => confirmToMint()} style={styles.btn}>
-      {t("创建并支付")}
-    </Text>
+    <TouchableOpacity onPress={() => confirmToMint()} style={styles.btn}>
+      <Text style={{
+        color: "#fff",
+        lineHeight: 50,
+        textAlign: "center",
+        fontSize:18
+      }} >
+        {t("创建并支付")}
+      </Text>
+    </TouchableOpacity>
+
   ) : (
-    <Text style={styles.btn}>{t("上传中")}...</Text>
+    <Text style={[styles.btn,{
+      color: "#fff",
+      lineHeight: 50,
+      textAlign: "center",
+      fontSize:18
+    }]}>{t("上传中")}...</Text>
   );
 
   useEffect(() => {
@@ -551,13 +565,13 @@ const TransferredIntoCollection = (props) => {
       .then((res) => {
         console.log(res, "cvnsnjcn");
         if (res.code == 200) {
-          Toast(t("创建成功！"));
+          Toast(t("创建成功"));
         } else {
-          Toast(res.message);
+          Toast(t(res.message));
         }
       })
       .catch((err) => {
-        Toast(err.message);
+        Toast(t(err.message));
       });
   }, [txHash]);
 
@@ -644,7 +658,7 @@ const TransferredIntoCollection = (props) => {
                   mintTo: WalletInUse == 1 ? dmwWalletList[0] : currentWallet,
                   mintAmount: mintAmount,
                   network: chainIdmap[currentChainId].network.toLowerCase(),
-                  royaltyBps:Number(royaltyBps)*100,
+                  royaltyBps: Number(royaltyBps) * 100,
                   royaltyRecipient: royaltyRecipient
                 }),
                 headers: {
@@ -661,7 +675,7 @@ const TransferredIntoCollection = (props) => {
                       walletRes.walletDict[currentDmwWallet].privateKey,
                       resp.result.SignedPayload[0],
                       resp.result.SignedPayload[
-                        resp.result.SignedPayload.length - 1
+                      resp.result.SignedPayload.length - 1
                       ]
                     );
                     setTxModalVisible(true);
@@ -704,7 +718,9 @@ const TransferredIntoCollection = (props) => {
 
   return (
     <SafeAreaView
-      style={{
+
+    >
+      <View style={{
         // paddingTop: 20,
         paddingLeft: 20,
         paddingRight: 20,
@@ -712,49 +728,50 @@ const TransferredIntoCollection = (props) => {
         // height: Dimensions.get("window").height,
         // paddingBottom: 300,
         backgroundColor: "#fff",
-      }}
-    >
-      {screenloading ? (
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Spinner />
-          <Text style={{ marginTop: 10 }}>{t("正在上链中")}...</Text>
-        </View>
-      ) : (
-        <>
-          <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}  onScroll={handleScroll}>
-            {nftImageUpload}
+      }}>
+        {screenloading ? (
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Spinner />
+            <Text style={{ marginTop: 10 }}>{t("正在上链中")}...</Text>
+          </View>
+        ) : (
+          <>
+            <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false} onScroll={handleScroll}>
+              {nftImageUpload}
 
-            <Text style={{ fontSize: 10, color: "#999999", marginBottom: 27 }}>
-              {t("支持的文件类型：")}JPG、SVG、PNG
-            </Text>
-
-            {nftNameInput}
-
-            {nftDescriptionInput}
-            {mintAmountInput}
-            {royaltyBpsInput}
-            {royaltyRecipientInput}
-            {selectCollection}
-
-            <View style={[styles.lis, { marginBottom: 20 }]}>
-              <Text style={{ fontSize: 16, marginBottom: 17 }}>
-                {t("区块链")}:{chainIdmap[currentChainId].network}
+              <Text style={{ fontSize: 10, color: "#999999", marginBottom: 27 }}>
+                {t("支持的文件类型")}：JPG、SVG、PNG
               </Text>
-            </View>
 
-            {costAndBalance}
+              {nftNameInput}
 
-            {payToMint}
-          </ScrollView>
-        </>
-      )}
+              {nftDescriptionInput}
+              {mintAmountInput}
+              {royaltyBpsInput}
+              {royaltyRecipientInput}
+              {selectCollection}
+
+              <View style={[styles.lis, { marginBottom: 20 }]}>
+                <Text style={{ fontSize: 16, marginBottom: 17 }}>
+                  {t("区块链")}:{chainIdmap[currentChainId].network}
+                </Text>
+              </View>
+
+              {costAndBalance}
+
+              {payToMint}
+            </ScrollView>
+          </>
+        )}
+      </View>
+
 
       {vfModalVisible && (
         <VerfiySecretModal
@@ -828,13 +845,13 @@ const styles = StyleSheet.create({
   btn: {
     width: screenWidth - 40,
     backgroundColor: "#897EF8",
-    color: "#fff",
-    // height: 50,
-    lineHeight: 50,
-    textAlign: "center",
+
+    height: 50,
+
     // marginRight: 20,
     // marginLeft: 20,
     borderRadius: 50,
+    marginBottom: 20
     // position: "absolute",
     // bottom: 138,
   },

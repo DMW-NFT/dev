@@ -141,7 +141,7 @@ const Myself = (props) => {
           res.data.page && setCurrentPage(res.data.page + 1);
           res.data.current_page && setCurrentPage(res.data.current_page + 1);
         } else {
-          Toast(res.message);
+          Toast(t(res.message));
           setLoding(false);
         }
       })
@@ -325,9 +325,9 @@ const Myself = (props) => {
   );
 
   return (
-    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
+    <SafeAreaView style={{flex: 1 ,backgroundColor: "#fff" }}>
       <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
-        <View style={{ backgroundColor: "#fff" }}>
+        <View style={{ }}>
           <View style={styles.index_box}>
             {/* title -- start*/}
             <View
@@ -393,7 +393,7 @@ const Myself = (props) => {
           </View>
 
           {/* tab栏 -- start */}
-          <View style={[styles.index_box, { paddingLeft: 40 }]}>
+          <View style={[]}>
             <Tabcolumn
               typename={typename}
               paging={(typename) => {
@@ -423,7 +423,9 @@ const Myself = (props) => {
               paddingLeft: 20,
               paddingTop: 20,
               // marginBottom:100,
-              zIndex: 1,
+              // zIndex: 1,
+              // backgroundColor:"pink",
+              minHeight:"50%"
             }}
           >
             {/*  navigatetoDetail={(id, unique_id, contract_address, token_id, network)
@@ -437,7 +439,7 @@ const Myself = (props) => {
       {visible ? (
         <Screen
           title="select filter"
-          style={[styles.Screen]}
+          // style={[styles.Screen]}
           visible={visible}
           close={() => close()}
           datalist={screenData}
@@ -470,6 +472,7 @@ const styles = StyleSheet.create({
     width: screenWidth,
     position: "absolute",
     zIndex: 100,
+
   },
   index_box: {
     paddingLeft: 20,
@@ -481,7 +484,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     lineHeight: 52,
     fontWeight: "700",
-    fontFamily: "",
+
     display: "flex",
     justifyContent: "space-around",
     includeFontPadding: false,
@@ -508,7 +511,7 @@ const styles = StyleSheet.create({
   },
   nickname: {
     fontSize: 32 / 2,
-    fontFamily: "Source Han Sans CN",
+    
     fontWeight: "700",
     lineHeight: 24,
     color: "#333333",
@@ -520,7 +523,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#999999",
     fontSize: 12,
-    fontFamily: "Source Han Sans CN",
+    
     textAlign: "center",
   },
   TextInput_s: {

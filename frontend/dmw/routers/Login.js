@@ -11,7 +11,8 @@ export default class Home extends Component {
             component={loginHome} 
             name='loginHome'
             options={{  
-              headerMode:'none'
+              headerMode:'none',
+              title:null
             }}
           >  
          </Stack.Screen>
