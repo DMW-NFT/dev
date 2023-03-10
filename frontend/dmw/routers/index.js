@@ -54,6 +54,11 @@ const router = [
         title: null, //头部展示标题
         component: require("../login/Text/enyh.tsx").default,
     },
+    {
+        name: "WebViewModal", //跳转路径
+        title: null, //头部展示标题
+        component: require("../screen/Other/WebViewModal.tsx").default,
+    },
    
 ]
 export default router

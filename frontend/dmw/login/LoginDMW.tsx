@@ -350,13 +350,10 @@ const LoginDMW = (props) => {
                 <Text
                   style={[styles.text]}
                   onPress={() => {
-                    props.navigation.navigate(
-                      language == "en"
-                        ? "yhen"
-                        : language == "zh"
-                          ? "yhzh"
-                          : "yhjp"
-                    );
+                    props.navigation.navigate("WebViewModal", {
+                      type: "userAgreement",
+                      language: language,
+                    });
                   }}
                 >
                   {t("《用户协议》")}
@@ -365,13 +362,10 @@ const LoginDMW = (props) => {
                 <Text
                   style={[styles.text]}
                   onPress={() => {
-                    props.navigation.navigate(
-                      language == "en"
-                        ? "stren"
-                        : language == "zh"
-                          ? "str"
-                          : "strjp"
-                    );
+                    props.navigation.navigate("WebViewModal", {
+                      type: "privacyPolicy",
+                      language: language,
+                    });
                   }}
                 >
                   {t("《隐私政策》")}
@@ -386,7 +380,10 @@ const LoginDMW = (props) => {
                 <Text
                   style={[styles.text]}
                   onPress={() => {
-                    props.navigation.navigate("yhjp");
+                    props.navigation.navigate("WebViewModal", {
+                      type: "userAgreement",
+                      language: language,
+                    });
                   }}
                 >
                   {"\n(" + t("《用户协议》") + " "}
@@ -394,7 +391,10 @@ const LoginDMW = (props) => {
                 <Text
                   style={[styles.text]}
                   onPress={() => {
-                    props.navigation.navigate("strjp");
+                    props.navigation.navigate("WebViewModal", {
+                      type: "privacyPolicy",
+                      language: language,
+                    });
                   }}
                 >
                   {t("《隐私政策》") + ")"}
