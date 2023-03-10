@@ -99,7 +99,7 @@
   "报价详情": "Offer details",
   "取消报价": "Cancel the offer",
   "价格/NFT": "Price/NFT",
-
+  "Tx 记录": "Transaction history",
   "已批准额度": "Approved allowance",
   "仍需批准额度": "Unapproved allowance",
   "批准额度": "Approve allowance",
@@ -368,5 +368,9 @@
   "总价": "Total price",
   "助记词解析错误，请重新尝试": "Mnemonic analysis error, please try again",
   "剩余数量不足": "Insufficient remaining quantity",
-  "连接钱包": "Connect Wallet"
+  "连接钱包": "Connect Wallet",
+  "删除账户": "Delete Account",
+  "账号一旦删除将不可恢复，账号内容的数据也将无法找回!": "Once the account is deleted, it cannot be recovered, and the data in the account will also be irretrievable!",
+  "警告": "Warning",
+  "账户已永久删除": "Account has been permanently deleted"
 }

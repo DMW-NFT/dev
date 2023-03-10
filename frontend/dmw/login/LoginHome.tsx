@@ -33,13 +33,13 @@ const LoginHome = (props) => {
   const [SelectedObj, setSelectedObj] = useState(
     language == "en"
       ? {
-          name: "English",
-          id: "en",
-          url: require("../assets/img/login/en.png"),
-        }
+        name: "English",
+        id: "en",
+        url: require("../assets/img/login/en.png"),
+      }
       : language == "zh"
-      ? { name: "中文", id: "zh", url: require("../assets/img/login/zh.png") }
-      : {
+        ? { name: "中文", id: "zh", url: require("../assets/img/login/zh.png") }
+        : {
           name: "日本語",
           id: "jp",
           url: require("../assets/img/login/Japaneseflag.jpeg"),
@@ -74,7 +74,7 @@ const LoginHome = (props) => {
 
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
-      <ScrollView style={{height:screenHeight}}>
+      <ScrollView style={{ height: screenHeight }}>
         <View style={[styles.container]}>
           <View
             style={{
@@ -209,10 +209,12 @@ const LoginHome = (props) => {
                 {t("邮箱号登录")}
               </Text>
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => register()}>
+              <Text style={[styles.regiset]}>
+                {t("注册")}
+              </Text>
+            </TouchableOpacity>
 
-            <Text onPress={() => register()} style={[styles.regiset]}>
-              {t("注册")}
-            </Text>
           </View>
         </View>
       </ScrollView>

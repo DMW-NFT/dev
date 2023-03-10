@@ -323,7 +323,6 @@ const Home = (props) => {
                 <TouchableOpacity onPress={() => paging("Blind")}>
                   <Text
                     style={[styles.tab_text, typename == "Blind" && styles.tab_text_ative]}
-                    onPress={() => paging("Blind")}
                   >
                     Blind box
                   </Text>
@@ -356,7 +355,7 @@ const Home = (props) => {
               ListEmptyComponent={() => {
                 return (
                   <Text style={{ textAlign: "center", flex: 1 }}>
-                    {t("空空如也")}
+                    {/* {t("空空如也")} */}
                   </Text>
                 );
                 // 列表为空展示改组件
@@ -400,7 +399,7 @@ const Home = (props) => {
                       marginBottom: 20,
                     }}
                   >
-                    {t("没有更多了")}
+                    {/* {t("没有更多了")} */}
                   </Text>
                 ) : null;
               }}
