@@ -155,5 +155,6 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": "eslint --fix --ext '.ts,.tsx,.js,.jsx' -c .eslintrc.json"
-  }
+  },
+  "releaseVersion":"ios-appleStore" 
 }

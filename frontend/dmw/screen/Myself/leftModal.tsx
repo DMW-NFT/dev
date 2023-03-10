@@ -18,7 +18,7 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const Lmodal = (props) => {
-  const {logOut} = useDmwLogin()
+  const {logOut,tradeControl} = useDmwLogin()
   const { t, i18n } = useTranslation();
   const close = () => {
     props.close();
@@ -50,8 +50,8 @@ const Lmodal = (props) => {
 
       {visible ? (
         <SafeAreaView style={styles.Lm_box}>
-          <Text style={styles.title}>{t("常用功能")}</Text>
-          <View
+          {tradeControl&&<Text style={styles.title}>{t("常用功能")}</Text>}
+          {tradeControl&&<View
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
@@ -110,7 +110,7 @@ const Lmodal = (props) => {
                 </View>
               }
             </TouchableWithoutFeedback>
-          </View>
+          </View>}
           <Text style={styles.title}>{t("更多功能")}</Text>
           <View>
             {/* <TouchableWithoutFeedback

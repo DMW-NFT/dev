@@ -12,12 +12,35 @@ import {
 import { Switch } from "react-native-paper";
 import { useTranslation } from "react-i18next";
 import { useDmwLogin } from "../../../loginProvider/constans/DmwLoginProvider";
-
+import { DmwApiProvider, useDmwApi } from "../../../DmwApiProvider/DmwApiProvider";
+import CheckDialog from "../Other/CheckDialog"
 
 const SetUp = (props) => {
   const { t, i18n } = useTranslation();
-  const { language } = useDmwLogin();
+  const { language ,logOut} = useDmwLogin();
   const [Switchshow, setSwitchshow] = useState(false);
+  const {post,Toast,} = useDmwApi()
+  const [checkDialogVisible,setCheckDialogVisible] = useState(false)
+  const [deleteAccountConfirmed,setDeleteAccountConfirmed] = useState(false)
+  const [dialog,setDialog] = useState({title:"",content:""})
+  const deleteAccount =()=>{
+    post("/index/user/write_off",).then((res) => {
+      console.log(res, "delete account");
+      if (res.code == 200) {
+        Toast(res.message);
+        logOut()
+      }
+    })
+    .catch((err) => {
+      Toast(t(err.message));
+    });
+  }
+  useEffect(()=>{
+    if(deleteAccountConfirmed){
+      deleteAccount()
+      setDeleteAccountConfirmed(false)
+    }
+  },[deleteAccountConfirmed])
 
   return (
     <ScrollView>
@@ -34,6 +57,18 @@ const SetUp = (props) => {
           >
             <View style={[styles.list, { marginBottom: 31 }]}>
               <Text style={styles.textname}>{t("修改个人信息")}</Text>
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                color="#707070"
+                size={16}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={()=>{
+            setDialog({title:t("警告"),content:t("账号一旦删除将不可恢复，账号内容的数据也将无法找回!")})
+            setCheckDialogVisible(true)}}>
+            <View style={[styles.list, { marginBottom: 31 }]}>
+              <Text style={styles.textname}>{t("删除账户")}</Text>
               <FontAwesomeIcon
                 icon={faChevronRight}
                 color="#707070"
@@ -160,6 +195,7 @@ const SetUp = (props) => {
           </TouchableWithoutFeedback>
         </View>
       </SafeAreaView>
+      {checkDialogVisible&&<CheckDialog visible={checkDialogVisible} setVisible={setCheckDialogVisible} title={dialog.title} content={dialog.content} setConfirmed={setDeleteAccountConfirmed}/>}
     </ScrollView>
   );
 };
