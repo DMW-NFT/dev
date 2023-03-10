@@ -46,13 +46,13 @@ const UserAgreement_JP =  `<p class="MsoNormal" align="center" style="text-align
 サービス内容及び仕様
 </h2>
 <p class="MsoListParagraph" style="margin-left:21.0pt;text-indent:-21.0pt;">
-  1)&nbsp;&nbsp; 利用者がコレクションを購入する価格は、実際の取引画面（お客様の側）に表示される価格で実行されます。DMWにて指定された方法（Wechatのほか、今後DMWが指定する支払方法も含む）でお支払ってください。法的な返金義務がある場合を除き、DMWは払い戻しを受けられません。
+  1)&nbsp;&nbsp; 利用者がコレクションを購入する価格は、実際の取引画面（お客様の側）に表示される価格で実行されます。DMWにて指定された方法（Wechatのほか、今後DMWが指定する支払方法も含む）でお支払いください。法的な返金義務がある場合を除き、DMWは払い戻しを受けられません。
 </p>
 <p class="MsoListParagraph" style="margin-left:21.0pt;text-indent:-21.0pt;">
-  2)&nbsp;&nbsp; 利用者がコレクションを購入した後、DMWは利用者の学習、研究、鑑賞、コレクションのため展示サービスを提供します。ただし、利用者は上記以外の目的には使用してはいけません。
+  2)&nbsp;&nbsp; 利用者がコレクションを購入した後、DMWは利用者の学習、研究、鑑賞、コレクションのためのサービスを提供します。ただし、利用者は上記以外の目的には使用してはいけません。
 </p>
 <p class="MsoListParagraph" style="margin-left:21.0pt;text-indent:-21.0pt;">
-  3)&nbsp;&nbsp; ネットサービスが特殊性があるため、技術のアップグレード、サービス体系のアップグレード、経営戦略の調整、あるいは国家の重大な技術、法律法規、政策などの変化に合わせて、DMWは需要に応じて本アプリおよび本サービスの内容を更新または調整し、または本サービスを停止、終了することとなります。上記の内容にかんしては、いかなる責任を持つものでもありません。
+  3)&nbsp;&nbsp; ネットサービスが特殊性があるため、技術のアップグレード、サービス体系のアップグレード、経営戦略の調整、あるいは国家の重大な技術、法律法規、政策などの変化に合わせて、DMWは需要に応じて本アプリおよび本サービスの内容を更新または調整し、または本サービスを停止、終了することとなります。上記の内容に関しては、いかなる責任を持つものでもありません。
 </p>
 <h2 style="margin-left:54.0pt;text-indent:-54.0pt;">
   第３条．&nbsp;&nbsp;
@@ -71,7 +71,7 @@ const UserAgreement_JP =  `<p class="MsoNormal" align="center" style="text-align
   4)&nbsp;&nbsp; DMWは使用端末、システムなどに応じて異なるバージョンを開発し、利用者は自身状況により、適切なバージョンをダウンロードしてください。
 </p>
 <p class="MsoListParagraph" style="margin-left:21.0pt;text-indent:-21.0pt;">
-  5)&nbsp;&nbsp; 利用者は本アプリを使用する必要がないあるいは新しいバージョンをアップされる場合、自分でアンインストールすることができます。
+  5)&nbsp;&nbsp; 利用者は本アプリを使用する必要がない場合、自分でアンインストールすることができます。
 </p>
 <p class="MsoListParagraph" style="margin-left:21.0pt;text-indent:-21.0pt;">
   6)&nbsp;&nbsp; 利用者の使用体験を向上させ、サービスの内容を改善するために、DMWは新しいサービスを開発し、アプリの更新を提供します。
@@ -90,7 +90,7 @@ const UserAgreement_JP =  `<p class="MsoNormal" align="center" style="text-align
   DMWは、本規約および「プライバシーポリシー」に基づき、利用者の個人情報を収集、使用、保存、共有します。
 </p>
 <p class="MsoNormal" style="text-indent:10.5pt;">
-  DMWは、利用者の個人情報をいかなる第三者にも転送または披露すとことは一切しません。ただし、以下の場合を除き：
+  DMWは、利用者の個人情報をいかなる第三者にも転送または漏洩することは一切しません。ただし、以下の場合を除き：
 </p>
 <p class="MsoNormal" style="text-indent:10.5pt;">
   <br />
@@ -148,7 +148,7 @@ const UserAgreement_JP =  `<p class="MsoNormal" align="center" style="text-align
   第６条．&nbsp;&nbsp; 法律責任<span></span>
 </h2>
 <p class="MsoNormal" style="text-indent:10.5pt;">
-  利用者が法律法規、本規約、およびDMWのその他の規約、規則に違反した場合、DMWは当該利用者について、本アプリの利用者資格を停止するなどの処分をすることができます。処分措置は以下の通りです：
+  利用者が法律法規、本規約、およびDMWのその他の規約、規則に違反した場合、DMWは当該利用者について、本アプリの利用者資格を停止するなどの処分をすることができます。処分措置は以下の通りです。
 </p>
 <p class="MsoNormal" style="text-indent:10.5pt;">
   <br />
